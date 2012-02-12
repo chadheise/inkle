@@ -121,4 +121,4 @@ def clean_url(value):
         return value.split("://")[1]
     else:
         return value
-debug_value.is_safe = True
+clean_url.is_safe = True

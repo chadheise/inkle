@@ -1,12 +1,11 @@
 <div id="editProfilePictureContent">
     <!-- Edit profile picture message -->
-    <p style="margin-bottom: 15px;">Upload a file below to change you profile picture. Square images work best.</p>
+    <p style="margin-bottom: 15px;">Select an image file to use as your profile picture. You will be able to crop it before saving it.</p>
 
-    <!-- Current profile picture -->
-    <img id="currentMemberImage" src="{{ STATIC_URL }}/media/images/members/{{ member.id }}.jpg" />
-
-    <br />
-    <br />
+    <!--  Errors -->
+    <div id="uploadProfilePictureErrors" class="errors">
+        <p>No file specified</p>
+    </div>
 
     <!-- New profile picture -->
     <form id="editProfilePictureForm" action="/editProfilePicture/" method="POST" enctype="multipart/form-data">
@@ -14,15 +13,61 @@
         <input id="newProfilePicture" name="newProfilePicture" type="file" />
         <br />
         <!-- Edit profile picture button -->
-        <input id="editProfilePictureButton" type="submit" value="Edit profile picture" />
-
+        <input id="editProfilePictureButton" type="submit" value="Upload" />
     </form>
    
     <!-- iframe which will be target for new profile picture form in order to allow upload without page reload -->
     <iframe id="uploadTarget" name="uploadTarget"></iframe>
 </div>
 
+<div id="cropProfilePictureContent">
+    <!-- Crop profile picture message -->
+    <p style="margin-bottom: 15px;">Use your mouse to crop the image you uploaded and then click "Crop". Click "Back" to upload a different image.</p>
+
+    <!--  Errors -->
+    <div id="cropProfilePictureErrors" class="errors">
+        <p>No cropping selection specified</p>
+    </div>
+
+    <!-- Uploaded image -->
+    <div style="border: solid 1px black; display: inline-block;">
+        <img id="uploadedProfileImage" src="{{ STATIC_URL }}/media/tmp/{{ member.id }}_upload.jpg" />
+    </div>
+
+    <!-- Crop parameters -->
+    <input id="cropX" type="hidden" value="" />
+    <input id="cropY" type="hidden" value="" />
+    <input id="cropX2" type="hidden" value="" />
+    <input id="cropY2" type="hidden" value="" />
+    <input id="cropWidth" type="hidden" value="" />
+    <input id="cropHeight" type="hidden" value="" />
+
+    <br />
+
+    <!-- Crop profile picture button -->
+    <input id="cropProfilePictureButton" type="button" value="Crop" />
+
+    <!-- Upload different image button -->
+    <input id="cropProfilePictureBackButton" type="button" value="Back" />
+</div>
+
+<div id="saveProfilePictureContent">
+    <!-- Save profile picture message -->
+    <p style="margin-bottom: 15px;">Click "Save" to save the image below as your profile picture. You can re-crop the image you uploaded by clicking "Back".</p>
+
+    <!-- Cropped image -->
+    <img id="croppedProfileImage" src="{{ STATIC_URL }}/media/tmp/{{ member.id }}_crop.jpg" />
+
+    <br />
+
+    <!-- Save profile picture button -->
+    <input id="saveProfilePictureButton" type="button" value="Save" />
+
+    <!-- Re-crop button -->
+    <input id="saveProfilePictureBackButton" type="button" value="Back" />
+</div>
+
 <!-- Edit profile picture confirmation -->
 <div id="editProfilePictureConfirmation">
-    <p>Your profile picture has been changed.</p>
+    <p>Your profile picture has been changed. It may take a few minutes to see the the change take effect.</p>
 </div>

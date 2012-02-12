@@ -9,6 +9,13 @@
     width: 400px;
 }
 
+#uploadProfilePictureErrors, #cropProfilePictureErrors
+{
+    width: 327px;
+    display: none;
+    margin-bottom: 20px;
+}
+
 table tr
 {
     height: 30px;
@@ -64,10 +71,10 @@ table td .invalid
     border: solid 2px #CD1A26;
 }
 
-#editProfileInformationButton, #editProfilePictureButton, #editProfilePrivacyButton, #editProfileEmailPreferencesButton
+#editProfileInformationButton, #editProfilePictureButton, #cropProfilePictureButton, #cropProfilePictureBackButton, #saveProfilePictureButton, #saveProfilePictureBackButton, #editProfilePrivacyButton, #editProfileEmailPreferencesButton
 {
     padding: 5px 0px 5px 0px;
-    width: 150px;
+    width: 70px;
     font-weight: bold;
     font-size: 12px;
     color: white;
@@ -77,15 +84,38 @@ table td .invalid
     background-color: #288D42;
     border-color: #336E34;
     cursor: pointer;
+    text-align: center;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
 }
 
-#editProfileInformationButton:hover, #editProfilePictureButton:hover, #editProfilePrivacyButton:hover, #editProfileEmailPreferencesButton:hover
+#cropProfilePictureButton, #saveProfilePictureButton
+{
+    margin-top: 0px;
+}
+
+#cropProfilePictureBackButton, #saveProfilePictureBackButton
+{
+    background-color: #CD1A26;
+    border-color: #914044;
+    margin-left: 10px;
+    margin-top: 0px;
+}
+
+#cropProfilePictureBackButton:hover, #saveProfilePictureBackButton:hover
+{
+    border-color: #7E181A;
+}
+
+#editProfileInformationButton:hover, #editProfilePictureButton:hover, #cropProfilePictureButton:hover, #saveProfilePictureButton:hover, #editProfilePrivacyButton:hover, #editProfileEmailPreferencesButton:hover
 {
     border-color: #1A492B;
     cursor: pointer;
 }
 
-#editProfileInformationConfirmation, #editProfilePictureConfirmation, #editProfilePrivacyConfirmation, #editProfileEmailPreferencesConfirmation
+#editProfileInformationConfirmation, #cropProfilePictureContent, #saveProfilePictureContent, #editProfilePictureConfirmation, #editProfilePrivacyConfirmation, #editProfileEmailPreferencesConfirmation
 {
     display: none;
 }
@@ -98,14 +128,16 @@ table td .invalid
     display: none;
 }
 
-#currentMemberImage
+#croppedProfileImage
 {
-    height: 250px;
-    width: 250px;
+    height: 350px;
+    width: 350px;
+    margin-bottom: 15px;
+    border: 1px solid black;
 }
 
 #newProfilePicture
 {
-    width: 200px;
+    width: 350px;
     border: inset 2px #BBB;
 }
