@@ -1755,7 +1755,7 @@ def register_view(request):
             invalid["confirm_email"] = True
             invalid["errors"].append("Email and confirm email do not match")
             
-        elif (not ((data["email"].endswith("@nd.edu")) or (data["email"].endswith("@saintmarys.edu")) or (data["email"].endswith("@hcc-nd.edu")))):
+        elif (not ((data["email"].endswith("@nd.edu")) or (data["email"].endswith("@saintmarys.edu")) or (data["email"].endswith("@hcc-nd.edu")) or (data["email"].endswith("@heise.org") or (data["email"] in ["aaron.m.wenger@gmail.com", "hcwenger@gmail.com", "rew5003@gmail.com", "christopher.patrick.kelly@gmail.com"])))):
             invalid["email"] = True
             invalid["confirm_email"] = True
             invalid["errors"].append("Inkle is currently limited to Notre Dame, Saint Mary's, and Holy Cross email addresses only")
