@@ -5,6 +5,31 @@ $(document).ready(function() {
     var contentType = $("#editProfileContentLinks .selectedContentLink").attr("contentType");
     loadContent(contentType, true);
 
+    // "Pointer" to jcrop element
+    var jcrop_api;
+
+    /* Updates the coordinates for the JCrop element */
+    function updateCoords(c)
+    {
+        $("#cropX").val(c.x);
+        $("#cropY").val(c.y);
+        $("#cropX2").val(c.x2);
+        $("#cropY2").val(c.y2);
+        $("#cropWidth").val(c.w);
+        $("#cropHeight").val(c.h);
+    }
+
+    /* Clears the coordinates for the JCrop element */
+    function clearCoords()
+    {
+        $("#cropX").val("");
+        $("#cropY").val("");
+        $("#cropX2").val("");
+        $("#cropY2").val("");
+        $("#cropWidth").val("");
+        $("#cropHeight").val("");
+    }
+
     /* Loads the content for the inputted content type and populates the main content with it */
     function loadContent(contentType, firstLoad)
     {
@@ -189,29 +214,131 @@ $(document).ready(function() {
 
     /* Edit the logged in member's profile picture when the "Edit profile picture" button is clicked */
     $("#editProfilePictureButton").live("click", function() {
+        // If a file has been selected, upload the image and load the crop picture content
         if ($("#newProfilePicture").val())
         {
-            $("#newProfilePicture").css("border", "solid 2px #BBB");
+            // Hide all the errors
+            $("#uploadProfilePictureErrors").hide();
+            $("#cropProfilePictureErrors").hide();
 
             // Fade out the profile picture content, fade in the confirmation message and update the profile picture, and fade back in the profile picture content after a delay
             $("#editProfilePictureContent").fadeOut("medium", function() {
-                // Reload the member images
+                // Update the uploaded image's source
                 var date = new Date()
-                var imageSource = $("#headerMemberImage").attr("src") + "?" + date.getTime();
-                $("#currentMemberImage").attr("src", imageSource);
-                $("#headerMemberImage").attr("src", imageSource);
+                var imageSource = $("#headerMemberImage").attr("src").split(".")[0] + "_upload.jpg?" + date.getTime();
+                var imageSource = $("#uploadedProfileImage").attr("src") + "?" + date.getTime();
+                $("#uploadedProfileImage").attr("src", imageSource);
 
-
-                $("#editProfilePictureConfirmation").fadeIn("medium").delay(2000).fadeOut("medium", function() {
-                    $("#editProfilePictureContent").fadeIn("medium", function() {
-                });
-            
+                // Fade in the crop content and attached the Jcrop element
+                $("#cropProfilePictureContent").fadeIn("medium", function() {
+                    $("#uploadedProfileImage").Jcrop(
+                        {
+                            aspectRatio: 1,
+                            onSelect: updateCoords,
+                            onRelease: clearCoords
+                        },
+                        function() {
+                            jcrop_api = this;
+                        }
+                    );
                 });
             });
         }
+
+        // If no file has been selected, show the errors
         else
         {
-            $("#newProfilePicture").css("border", "solid 2px #FF0000");
+            $("#uploadProfilePictureErrors").show();
         }
+    });
+
+    /* Crops the image */
+    $("#cropProfilePictureButton").live("click", function() {
+        // Get the cropping selection data
+        var x = $("#cropX").val();
+        var y = $("#cropY").val();
+        var x2 = $("#cropX2").val();
+        var y2 = $("#cropY2").val();
+        var width = $("#cropWidth").val();
+        var height = $("#cropHeight").val();
+
+        // If the cropping selection data exists, crop the picture and show the save picture content
+        if ((x != "") && (y != "") && (x2 != "") && (y2 != "") && (width != "") && (height != ""))
+        {
+            // Hide the errors
+            $("#cropProfilePictureErrors").hide();
+
+            // Crop the picture and show the save picture content
+            $.ajax({
+                type: "POST",
+                url: "/cropProfilePicture/",
+                data: { "x" : x, "y" : y, "x2" : x2, "y2" : y2, "width" : width, "height" : height },
+                success: function(html) {
+                    // Update the cropped image's source
+                    var date = new Date()
+                    var imageSource = $("#croppedProfileImage").attr("src") + "?" + date.getTime();
+                    $("#croppedProfileImage").attr("src", imageSource);
+    
+                    // Fade in the save picture content
+                    $("#cropProfilePictureContent").fadeOut("medium", function() {
+                        $("#saveProfilePictureContent").fadeIn("medium");
+                    });
+                },
+                error: function(jqXHR, textStatus, error) {
+                    if ($("body").attr("debug") == "True")
+                    {
+                        alert("editProfile.js (5): " + error);
+                    }
+                }
+            });
+        }
+
+        // If no cropping selection exists, show the errors
+        else
+        {
+            $("#cropProfilePictureErrors").show();
+        }
+    });
+
+    /* Fades back in the upload picture content and destroy the Jcrop element if the "Back" button is pressed on the save picture page */
+    $("#cropProfilePictureBackButton").live("click", function() {
+        $("#cropProfilePictureContent").fadeOut("medium", function() {
+            jcrop_api.destroy();
+            clearCoords();
+            $("#editProfilePictureContent").fadeIn("medium");
+        });
+    });
+
+    /* Saves the cropped picture as the logged in member's profile picture */
+    $("#saveProfilePictureButton").live("click", function() {
+        $.ajax({
+            type: "POST",
+            url: "/saveProfilePicture/",
+            data: { },
+            success: function(html) {
+                // Fade out the save picture content and fade in the confirmation message
+                $("#saveProfilePictureContent").fadeOut("medium", function() {
+                    $("#editProfilePictureConfirmation").fadeIn("medium");
+
+                    // Update the header image's source
+                    var date = new Date()
+                    var imageSource = $("#headerMemberImage").attr("src") + "?" + date.getTime();
+                    $("#headerMemberImage").attr("src", imageSource);
+                });
+            },
+            error: function(jqXHR, textStatus, error) {
+                if ($("body").attr("debug") == "True")
+                {
+                    alert("editProfile.js (6): " + error);
+                }
+            }
+        });
+    });
+
+    /* Fades back in the crop picture content if the "Back" button is pressed on the save picture page */
+    $("#saveProfilePictureBackButton").live("click", function() {
+        $("#saveProfilePictureContent").fadeOut("medium", function() {
+            $("#cropProfilePictureContent").fadeIn("medium");
+        });
     });
 });

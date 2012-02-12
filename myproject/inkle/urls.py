@@ -122,6 +122,8 @@ urlpatterns = patterns(
     (r"^editProfileEmailPreferences/$", "edit_profile_email_preferences_view"),
     (r"^editProfilePicture/$", "edit_profile_picture_view"),
     (r"^getNewProfilePicture/$", "get_new_profile_picture_view"),
+    (r"^cropProfilePicture/$", "crop_profile_picture_view"),
+    (r"^saveProfilePicture/$", "save_profile_picture_view"),
 
     (r"^terms/$", "terms_view"),
     (r"^contact/$", "contact_view"),

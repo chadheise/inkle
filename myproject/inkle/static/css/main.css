@@ -195,6 +195,10 @@ input, textarea, select
     border-radius: 5px;
     outline: none;
     cursor: pointer;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
 }
 
 .cardButton

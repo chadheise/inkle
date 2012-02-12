@@ -13,6 +13,7 @@ from django.db.models import Q
 
 import datetime
 import shutil
+from PIL import Image
 
 from databaseViews import *
 
@@ -499,16 +500,31 @@ def edit_profile_picture_view(request):
         raise Http404()
 
     if (request.FILES):
-        fileName = MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg"
-        destination = open(fileName, "wb+")
-        for chunk in request.FILES["newProfilePicture"].chunks():
-            destination.write(chunk)
-        destination.close()
+        # Open the uploaded image
+        image = Image.open(request.FILES["newProfilePicture"])
+
+        # Get the uploaded image's size
+        width, height = image.size
+
+        # Resize the uploaded image
+        max_height = 450.0
+        max_width = 675.0
+        if (width > max_width):
+            height = (max_width / width) * height
+            width = max_width
+        if (height > max_height):
+            width = (max_height / height) * width
+            height = max_height
+        image = image.resize((int(width), int(height)))
+
+        # Save the uploaded image
+        image.save(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
+
+        # Update the number of times the logged in member has changed their profile image
         member.changed_image += 1
         member.save()
-        return render_to_response( "editProfilePicture.html",
-            { "member" : member },
-            context_instance = RequestContext(request) )
+
+        return HttpResponse()
     else:
         if (request.POST):
             return HttpResponseRedirect("/editProfile/picture/")
@@ -516,6 +532,53 @@ def edit_profile_picture_view(request):
             return render_to_response( "editProfilePicture.html",
                 { "member" : member },
                 context_instance = RequestContext(request) )
+
+
+def crop_profile_picture_view(request):
+    # Get the member who is logged in (or raise a 404 error)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    try:
+        x = int(request.POST["x"])
+        y = int(request.POST["y"])
+        x2 = int(request.POST["x2"])
+        y2 = int(request.POST["y2"])
+        width = int(request.POST["width"])
+        height = int(request.POST["height"])
+    except KeyError:
+        raise Http404()
+
+    try:
+        open(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
+    except IOError:
+        raise Http404()
+
+    image = Image.open(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
+    image = image.crop((x, y, x2, y2))
+    image = image.resize((1000, 1000))
+    image.save(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
+
+    return HttpResponse()
+
+def save_profile_picture_view(request):
+    # Get the member who is logged in (or raise a 404 error)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    try:
+        open(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
+    except IOError:
+        raise Http404()
+
+    image = Image.open(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
+    image.save(MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+
+    return HttpResponse()
 
 
 def edit_profile_privacy_view(request):
