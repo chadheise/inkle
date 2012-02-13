@@ -182,7 +182,7 @@ class Invitation(models.Model):
 class ActiveMemberManager(models.Manager):
     """Manager which returns active member objects."""
     def get_query_set(self):
-        return Member.objects.filter(is_active = True)
+        return Member.objects.filter(is_active = True, verified = True)
 
 
 class Member(User):
