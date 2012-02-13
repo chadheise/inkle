@@ -264,7 +264,12 @@ class Member(User):
         return "%s %s, %s" % (months[self.birthday.month - 1], self.birthday.day, self.birthday.year)
 
     def get_num_notifications(self):
-        """Returns the current member's notification count."""
+        """Removes old inkling invitations and returns the current member's notification count."""
+        # Remove old inkling invitations
+        for invitation in self.invitations.all():
+            if (invitation.inkling.date < datetime.date.today()):
+                self.invitations.remove(invitation)
+
         return self.requested.count() + self.invitations.count()
 
     def update_verification_hash(self):
