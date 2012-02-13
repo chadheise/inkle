@@ -1181,7 +1181,7 @@ def suggestions_view(request):
     # Case 4: Member and blot suggestions for inkling invites
     elif (query_type == "inklingInvite"):
         # Get the member suggestions (and add them to the categories list if there are any)
-        members = members_search_query(query, Member.objects.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
+        members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
         if (members):
             members.suggestionType = "members"
             for m in members:

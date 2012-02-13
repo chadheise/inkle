@@ -39,7 +39,7 @@ def date_selected_view(request):
     """Updates the calendar once a date is clicked."""
     # Get the member who is logged in (or redirect them to the login page)
     try:
-        member = Member.objects.get(pk = request.session["member_id"])
+        member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         return HttpResponseRedirect("/login/")
     
@@ -134,7 +134,7 @@ def get_location_inklings(member_id = None, location_id = None, member_place_id 
             # Get all of the specified date's inklings at the provided location
             location_inklings = Inkling.objects.filter(date = date, location = location)
         else:
-            member_place = Member.objects.get(pk = int(member_place_id))
+            member_place = Member.active.get(pk = int(member_place_id))
             # Get all of the specified date's inklings at the provided location
             location_inklings = Inkling.objects.filter(date = date, member_place = member_place)
     except:
@@ -685,7 +685,7 @@ def create_inkling_view(request):
         if request.POST["locationType"] == "locations":
             location = Location.objects.get(pk = request.POST["locationID"])
         elif request.POST["locationType"] == "members":
-            member_place = Member.objects.get(pk = request.POST["locationID"])
+            member_place = Member.active.get(pk = request.POST["locationID"])
             if member_place != member:
                 raise Http404()
         date = request.POST["date"].split("/")
