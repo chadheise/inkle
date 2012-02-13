@@ -128,9 +128,13 @@ urlpatterns = patterns(
     (r"^terms/$", "terms_view"),
     (r"^contact/$", "contact_view"),
     (r"^sendContactEmail/$", "send_contact_email_view"),
+    
+    # Help
     (r"^help/$", "help_view"),
     (r"^help/(?P<content_type>overview|home|following|blots|networks|inklings)/$", "help_view"),
     (r"^gettingStarted/$", "getting_started_view"),
 
+    # Diagnostic
     (r"^diagnostic/$", "diagnostic_view"),
+    (r"^diagnostic/(?P<content_type>members|inklings|blots|networks|invitations|followers)/$", "diagnostic_view"),
 )

@@ -1,0 +1,6 @@
+{% load minus divided_by percentage_of from extraTags %}
+
+<p>Total members: {{ data.num_members }}</p>
+<p>Total inklings: {{ data.num_inklings }}</p>
+<p>Members who have inkled at least once: {{ data.num_members_inkled }} ({{ data.num_members_inkled|percentage_of:data.num_members }}%)</p>
+<p>Members who have not inkled: {{ data.num_members|minus:data.num_members_inkled }} ({{ data.num_members|minus:data.num_members_inkled|percentage_of:data.num_members }}%)</p>

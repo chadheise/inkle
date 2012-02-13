@@ -1,0 +1,7 @@
+{% load minus divided_by percentage_of from extraTags %}
+
+<p>Total members: {{ data.num_members }}</p>
+<p>Verified members: {{ data.num_verified }} ({{ data.num_verified|percentage_of:data.num_members }}%)</p>
+<p>Unverified members: {{ data.num_members|minus:data.num_verified }} ({{ data.num_members|minus:data.num_verified|percentage_of:data.num_members }}%)</p>
+<p>Active members: {{ data.num_active }} ({{ data.num_active|percentage_of:data.num_members }}%)</p>
+<p>Deactivated members: {{ data.num_members|minus:data.num_active }} ({{ data.num_members|minus:data.num_active|percentage_of:data.num_members }}%)</p>

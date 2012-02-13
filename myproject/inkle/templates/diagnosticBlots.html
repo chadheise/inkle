@@ -1,0 +1,7 @@
+{% load minus divided_by percentage_of from extraTags %}
+
+<p>Total members: {{ data.num_members }}</p>
+<p>Total blots: {{ data.num_blots }}</p>
+<p>Average number of blots per member: {{ data.num_blots|divided_by:data.num_members }}</p>
+<p>Members who have created at least one blot: {{ data.num_some_blots }} ({{ data.num_some_blots|percentage_of:data.num_members }}%)</p>
+<p>Members who have created no blots: {{ data.num_members|minus:data.num_some_blots }} ({{ data.num_members|minus:data.num_some_blots|percentage_of:data.num_members }}%)</p>

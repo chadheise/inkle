@@ -122,3 +122,42 @@ def clean_url(value):
     else:
         return value
 clean_url.is_safe = True
+
+@register.filter()
+def minus(value, arg):
+    """Returns value - arg as an int."""
+    # Get the int values of each arguemnt
+    try:
+        value = int(value)
+        arg = int(arg)
+    except ValueError:
+        return value
+
+    return value - arg
+minus.is_safe = True
+
+@register.filter()
+def divided_by(value, arg):
+    """Returns value/arg as a float."""
+    # Get the float values of each arguemnt
+    try:
+        value = float(value)
+        arg = float(arg)
+    except ValueError:
+        return value
+
+    return round((value / arg), 2)
+divided_by.is_safe = True
+
+@register.filter()
+def percentage_of(value, arg):
+    """Returns value/arg as a percentage."""
+    # Get the float values of each arguemnt
+    try:
+        value = float(value)
+        arg = float(arg)
+    except ValueError:
+        return value
+
+    return round((value / arg) * 100.0, 2)
+percentage_of.is_safe = True

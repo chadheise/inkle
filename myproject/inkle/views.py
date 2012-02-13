@@ -635,21 +635,57 @@ def edit_profile_email_preferences_view(request):
         context_instance = RequestContext(request) )
 
 
-def diagnostic_view(request):
+def diagnostic_view(request, content_type = "members"):
     # Get the member who is logged in (or raise a 404 error)
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
         raise Http404()
+
+    try:
+        first_load = request.POST["firstLoad"]
+        first_load = False
+    except KeyError:
+        first_load = True
     
     if (not member.is_staff):
         raise Http404()
     else:
-        num_members = len(Member.objects.all())
-        num_verified = len(Member.objects.filter(verified = True))
-        num_unverified = num_members - num_verified
+        data = {}
+        if (content_type == "members"):
+            data["num_members"] = Member.objects.count()
+            data["num_verified"] = Member.objects.filter(verified = True).count()
+            data["num_active"] = Member.objects.filter(is_active = True).count()
+        elif (content_type == "inklings"):
+            data["num_members"] = Member.objects.count()
+            data["num_inklings"] = Inkling.objects.count()
+            data["num_members_inkled"] = len([m for m in Member.objects.all() if (m.inklings.all())])
+        elif (content_type == "blots"):
+            data["num_members"] = Member.objects.count()
+            data["num_blots"] = Blot.objects.count()
+            data["num_some_blots"] = len([m for m in Member.objects.all() if (m.blots.all())])
+        elif (content_type == "networks"):
+            data["num_members"] = Member.objects.count()
+            data["num_networks"] = Network.objects.count()
+            data["num_network_members"] = sum([m.networks.count() for m in Member.objects.all()])
+            data["num_some_networks"] = len([m for m in Member.objects.all() if (m.networks.all())])
+        elif (content_type == "invitations"):
+            data["num_members"] = Member.objects.count()
+            data["num_invitations"] = Invitation.objects.count()
+            data["num_some_invitations_sent"] = len(set([inv.from_member for inv in Invitation.objects.all()]))
+        elif (content_type == "followers"):
+            data["num_members"] = Member.objects.count()
+            data["num_followers"] = sum([m.following.count() for m in Member.objects.all()])
+            data["num_some_following"] = len([m for m in Member.objects.all() if (m.following.all())])
+            data["num_some_followers"] = len([m for m in Member.objects.all() if (m.followers.all())])
+
+    if (first_load):
         return render_to_response( "diagnostic.html",
-            { "member" : member, "num_members" : num_members, "num_verified" : num_verified, "num_unverified" : num_unverified },
+            { "member" : member, "contentType" : content_type, "data" : data },
+            context_instance = RequestContext(request) )
+    else:
+        return render_to_response( "diagnostic" + content_type[0].upper() + content_type[1:] + ".html",
+            { "member" : member, "contentType" : content_type, "data" : data },
             context_instance = RequestContext(request) )
         
 
