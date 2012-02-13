@@ -101,7 +101,10 @@ def member_view(request, other_member_id = None, content_type = "inklings", date
         other_member.button_list.append(buttonDictionary["blots"])
         other_member.button_list.append(buttonDictionary["stop"])
     else:
-        other_member.button_list.append(buttonDictionary["request"])
+        if (member in other_member.requested.all()):
+            other_member.button_list.append(buttonDictionary["revoke"])
+        else:
+            other_member.button_list.append(buttonDictionary["request"])
 
     if (member in other_member.following.all()):
         other_member.button_list.append(buttonDictionary["prevent"])
