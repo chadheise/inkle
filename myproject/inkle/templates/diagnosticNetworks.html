@@ -1,0 +1,8 @@
+{% load minus divided_by percentage_of from extraTags %}
+
+<p>Total members: {{ data.num_members }}</p>
+<p>Total networks: {{ data.num_networks }}</p>
+<p>Number of network members (includes duplicate members): {{ data.num_network_members }}</p>
+<p>Average number of networks per member: {{ data.num_network_members|divided_by:data.num_members }}</p>
+<p>Members who are in at least one network: {{ data.num_some_networks }} ({{ data.num_some_networks|percentage_of:data.num_members }}%)</p>
+<p>Members who are in no networks: {{ data.num_members|minus:data.num_some_networks }} ({{ data.num_members|minus:data.num_some_networks|percentage_of:data.num_members }}%)</p>

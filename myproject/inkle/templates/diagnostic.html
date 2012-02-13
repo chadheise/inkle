@@ -5,9 +5,11 @@
 {% endblock title %}
 
 {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/diagnostic.css" />
 {% endblock css %}
 
 {% block js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/diagnostic.js"></script>
 {% endblock js %}
 
 {% block mainContent %}
@@ -19,20 +21,18 @@
             </div>
             <div class="clear"></div>
 
-            <!-- Help content links -->
-            <!--<div id="helpContentLinks" class="contentLinks grid_24">
-                <p {% if contentType == "overview" %}class="selectedContentLink"{% endif %} contentType="overview">Overview</p>
-                <p {% if contentType == "home" %}class="selectedContentLink"{% endif %} contentType="home">Home</p>
+            <!-- Diagnostic content links -->
+            <div id="diagnosticContentLinks" class="contentLinks grid_24">
+                <p {% if contentType == "members" %}class="selectedContentLink"{% endif %} contentType="members">Members</p>
                 <p {% if contentType == "inklings" %}class="selectedContentLink"{% endif %} contentType="inklings">Inklings</p>
-                <p {% if contentType == "following" %}class="selectedContentLink"{% endif %} contentType="following">Following</p>
                 <p {% if contentType == "blots" %}class="selectedContentLink"{% endif %} contentType="blots">Blots</p>
                 <p {% if contentType == "networks" %}class="selectedContentLink"{% endif %} contentType="networks">Networks</p>
+                <p {% if contentType == "invitations" %}class="selectedContentLink"{% endif %} contentType="invitations">Invitations</p>
+                <p {% if contentType == "followers" %}class="selectedContentLink"{% endif %} contentType="followers">Followers</p>
             </div>
-            <div class="clear"></div>-->
+            <div class="clear"></div>
             
-            <div id="helpContent" class="grid_24">
-                <p>There are {{ num_members }} members signed up for Inkle.</p>
-                <p>There are {{ num_verified }} verified members and {{ num_unverified }} unverified members.</p>
+            <div id="diagnosticContent" class="grid_24">
             </div>
        </div>
     </div>
