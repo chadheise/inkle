@@ -32,7 +32,7 @@
             <div class="memberNetworks infoRow">
                 {% if m.privacy >= m.networks_privacy %}
                     {% for network in m.networks.all %}
-                        {% if network != m.networks.all|first %}
+                        {% if forloop.counter != 1 %}
                             <span>&middot;</span>
                         {% endif %}
                         {% for word in network.name|split %}
