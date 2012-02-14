@@ -9,14 +9,16 @@ def send_email(from_address, to_addresses, subject, body_text, body_html):
     # message = MIMEText(body_text)
     message = MIMEText(body_html, "html")
     message["Subject"] = subject
+    if (DEBUG):
+        to_addresses = ["test@inkleit.com"]
+    message["To"] = to_addresses[0]
+    message["From"] = from_address
 
     # Connect to the server, send the email, and disconnect from the server
     server = SMTP_SSL("smtp.webfaction.com", 465)
     
     server.login("inkle", "AmiTabh-2012")
 
-    if (DEBUG):
-        to_addresses = ["test@inkleit.com"]
     server.sendmail(from_address, to_addresses, message.as_string())
 
     server.quit()
@@ -344,11 +346,11 @@ def send_contact_email(member, name, email, subject, message):
     send_email(from_address, to_addresses, subject, body_text, body_html)
 
 
-def send_invite_to_inkle_email(member, emails):
+def send_invite_to_inkle_email(member, email):
     """Sends an invitation to join Inkle to the inputted email."""
     # Specify the from address and to addresses
     from_address = "inkle@inkleit.com"
-    to_addresses = emails
+    to_addresses = [email]
 
     # Specify the subject
     subject = "%s has invited you to join Inkle!" % (member.get_full_name())
