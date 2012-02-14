@@ -41,7 +41,7 @@ def send_email_verification_email(member):
         Once your account is verified, you'll be able to log into Inkle and redefine how you plan your weekends!
     
     Welcome aboard,
-    The Inkle team""" % (member.first_name, member.username, member.verification_hash)
+    The Inkle team""" % (member.first_name, member.email, member.verification_hash)
     
     # Specify the HTML body
     body_html = """<html>
@@ -65,7 +65,7 @@ def send_email_verification_email(member):
             <p>Welcome aboard,<br />
             The Inkle team</p>
         </body>
-    </html>""" % (member.first_name, member.username, member.verification_hash)
+    </html>""" % (member.first_name, member.email, member.verification_hash)
 
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)
@@ -88,7 +88,7 @@ def send_update_email_verification_email(member):
         http://www.inkleit.com/verifyEmail/%s/%s/
     
     Welcome aboard,
-    The Inkle team""" % (member.first_name, member.username, member.verification_hash)
+    The Inkle team""" % (member.first_name, member.email, member.verification_hash)
     
     # Specify the HTML body
     body_html = """<html>
@@ -101,7 +101,7 @@ def send_update_email_verification_email(member):
             <p>Welcome aboard,<br />
             The Inkle team</p>
         </body>
-    </html>""" % (member.first_name, member.username, member.verification_hash)
+    </html>""" % (member.first_name, member.email, member.verification_hash)
     
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)
@@ -126,7 +126,7 @@ def send_password_reset_email(member):
         If you didn't request to have your password reset, don't worry - just disregard this message.
     
     Thanks,
-    The Inkle team""" % (member.first_name, member.username, member.verification_hash)
+    The Inkle team""" % (member.first_name, member.email, member.verification_hash)
     
     # Specify the HTML body
     body_html = """<html>
@@ -141,7 +141,7 @@ def send_password_reset_email(member):
             <p>Thanks,<br />
             The Inkle team</p>
         </body>
-    </html>""" % (member.first_name, member.username, member.verification_hash)
+    </html>""" % (member.first_name, member.email, member.verification_hash)
     
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)

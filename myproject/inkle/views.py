@@ -241,7 +241,7 @@ def update_account_email_view(request):
             invalid["new_email"] = True
             invalid["errors"].append("Invalid new email format")
 
-        elif (Member.objects.filter(username = data["new_email"])):
+        elif (Member.objects.filter(email = data["new_email"])):
             invalid["new_email"] = True
             invalid["confirm_new_email"] = True
             invalid["errors"].append("An account already exists for the provided new email")
@@ -268,6 +268,8 @@ def update_account_email_view(request):
         # If all the POST data is valid, update the logged in member's email
         if (not invalid["errors"]):
             member.email = data["new_email"]
+            if (len(data["new_email"]) > 30):
+                data["new_email"] = data["new_email"][0:30]
             member.username = data["new_email"]
             member.verified = False
             member.save()
@@ -1663,7 +1665,7 @@ def login_view(request):
         if (not invalid["errors"]):
             # Get the member according to the provided email
             try:
-                member = Member.active.get(username = data["email"])
+                member = Member.active.get(email = data["email"])
             except:
                 member = []
 
@@ -1689,7 +1691,7 @@ def reset_password_view(request, email = None, verification_hash = None):
     """Verifies a member's email address using the inputted verification hash."""
     # Get the member corresponding to the provided email (or raise a 404 error)
     try:
-        member = Member.active.get(username = email)
+        member = Member.active.get(email = email)
     except Member.DoesNotExist:
         raise Http404()
 
@@ -1775,7 +1777,7 @@ def register_view(request):
             invalid["email"] = True
             invalid["errors"].append("Invalid email format")
 
-        elif (Member.objects.filter(username = data["email"])):
+        elif (Member.objects.filter(email = data["email"])):
             invalid["email"] = True
             invalid["confirm_email"] = True
             invalid["errors"].append("An account already exists for the provided email")
@@ -1857,6 +1859,8 @@ def register_view(request):
 
         # If the registration form is valid, create a new member with the provided POST data
         if (not invalid["errors"]):
+            if (len(data["email"]) > 30):
+                data["email"] = data["email"][0:30]
             # Create the new member
             member = Member(
                 first_name = data["first_name"],
@@ -1897,7 +1901,7 @@ def verify_email_view(request, email = None, verification_hash = None):
     """Verifies a member's email address using the inputted verification hash."""
     # Get the member corresponding to the provided email (otherwise, throw a 404 error)
     try:
-        member = Member.objects.get(username = email)
+        member = Member.objects.get(email = email)
     except Member.DoesNotExist:
         raise Http404()
 

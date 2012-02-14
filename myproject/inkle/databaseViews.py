@@ -876,7 +876,7 @@ def send_email_verification_email_view(request, email = None):
     """Sends an email to the provided email allowing them to verify that email."""
     # Get the member who corresponds to the provided email (or raise a 404 error if no corresponding member exists)
     try:
-        member = Member.objects.get(username = email)
+        member = Member.objects.get(email = email)
     except Member.DoesNotExist:
         raise Http404()
 
@@ -893,7 +893,7 @@ def send_update_email_verification_email_view(request, email = None):
     """Sends an email to the provided email allowing them to verify their new email."""
     # Get the member who corresponds to the provided email (or raise a 404 error if no corresponding member exists)
     try:
-        member = Member.active.get(username = email)
+        member = Member.active.get(email = email)
     except Member.DoesNotExist:
         raise Http404()
 
@@ -910,7 +910,7 @@ def send_password_reset_email_view(request, email = None):
     """Sends an email to the provided email allowing the corresponding to reset their password."""
     # Get the member who corresponds to the provided email and send them an email to reset their password (otherwise, don't do anything)
     try:
-        member = Member.active.get(username = email)
+        member = Member.active.get(email = email)
         send_password_reset_email(member)
     except Member.DoesNotExist:
         pass
