@@ -248,7 +248,7 @@ class Member(User):
    
     def __unicode__(self):
         """String representation for the current member."""
-        return "%s (%s %s)" % (self.username, self.first_name, self.last_name)
+        return "%s (%s %s)" % (self.email, self.first_name, self.last_name)
 
     def get_absolute_url(self):
         """Returns the URL for the current member's member page."""
