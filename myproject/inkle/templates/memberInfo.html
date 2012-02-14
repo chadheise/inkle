@@ -56,7 +56,7 @@
         <div class="blotsMenu">
             {% for blot in member.blots.all %}
                 <div>
-                    <input id="m{{ m.id }}_c{{ blot.id }}" type="checkbox" {% if m in blot.members.all %}checked="checked"{% endif %} blotID="{{ blot.id }}" />
+                    <input id="m{{ m.id }}_c{{ blot.id }}" type="checkbox" {% if other_member in blot.members.all %}checked="checked"{% endif %} blotID="{{ blot.id }}" />
                     <label for="m{{ m.id }}_c{{ blot.id }}">{{ blot.name }}</label>
                 </div>
             {% empty %}
