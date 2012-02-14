@@ -864,10 +864,11 @@ def invite_to_inkle_view(request):
     valid_emails = []
     for email in emails:
         if ((is_email(email)) and ((email.endswith("@nd.edu")) or (email.endswith("@saintmarys.edu")) or (email.endswith("@hcc-nd.edu")))):
-            valid_emails.append(email)
+            #valid_emails.append(email)
+            send_invite_to_inkle_email(member, email)
             
-    if (valid_emails):
-        send_invite_to_inkle_email(member, valid_emails)
+    #if (valid_emails):
+    #    send_invite_to_inkle_email(member, valid_emails)
 
     return HttpResponse()
 
