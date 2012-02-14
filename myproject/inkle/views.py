@@ -1897,7 +1897,7 @@ def verify_email_view(request, email = None, verification_hash = None):
     """Verifies a member's email address using the inputted verification hash."""
     # Get the member corresponding to the provided email (otherwise, throw a 404 error)
     try:
-        member = Member.active.get(username = email)
+        member = Member.objects.get(username = email)
     except Member.DoesNotExist:
         raise Http404()
 
