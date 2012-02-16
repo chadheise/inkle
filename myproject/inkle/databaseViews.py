@@ -71,7 +71,7 @@ def get_location_inklings_view(request):
 
     # Get date objects
     date1 = datetime.date(int(request.POST["year"]), int(request.POST["month"]), int(request.POST["day"]))
-    dates = [date1 + datetime.timedelta(days = x) for x in range(3)]
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
 
     member = get_location_inklings(request.session["member_id"], request.POST["location_id"], None, date1)
     
@@ -104,7 +104,7 @@ def get_member_place_view(request):
 
     # Get date objects
     date1 = datetime.date(int(request.POST["date"].split("/")[2]), int(request.POST["date"].split("/")[0]), int(request.POST["date"].split("/")[1]))
-    dates = [date1 + datetime.timedelta(days = x) for x in range(3)]
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
 
     if ("other_member_id" in request.POST):
         member = get_location_inklings(member.id, None, request.POST["other_member_id"], date1)

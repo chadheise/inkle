@@ -223,39 +223,49 @@ $(document).ready(function() {
         var calendar = $("#calendar");
         if ((today.getMonth() + 1 != calendar.attr("selectedMonth")) || (today.getDate() != calendar.attr("selectedDay")) || (today.getFullYear() != calendar.attr("selectedYear")))
         {
-            // Change the selected date container
-            $(".selectedDateContainer").removeClass("selectedDateContainer");
-            $(this).addClass("selectedDateContainer");
+            // Get the number of calendar dates to display
+            numDates = $(".dateContainer").size();
 
-            // Get the location and date information
-            var location_id = (window.location.pathname).split('/')[2];
-
-            // Get the clicked date and update the calendar's selected date information
-            var calendar = $("#calendar");
-            var month = $(this).attr("month");
-            var day = $(this).attr("day");
-            var year = $(this).attr("year");
-            calendar.attr("selectedMonth", month);
-            calendar.attr("selectedDay", day);
-            calendar.attr("selectedYear", year);
-            calendar.attr("selectedDate", $(this).attr("date"));
-            var date = getSelectedDate("/");
-
-            // Update location inklings
+            // Update calendar
             $.ajax({
                 type: "POST",
-                url: "/getLocationInklings/",
-                data: {"location_id" : location_id, "year" : year, "month" : month, "day": day},
-                success: function(html) {
-                    $("#locationInklingsContent").fadeOut("medium", function() {
-                        $("#locationInklingsContent").html(html);
-                            showHideContent( $(".selectedContentLink").attr("contentType") );
+                url: "/dateSelect/",
+                data: {"arrow" : "today", "numDates" : numDates},
+                success: function(html) {            
+                    // Update the HTML of the calendar
+                    $("#calendarContainer").html(html);
+
+                    // Get the location and date information
+                    var location_id = (window.location.pathname).split('/')[2];
+
+                    var calendar = $("#calendar");
+                    var month = calendar.attr("selectedMonth");
+                    var day = calendar.attr("selectedDay");
+                    var year = calendar.attr("selectedYear");
+              
+                    // Update location inklings
+                    $.ajax({
+                        type: "POST",
+                        url: "/getLocationInklings/",
+                        data: {"location_id" : location_id, "year" : year, "month" : month, "day": day},
+                        success: function(html) {
+                            $("#locationInklingsContent").fadeOut("medium", function() {
+                                $("#locationInklingsContent").html(html);
+                                    showHideContent( $(".selectedContentLink").attr("contentType") );
+                            });
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            if ($("body").attr("debug") == "True")
+                            {
+                                alert("location.js (5.2): " + error);
+                            }
+                        }
                     });
                 },
                 error: function(jqXHR, textStatus, error) {
                     if ($("body").attr("debug") == "True")
                     {
-                        alert("location.js (4): " + error);
+                        alert("location.js (5.1): " + error);
                     }
                 }
             });
