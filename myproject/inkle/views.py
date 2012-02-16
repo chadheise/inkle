@@ -54,7 +54,7 @@ def manage_view(request, content_type = "blots", date = "today", place_type = "a
             date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
         except:
             date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(3)]
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
 
     return render_to_response( "manage.html",
         {"member" : member, "dates" : dates, "selectedDate" : date1, "defaultContentType" : content_type, "place_type" : place_type},
@@ -117,7 +117,7 @@ def member_view(request, other_member_id = None, content_type = "inklings", date
             date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
         except:
             date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(3)]
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
 
     return render_to_response( "member.html",
         { "member" : member, "other_member" : other_member, "dates" : dates, "selectedDate" : date1, "content_type" : content_type, "place_type" : place_type },
@@ -823,7 +823,7 @@ def location_view(request, location_id = None, content_type = "all", date = "tod
             date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
         except:
             date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(3)]
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
     
     member = get_location_inklings(request.session["member_id"], location_id, None, date1)
 
@@ -1628,7 +1628,7 @@ def get_member_inklings_view(request):
             pass
 
         # Get date objects
-        dates = [date + datetime.timedelta(days = x) for x in range(3)]
+        dates = [date + datetime.timedelta(days = x) for x in range(4)]
         
         return render_to_response( "memberInklings.html",
             { "inklings" : inklings, "dates" : dates, "selectedDate" : date },

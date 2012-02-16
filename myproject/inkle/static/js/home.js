@@ -663,7 +663,7 @@ $(document).ready(function() {
                 error: function(jqXHR, textStatus, error) {
                     if ($("body").attr("debug") == "True")
                     {
-                        alert("calendar.js (1): " + error);
+                        alert("home.js (8): " + error);
                     }
                 }
             });
