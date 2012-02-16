@@ -31,7 +31,7 @@ input, textarea, select
 .pageTitle
 {
     font-size: 36px;
-    margin: -8px 0px 10px 0px;
+    margin: -8px 0px 5px 0px;
     font-weight: bold;
     color: #288D42;
     float: left;
@@ -46,7 +46,11 @@ input, textarea, select
     font-weight: bold;
     cursor: pointer;
     float: left;
-    margin: -3px 27px 15px 0px;
+    margin: 0px 27px 10px 0px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
 }
 
 .contentLinks .selectedContentLink
@@ -57,11 +61,15 @@ input, textarea, select
 .subsectionContentLinks p
 {
     color: #EAB0B5;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     cursor: pointer;
     float: left;
-    margin: 0px 30px 15px 0px;
+    margin: 0px 30px 10px 0px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
 }
 
 .subsectionContentLinks .selectedSubsectionContentLink

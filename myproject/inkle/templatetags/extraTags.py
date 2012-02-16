@@ -22,7 +22,7 @@ def truncate_characters(value, arg):
 
     # Add an ellipse if applicable, otherwise, simply return the input value
     if len(value) > length:
-        return "%s..." % value[0:(length - 3)]
+        return "%s..." % (value[0:(length - 3)]).strip()
     return value
 truncate_characters.is_safe = True
 

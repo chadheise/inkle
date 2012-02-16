@@ -32,7 +32,7 @@ def home_view(request):
     dates = [today + datetime.timedelta(days = x) for x in range(7)] 
 
     # Get others' dinner inklings for today
-    locations = get_others_inklings(member, today, "other", "blots", "mainEvent")
+    locations = get_others_inklings(member, today, "other", "blots", "all")
 
     return render_to_response( "home.html",
         { "member" : member, "locations" : locations, "dates" : dates, "selectedDate" : today },

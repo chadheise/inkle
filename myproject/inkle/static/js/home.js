@@ -3,7 +3,6 @@
 $(document).ready(function() {
     // Set the "All blots" and "Dinner" options as the selected options
     $("#locationBoardPeopleSelect option:first").attr("selected", "selected");
-    $("#locationBoardInklingSelect option:last").attr("selected", "selected");
 
     /* Returns the currently selected date */
     function getSelectedDate(delimiter)
@@ -14,21 +13,46 @@ $(document).ready(function() {
     /* Updates my inklings with the logged in user's inklings for the inputted date */
     function updateMyInklings(date)
     {
+        if ($("#myInklings").is(":visible"))
+        {
+            var includeCalendar = "false";
+        }
+        else
+        {
+            var includeCalendar = "true";
+        }
+
         $.ajax({
             type: "POST",
             url: "/getMyInklings/",
-            data: {"date" : date},
+            data: { "date" : date, "includeCalendar" : includeCalendar },
             success: function(html) {
-                $("#homeContent").fadeOut("medium", function() {
-                    $("#homeContent").html(html); 
+                if ($("#myInklings").is(":visible"))
+                {
+                    $("#myInklings").fadeOut("medium", function() {
+                        $("#myInklings").html(html); 
     
-                    // Set the value of the my inkling inputs
-                    $("#dinnerInkling input").val($("#dinnerInkling input").attr("location"));
-                    $("#pregameInkling input").val($("#pregameInkling input").attr("location"));
-                    $("#mainEventInkling input").val($("#mainEventInkling input").attr("location"));
-
-                    $("#homeContent").fadeIn("medium"); 
-                });
+                        // Set the value of the my inkling inputs
+                        $("#dinnerInkling input").val($("#dinnerInkling input").attr("location"));
+                        $("#pregameInkling input").val($("#pregameInkling input").attr("location"));
+                        $("#mainEventInkling input").val($("#mainEventInkling input").attr("location"));
+    
+                        $("#myInklings").fadeIn("medium"); 
+                    });
+                }
+                else
+                {
+                    $("#homeContent").fadeOut("medium", function() {
+                        $("#homeContent").html(html); 
+    
+                        // Set the value of the my inkling inputs
+                        $("#dinnerInkling input").val($("#dinnerInkling input").attr("location"));
+                        $("#pregameInkling input").val($("#pregameInkling input").attr("location"));
+                        $("#mainEventInkling input").val($("#mainEventInkling input").attr("location"));
+    
+                        $("#homeContent").fadeIn("medium"); 
+                    });
+                }
             },
             error: function(jqXHR, textStatus, error) {
                 if ($("body").attr("debug") == "True")

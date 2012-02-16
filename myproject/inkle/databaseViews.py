@@ -770,9 +770,13 @@ def get_my_inklings_view(request):
         raise Http404()
 
     # Get the POST data
-    date = request.POST["date"].split("/")
-    date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
-    
+    try:
+        date = request.POST["date"].split("/")
+        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+        include_calendar = request.POST["includeCalendar"]
+    except KeyError:
+        raise Http404()
+
     pastDate = False
     if (date < datetime.date.today()):
         pastDate = True
@@ -783,10 +787,14 @@ def get_my_inklings_view(request):
     # Get date objects
     dates = [date + datetime.timedelta(days = x) for x in range(7)] 
 
-    return render_to_response( "myInklings.html",
-        { "member" : member, "pastDate" : pastDate, "dates" : dates, "selectedDate" : date },
-        context_instance = RequestContext(request) )
-
+    if (include_calendar == "true"):
+        return render_to_response( "myInklingsAndCalendar.html",
+            { "member" : member, "pastDate" : pastDate, "dates" : dates, "selectedDate" : date },
+            context_instance = RequestContext(request) )
+    else:
+        return render_to_response( "myInklings.html",
+            { "member" : member, "pastDate" : pastDate, "dates" : dates, "selectedDate" : date },
+            context_instance = RequestContext(request) )
 
 def get_inklings(member, date):
     """Returns the names and images for the logged in member's inkling locations."""
