@@ -6,7 +6,7 @@
     background-color: #ABD4B0;
     width: 250px;
     padding: 10px;
-    margin: 15px;
+    margin: 0px 15px 15px 15px;
     float: left;
 }
 
@@ -160,68 +160,76 @@ select, select option
 
 .locationBoardCard
 {
+    float: left;
+    width: 465px;
     height: 130px;
-    border-radius: 7px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.locationBoardCard:nth-child(odd)
+{
+    margin-right: 10px;
 }
 
 .locationBoardCard:hover
 {
     background: #ABC2E5;
-    cursor: pointer;
 }
 
 .locationBoardCardCount
 {
-    /*border: solid 1px black;
-    padding-top: 15px; */
     font-size: 32px;
     position: relative;
     height: 115px;
-    text-align: center;
     font-weight: bold;
     color: #FFF;
-    margin: 0px;
-    /*background-color: #1B5898; */
-    /*background-image:url('/static/media/images/main/blotblue.png');
-    background:url(/static/media/images/main/blotblue.png);
-    background-size:115px 115px;
-    background-repeat:no-repeat;*/
+    float: left;
+    margin-right: 10px;
 }
 
 .locationBoardCardCount img
 {
-    height: 130px;
-    width: 130px;
+    padding: 5px 0px 0px 3px;
+    height: 120px;
 }
 
-.locationBoardCardCount .text
+.locationBoardCardCount p
 {
     position: absolute;
-    top: 40%;
-    width: 100%;
-}
-
-.locationBoardCardCount .text p
-{
     text-align: center;
+    top: 43px;
+    width: 115px;
 }
 
 .locationBoardCardName
 {
     margin-top: 3px;
-    font-size: 32px;
+    font-size: 30px;
     color: #288D42;
-    text-decoration: none;
+    width: 338px;
+    white-space: nowrap;
 } 
+
+.locationBoardCardStreet, .locationBoardCardCity
+{
+    margin-left: 3px;
+}
 
 .locationBoardCardText
 {
-    margin-top: 0px;
-    width: 100%;
-    overflow:hidden;
+    float: left;
+    overflow: hidden;
+    margin-top: 20px;
 }
 
-.hidden
+.noStreet
 {
-    visibility: hidden;
+    margin-top: 25px;
+}
+
+.noCityState
+{
+    margin-top: 40px;
 }
