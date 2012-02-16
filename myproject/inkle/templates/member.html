@@ -47,8 +47,9 @@
             </div>
             <div class="clear"></div>
             
+            <div id="allMemberContent">
             <!-- Additional content links for viewing member place -->
-            <div id="memberPlaceContentLinks" class="subsectionContentLinks grid_17" style="display: none;">
+            <div id="memberPlaceContentLinks" class="subsectionContentLinks grid_17 alpha omega" style="display: none;">
                 <p {% if place_type == "all" %}class="selectedSubsectionContentLink"{% endif %} contentType="all">All</p>
                 <p {% if place_type == "dinner" %}class="selectedSubsectionContentLink"{% endif %} contentType="dinner">Dinner</p>
                 <p {% if place_type == "pregame" %}class="selectedSubsectionContentLink"{% endif %} contentType="pregame">Pregame</p>
@@ -66,6 +67,7 @@
                 <!-- Main manage content -->
                 <div id="mainMemberContent" class="grid_17 alpha omega">
                 </div>
+            </div>
             </div>
         </div>
     </div>

@@ -1,13 +1,19 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
 $(document).ready(function() {
+    /* Returns the currently selected date */
+    function getSelectedDate(delimiter)
+    {
+        return date = $("#calendar").attr("selectedMonth") + delimiter + $("#calendar").attr("selectedDay") + delimiter + $("#calendar").attr("selectedYear");
+    }
+
     // Populate the main content with the initially selected main content link
     var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
-    var date = $("#selectedDate").attr("month") + "/" + $("#selectedDate").attr("day") + "/" + $("#selectedDate").attr("year");
-    loadContent(contentType, date, true);
+    var date = getSelectedDate("/");
+    loadContent(contentType, date, true, false);
 
     /* Loads the content for the inputted content type and populates the main content with it */
-    function loadContent(contentType, date, firstLoad)
+    function loadContent(contentType, date, firstLoad, dontReloadAll)
     {
         var other_member_id = $("#memberName").attr("memberID");
         
@@ -16,16 +22,12 @@ $(document).ready(function() {
             url: "/" + "getMember" + contentType + "/",
             data: { "date" : date, "other_member_id" : other_member_id},
             success: function(html) {
-                if ( (contentType != "Inklings") && (contentType != "Place") ) {
-                    $("#calendarContainer").fadeOut("medium");
-                }
-                
                 // If this is the first load, simply load the member content
                 if (firstLoad)
                 {
-                    loadContentHelper(html, contentType, styleSelectedDate);
+                    loadContentHelper(html, contentType);
                     if (contentType == "Inklings")  {
-                        $("#calendarContainer").fadeIn("medium");
+                        $("#calendarContainer").show();
                     }
                     else if (contentType == "Place") {
                         $("#memberPlaceContentLinks").show();
@@ -35,26 +37,49 @@ $(document).ready(function() {
                 // Otherwise, fade out the current member content and fade the new member content back in
                 else
                 {
-                    if (contentType == "Inklings") {
-                        $("#memberPlaceContentLinks").fadeOut("medium", function() {
-                            $("#calendarContainer").fadeIn("medium");
-                        });
-                    }
-                    else if(contentType == "Place") {
-                        $("#memberPlaceContentLinks").fadeIn("medium");
-                        $("#calendarContainer").fadeIn("medium");    
-                    }
-                    else {
-                        $("#memberPlaceContentLinks").fadeOut("medium");
-                        $("#calendarContainer").fadeOut("medium");
-                    }
+                    if (dontReloadAll)
+                    {
+                        $("#memberContent").fadeOut("medium", function() {
+                            if (contentType == "Inklings")
+                            {
+                                $("#calendarContainer").show();
+                                $(".subsectionContentLinks").hide();
+                            }
+                            else if(contentType == "Place")
+                            {
+                                $("#calendarContainer").show();
+                                $("#memberPlaceContentLinks").show();
+                            }
                     
-                    $("#mainMemberContent").fadeOut("medium", function () {
-                        loadContentHelper(html, contentType, function() {
-                            $("#mainMemberContent").fadeIn("medium");
+                            loadContentHelper(html, contentType);
+                        
+                            $("#memberContent").fadeIn("medium");
                         });
-                        styleSelectedDate();
-                    }); 
+                    }
+                    else
+                    {
+                        $("#allMemberContent").fadeOut("medium", function() {
+                            if (contentType == "Inklings")
+                            {
+                                $("#calendarContainer").show();
+                                $(".subsectionContentLinks").hide();
+                            }
+                            else if(contentType == "Place")
+                            {
+                                $("#calendarContainer").show();
+                                $("#memberPlaceContentLinks").show();
+                            }
+                            else
+                            {
+                                $("#calendarContainer").hide();
+                                $(".subsectionContentLinks").hide();
+                            }
+                    
+                            loadContentHelper(html, contentType);
+                        
+                            $("#allMemberContent").fadeIn("medium");
+                        });
+                    }
                 }
             },
             error: function(jqXHR, textStatus, error) {
@@ -113,104 +138,111 @@ $(document).ready(function() {
 
             // Load the content for the clicked main content link
             var contentType = $(this).attr("contentType");
-            var date = $("#selectedDate").attr("month") + "/" + $("#selectedDate").attr("day") + "/" + $("#selectedDate").attr("year");
+            var date = getSelectedDate("/");
             loadContent(contentType, date, false);
         }
     });
     
     /* Updates the subsection when one of the subsection content links is clicked */
-    $(".subsectionContentLinks p").click(function() {
+    $("#memberPlaceContentLinks p").click(function() {
         // Only update the content if the subsection content link which is clicked is not the currently selected one
         if (!$(this).hasClass("selectedSubsectionContentLink"))
         {
+            // Get the this element
+            var thisElement = $(this);
+
             // Update the selected subsection content link
             $(this).siblings().removeClass("selectedSubsectionContentLink");
             $(this).addClass("selectedSubsectionContentLink");
 
-            // Load the content for the clicked subsection inkling type
-            if ( $(this).attr("contentType") == "all" ) {
-                $(".subsectionTitle").fadeIn("medium");
-                $(".inklingContent").fadeIn("medium");
-            }
-            else if ( $(this).attr("contentType") == "dinner" ) {
-                $(".subsectionTitle").fadeOut("medium");
-                $(".inklingContent").fadeOut("medium");
-                $("#dinnerContent").delay(400).fadeIn("medium");
-            }
-            else if ( $(this).attr("contentType") == "pregame" ) {
-                $(".subsectionTitle").fadeOut("medium");
-                $(".inklingContent").fadeOut("medium");
-                $("#pregameContent").delay(400).fadeIn("medium");
-            }
-            else if ( $(this).attr("contentType") == "mainEvent" ) {
-                $(".subsectionTitle").fadeOut("medium");
-                $(".inklingContent").fadeOut("medium");
-                $("#mainEventContent").delay(400).fadeIn("medium");
-            }
-            
+            $("#memberContent").fadeOut("medium", function() {
+                // Get the content type
+                var contentType = thisElement.attr("contentType");
+
+                // Load the content for the clicked subsection inkling type
+                if (contentType == "all")
+                {
+                    $(".subsectionTitle").show();
+                    $(".inklingContent").show();
+                }
+                else if (contentType == "dinner")
+                {
+                    $(".subsectionTitle").hide();
+                    $(".inklingContent").hide();
+                    $("#dinnerContent").show();
+                }
+                else if (contentType == "pregame")
+                {
+                    $(".subsectionTitle").hide();
+                    $(".inklingContent").hide();
+                    $("#pregameContent").show();
+                }
+                else if (contentType == "mainEvent")
+                {
+                    $(".subsectionTitle").hide();
+                    $(".inklingContent").hide();
+                    $("#mainEventContent").show();
+                }
+
+                $("#memberContent").fadeIn("medium");
+            });
         }
     });
     
     // THE FUNCTIONS BELOW SHOULD BE MOVED TO CALENDAR.JS
 
-    styleSelectedDate();
+    /* Updates either my inklings or others' inklings (depending on which is visible) when a date container is clicked */
+    $(".dateContainer").live("click", function() {
+        // Only update the content if the date container that is clicked is not the currently selected date container
+        if (!$(this).hasClass("selectedDateContainer"))
+        {
+            // Change the selected date container
+            $(".selectedDateContainer").removeClass("selectedDateContainer");
+            $(this).addClass("selectedDateContainer");
 
-       //Adds styling to selected date if it is one of the visible date containers
-       function styleSelectedDate() {
-           $(".dateContainer").each(function() {
-               if ($(this).attr("date") == $("#selectedDate").attr("date") && $(this).attr("id") != "selectedDate") {
-                   $(this).addClass("selectedDateContainer")
-               }
-           });
-       }
-
-       /* Updates either my inklings or others' inklings (depending on which is visible) when a date container is clicked */
-       $(".dateContainer").live("click", function() {
-           // Only update the content if the date container that is clicked is not the currently selected date container
-           if (!$(this).hasClass("selectedDateContainer"))
-           {
-               // Change the selected date container
-               $(".selectedDateContainer").removeClass("selectedDateContainer");
-               $(this).addClass("selectedDateContainer");
-
-               // Get the selected date and update hidden dateContainer
-               var date = $(this).attr("month") + "/" + $(this).attr("day") + "/" + $(this).attr("year");
-               $("#selectedDate").attr("month", $(this).attr("month"));
-               $("#selectedDate").attr("day", $(this).attr("day"));
-               $("#selectedDate").attr("year", $(this).attr("year"));
-               $("#selectedDate").attr("date", $(this).attr("date"));
+            // Get the clicked date and update the calendar's selected date information
+            var calendar = $("#calendar");
+            var month = $(this).attr("month");
+            var day = $(this).attr("day");
+            var year = $(this).attr("year");
+            calendar.attr("selectedMonth", month);
+            calendar.attr("selectedDay", day);
+            calendar.attr("selectedYear", year);
+            calendar.attr("selectedDate", $(this).attr("date"));
+            var date = getSelectedDate("/");
               
-               // Update content
-               var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
-               loadContent(contentType, date, false);
-           }
-       });
+            // Update content
+            var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
+            loadContent(contentType, date, false, true);
+        }
+    });
 
-       $(".todayButton").live("click", function() {
-           var arrow = "today"
-           numDates = $(".dateContainer").size() - 1; //Get the number of calendar dates to display, subtract 1 for hidden selected field
+    /* Sets the selected date as today when the "Today" button is clicked */
+    $(".todayButton").live("click", function() {
+        // Get today's date
+        var today = new Date();
+        var calendar = $("#calendar");
+        if ((today.getMonth() + 1 != calendar.attr("selectedMonth")) || (today.getDate() != calendar.attr("selectedDay")) || (today.getFullYear() != calendar.attr("selectedYear")))
+        {
+            // Get the number of calendar dates to display
+            numDates = $(".dateContainer").size();
 
-           //Update calendar
-           $.ajax({
-               type: "POST",
-               url: "/dateSelect/",
-               data: {"arrow" : arrow, "numDates" : numDates},
-               success: function(html) {            
-                   $("#calendarContainer").html(html); // Update the HTML of the calendar
-                   styleSelectedDate();
+            // Update calendar
+            $.ajax({
+                type: "POST",
+                url: "/dateSelect/",
+                data: {"arrow" : "today", "numDates" : numDates},
+                success: function(html) {            
+                    // Update the HTML of the calendar
+                    $("#calendarContainer").html(html);
 
-                   var location_id = (window.location.pathname).split('/')[2];
-                   var year = $("#selectedDate").attr("year");
-                   var month = $("#selectedDate").attr("month");
-                   var day = $("#selectedDate").attr("day");
-                   
-                   // Get the selected date (now this is today's date)
-                   var date = $("#selectedDate").attr("month") + "/" + $("#selectedDate").attr("day") + "/" + $("#selectedDate").attr("year");
-                   
-                   // Update content
-                      var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
-                      loadContent(contentType, date, false);
-               },
+                    // Get the selected date (now this is today's date) and the content type
+                    var date = getSelectedDate("/");
+                    var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
+
+                    // Update the content type
+                    loadContent(contentType, date, false, true);
+                },
                 error: function(jqXHR, textStatus, error) {
                     if ($("body").attr("debug") == "True")
                     {
@@ -218,45 +250,6 @@ $(document).ready(function() {
                     }
                 }
            });
-
-       });
-
-       $(".calendarArrow").live("click", function() {
-           var arrow = "left" //Default to leftArrow
-           if ($(this).attr("id") == "calendarArrowRight") {
-               arrow = "right" //Change if rightArrow clicked
-           }
-
-           // Get the first
-           var year = $("#date1").attr("year");
-           var month = $("#date1").attr("month");
-           var day = $("#date1").attr("day");
-
-           //Get the selected date
-           var selectedYear = $("#selectedDate").attr("year");
-           var selectedMonth = $("#selectedDate").attr("month");
-           var selectedDay = $("#selectedDate").attr("day");
-
-           numDates = $(".dateContainer").size() - 1; //Get the number of calendar dates to display, subtract 1 for hidden selected field
-
-           //Update calendar
-           $.ajax({
-               type: "POST",
-               url: "/dateSelect/",
-               data: {"arrow" : arrow, "numDates" : numDates, "firstYear" : year, "firstMonth" : month, "firstDay" : day, "selectedYear" : selectedYear, "selectedMonth" : selectedMonth, "selectedDay" : selectedDay},
-               success: function(html) {
-
-                   $("#calendarContainer").html(html); // Update the HTML of the calendar
-                   styleSelectedDate();
-               },
-                error: function(jqXHR, textStatus, error) {
-                    if ($("body").attr("debug") == "True")
-                    {
-                        alert("member.js (3): " + error);
-                    }
-                }
-           });
-       });
-    
-    
+        }
+    });
 });

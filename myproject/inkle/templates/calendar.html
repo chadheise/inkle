@@ -1,5 +1,5 @@
 <!-- Calendar -->
-<div id="calendar" selectedDay="{{ selectedDate|date:"j" }}" selectedMonth="{{ selectedDate|date:"n" }}" selectedYear="{{ selectedDate|date:"Y" }}" selectedDate="{{selectedDate|date}}">
+<div id="calendar" class="grid24 alpha omega" selectedDay="{{ selectedDate|date:"j" }}" selectedMonth="{{ selectedDate|date:"n" }}" selectedYear="{{ selectedDate|date:"Y" }}" selectedDate="{{selectedDate|date}}">
     <!-- Today button -->
     <div class="todayButton">
         <p>T</p><p>o</p><p>d</p><p>a</p><p>y</p>
@@ -21,5 +21,9 @@
     <!-- Right button -->
     <div id="calendarArrowRight" class="calendarArrow">
         <img class="calendarArrowImg" src="{{ STATIC_URL }}/media/images/main/rightArrow.png" />
+    </div>
+
+    <div class="todayButton" style="visibility: hidden;">
+        &nbsp;
     </div>
 </div>

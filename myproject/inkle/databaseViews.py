@@ -785,7 +785,7 @@ def get_my_inklings_view(request):
     member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
 
     # Get date objects
-    dates = [date + datetime.timedelta(days = x) for x in range(7)] 
+    dates = [date + datetime.timedelta(days = x) for x in range(5)] 
 
     if (include_calendar == "true"):
         return render_to_response( "myInklingsAndCalendar.html",
