@@ -1,10 +1,8 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
-#calendarContainer {
-    text-align: center;
-}
-
-#calendar {
+#calendar
+{
+    margin-bottom: 10px;
     display: inline-block;
 }
 
@@ -14,7 +12,7 @@
     border: solid 2px #288D42;
     height: 95px;
     width: 105px;
-    margin: 10px;
+    margin: 10px 5px 10px 5px;
     cursor: pointer;
     float: left;
 }
@@ -58,25 +56,8 @@
     text-align: center;
 }
 
-/*#todayButton {
-    padding: 5px 0px 5px 0px;
-    height: 30px;
-    width: 105px;
-    font-weight: bold;
-    font-size: 15px;
-    color: white;
-    margin-top: 10px;
-    border-radius: 5px;
-    background-color: #1B5898;
-    border-color: 3px solid #2A4360;
-    cursor: pointer;
-}
-
-#todayButton:hover {
-    border-color: #002C45;
-}*/
-
-.todayButton {
+.todayButton
+{
     font-weight: bold;
     font-size: 15px;
     color: white;
@@ -86,44 +67,48 @@
     border: 2px solid #70A9DB;
     height: 95px;
     width: 25px;
-    margin: 10px 10px 10px 10px;
+    margin: 10px 5px 10px 0px;
     text-align: center;
     float: left;
 }
 
-.todayButton:hover {
+.todayButton:hover
+{
     background-color: #1B5898;
     border: 2px solid #1B5898;
 }
 
-.calendarArrow {
+.calendarArrow
+{
     cursor: pointer;
     background-color: #ABD4B0;
     border: 2px solid #ABD4B0;
     height: 95px;
     width: 25px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 5px 10px 5px;
     text-align: center;
     float: left;
 }
 
-.calendarArrow:hover {
+.calendarArrow:hover
+{
     background-color: #288D42;
     border: 2px solid #288D42;
 }
 
-#calendarArrowLeft {
+#calendarArrowLeft
+{
     border-radius: 7px 0px 0px 7px;
-    margin-right: 10px;
 }
 
-#calendarArrowRight {
+#calendarArrowRight
+{
     border-radius: 0px 7px 7px 0px;
-    margin-left: 10px;
+    margin-right: 0px;
 }
 
-.calendarArrowImg {
+.calendarArrowImg
+{
     height: 15px;
     padding-top: 38px;
 }

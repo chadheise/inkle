@@ -1,5 +1,5 @@
 <!-- Calendar -->
-<div id="calendar">
+<div id="calendar" selectedDay="{{ selectedDate|date:"j" }}" selectedMonth="{{ selectedDate|date:"n" }}" selectedYear="{{ selectedDate|date:"Y" }}" selectedDate="{{selectedDate|date}}">
     <!-- Today button -->
     <div class="todayButton">
         <p>T</p><p>o</p><p>d</p><p>a</p><p>y</p>
@@ -9,9 +9,10 @@
     <div id="calendarArrowLeft" class="calendarArrow">
         <img class="calendarArrowImg" src="{{ STATIC_URL }}/media/images/main/leftArrow.png" />
     </div>
+
     <!-- Date Icons -->
     {% for d in dates %}
-        <div id="date{{forloop.counter}}" class="dateContainer" day="{{ d|date:"j" }}" month="{{ d|date:"n" }}" year="{{ d|date:"Y" }}" date="{{d|date}}">
+        <div class="dateContainer{% if d == selectedDate %} selectedDateContainer{% endif %}" day="{{ d|date:"j" }}" month="{{ d|date:"n" }}" year="{{ d|date:"Y" }}" date="{{d|date}}">
             <p class="weekday">{{ d|date:"l" }}</p>
             <p class="date">{{ d|date:"j" }}</p>
             <p class="month">{{ d|date:"F" }}</p>
@@ -20,16 +21,5 @@
     <!-- Right button -->
     <div id="calendarArrowRight" class="calendarArrow">
         <img class="calendarArrowImg" src="{{ STATIC_URL }}/media/images/main/rightArrow.png" />
-    </div>
-    
-    <!-- Today button -->
-    <div class="todayButton" style="visibility:hidden;" >
-        <!--<<p>T</p><p>o</p><p>d</p><p>a</p><p>y</p>-->
-    </div>
-    
-    <!-- Hidden dateContainer for selected date -->
-    <div class="grid_3" style="display:none;" >
-        <div id="selectedDate" class="dateContainer" day="{{ selectedDate|date:"j" }}" month="{{ selectedDate|date:"n" }}" year="{{ selectedDate|date:"Y" }}" date="{{selectedDate|date}}">
-        </div>
     </div>
 </div>

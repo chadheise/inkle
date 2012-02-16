@@ -29,7 +29,7 @@ def home_view(request):
     
     # Get date objects
     today = datetime.date.today()
-    dates = [today + datetime.timedelta(days = x) for x in range(5)] 
+    dates = [today + datetime.timedelta(days = x) for x in range(7)] 
 
     # Get others' dinner inklings for today
     locations = get_others_inklings(member, today, "other", "blots", "mainEvent")
@@ -1512,6 +1512,7 @@ def get_others_inklings_view(request):
     # Get the POST data
     try:
         date = request.POST["date"].split("/")
+        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
         people_type = request.POST["peopleType"]
         people_id = request.POST["peopleID"]
         inkling_type = request.POST["inklingType"]
@@ -1520,11 +1521,14 @@ def get_others_inklings_view(request):
         raise Http404()
 
     # Get others' inklings
-    locations = get_others_inklings(member, datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2])), people_type, people_id, inkling_type)
+    locations = get_others_inklings(member, date, people_type, people_id, inkling_type)
+
+    # Get date objects
+    dates = [date + datetime.timedelta(days = x) for x in range(7)] 
 
     if (include_member == "true"):
         return render_to_response( "othersInklings.html",
-            { "member" : member, "locations" : locations },
+            { "member" : member, "locations" : locations, "dates" : dates, "selectedDate" : date },
             context_instance = RequestContext(request) )
     else:
         return render_to_response( "locationBoard.html",
@@ -1533,6 +1537,8 @@ def get_others_inklings_view(request):
 
 
 def get_others_inklings(member, date, people_type, people_id, inkling_type):
+    """Returns the others' inklings for the inputted date."""
+    # Determine the members whose inklings we are retrieving
     if (people_type == "other"):
         people = member.following.filter(is_active = True)
 
@@ -1544,12 +1550,20 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
         blot = Blot.objects.get(pk = people_id)
         people = blot.members.filter(is_active = True)
 
+    # Get the locations which match the inputted criteria
     locations = []
     for p in people:
-        inkling = p.inklings.filter(date = date, category = inkling_type)
-        if (inkling):
-            if inkling[0].location:
-                location = inkling[0].location
+        # Get the inklings according to category type
+        if (inkling_type == "all"):
+            inklings = p.inklings.filter(date = date)
+        else:
+            inklings = p.inklings.filter(date = date, category = inkling_type)
+
+        # If there is an inkling which matches the criteria
+        for inkling in inklings:
+            # Location inkling
+            if inkling.location:
+                location = inkling.location
                 if (location in locations):
                     for l in locations:
                         if (l == location):
@@ -1557,8 +1571,10 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
                 else:
                     location.count = 1
                     locations.append(location)
-            elif ((inkling[0].member_place in member.following.filter(is_active = True)) or (inkling[0].member_place in member.followers.filter(is_active = True)) or (inkling[0].member_place == member)):
-                member_place = inkling[0].member_place
+
+            # Member place inkling
+            elif ((inkling.member_place in member.following.filter(is_active = True)) or (inkling.member_place in member.followers.filter(is_active = True)) or (inkling.member_place == member)):
+                member_place = inkling.member_place
                 if (member_place in locations):
                     for l in locations:
                         if (l == member_place):
@@ -1567,6 +1583,7 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
                     member_place.count = 1
                     locations.append(member_place)
     
+    # Sort the locations from most members to least
     locations.sort(key = lambda l:-l.count)
 
     return locations

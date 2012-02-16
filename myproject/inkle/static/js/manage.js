@@ -129,35 +129,35 @@ $(document).ready(function() {
     
     /* Updates which inklings are displayed when a member place content link is clicked */
     $("#memberPlaceContentLinks p").live("click", function() {
-            // Only update the content if the subsection content link which is clicked is not the currently selected one
-            if (!$(this).hasClass("selectedSubsectionContentLink"))
-            {
-                // Update the selected subsection content link
-                $(this).siblings().removeClass("selectedSubsectionContentLink");
-                $(this).addClass("selectedSubsectionContentLink");
+        // Only update the content if the subsection content link which is clicked is not the currently selected one
+        if (!$(this).hasClass("selectedSubsectionContentLink"))
+        {
+            // Update the selected subsection content link
+            $(this).siblings().removeClass("selectedSubsectionContentLink");
+            $(this).addClass("selectedSubsectionContentLink");
 
-                // Load the content for the clicked subsection inkling type
-                if ( $(this).attr("contentType") == "all" ) {
-                    $(".subsectionTitle").fadeIn("medium");
-                    $(".inklingContent").fadeIn("medium");
-                }
-                else if ( $(this).attr("contentType") == "dinner" ) {
-                    $(".subsectionTitle").fadeOut("medium");
-                    $(".inklingContent").fadeOut("medium") ;
-                    $("#dinnerContent").delay(400).fadeIn("medium");
-                }
-                else if ( $(this).attr("contentType") == "pregame" ) {
-                    $(".subsectionTitle").fadeOut("medium");
-                    $(".inklingContent").fadeOut("medium");
-                    $("#pregameContent").delay(400).fadeIn("medium");
-                }
-                else if ( $(this).attr("contentType") == "mainEvent" ) {
-                    $(".subsectionTitle").fadeOut("medium");
-                    $(".inklingContent").fadeOut("medium");
-                    $("#mainEventContent").delay(400).fadeIn("medium");
-                }
+            // Load the content for the clicked subsection inkling type
+            if ( $(this).attr("contentType") == "all" ) {
+                $(".subsectionTitle").fadeIn("medium");
+                $(".inklingContent").fadeIn("medium");
             }
-        });
+            else if ( $(this).attr("contentType") == "dinner" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium") ;
+                $("#dinnerContent").delay(400).fadeIn("medium");
+            }
+            else if ( $(this).attr("contentType") == "pregame" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium");
+                $("#pregameContent").delay(400).fadeIn("medium");
+            }
+            else if ( $(this).attr("contentType") == "mainEvent" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium");
+                $("#mainEventContent").delay(400).fadeIn("medium");
+            }
+        }
+    });
      
     // THE FUNCTIONS BELOW SHOULD BE MOVED TO CALENDAR.JS
     styleSelectedDate();

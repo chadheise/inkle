@@ -10,8 +10,8 @@
 {% endblock css%}
 
 {% block js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}/js/home.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}/js/calendar.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/home.js"></script>
 {% endblock js %}
 
 {% block mainContent %}
@@ -21,18 +21,18 @@
             <p class="pageTitle">Inklings</p>
         </div>
         <div class="clear"></div>
+
         <!-- Content links -->
         <div id="inklingsContentLinks" class="contentLinks grid_24">
             <p class="selectedContentLink" contentType="othersInklings">Others'</p>
             <p contentType="myInklings">Mine</p>
         </div>
         <div class="clear"></div> 
-        <div id="calendarContainer" class="grid_24">
-            {% include "calendar.html" %}
-        </div>
-        <div class="clear"></div>
-        <!-- Others' inklings -->
+        
+        <!-- Inklings content -->
         <div id="homeContent" class="grid_24">
+            
+            <!-- Others' inklings -->
             {% include "othersInklings.html" %}
         </div>
     </div>
