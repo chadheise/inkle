@@ -1,10 +1,15 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
 $(document).ready(function() {
-    
     // Set the "All blots" and "Dinner" options as the selected options
     $("#locationBoardPeopleSelect option:first").attr("selected", "selected");
     $("#locationBoardInklingSelect option:last").attr("selected", "selected");
+
+    /* Returns the currently selected date */
+    function getSelectedDate(delimiter)
+    {
+        return date = $("#calendar").attr("selectedMonth") + delimiter + $("#calendar").attr("selectedDay") + delimiter + $("#calendar").attr("selectedYear");
+    }
 
     /* Updates my inklings with the logged in user's inklings for the inputted date */
     function updateMyInklings(date)
@@ -57,7 +62,7 @@ $(document).ready(function() {
                 var peopleID = selectedPeopleOption.attr("blotID");
             }
 
-            var inklingType = $("#locationBoardInklingSelect option:selected").attr("inklingType");
+            var inklingType = $("#othersInklingsContentLinks .selectedSubsectionContentLink").attr("contentType");
 
             var includeMember = "false";
         }
@@ -65,7 +70,7 @@ $(document).ready(function() {
         {
             var peopleType = "other";
             var peopleID = "blots";
-            var inklingType = "mainEvent";
+            var inklingType = "all";
             var includeMember = "true";
         }
 
@@ -108,7 +113,7 @@ $(document).ready(function() {
             $(this).addClass("selectedContentLink");
         
             // Get the selected date
-            var date = $(".selectedDateContainer").attr("month") + "/" + $(".selectedDateContainer").attr("day") + "/" + $(".selectedDateContainer").attr("year");
+            var date = getSelectedDate("/");
 
             // Update and show others' inklings if my inklings is visible
             var contentType = $(this).attr("contentType");
@@ -125,10 +130,58 @@ $(document).ready(function() {
         }
     });
 
+    /* Updates which inklings are displayed when an other's inklings content link is clicked */
+    $("#othersInklingsContentLinks p").live("click", function() {
+        // Only update the content if the subsection content link which is clicked is not the currently selected one
+        if (!$(this).hasClass("selectedSubsectionContentLink"))
+        {
+            // Update the selected subsection content link
+            $(this).siblings().removeClass("selectedSubsectionContentLink");
+            $(this).addClass("selectedSubsectionContentLink");
+
+            // Get the selected date
+            var date = getSelectedDate("/");
+
+            updateOthersInklings(date);
+        }
+    });
+
+    /* Updates which inklings are displayed when a member place content link is clicked */
+    $("#memberPlaceContentLinks p").live("click", function() {
+        // Only update the content if the subsection content link which is clicked is not the currently selected one
+        if (!$(this).hasClass("selectedSubsectionContentLink"))
+        {
+            // Update the selected subsection content link
+            $(this).siblings().removeClass("selectedSubsectionContentLink");
+            $(this).addClass("selectedSubsectionContentLink");
+
+            // Load the content for the clicked subsection inkling type
+            if ( $(this).attr("contentType") == "all" ) {
+                $(".subsectionTitle").fadeIn("medium");
+                $(".inklingContent").fadeIn("medium");
+            }
+            else if ( $(this).attr("contentType") == "dinner" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium") ;
+                $("#dinnerContent").delay(400).fadeIn("medium");
+            }
+            else if ( $(this).attr("contentType") == "pregame" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium");
+                $("#pregameContent").delay(400).fadeIn("medium");
+            }
+            else if ( $(this).attr("contentType") == "mainEvent" ) {
+                $(".subsectionTitle").fadeOut("medium");
+                $(".inklingContent").fadeOut("medium");
+                $("#mainEventContent").delay(400).fadeIn("medium");
+            }
+        }
+    });
+
     /* Updates others' inklings when a location board select is changed */
     $(".locationBoardSelect").live("change", function () {
         // Get the selected date
-        var date = $(".selectedDateContainer").attr("month") + "/" + $(".selectedDateContainer").attr("day") + "/" + $(".selectedDateContainer").attr("year");
+        var date = getSelectedDate("/");
         
         // Update others' inklings for the selected date
         updateOthersInklings(date);
@@ -147,7 +200,7 @@ $(document).ready(function() {
             var inklingType = inklingElement.attr("inklingType");
 
             // Get the selected date
-            var date = $(".selectedDateContainer").attr("month") + "/" + $(".selectedDateContainer").attr("day") + "/" + $(".selectedDateContainer").attr("year");
+            var date = getSelectedDate("/");
 
             // Remove the inkling (and its corresponding image)
             $.ajax({
@@ -196,7 +249,7 @@ $(document).ready(function() {
         var inklingType = inklingElement.attr("inklingType");
 
         // Get the selected date
-        var date = $(".selectedDateContainer").attr("month") + "/" + $(".selectedDateContainer").attr("day") + "/" + $(".selectedDateContainer").attr("year");
+        var date = getSelectedDate("/");
 
         // Create the selected inkling and update its corresponding content
         $.ajax({
@@ -340,13 +393,21 @@ $(document).ready(function() {
         }
     });
     
+    /* Goes to a member place or location when a location board card is clicked */
     $(".locationBoardCard").live("click", function() {
-        var date = $(".selectedDateContainer").attr("month") + "_" + $(".selectedDateContainer").attr("day") + "_" + $(".selectedDateContainer").attr("year");
-        var inklingType = $("#locationBoardInklingSelect option:selected").attr("inklingType");
-        if ( $(this).attr("type") == "memberPlace" ) { //If member is in the url (indicates a member place not a location)
+        // Get the selected date and inkling type
+        var date = getSelectedDate("_");
+        var inklingType = $("#othersInklingsContentLinks .selectedSubsectionContentLink").attr("contentType");
+
+        // If the the clicked location is a member place, go the that member's page
+        if ( $(this).attr("type") == "memberPlace" )
+        {
             window.location = $(this).attr("url") + "place/" + date + "/" + inklingType + "/";
         }
-        else {
+
+        // Otherwise, simply go to the location page
+        else
+        {
             window.location = $(this).attr("url") + inklingType + "/" + date + "/";
         }
     });
@@ -507,120 +568,81 @@ $(document).ready(function() {
     });
     
     // THE FUNCTIONS BELOW SHOULD BE MOVED TO CALENDAR.JS
-    
-    styleSelectedDate();
 
-       //Adds styling to selected date if it is one of the visible date containers
-       function styleSelectedDate() {
-           $(".dateContainer").each(function() {
-               if ($(this).attr("date") == $("#selectedDate").attr("date") && $(this).attr("id") != "selectedDate") {
-                   $(this).addClass("selectedDateContainer")
-               }
-           });
-       }
+    /* Updates either my inklings or others' inklings (depending on which is visible) when a date container is clicked */
+    $(".dateContainer").live("click", function() {
+        // Only update the content if the date container that is clicked is not the currently selected date container
+        if (!$(this).hasClass("selectedDateContainer"))
+        {
+            // Change the selected date container
+            $(".selectedDateContainer").removeClass("selectedDateContainer");
+            $(this).addClass("selectedDateContainer");
 
-       /* Updates either my inklings or others' inklings (depending on which is visible) when a date container is clicked */
-       $(".dateContainer").live("click", function() {
-           // Only update the content if the date container that is clicked is not the currently selected date container
-           if (!$(this).hasClass("selectedDateContainer"))
-           {
-               // Change the selected date container
-               $(".selectedDateContainer").removeClass("selectedDateContainer");
-               $(this).addClass("selectedDateContainer");
+            // Get the clicked date and update the calendar's selected date information
+            var calendar = $("#calendar");
+            calendar.attr("selectedMonth", $(this).attr("month"));
+            calendar.attr("selectedDay", $(this).attr("day"));
+            calendar.attr("selectedYear", $(this).attr("year"));
+            calendar.attr("selectedDate", $(this).attr("date"));
+            var date = getSelectedDate("/");
 
-               // Get the selected date and update hidden dateContainer
-               var date = $(this).attr("month") + "/" + $(this).attr("day") + "/" + $(this).attr("year");
-               $("#selectedDate").attr("month", $(this).attr("month"));
-               $("#selectedDate").attr("day", $(this).attr("day"));
-               $("#selectedDate").attr("year", $(this).attr("year"));
-               $("#selectedDate").attr("date", $(this).attr("date"));
+            // Update my inklings if it is visible
+            var contentType = ($(".selectedContentLink").attr("contentType"))
+            if (contentType == "myInklings")
+            {
+                updateMyInklings(date);
+            }
 
-               // Update my inklings if it is visible
-               var contentType = ($(".selectedContentLink").attr("contentType"))
-               if (contentType == "myInklings")
-               {
-                   updateMyInklings(date);
-               }
+            // Othwerise, if others' inklings is visible, update others inklings
+            else if (contentType == "othersInklings")
+            {
+                updateOthersInklings(date);
+            }
+        }
+    });
 
-               // Othwerise, if others' inklings is visible, update others inklings
-               else if (contentType == "othersInklings")
-               {
-                   updateOthersInklings(date);
-               }
-           }
-       });
+    /* Sets the selected date as today when the "Today" button is clicked */
+    $(".todayButton").live("click", function() {
+        // Get today's date
+        var today = new Date();
+        var calendar = $("#calendar");
+        if ((today.getMonth() + 1 != calendar.attr("selectedMonth")) || (today.getDate() != calendar.attr("selectedDay")) || (today.getFullYear() != calendar.attr("selectedYear")))
+        {
+            // Get the number of calendar dates to display
+            numDates = $(".dateContainer").size();
 
-       $(".todayButton").live("click", function() {
-           var arrow = "today"
-           numDates = $(".dateContainer").size() - 1; //Get the number of calendar dates to display, subtract 1 for hidden selected field
+            // Update calendar
+            $.ajax({
+                type: "POST",
+                url: "/dateSelect/",
+                data: {"arrow" : "today", "numDates" : numDates},
+                success: function(html) {            
+                    // Update the HTML of the calendar
+                    $("#calendarContainer").html(html);
 
-           //Update calendar
-           $.ajax({
-               type: "POST",
-               url: "/dateSelect/",
-               data: {"arrow" : arrow, "numDates" : numDates},
-               success: function(html) {            
-                   $("#calendarContainer").html(html); // Update the HTML of the calendar
-                   styleSelectedDate();
+                    // Get the selected date
+                    var date = getSelectedDate("/");
 
-                   var date = $("#selectedDate").attr("month") + "/" + $("#selectedDate").attr("day") + "/" + $("#selectedDate").attr("year");
-                   // Update my inklings if it is visible
-                   var contentType = ($(".selectedContentLink").attr("contentType"))
-                   if (contentType == "myInklings")
-                   {
-                       updateMyInklings(date);
-                   }
+                    // Update my inklings if it is visible
+                    var contentType = ($(".selectedContentLink").attr("contentType"))
+                    if (contentType == "myInklings")
+                    {
+                        updateMyInklings(date);
+                    }
 
-                   // Othwerise, if others' inklings is visible, update others inklings
-                   else if (contentType == "othersInklings")
-                   {
-                       updateOthersInklings(date);
-                   }                          
-               },
-               error: function(jqXHR, textStatus, error) {
-                   if ($("body").attr("debug") == "True")
-                   {
-                       alert("home.js (8): " + error);
-                   }
-               }
-           });
-       });
-
-       $(".calendarArrow").live("click", function() {
-           var arrow = "left" //Default to leftArrow
-           if ($(this).attr("id") == "calendarArrowRight") {
-               arrow = "right" //Change if rightArrow clicked
-           }
-
-           // Get the first
-           var year = $("#date1").attr("year");
-           var month = $("#date1").attr("month");
-           var day = $("#date1").attr("day");
-
-           //Get the selected date
-           var selectedYear = $("#selectedDate").attr("year");
-           var selectedMonth = $("#selectedDate").attr("month");
-           var selectedDay = $("#selectedDate").attr("day");
-
-           numDates = $(".dateContainer").size() - 1; //Get the number of calendar dates to display, subtract 1 for hidden selected field
-
-           //Update calendar
-           $.ajax({
-               type: "POST",
-               url: "/dateSelect/",
-               data: {"arrow" : arrow, "numDates" : numDates, "firstYear" : year, "firstMonth" : month, "firstDay" : day, "selectedYear" : selectedYear, "selectedMonth" : selectedMonth, "selectedDay" : selectedDay},
-               success: function(html) {
-
-                   $("#calendarContainer").html(html); // Update the HTML of the calendar
-                   styleSelectedDate();
-               },
-               error: function(jqXHR, textStatus, error) {
-                   if ($("body").attr("debug") == "True")
-                   {
-                       alert("home.js (9): " + error);
-                   }
-               }
-           });
-       });
-          
+                    // Othwerise, if others' inklings is visible, update others inklings
+                    else if (contentType == "othersInklings")
+                    {
+                        updateOthersInklings(date);
+                    }                          
+                },
+                error: function(jqXHR, textStatus, error) {
+                    if ($("body").attr("debug") == "True")
+                    {
+                        alert("calendar.js (1): " + error);
+                    }
+                }
+            });
+        }
+    });
 });

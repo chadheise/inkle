@@ -768,6 +768,7 @@ def get_my_inklings_view(request):
         member = Member.active.get(pk = request.session["member_id"])
     except:
         raise Http404()
+
     # Get the POST data
     date = request.POST["date"].split("/")
     date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
@@ -779,8 +780,11 @@ def get_my_inklings_view(request):
     # Get the names and images for the logged in member's inkling locations
     member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
 
+    # Get date objects
+    dates = [date + datetime.timedelta(days = x) for x in range(7)] 
+
     return render_to_response( "myInklings.html",
-        { "member" : member, "pastDate" : pastDate },
+        { "member" : member, "pastDate" : pastDate, "dates" : dates, "selectedDate" : date },
         context_instance = RequestContext(request) )
 
 
