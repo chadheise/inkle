@@ -233,3 +233,8 @@ select, select option
 {
     margin-top: 40px;
 }
+
+#calendarContainer
+{
+    text-align: center;
+}
