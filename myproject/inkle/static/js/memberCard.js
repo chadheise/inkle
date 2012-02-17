@@ -83,6 +83,13 @@ $(document).ready(function() {
                                 // Remove the member card and message
                                 $(this).remove();
                                 memberCard.remove();
+
+                                if ($("#blotMembers .memberCard").size() == 0)
+                                {
+                                    $("#blotMembers").fadeOut("fast", function() {
+                                        $(this).html("<p>There is no one in this blot.</p>").fadeIn("medium");
+                                    });
+                                }
                             });
                     });
                 }
