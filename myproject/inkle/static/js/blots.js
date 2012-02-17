@@ -66,13 +66,20 @@ $(document).ready(function() {
             type: "POST",
             url: "/renameBlot/",
             data: { "blotID" : blotID, "blotName" : blotName },
-            success: function(html) {
+            success: function() {
                 var blot = $("#renameBlotInput").parent(".blot");
                 blot.html("<p>" + blotName + "</p>");
                 var blotP = blot.find("p");
                 var marginTop = (blot.height() - blotP.height()) / 2;
                 blot.find("p").css("margin-top", marginTop + "px");
-
+                
+                // Update the blot names on each member card's blots menu
+                $(".blotsMenu input").each(function () {
+                    if ($(this).attr("blotID") == blotID)
+                    {
+                        $(this).next().text(blotName);
+                    }
+                });
             },
             error: function(jqXHR, textStatus, error) {
                 if ($("body").attr("debug") == "True")
