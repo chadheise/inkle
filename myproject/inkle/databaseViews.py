@@ -21,7 +21,7 @@ buttonDictionary = {
     "revoke" : ("revokeRequest", "Revoke request", "Revoke my request to follow this person"),
     "stop" : ("stopFollowing", "Stop following", "Stop following this person"),
     "blots" : ("blotsCardButton", "Blots"),
-    "reject" : ("rejectRequest", "Reject request", "Do not allow this person to follow me"),
+    "reject" : ("rejectRequest", "Decline request", "Do not allow this person to follow me"),
     "accept" : ("acceptRequest", "Accept request", "Allow this person to follow me"),
     "join" : ("joinNetwork", "Join network", "Beome a member of this network"),
     "leave" : ("leaveNetwork", "Leave network", "I no longer wish to be a part of this network"),
@@ -261,7 +261,13 @@ def inkling_invitations_view(request):
     except:
         raise Http404()
 
-    invites = request.POST["invited"].split("|<|>|")
+    try:
+        invites = request.POST["invitees"].split("|<|>|")
+        message = request.POST["message"]
+        inkling = Inkling.objects.get(pk = request.POST["inklingID"])
+    except:
+        raise Http404()
+
     members = []
     i = 0
     while (i < len(invites)):
@@ -283,17 +289,58 @@ def inkling_invitations_view(request):
                 pass
         i += 1
 
+    invitation = Invitation(description = message, inkling = inkling, from_member = member)
+    invitation.save()
+    for m in members:
+        conflicting_invitation = m.invitations.filter(inkling = inkling, from_member = member)
+        if (conflicting_invitation):
+            m.invitations.remove(conflicting_invitation[0])
+            
+        m.invitations.add(invitation)
+
+    return HttpResponse(invitation.id)
+
+
+def send_inkling_invitations_view(request):
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
     try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingID"])
-        invitation = Invitation(description = "", inkling = inkling, from_member = member)
-        invitation.save()
-        for m in members:
-            if (not m.invitations.filter(inkling = inkling, from_member = member)):
-                m.invitations.add(invitation)
-                if (m.invited_email_preference and m.verified):
-                    send_inkling_invitation_email(member, m, inkling)
+        member = Member.active.get(pk = request.session["member_id"])
     except:
-        pass
+        raise Http404()
+
+    try:
+        invites = request.POST["invitees"].split("|<|>|")
+        message = request.POST["message"]
+        inkling = Inkling.objects.get(pk = request.POST["inklingID"])
+        invitation = Invitation.objects.get(pk = request.POST["invitationID"])
+    except:
+        raise Http404()
+
+    members = []
+    i = 0
+    while (i < len(invites)):
+        if (invites[i] == "people"):
+            try:
+                m = Member.active.get(pk = int(invites[i + 1]))
+                if (((m in member.following.filter(is_active = True)) or (m in member.followers.filter(is_active = True))) and (m not in members)):
+                    members.append(m)
+            except:
+                pass
+        elif (invites[i] == "blots"):
+            try:
+                blot = Blot.objects.get(pk = int(invites[i + 1]))
+                if (blot in member.blots.all()):
+                    for m in blot.members.filter(is_active = True):
+                        if (m not in members):
+                            members.append(m)
+            except:
+                pass
+        i += 1
+
+    for m in members:
+        if (m.invitations.filter(inkling = inkling, from_member = member)):
+            if (m.invited_email_preference and m.verified):
+                send_inkling_invitation_email(member, m, inkling, message)
 
     return HttpResponse()
 
