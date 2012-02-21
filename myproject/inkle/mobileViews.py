@@ -17,7 +17,21 @@ from PIL import Image
 
 from myproject.settings import MEDIA_ROOT
 
+from django.views.decorators.csrf import csrf_exempt
+from xml.dom.minidom import parse, parseString
+
+@csrf_exempt
 def login_view(request):
     """Either logs in a member or returns the login errors."""
     
-    return render_to_response( "404.html", {}, context_instance = RequestContext(request) )
+    postdata = "Nothing loaded"
+    if request.method == 'POST':
+        postXML = request.POST.copy()
+        #postDom = parseString(postXML)
+        #emailTag = postDom.getElementsByTagName("email")[0].toxml()
+        #strip off the tag (<tag>data</tag>  --->   data):
+        #email=emailTag.replace('<email>','').replace('</email>','')
+    
+    #return HttpResponse("postXML = " + postXML + " -------------- email = " + email)
+    return HttpResponse(postXML)
+    #return render_to_response( "sample.xml", {}, mimetype='text/xml')
