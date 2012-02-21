@@ -1220,17 +1220,44 @@ def suggestions_view(request):
     elif (query_type == "inklingInvite"):
         # Get the member suggestions (and add them to the categories list if there are any)
         members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
+        members = list(members)
+
+        # Get the blots
+        blots = blots_search_query(query, member)[0:5]
+        blots = list(blots)
+
+        # Remove members who have already been invited 
+        try:
+            invites = request.POST["invitees"].split("|<|>|")
+        except KeyError:
+            raise Http404()
+
+        i = 0
+        while (i < len(invites)):
+            if (invites[i] == "people"):
+                try:
+                    m = Member.active.get(pk = int(invites[i + 1]))
+                    if (m in members):
+                        members.remove(m)
+                except Member.DoesNotExist:
+                    pass
+            elif (invites[i] == "blots"):
+                try:
+                    blot = Blot.objects.get(pk = int(invites[i + 1]))
+                    if (blot in blots):
+                        blots.remove(blot)
+                except Member.DoesNotExist:
+                    pass
+            i += 1
+
         if (members):
-            members.suggestionType = "members"
             for m in members:
                 m.name = m.first_name + " " + m.last_name
-            categories.append((members, "People"))
+            categories.append((members, "People", "members"))
 
         # Get the blots suggestions (and add them to the categories list if there are any)
-        blots = blots_search_query(query, member)[0:5]
         if (blots):
-            blots.suggestionType = "blots"
-            categories.append((blots, "Blots"))
+            categories.append((blots, "Blots", "blots"))
         
         # Set the number of characters to show for each suggestion
         num_chars = 20

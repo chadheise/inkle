@@ -237,7 +237,7 @@ def send_accept_request_email(from_member, to_member):
     send_email(from_address, to_addresses, subject, body_text, body_html)
 
 
-def send_inkling_invitation_email(from_member, to_member, inkling):
+def send_inkling_invitation_email(from_member, to_member, inkling, invitation_message):
     """Sends an email to from_member that to_member has invited them to the inkling."""
     # Specify the from address and to addresses
     from_address = "notifications@inkleit.com"
@@ -292,7 +292,8 @@ def send_inkling_invitation_email(from_member, to_member, inkling):
             
             <p>Location: %s<br />
             Type: %s<br />
-            Date: %s</p>
+            Date: %s<br />
+            Message: %s</p.
 
             <p>Click <a href="http://www.inkleit.com/manage/notifications/">here</a> to respond to %s invitation.</p>
     
@@ -301,7 +302,7 @@ def send_inkling_invitation_email(from_member, to_member, inkling):
             
             <p style="font-size: 10px;">If you don't want to receive emails like this, you can set your email preferences <a href="http://www.inkleit.com/editProfile/emailPreferences/">here</a>.</p>
         </body>
-    </html>""" % (to_member.first_name, from_member.get_full_name(), location, category, inkling.get_formatted_date(year = False, weekday = True), his_her)
+    </html>""" % (to_member.first_name, from_member.get_full_name(), location, category, inkling.get_formatted_date(year = False, weekday = True), invitation_message, his_her)
     
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)

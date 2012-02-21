@@ -36,22 +36,19 @@
 
             <!-- Date and category -->
             <div class="infoRow">
-                <p>{{ invitation.inkling.get_formatted_date }} - {{ invitation.inkling.get_formatted_category }}</p>
-            </div>
-
-            <!-- Invited by -->
-            <div class="infoRow">
-                <p>Invited by <a id="invitedBy" href="/member/{{ invitation.from_member.id }}/">{{ invitation.from_member.get_full_name }}</a></p>
+                <p><a id="invitedBy" href="/member/{{ invitation.from_member.id }}/">{{ invitation.from_member.get_full_name }}</a> invited you to {% if invitation.inkling.category == "mainEvent" %}the{% endif %} {{ invitation.inkling.get_formatted_category|lower }} on {{ invitation.inkling.date|date:"l, F j" }}</p>
             </div>
 
             <!-- Description -->
-            <div class="infoRow">
-                <p>{{ invitation.description }}</p>
+            <div class="infoRow invitationDescription">
+                {% if invitation.description %}
+                    <p>"{{ invitation.description }}"</p>
+                {% endif %}
             </div>
 
             <!-- Button list -->
             <div class="infoRow">
-                <button class="cardButton rejectInvitation" invitationID="{{ invitation.id }}">Reject invitation</button>
+                <button class="cardButton rejectInvitation" invitationID="{{ invitation.id }}">Decline invitation</button>
                 <button class="cardButton acceptInvitation" invitationID="{{ invitation.id }}">Accept invitation</button>
             </div>
         </div>
