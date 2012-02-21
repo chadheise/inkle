@@ -1,106 +1,191 @@
-    <div style="display: inline-block;">
-        <!-- Dinner inkling -->
-        <div id="dinnerInkling" class="inkling" inklingType="dinner">
-            <div>
-                <p class="inklingTitle">Dinner</p>
-                {% if not pastDate %}
-                    {% if member.dinner_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.dinner_inkling.location.name|default:"" }}" />
-                    {% endif %}
-                {% else %}
-                    {% if member.dinner_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place</p>
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.dinner_inkling.location.name|default:"" }}</p>
-                    {% endif %}
-                {% endif %}
-            </div>
+<!-- Dinner inkling -->
+<div class="inklingContainer">
+    <div id="dinnerInkling" class="inkling" inklingType="dinner">
+        <div>
+            <!-- Inkling category -->
+            <p class="inklingTitle">Dinner</p>
 
-            <div class="suggestions inklingSuggestions"></div>
+            <!-- Inkling location image -->
+            {% if member.dinner_inkling.member_place %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
+            {% else %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
+            {% endif %}
+
+            <!-- Inkling location name -->
+            {% if not pastDate %}
+                {% if member.dinner_inkling.member_place %}
+                    <input type="text" location="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
+                {% else %}
+                    <input type="text" location="{{ member.dinner_inkling.location.name|default:"" }}" />
+                {% endif %}
+            {% else %}
+                {% if member.dinner_inkling.member_place %}
+                    <p class="pastInklingText">{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place</p>
+                {% else %}
+                    <p class="pastInklingText">{{ member.dinner_inkling.location.name|default:"" }}</p>
+                {% endif %}
+            {% endif %}
         </div>
 
-        <!-- Pregame inkling -->
-        <div id="pregameInkling" class="inkling" inklingType="pregame">
-            <div>
-                <p class="inklingTitle">Pregame</p>
-                {% if not pastDate %}
-                    {% if member.pregame_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.pregame_inkling.member_place.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place" />
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.pregame_inkling.location.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.pregame_inkling.location.name|default:"" }}" />
-                    {% endif %}
-                {% else %}
-                    {% if member.pregame_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.pregame_inkling.member_place.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place</p>
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.pregame_inkling.location.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.pregame_inkling.location.name|default:"" }}</p>
-                    {% endif %}
-                {% endif %}
-            </div>
-
-            <div class="suggestions inklingSuggestions"></div>
-        </div>
-
-        <!-- Main event inkling -->
-        <div id="mainEventInkling" class="inkling" inklingType="mainEvent">
-            <div>
-                <p class="inklingTitle">Main Event</p>
-                {% if not pastDate %}
-                    {% if member.main_event_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.main_event_inkling.member_place.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place" />
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.main_event_inkling.location.id|default:"default" }}.jpg" />
-                        <input type="text" location="{{ member.main_event_inkling.location.name|default:"" }}" />
-                    {% endif %}
-                {% else %}
-                    {% if member.main_event_inkling.member_place %} <!-- Check inkling type (member or location) -->
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.main_event_inkling.member_place.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place</p>
-                    {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.main_event_inkling.location.id|default:"default" }}.jpg" />
-                        <p class="pastInklingText">{{ member.main_event_inkling.location.name|default:"" }}</p>
-                    {% endif %}
-                {% endif %}
-            </div>
-
-            <div class="suggestions inklingSuggestions"></div>
-        </div>
-        <div class="clear"></div>
-
-        {% if not pastDate %}
-            <!-- Dinner inkling invite -->
-            <div id="dinnerInklingInvite" class="inklingInviteContainer {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}" inklingType="dinner" inklingID="{{ member.dinner_inkling.id }}">
-                <input type="text" />
-                <button class="button inklingInviteButton">Invite</button>
-                <div class="suggestions inklingInviteSuggestions"></div>
-                <div class="invited"></div>
-            </div>
-
-            <!-- Pregame inkling invite -->
-            <div id="pregameInklingInvite" class="inklingInviteContainer {% if not member.pregame_inkling or member.pregame_inkling.member_place and member.pregame_inkling.member_place != member %}hidden{% endif %}" inklingType="pregame" inklingID="{{ member.pregame_inkling.id }}">
-                <input type="text" />
-                <button class="button inklingInviteButton">Invite</button>
-                <div class="suggestions inklingInviteSuggestions"></div>
-                <div class="invited"></div>
-            </div>
-
-            <!-- Main event inkling invite -->
-            <div id="mainEventInklingInvite" class="inklingInviteContainer {% if not member.main_event_inkling or member.main_event_inkling.member_place and member.main_event_inkling.member_place != member %}hidden{% endif %}" inklingType="mainEvent" inklingID="{{ member.main_event_inkling.id }}">
-                <input type="text" />
-                <button class="button inklingInviteButton">Invite</button>
-                <div class="suggestions inklingInviteSuggestions"></div>
-                <div class="invited"></div>
-            </div>
-        {% endif %}
+        <!-- Inkling suggestions -->
+        <div class="suggestions inklingSuggestions"></div>
     </div>
+    
+    <!-- Invitations -->
+    {% if not pastDate %}
+        <!-- Inkling invitation button -->
+        <button class="button inklingInviteButton {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}">Invite</button>
+
+        <!-- Inkling invitation container -->
+        <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.dinner_inkling.id }}">
+            <!-- Invitees -->
+            <p class="invitationLabel">Invitees:</p>
+            <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
+            <div class="inviteesContainer"></div>
+
+            <!-- Invitation message -->
+            <p class="invitationLabel" style="padding-top: 7px;">Message:</p>
+            <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
+
+            <!-- Send button -->
+            <div style="text-align: center;">
+                <button class="button sendInklingInviteButton">Send</button>
+            </div>
+        </div>
+
+        <!-- Inkling invitation suggestions -->
+        <div class="suggestions inklingInviteSuggestions"></div>
+
+        <!-- Inkling invitation confirmation -->
+        <div class="inklingInviteConfirmation"></div>
+    {% endif %}
+</div>
+
+<!-- Pregame inkling -->
+<div class="inklingContainer">
+    <div id="pregameInkling" class="inkling" inklingType="pregame">
+        <div>
+            <!-- Inkling category -->
+            <p class="inklingTitle">Pregame</p>
+
+            <!-- Inkling location image -->
+            {% if member.pregame_inkling.member_place %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.pregame_inkling.member_place.id|default:"default" }}.jpg" />
+            {% else %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.pregame_inkling.location.id|default:"default" }}.jpg" />
+            {% endif %}
+
+            <!-- Inkling location name -->
+            {% if not pastDate %}
+                {% if member.pregame_inkling.member_place %}
+                    <input type="text" location="{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place" />
+                {% else %}
+                    <input type="text" location="{{ member.pregame_inkling.location.name|default:"" }}" />
+                {% endif %}
+            {% else %}
+                {% if member.pregame_inkling.member_place %}
+                    <p class="pastInklingText">{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place</p>
+                {% else %}
+                    <p class="pastInklingText">{{ member.pregame_inkling.location.name|default:"" }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Inkling suggestions -->
+        <div class="suggestions inklingSuggestions"></div>
+    </div>
+
+    <!-- Invitations -->
+    {% if not pastDate %}
+        <!-- Inkling invitation button -->
+        <button class="button inklingInviteButton {% if not member.pregame_inkling or member.pregame_inkling.member_place and member.pregame_inkling.member_place != member %}hidden{% endif %}">Invite</button>
+
+        <!-- Inkling invitation container -->
+        <div id="pregameInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.pregame_inkling.id }}">
+            <!-- Invitees -->
+            <p class="invitationLabel">Invitees:</p>
+            <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
+            <div class="inviteesContainer"></div>
+
+            <!-- Invitation message -->
+            <p class="invitationLabel" style="padding-top: 7px;">Message:</p>
+            <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
+
+            <!-- Send button -->
+            <div style="text-align: center;">
+                <button class="button sendInklingInviteButton">Send</button>
+            </div>
+        </div>
+
+        <!-- Inkling invitation suggestions -->
+        <div class="suggestions inklingInviteSuggestions"></div>
+
+        <!-- Inkling invitation confirmation -->
+        <div class="inklingInviteConfirmation"></div>
+    {% endif %}
+</div>
+
+<!-- Main event inkling -->
+<div class="inklingContainer">
+    <div id="mainEventInkling" class="inkling" inklingType="mainEvent">
+        <div>
+            <!-- Inkling category -->
+            <p class="inklingTitle">Main Event</p>
+
+            <!-- Inkling location image -->
+            {% if member.main_event_inkling.member_place %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.main_event_inkling.member_place.id|default:"default" }}.jpg" />
+            {% else %}
+                <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.main_event_inkling.location.id|default:"default" }}.jpg" />
+            {% endif %}
+
+            <!-- Inkling location name -->
+            {% if not pastDate %}
+                {% if member.main_event_inkling.member_place %}
+                    <input type="text" location="{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place" />
+                {% else %}
+                    <input type="text" location="{{ member.main_event_inkling.location.name|default:"" }}" />
+                {% endif %}
+            {% else %}
+                {% if member.main_event_inkling.member_place %}
+                    <p class="pastInklingText">{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place</p>
+                {% else %}
+                    <p class="pastInklingText">{{ member.main_event_inkling.location.name|default:"" }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Inkling suggestions -->
+        <div class="suggestions inklingSuggestions"></div>
+    </div>
+    
+    <!-- Invitations -->
+    {% if not pastDate %}
+        <!-- Inkling invitation button -->
+        <button class="button inklingInviteButton {% if not member.main_event_inkling or member.main_event_inkling.member_place and member.main_event_inkling.member_place != member %}hidden{% endif %}">Invite</button>
+
+        <!-- Inkling invitation container -->
+        <div id="mainEventInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.main_event_inkling.id }}">
+            <!-- Invitees -->
+            <p class="invitationLabel">Invitees:</p>
+            <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
+            <div class="inviteesContainer"></div>
+
+            <!-- Invitation message -->
+            <p class="invitationLabel" style="padding-top: 7px;">Message:</p>
+            <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
+
+            <!-- Send button -->
+            <div style="text-align: center;">
+                <button class="button sendInklingInviteButton">Send</button>
+            </div>
+        </div>
+
+        <!-- Inkling invitation suggestions -->
+        <div class="suggestions inklingInviteSuggestions"></div>
+
+        <!-- Inkling invitation confirmation -->
+        <div class="inklingInviteConfirmation"></div>
+    {% endif %}
+</div>
