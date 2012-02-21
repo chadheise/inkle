@@ -1,13 +1,18 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
+.inklingContainer
+{
+    width: 250px;
+    margin: 0px 30px 15px 30px;
+    float: left;
+}
+
 .inkling
 {
     border: solid 2px #288D42;
     background-color: #ABD4B0;
-    width: 250px;
+    width: 100%;
     padding: 10px;
-    margin: 0px 15px 15px 15px;
-    float: left;
 }
 
 .inklingTitle
@@ -19,9 +24,24 @@
     color: #288D42;
 }
 
+.inklingInviteButton
+{
+    background-color: #1B5898;
+    border-color: #2A4360;
+    position: relative;
+    top: -350px;
+    left: 106px;
+}
+
+.inklingInviteButton:hover
+{
+    border-color: #002C45;
+}
+
+
 .inklingImage
 {
-    width: 100%;
+    width: 247px;
     height: 252px;
     border: solid 1px #000;
 }
@@ -33,6 +53,11 @@
     padding: 5px;
     width: 238px;
     border: inset 2px #BBB;
+}
+
+.emptyInput
+{
+    color: #888;
 }
 
 .pastInklingText
@@ -57,67 +82,78 @@
 
 .inklingInviteContainer
 {
-    border: solid 2px #288D42;
-    background-color: #ABD4B0;
-    width: 250px;
-    margin: 0px 15px 0px 15px;
-    padding: 5px 10px 10px 10px;
     text-align: left;
-    float: left;
+    position: relative;
+    border: solid 2px #1B5898;
+    background-color: #ABC2E5;
+    width: 225px;
+    padding: 5px 10px 10px 10px;
+    left: 12px;
+    top: -344px;
+    display: none;
+}
+
+.inklingInviteConfirmation
+{
+    position: absolute;
+    text-align: left;
+    border: solid 2px #1B5898;
+    background-color: #ABC2E5;
+    width: 225px;
+    padding: 5px 10px 10px 10px;
+    display: none;
 }
 
 .inklingInviteContainer input
 {
-    margin-top: 5px;
-    font-size: 18px;
-    padding: 5px;
-    width: 173px;
+    width: 221px;
     border: inset 2px #BBB;
-    clear: left;
-    float: left;
+    margin-bottom: 3px;
 }
 
-.inklingInviteButton
+.inklingInviteContainer textarea
 {
-    float: left;
-    background-color: #1B5898;
-    border-color: #2A4360;
-}
-
-.inklingInviteButton:hover
-{
-    border-color: #002C45;
+    width: 221px;
+    height: 52px;
+    border: inset 2px #BBB;
+    resize: none;
 }
 
 .inklingInviteSuggestions
 {
-    margin-top: 43px;
-    width: 245px;
+    position: absolute;
+    width: 221px;
 }
 
-.invited
+.invitationLabel
+{
+    clear: both;
+    font-weight: bold;
+}
+
+.inviteesContainer
 {
     clear: both;
 }
 
-.invitedPeople
+.invitee
 {
     float: left;
     background-color: #1B5898;
     border: solid 2px #2A4360;
-    margin: 10px 5px 0px 0px;
+    margin: 5px 5px 0px 0px;
     padding: 3px;
     color: #FFF;
     font-size: 12px;
 }
 
-.invitedPeopleName
+.inviteeName
 {
     float: left;
     margin-right: 5px;
 }
 
-.removeInvitedPeople
+.removeInvitee
 {
     float: left;
     background-color: #70A9DB;
@@ -128,14 +164,26 @@
     cursor: pointer;
 }
 
-.removeInvitedPeople:hover
+.removeInvitee:hover
 {
     background-color: #E5736F;
 }
 
-.removeInvitedPeople p
+.removeInvitee p
 {
     margin-top: -3px;
+}
+
+.sendInklingInviteButton
+{
+    background-color: #288D42;
+    border-color: #336E34;
+    margin-left: 0px;
+}
+
+.sendInviteButton:hover
+{
+    border-color: #1A492B;
 }
 
 select, select option
@@ -148,15 +196,6 @@ select, select option
 {
     margin-top: 20px;
 }
-
-/*.locationBoardCard
-{
-    border: solid 2px #288D42;
-    background-color: #DDD;
-    padding: 10px 10px 10px 0px;
-    height: 130px;
-    margin-bottom: 10px;
-} */
 
 .locationBoardCard
 {
@@ -237,4 +276,9 @@ select, select option
 #calendarContainer
 {
     text-align: center;
+}
+
+.hidden
+{
+    display: none;
 }

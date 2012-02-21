@@ -5,7 +5,7 @@
     border: solid 2px #AAA;
     border-top: none;
     position: absolute;
-    z-index: 10;
+    z-index: 5;
     display: none;
     text-align: left;
 }
