@@ -310,7 +310,7 @@ $(document).ready(function() {
 
                 // Fade out the inkling's suggestions
                 inklingElement.find(".inklingSuggestions").fadeOut("medium", function() {
-                    $(this).remove();
+                    $(this).children().remove();
                 });
             },
             error: function(jqXHR, textStatus, error) {
