@@ -56,6 +56,7 @@ urlpatterns = patterns(
     (r"^manage/(?P<content_type>notifications|place|blots|networks|followers)/$", "manage_view"),
     (r"^manage/(?P<content_type>place)/(?P<date>\d\d?_\d\d?_\d\d\d\d)/$", "manage_view"),
     (r"^manage/(?P<content_type>place)/(?P<date>\d\d?_\d\d?_\d\d\d\d)/(?P<place_type>all|dinner|pregame|mainEvent)/$", "manage_view"),
+
     #Manage page database views
     (r"^notifications/$", "notifications_view"),
     (r"^place/$", "get_member_place_view"),
@@ -126,6 +127,7 @@ urlpatterns = patterns(
     (r"^cropProfilePicture/$", "crop_profile_picture_view"),
     (r"^saveProfilePicture/$", "save_profile_picture_view"),
 
+    (r"^about/$", "about_view"),
     (r"^terms/$", "terms_view"),
     (r"^contact/$", "contact_view"),
     (r"^sendContactEmail/$", "send_contact_email_view"),

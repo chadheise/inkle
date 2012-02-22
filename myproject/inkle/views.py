@@ -727,6 +727,19 @@ def network_view(request, network_id = None):
         context_instance = RequestContext(request) )
 
 
+def about_view(request):
+    """Returns the HTML for the about page."""
+    # Get the member who is logged in (or set that member to None)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        member = None
+
+    return render_to_response( "about.html",
+        { "member" : member },
+        context_instance = RequestContext(request) )
+
+
 def terms_view(request):
     """Returns the HTML for the terms page."""
     # Get the member who is logged in (or set that member to None)
