@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+	<title>Inkle | About</title>
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/terms.css" />
+{% endblock css %}
+
+{% block js %}
+{% endblock js %}
+
+{% block mainContent %}
+    <div id="mainContent" class="container_24">
+        <div class="grid_24 alpha omega">
+            <!-- Page title -->
+            <div class="grid_24">
+                <p class="pageTitle">About</p>
+            </div>
+            <div class="clear"></div>
+
+            <div id="termsContent" class="grid_24">
+                <p style="margin-bottom: 15px;">Have you ever spent your evening sending text messages to your friends trying to figure out their plans for the night? Are they going to the pregame at Irish Row and then hitting up the Backer? Or are they going to dinner at SDH and then stopping by the dorm party in Sorin? Inkle aims to solve these problems by allowing you plan your nights with your friends and to make it easy to find out where the big event is happening. Each day, you can set three different inklings: dinner, pregame, and main event. By setting your inklings, you share where you are going to be with your followers. You can see where your friends are going out by requesting to follow them and you can join networks to see which places are most popular on a given night. It’s that simple. Just sign in, see your friends’ plans, and decide where you are headed. Inkle is a light social network which is more interested in connecting you with your friends in real life than in the virtual world. Inkle is open to any Notre Dame, Saint Mary’s, or Holy Cross student.</p>
+                <p>To learn how to use Inkle, check out the <a href="/help/" style="color: #1B5898;">help section</a>. Happy inkling!</p>
+            </div>
+        </div>
+    </div>
+{% endblock mainContent%}
