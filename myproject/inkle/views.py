@@ -1622,7 +1622,7 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
                 else:
                     member_place.count = 1
                     locations.append(member_place)
-    
+
     # Sort the locations from most members to least
     locations.sort(key = lambda l:-l.count)
 
