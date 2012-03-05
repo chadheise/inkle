@@ -8,6 +8,8 @@ from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns(
     "myproject.inkle.mobileViews",
-    (r"^login/$", "login_view"),
+    (r"^login/$", "m_login_view"),
+    (r"^test/$", "m_test_view"),
+    (r"^othersInklings/$", "m_get_others_inklings_view"),
 
 )
