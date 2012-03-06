@@ -71,6 +71,9 @@ def load_restaurants():
 def load_apartments():
     load_locations("databaseData/apartments.txt")
 
+def load_extra():
+    load_locations("databaseData/extra.txt")
+
 
 def load_miscellaneous():
     load_locations("databaseData/miscellaneous.txt")
@@ -93,6 +96,7 @@ def populate_dev_database():
     load_miscellaneous()
     load_dorms()
     load_campus_locations()
+    load_extra()
     load_networks()
     load_member_networks()
 
