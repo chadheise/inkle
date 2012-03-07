@@ -1,9 +1,16 @@
 {% load minus divided_by percentage_of from extraTags %}
 
-<p>Total members: {{ data.num_members }}</p>
-<p>Total follower relationships: {{ data.num_followers }}</p>
-<p>Average number of followers per member: {{ data.num_followers|divided_by:data.num_members }}</p>
-<p>Members who are following at least one member: {{ data.num_some_following }} ({{ data.num_some_following|percentage_of:data.num_members }}%)</p>
-<p>Members who are not following anyone: {{ data.num_members|minus:data.num_some_following }} ({{ data.num_members|minus:data.num_some_following|percentage_of:data.num_members }}%)</p>
-<p>Members who are followed by at least one member: {{ data.num_some_followers }} ({{ data.num_some_followers|percentage_of:data.num_members }}%)</p>
-<p>Members who are not followed by anyone: {{ data.num_members|minus:data.num_some_followers }} ({{ data.num_members|minus:data.num_some_followers|percentage_of:data.num_members }}%)</p>
+<p class="diagnosticSectionHeader">Membership:</p>
+<div class="diagnosticSection">
+    <p>Total: {{ data.total_members }}</p>
+</div>
+
+<p class="diagnosticSectionHeader">Followers:</p>
+<div class="diagnosticSection">
+    <p>Total follower relationships: {{ data.num_followers }}</p>
+    <p>Average number of followers per member: {{ data.num_followers|divided_by:data.total_members }}</p>
+    <p>Members who are following someone: {{ data.num_some_following }} ({{ data.num_some_following|percentage_of:data.total_members }}%)</p>
+    <p>Members who are not following anyone: {{ data.total_members|minus:data.num_some_following }} ({{ data.total_members|minus:data.num_some_following|percentage_of:data.total_members }}%)</p>
+    <p>Members who are followed: {{ data.num_some_followers }} ({{ data.num_some_followers|percentage_of:data.total_members }}%)</p>
+    <p>Members who are not followed: {{ data.total_members|minus:data.num_some_followers }} ({{ data.total_members|minus:data.num_some_followers|percentage_of:data.total_members }}%)</p>
+</div>

@@ -1,7 +1,24 @@
 {% load minus divided_by percentage_of from extraTags %}
 
-<p>Total members: {{ data.num_members }}</p>
-<p>Verified members: {{ data.num_verified }} ({{ data.num_verified|percentage_of:data.num_members }}%)</p>
-<p>Unverified members: {{ data.num_members|minus:data.num_verified }} ({{ data.num_members|minus:data.num_verified|percentage_of:data.num_members }}%)</p>
-<p>Active members: {{ data.num_active }} ({{ data.num_active|percentage_of:data.num_members }}%)</p>
-<p>Deactivated members: {{ data.num_members|minus:data.num_active }} ({{ data.num_members|minus:data.num_active|percentage_of:data.num_members }}%)</p>
+<p class="diagnosticSectionHeader">Membership:</p>
+<div class="diagnosticSection">
+    <p>Total: {{ data.total_members }}</p>
+    <p>Joined: {{ data.num_members }} ({{ data.num_members|percentage_of:data.total_members }}%)</p>
+    <p>Verified: {{ data.num_verified }} ({{ data.num_verified|percentage_of:data.num_members }}%)</p>
+    <p>Unverified: {{ data.num_members|minus:data.num_verified }} ({{ data.num_members|minus:data.num_verified|percentage_of:data.num_members }}%)</p>
+    <p>Deactived: {{ data.num_deactived }} ({{ data.num_deactived|percentage_of:data.num_members }}%)</p>
+</div>
+
+<p class="diagnosticSectionHeader">Gender:</p>
+<div class="diagnosticSection">
+    <p>Male: {{ data.num_male }} ({{ data.num_male|percentage_of:data.num_members }}%)</p>
+    <p>Female: {{ data.num_members|minus:data.num_male }} ({{ data.num_members|minus:data.num_male|percentage_of:data.num_members }}%)</p>
+</div>
+
+<p class="diagnosticSectionHeader">Profile updates:</p>
+<div class="diagnosticSection">
+    <p>Picture: {{ data.num_updated_profile_picture }} ({{ data.num_updated_profile_picture|percentage_of:data.num_members }}%)</p>
+    <p>Phone: {{ data.num_updated_phone }} ({{ data.num_updated_phone|percentage_of:data.num_members }}%)</p>
+    <p>Street: {{ data.num_updated_street }} ({{ data.num_updated_street|percentage_of:data.num_members }}%)</p>
+    <p>Location: {{ data.num_updated_location }} ({{ data.num_updated_location|percentage_of:data.num_members }}%)</p>
+</div>

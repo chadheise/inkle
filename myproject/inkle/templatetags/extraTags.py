@@ -146,7 +146,10 @@ def divided_by(value, arg):
     except ValueError:
         return value
 
-    return round((value / arg), 2)
+    if (arg != 0.0):
+        return round((value / arg), 2)
+    else:
+        return 0.0
 divided_by.is_safe = True
 
 @register.filter()
@@ -159,5 +162,8 @@ def percentage_of(value, arg):
     except ValueError:
         return value
 
-    return round((value / arg) * 100.0, 2)
+    if (arg != 0.0):
+        return round((value / arg) * 100.0, 2)
+    else:
+        return 0.0
 percentage_of.is_safe = True

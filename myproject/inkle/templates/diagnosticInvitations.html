@@ -1,7 +1,14 @@
 {% load minus divided_by percentage_of from extraTags %}
 
-<p>Total members: {{ data.num_members }}</p>
-<p>Total invitations: {{ data.num_invitations }}</p>
-<p>Average number of invitations per member: {{ data.num_invitations|divided_by:data.num_members }}</p>
-<p>Members who have sent at least one invitation: {{ data.num_some_invitations_sent }} ({{ data.num_some_invitations_sent|percentage_of:data.num_members }}%)</p>
-<p>Members who have sent no invitations: {{ data.num_members|minus:data.num_some_invitations_sent }} ({{ data.num_members|minus:data.num_some_invitations_sent|percentage_of:data.num_members }}%)</p>
+<p class="diagnosticSectionHeader">Membership:</p>
+<div class="diagnosticSection">
+    <p>Total: {{ data.total_members }}</p>
+</div>
+
+<p class="diagnosticSectionHeader">Invitations:</p>
+<div class="diagnosticSection">
+    <p>Total invitations: {{ data.num_invitations }}</p>
+    <p>Average number of invitations per member: {{ data.num_invitations|divided_by:data.total_members }}</p>
+    <p>Members who have sent an invitation: {{ data.num_some_invitations_sent }} ({{ data.num_some_invitations_sent|percentage_of:data.total_members }}%)</p>
+    <p>Members who have not sent an invitation: {{ data.total_members|minus:data.num_some_invitations_sent }} ({{ data.total_members|minus:data.num_some_invitations_sent|percentage_of:data.total_members }}%)</p>
+</div>

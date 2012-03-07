@@ -5,3 +5,14 @@
     text-align: justify;
     margin-bottom: 5px;
 }
+
+.diagnosticSectionHeader
+{
+    font-size: 18px;
+    color: #288D42;
+}
+
+.diagnosticSection
+{
+    margin: 0px 0px 15px 25px;
+}

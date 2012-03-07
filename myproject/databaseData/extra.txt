@@ -1,0 +1,36 @@
+Jamba Juice | Drink Shop | 1234 N. Eddy St. Suite 107 | South Bend | IN | 46617 | 5742320970 | http://www.jambajuice.com/
+Main Stree Coffee House | Coffee Shop | 102 N. Main St | South Bend | IN | 46601 | 5742325333 | http://www.mainstreetroasters.com/
+Bruno's Pizza | Pizza | 131 S. Michigan St. | South Bend | IN | 46601 | 5742342222 | http://www.brunospizza.com/ 
+State Theatre | Theater | 214 1/2 S. Michigan St. | South Bend | IN | 46601  | 5742320679 | 
+South Bend Civic Theatre | Theater | 403 N. Main St. | South Bend | IN | 46601 | 5742341112 | http://www.sbct.org/
+Morris Performing Arts Center | Theater | 211 N. Michigan St. | South Bend | IN | 46601 | 5742359190 | http://www.morriscenter.org/
+College Football Hall of Fame | Museum | 111 S. Saint Joseph St. | South Bend | IN | 46601 | 5742359999 | http://collegefootball.org/
+Number 1 Chinese | Restaurant | 301 S. Michigan St. | South Bend | IN | 46601 | 5742348888 | 
+Vesuvio Pizza | Pizza | 230 S. Michigan St. | South Bend | IN | 46601 | 5742342183 | 
+Quincy's Cafe & Espresso | Coffee Shop | 1631 Edison Rd. | South Bend | IN | 46637 | 5742730159 | http://www.quincyscafe.com/ 
+Domino's Pizza | Pizza | 1627 Edison Rd. | South Bend | IN | 46637 | 5742710300 | http://www.dominos.com/ 
+Ari's Grill | Restaurant | 1841 S. Bend Ave. | South Bend | IN | 46637 | 5742471780 |  
+Papa John's Pizza | Pizza | 1827 S. Bend Ave. | South Bend | IN | 46637 | 5742711177 | http://www.papajohns.com/ 
+Dairy Queen | Dessert Shop | 2015 S. Bend Ave. | South Bend | IN | 46637 | 5742711102 | http://www.dairyqueen.com/ 
+Pizza Hut | Pizza | 2017 S. Bend Ave. | South Bend | IN | 46637 | 5742739944 | http://www.pizzahut.com/
+Einstein Bros. Bagels | Bagel Shop | 2019 S. Bend Ave. | South Bend | IN | 46637 | 5742722622 | http://www.einsteinbros.com/
+Starbucks | Coffee Shop | 2202 S. Bend Ave. Ste E | South Bend | IN | 46635 |5742773684 | http://www.starbucks.com/
+Bob Evans Restaurant | Restaurant | 204 S. Dixie Way | South Bend | IN | 46637 | 5742726737 | http://bobevans.com/
+Bob Evans Restaurant | Restaurant | 5823 Grape Rd. | Mishawaka | IN | 46545 | 5742715141 | http://bobevans.com/
+Burger King | Restaurant | 5809 Grape Rd. | Mishawaka | IN | 46545 | 5742774343 | http://www.bk.com/
+Strikes & Spares Entertainment | Bowling | 5419 Grape Rd. | Mishawaka | IN | 46545 | 5742432695 | http://strikesandspares.us/
+Chippewa Bowl | Bowling | 225 W. Chippewa Ave. | South Bend | IN | 46614 | 5742915093 | 
+Regal Lanes | Bowling | 1121 W. 8th St. | Mishawaka | IN | 46544 | 5742595209 | http://amf.com/
+Puerto Vallarta | Restaurant | 4609 Grape Rd. Suite 7 | Mishawaka | IN | 46545 | 5742719959 | 
+Kabob House | Restaurant | 3915 Grape Rd. | Mishawaka | IN | 46545 | 5742431700 | 
+Cold Stone Creamery | Dessert Shop | 620 W. Edison Rd. | Mishawaka | IN | 46545 | 5742577884 | http://coldstonecreamery.com/ 
+Toyo Grill | Restaurant | 620 W. Edison Rd. Suite 106 | Mishawaka | IN | 46545 | 5742549120 | 
+India Garden Restuarant | Restaurant | 615 W. Edison Rd. | Mishawaka | IN | 46545 | 5742555600 | http://www.theindiagarden.com/
+Cinemark Movies 14 | Movie Theater | 910 W. Edison Rd. | Mishawaka | IN | 46545 | 8003263264 | http://cinemark.com/theatre-detail.aspx?node_id=1497
+Cinemark Movies 6 | Movie Theater | 6424 North Grape Rd. | Mishawaka | IN | 46545 | 8003263264 | http://cinemark.com/theatre-detail.aspx?node_id=1575
+AMC Showplace South Bend 16 | Movie Theater | 450 W. Chippewa Ave. | South Bend | IN | 46614 | 5742314951 | http://www.amctheatres.com/
+Little Caesars Pizza | Pizza | 3601 Edison Rd. Suite G | South Bend |  IN | 46615 | 5742434680 | http://www.littlecaesars.com/
+Honeybaked Ham | Restaurant | 2307 Edison Rd. | South Bend | IN | 46615 | 5742884267 | http://honeybakedham.com/
+Mark Dine & Tap | Restaurant | 1234 N. Eddy St. | South Bend | IN | 46617 | 5742042767 | http://www.thecleanplateclubrestaurants.com/mark/ 
+Leahy's | Restaurant | Morris Inn | Notre Dame | IN | 46556 | 5746312018 | http://morrisinn.nd.edu/leahys/
+Sorin's | Restaurant | Morris Inn | Notre Dame | IN | 46556 | 5746312020 | http://morrisinn.nd.edu/sorins/

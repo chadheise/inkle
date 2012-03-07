@@ -58,7 +58,7 @@ class Network(models.Model):
     """Network class definition."""
     name = models.CharField(max_length = 50)
     
-    #Metadata
+    # Metadata
     date_created = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
