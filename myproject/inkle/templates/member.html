@@ -48,26 +48,26 @@
             <div class="clear"></div>
             
             <div id="allMemberContent">
-            <!-- Additional content links for viewing member place -->
-            <div id="memberPlaceContentLinks" class="subsectionContentLinks grid_17 alpha omega" style="display: none;">
-                <p {% if place_type == "all" %}class="selectedSubsectionContentLink"{% endif %} contentType="all">All</p>
-                <p {% if place_type == "dinner" %}class="selectedSubsectionContentLink"{% endif %} contentType="dinner">Dinner</p>
-                <p {% if place_type == "pregame" %}class="selectedSubsectionContentLink"{% endif %} contentType="pregame">Pregame</p>
-                <p {% if place_type == "mainEvent" %}class="selectedSubsectionContentLink"{% endif %} contentType="mainEvent">Main Event</p>
-            </div>
-            <div class="clear"></div>
-            
-            <!-- Calendar -->
-            <div id="calendarContainer" class="grid_17 alpha omega" style="display: none;">
-                {% include "calendar.html" %}
-            </div>
-            <div class="clear"></div>
-                
-            <div id="memberContent" class="grid_17 alpha omega">
-                <!-- Main manage content -->
-                <div id="mainMemberContent" class="grid_17 alpha omega">
+                <!-- Additional content links for viewing member place -->
+                <div id="memberPlaceContentLinks" class="subsectionContentLinks grid_17 alpha omega" style="display: none;">
+                    <p {% if place_type == "all" %}class="selectedSubsectionContentLink"{% endif %} contentType="all">All</p>
+                    <p {% if place_type == "dinner" %}class="selectedSubsectionContentLink"{% endif %} contentType="dinner">Dinner</p>
+                    <p {% if place_type == "pregame" %}class="selectedSubsectionContentLink"{% endif %} contentType="pregame">Pregame</p>
+                    <p {% if place_type == "mainEvent" %}class="selectedSubsectionContentLink"{% endif %} contentType="mainEvent">Main Event</p>
                 </div>
-            </div>
+                <div class="clear"></div>
+            
+                <!-- Calendar -->
+                <div id="calendarContainer" class="grid_17 alpha omega" style="display: none;">
+                    {% include "calendar.html" %}
+                </div>
+                <div class="clear"></div>
+                
+                <div id="memberContent" class="grid_17 alpha omega">
+                    <!-- Main manage content -->
+                    <div id="mainMemberContent" class="grid_17 alpha omega">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

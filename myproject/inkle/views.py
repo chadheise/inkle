@@ -644,50 +644,76 @@ def diagnostic_view(request, content_type = "members"):
     except:
         raise Http404()
 
-    try:
-        first_load = request.POST["firstLoad"]
-        first_load = False
-    except KeyError:
-        first_load = True
-    
+    # Throw an error if the member is not a staff member
     if (not member.is_staff):
         raise Http404()
+
     else:
+        try:
+            time_range = request.POST["timeRange"]
+            first_load = request.POST["firstLoad"]
+            first_load = False
+        except KeyError:
+            time_range = "all"
+            first_load = True
+
+        # Determine the date from which to limit the results
+        today = datetime.date.today()
+        if (time_range == "all"):
+            date = datetime.date(month = 2, day = 7, year = 2012)
+        elif (time_range == "today"):
+            date = today
+        elif (time_range == "week"):
+            date = today - datetime.timedelta(days = 7)
+        elif (time_range == "month"):
+            date = today
+            current_month = date.month
+            if (current_month != 1):
+                date = date.replace(month = current_month - 1)
+            else:
+                current_year = date.year
+                date = date.replace(month = 12, year = current_year - 1)
+        elif (time_range == "year"):
+            date = today
+            current_year = date.year
+            date = date.replace(year = current_year - 1)
+
         data = {}
+        data["total_members"] = Member.objects.count()
         if (content_type == "members"):
-            data["num_members"] = Member.objects.count()
-            data["num_verified"] = Member.objects.filter(verified = True).count()
-            data["num_active"] = Member.objects.filter(is_active = True).count()
+            data["num_members"] = Member.objects.filter(date_joined__gte = date).count()
+            data["num_verified"] = Member.objects.filter(verified = True).filter(date_joined__gte = date).count()
+            data["num_deactived"] = Member.objects.filter(is_active = False).filter(date_joined__gte = date).count()
+            data["num_male"] = Member.objects.filter(gender = "Male").filter(date_joined__gte = date).count()
+            data["num_updated_profile_picture"] = Member.objects.filter(changed_image__gte = 1).filter(date_joined__gte = date).count()
+            data["num_updated_phone"] = Member.objects.exclude(phone__exact = "").filter(date_joined__gte = date).count()
+            data["num_updated_street"] = Member.objects.exclude(street__exact = "").filter(date_joined__gte = date).count()
+            data["num_updated_location"] = Member.objects.exclude(city__exact = "").filter(date_joined__gte = date).count()
         elif (content_type == "inklings"):
-            data["num_members"] = Member.objects.count()
-            data["num_inklings"] = Inkling.objects.count()
-            data["num_members_inkled"] = len([m for m in Member.objects.all() if (m.inklings.all())])
+            data["num_inklings"] = Inkling.objects.filter(date_created__gte = date).count()
+            data["num_members_inkled"] = len([m for m in Member.objects.all() if (m.inklings.filter(date_created__gte = date))])
         elif (content_type == "blots"):
-            data["num_members"] = Member.objects.count()
             data["num_blots"] = Blot.objects.count()
             data["num_some_blots"] = len([m for m in Member.objects.all() if (m.blots.all())])
         elif (content_type == "networks"):
-            data["num_members"] = Member.objects.count()
             data["num_networks"] = Network.objects.count()
             data["num_network_members"] = sum([m.networks.count() for m in Member.objects.all()])
             data["num_some_networks"] = len([m for m in Member.objects.all() if (m.networks.all())])
         elif (content_type == "invitations"):
-            data["num_members"] = Member.objects.count()
-            data["num_invitations"] = Invitation.objects.count()
-            data["num_some_invitations_sent"] = len(set([inv.from_member for inv in Invitation.objects.all()]))
+            data["num_invitations"] = Invitation.objects.filter(inkling__date__gte = date).count()
+            data["num_some_invitations_sent"] = len(set([inv.from_member for inv in Invitation.objects.filter(inkling__date__gte = date).all()]))
         elif (content_type == "followers"):
-            data["num_members"] = Member.objects.count()
             data["num_followers"] = sum([m.following.count() for m in Member.objects.all()])
             data["num_some_following"] = len([m for m in Member.objects.all() if (m.following.all())])
             data["num_some_followers"] = len([m for m in Member.objects.all() if (m.followers.all())])
 
     if (first_load):
         return render_to_response( "diagnostic.html",
-            { "member" : member, "contentType" : content_type, "data" : data },
+            { "member" : member, "contentType" : content_type, "timeRange" : time_range, "data" : data },
             context_instance = RequestContext(request) )
     else:
         return render_to_response( "diagnostic" + content_type[0].upper() + content_type[1:] + ".html",
-            { "member" : member, "contentType" : content_type, "data" : data },
+            { "member" : member, "contentType" : content_type, "timeRange" : time_range, "data" : data },
             context_instance = RequestContext(request) )
         
 
