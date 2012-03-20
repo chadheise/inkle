@@ -10,6 +10,15 @@ $(document).ready(function() {
         return date = $("#calendar").attr("selectedMonth") + delimiter + $("#calendar").attr("selectedDay") + delimiter + $("#calendar").attr("selectedYear");
     }
 
+    /* If an inkling input gains focus and it says "Where are you going?" grayed out, make the text blue and empty it */
+    $(".inkling input").live("focus", function() {
+        if ($(this).hasClass("emptyInklingInput"))
+        {
+            $(this).val("").removeClass("emptyInklingInput");
+            $(this).attr("location", "");
+        }
+    });
+   
     /* Updates my inklings with the logged in user's inklings for the inputted date */
     function updateMyInklings(date)
     {
@@ -217,6 +226,12 @@ $(document).ready(function() {
         var thisElement = $(this);
         var query = $(this).val();
         var inklingLocation = $(this).attr("location");
+
+        if (query == "")
+        {
+            $(this).val("Where are you going?").addClass("emptyInklingInput");
+        }
+
         if ((query == "") && (inklingLocation != ""))
         {
             // Get the type of the selected inkling
