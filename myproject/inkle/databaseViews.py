@@ -410,7 +410,7 @@ def accept_request_view(request):
     from_member.accepted.add(to_member)
     
     return render_to_response( "requestConfirmation.html",
-        { "member" : from_member, "acceptedOrRejected" : "accepted" },
+        { "member" : from_member, "acceptedOrDeclined" : "declined" },
         context_instance = RequestContext(request) )
 
 
@@ -433,7 +433,7 @@ def reject_request_view(request):
     to_member.requested.remove(from_member)
 
     return render_to_response( "requestConfirmation.html",
-        { "member" : from_member, "acceptedOrRejected" : "rejected" },
+        { "member" : from_member, "acceptedOrDeclined" : "declined" },
         context_instance = RequestContext(request) )
 
 
