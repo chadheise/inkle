@@ -156,7 +156,7 @@ def send_request_to_follow_email(from_member, to_member):
     to_addresses = [to_member.email]
 
     # Specify the subject
-    subject = "%s %s has requested to follow you" % (from_member.first_name, from_member.last_name)
+    subject = "%s requested to follow you" % (from_member.get_full_name())
     
     # Determine whether to use his or her
     his_her = "his"
@@ -206,7 +206,7 @@ def send_accept_request_email(from_member, to_member):
         him_her = "her"
 
     # Specify the subject
-    subject = "%s %s has accepted your request to follow %s" % (to_member.first_name, to_member.last_name, him_her)
+    subject = "%s accepted your request to follow %s" % (to_member.get_full_name(), him_her)
     
     # Specify the text body
     body_text = """Hi %s,
@@ -243,6 +243,9 @@ def send_inkling_invitation_email(from_member, to_member, inkling, invitation_me
     from_address = "notifications@inkleit.com"
     to_addresses = [to_member.email]
 
+    # Specify the subject
+    subject = "%s invited you to an inkling" % (from_member.get_full_name())
+
     # Determine whether to use his or her and him or her
     his_her = "his"
     him_her = "him"
@@ -263,9 +266,6 @@ def send_inkling_invitation_email(from_member, to_member, inkling, invitation_me
     else:
         location = from_member.get_full_name() + "'s Place"
 
-    # Specify the subject
-    subject = "%s %s has invited you to an inkling" % (from_member.first_name, from_member.last_name)
-    
     # Specify the text body
     body_text = """Hi %s,
 
@@ -288,12 +288,12 @@ def send_inkling_invitation_email(from_member, to_member, inkling, invitation_me
         <body>
             <p>Hi %s,</p>
 
-            <p>%s has invited you to an inkling! Here is the information:</p>
+            <p>%s invited you to an inkling! Here is the information:</p>
             
             <p>Location: %s<br />
             Type: %s<br />
             Date: %s<br />
-            Message: %s</p.
+            Message: %s</p>
 
             <p>Click <a href="http://www.inkleit.com/manage/notifications/">here</a> to respond to %s invitation.</p>
     
@@ -303,6 +303,57 @@ def send_inkling_invitation_email(from_member, to_member, inkling, invitation_me
             <p style="font-size: 10px;">If you don't want to receive emails like this, you can set your email preferences <a href="http://www.inkleit.com/editProfile/emailPreferences/">here</a>.</p>
         </body>
     </html>""" % (to_member.first_name, from_member.get_full_name(), location, category, inkling.get_formatted_date(year = False, weekday = True), invitation_message, his_her)
+    
+    # Send the email
+    send_email(from_address, to_addresses, subject, body_text, body_html)
+
+
+def send_invitation_response_email(from_member, to_member, inkling, invitation_response):
+    """Sends an email to from_member that to_member has responded to their inkling invitation."""
+    # Specify the from address and to addresses
+    from_address = "notifications@inkleit.com"
+    to_addresses = [from_member.email]
+
+    # Specify the subject
+    subject = "%s %s your inkling invitation" % (to_member.get_full_name(), invitation_response)
+
+    # Determine the inkling category
+    if (inkling.category == "dinner"):
+        category = "Dinner"
+    elif (inkling.category == "pregame"):
+        category = "Pregame"
+    elif (inkling.category == "mainEvent"):
+        category = "Main Event"
+
+    # Determine the inkling location
+    if (inkling.location):
+        location = inkling.location.name
+    else:
+        location = from_member.get_full_name() + "'s Place"
+    
+    # Specify the text body
+    body_text = ""
+    
+    # Specify the HTML body
+    body_html = """<html>
+        <head></head>
+        <body>
+            <p>Hi %s,</p>
+
+            <p>%s %s your invitation to the following inkling:</p>
+
+            <p>Location: %s<br />
+            Type: %s<br />
+            Date: %s</p>
+
+            <p>Click <a href="http://www.inkleit.com/%s">here</a> to see who is going to this inkling.</p>
+    
+            <p>Thanks,<br />
+            The Inkle team</p>
+            
+            <p style="font-size: 10px;">If you don't want to receive emails like this, you can set your email preferences <a href="http://www.inkleit.com/editProfile/emailPreferences/">here</a>.</p>
+        </body>
+    </html>""" % (from_member.first_name, to_member.get_full_name(), invitation_response, location, category, inkling.get_formatted_date(year = False, weekday = True), inkling.location.get_absolute_url(category = inkling.category, date = inkling.date))
     
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)
@@ -354,7 +405,7 @@ def send_invite_to_inkle_email(member, email):
     to_addresses = [email]
 
     # Specify the subject
-    subject = "%s has invited you to join Inkle!" % (member.get_full_name())
+    subject = "%s invited you to join Inkle!" % (member.get_full_name())
 
     # Specify the text body
     body_text = """Hi there,

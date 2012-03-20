@@ -517,7 +517,7 @@ def invitation_response_view(request):
         raise Http404()
 
     # Update the logged in member's inkling if they accepted the current invitation
-    if (response == "accept"):
+    if (response == "accepted"):
         # See if the logged in member already has an inkling for the location/date combination
         try:
             conflicting_inkling = member.inklings.get(category = invitation.inkling.category, date = invitation.inkling.date)
@@ -535,6 +535,25 @@ def invitation_response_view(request):
     return render_to_response( "invitationConfirmation.html",
         { "invitation" : invitation, "response" : response },
         context_instance = RequestContext(request) )
+
+
+def send_invitation_response_email_view(request):
+    """Responds to the current invitation."""
+    # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
+    try:
+        to_member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    # Get the invitation which is being responded to (or raise a 404 error if the invitation ID is invalid) and the response
+    try:
+        invitation = Invitation.objects.get(pk = request.POST["invitationID"])
+        response = request.POST["response"]
+        send_invitation_response_email(invitation.from_member, to_member, invitation.inkling, response)
+    except:
+        raise Http404()
+
+    return HttpResponse()
 
 
 def add_to_blot_view(request):
