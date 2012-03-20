@@ -17,7 +17,11 @@
                 {% if member.dinner_inkling.member_place %}
                     <input type="text" location="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
                 {% else %}
-                    <input type="text" location="{{ member.dinner_inkling.location.name|default:"" }}" />
+                    {% if member.dinner_inkling.location %}
+                        <input type="text" location="{{ member.dinner_inkling.location.name }}" />
+                    {% else %}
+                        <input type="text" class="emptyInklingInput" location="Where are you going?" />
+                    {% endif %}
                 {% endif %}
             {% else %}
                 {% if member.dinner_inkling.member_place %}
@@ -81,7 +85,11 @@
                 {% if member.pregame_inkling.member_place %}
                     <input type="text" location="{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place" />
                 {% else %}
-                    <input type="text" location="{{ member.pregame_inkling.location.name|default:"" }}" />
+                    {% if member.pregame_inkling.location %}
+                        <input type="text" location="{{ member.pregame_inkling.location.name }}" />
+                    {% else %}
+                        <input type="text" class="emptyInklingInput" location="Where are you going?" />
+                    {% endif %}
                 {% endif %}
             {% else %}
                 {% if member.pregame_inkling.member_place %}
@@ -145,7 +153,11 @@
                 {% if member.main_event_inkling.member_place %}
                     <input type="text" location="{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place" />
                 {% else %}
-                    <input type="text" location="{{ member.main_event_inkling.location.name|default:"" }}" />
+                    {% if member.main_event_inkling.location %}
+                        <input type="text" location="{{ member.main_event_inkling.location.name }}" />
+                    {% else %}
+                        <input type="text" class="emptyInklingInput" location="Where are you going?" />
+                    {% endif %}
                 {% endif %}
             {% else %}
                 {% if member.main_event_inkling.member_place %}
