@@ -42,9 +42,16 @@ class Location(models.Model):
         """String representation for the current location."""
         return "%s (%s, %s)" % (self.name, self.city, self.state)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, category = None, date = None):
         """Returns the URL for the current location."""
-        return "/location/%i/" % (self.id)
+        if category and date:
+            return "/location/%i/%s/%d_%d_%d/" % (self.id, category, date.month, date.day, date.year)
+        elif category:
+            return "/location/%i/%s/" % (self.id, category)
+        elif date:
+            return "/location/%i/%d_%d_%d/" % (self.id, date.month, date.day, date.year)
+        else:
+            return "/location/%i/" % (self.id)
 
     def get_formatted_phone(self):
         """Returns the current location's formatted phone number."""

@@ -10,10 +10,23 @@ $(document).ready(function() {
         $.ajax({
             type: "POST",
             url: "/invitationResponse/",
-            data: { "invitationID" : invitationID, "response" : "accept" },
+            data: { "invitationID" : invitationID, "response" : "accepted" },
             success: function(html) {
                 decrementNotificationCount();
                 hideInvitationCard(invitationCard, html);
+
+                // Send the accepted invitation response email
+                $.ajax({
+                    type: "POST",
+                    url: "/sendInvitationResponseEmail/",
+                    data: { "invitationID" : invitationID, "response" : "accepted" },
+                    error: function(jqXHR, textStatus, error) {
+                        if ($("body").attr("debug") == "True")
+                        {
+                            alert("invitationCard.js (1.2): " + error);
+                        }
+                    }
+                });
             },
             error: function(jqXHR, textStatus, error) {
                 if ($("body").attr("debug") == "True")
@@ -33,10 +46,23 @@ $(document).ready(function() {
         $.ajax({
             type: "POST",
             url: "/invitationResponse/",
-            data: { "invitationID" : invitationID, "response" : "reject" },
+            data: { "invitationID" : invitationID, "response" : "declined" },
             success: function(html) {
                 decrementNotificationCount();
                 hideInvitationCard(invitationCard, html);
+
+                // Send the rejected invitation response email
+                $.ajax({
+                    type: "POST",
+                    url: "/sendInvitationResponseEmail/",
+                    data: { "invitationID" : invitationID, "response" : "declined" },
+                    error: function(jqXHR, textStatus, error) {
+                        if ($("body").attr("debug") == "True")
+                        {
+                            alert("invitationCard.js (2.2): " + error);
+                        }
+                    }
+                });
             },
             error: function(jqXHR, textStatus, error) {
                 if ($("body").attr("debug") == "True")
