@@ -19,6 +19,7 @@
         <tr>
             <th><label for="registrationFirstName">First name:</label></th>
             <td><input id="registrationFirstName" class="{% if registrationInvalid.first_name %}invalid{% endif %}" type="text" maxlength="30" value="{{ registrationData.first_name }}" /></td>
+            <td class="questionMark" title="Inkle connects you with your friends and the best way to do this is by using your real name."><p>?</p></td>
         </tr>
 
         <!-- Last name -->
@@ -31,6 +32,7 @@
         <tr>
             <th><label for="registrationEmail">Email:</label></th>
             <td><input id="registrationEmail" class="{% if registrationInvalid.email %}invalid{% endif %}" type="text" maxlength="50" value="{{ registrationData.email }}" /></td>
+            <td class="questionMark" title="Your email is safe with us! It will be your username and will be our way of communicating with you. We promise to never share it with anyone!"><p>?</p></td>
         </tr>
 
         <!-- Confirm email -->
@@ -74,6 +76,7 @@
                     {% endfor %}
                 </select>
             </td>
+            <td class="questionMark" title="Everyone must be at least 16 years old to use our site. Your birthday information can be easily hidden once you join our site."><p>?</p></td>
         </tr>
 
         <!-- Gender -->
