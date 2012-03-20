@@ -1969,10 +1969,29 @@ def register_view(request):
 
             # Create default image for the new member
             if (member.gender == "Male"):
-                #shutil.copyfile("static/media/images/main/man.jpg", "static/media/images/members/" + str(member.id) + ".jpg")
                 shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
             else:
                 shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+
+            # Add the member to a network according to their email address
+            if (member.email.endswith("@nd.edu")):
+                try:
+                    network = Network.objects.get(name = "University of Notre Dame")
+                    member.networks.add(network)
+                except:
+                    pass
+            elif (member.email.endswith("@saintmarys.edu")):
+                try:
+                    network = Network.objects.get(name = "Saint Mary's College")
+                    member.networks.add(network)
+                except:
+                    pass
+            elif (member.email.endswith("@hcc-nd.edu")):
+                try:
+                    network = Network.objects.get(name = "Holy Cross College")
+                    member.networks.add(network)
+                except:
+                    pass
 
             # Send the member to the successful account creation page
             return render_to_response( "registrationConfirmation.html",
