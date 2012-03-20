@@ -16,15 +16,15 @@
 {% block mainContent %}
     <div id="mainContent" class="container_24">
         <!-- Welcome (home left) -->
-        <div class="grid_12 suffix_2">
+        <div class="grid_12 suffix_1">
             <p id="welcomeText">Inkle makes it easy to find out where the big event is happening. <span id="aboutLink"><a href="/about/">Find out more</a></span></p>
             <img id="welcomeImage" src="{{ STATIC_URL }}/media/images/main/welcome.jpg" />
         </div>
 
         <!-- Login/registration (home right) -->
-        <div class="grid_10">
+        <div class="grid_11">
             <!-- Content links -->
-            <div id="loginContentLinks" class="contentLinks grid_10 alpha omega">
+            <div id="loginContentLinks" class="contentLinks grid_10 prefix_1 alpha omega">
                 <p {% if selectedContentLink == "login" %}class="selectedContentLink{% endif %}" contentType="login">Login</p>
                 <p {% if selectedContentLink == "registration" %}class="selectedContentLink{% endif %}" contentType="registration">Register</p>
             </div> 
