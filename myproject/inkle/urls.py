@@ -72,7 +72,6 @@ urlpatterns = patterns(
     (r"^removeFromBlot/$", "remove_from_blot_view"),
     (r"^addToBlot/$", "add_to_blot_view"),
     
-    
     (r"^joinNetwork/$", "join_network_view"),
     (r"^leaveNetwork/$", "leave_network_view"),
 

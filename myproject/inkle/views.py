@@ -2019,6 +2019,9 @@ def verify_email_view(request, email = None, verification_hash = None):
     else:
         raise Http404()
 
+    # Send the welcome email
+    send_welcome_email(member)
+
     return render_to_response( "login.html",
         { "selectedContentLink" : "registration", "registrationContent" : "verifyEmail", "m" : member },
         context_instance = RequestContext(request) )

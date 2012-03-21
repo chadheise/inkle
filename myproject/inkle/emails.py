@@ -31,7 +31,7 @@ def send_email_verification_email(member):
     to_addresses = [member.email]
 
     # Specify the subject
-    subject = "Welcome to Inkle!"
+    subject = "Verify your Inkle email address"
     
     # Specify the text body
     body_text = """Hi %s,
@@ -51,9 +51,36 @@ def send_email_verification_email(member):
         <body>
             <p>Hi %s,</p>
 
-            <p>Welcome to Inkle! Click <a href="http://www.inkleit.com/verifyEmail/%s/%s/">here</a> to verify your email address and start redefining how you plan your nights.</p>
+            <p>Click <a href="http://www.inkleit.com/verifyEmail/%s/%s/">here</a> to verify your email address and start redefining how you plan your nights.</p>
 
-            <p>Here are some suggestions to get you started:</p>
+            <p>Thanks,<br />
+            The Inkle team</p>
+        </body>
+    </html>""" % (member.first_name, member.email, member.verification_hash)
+
+    # Send the email
+    send_email(from_address, to_addresses, subject, body_text, body_html)
+
+
+def send_welcome_email(member):
+    """Sends the welcome email."""
+    # Specify the from address and to addresses
+    from_address = "inkle@inkleit.com"
+    to_addresses = [member.email]
+
+    # Specify the subject
+    subject = "Welcome to Inkle!"
+    
+    # Specify the text body
+    body_text = ""
+    
+    # Specify the HTML body
+    body_html = """<html>
+        <head></head>
+        <body>
+            <p>Hi %s,</p>
+
+            <p>Welcome to Inkle! Here are some suggestions to get you started:</p>
             
             <ol>
                 <li><a href="http://www.inkleit.com/editProfile/information/">Update your profile information</a> to help your friends find you.</li>
@@ -67,7 +94,7 @@ def send_email_verification_email(member):
             <p>Welcome aboard,<br />
             The Inkle team</p>
         </body>
-    </html>""" % (member.first_name, member.email, member.verification_hash)
+    </html>""" % (member.first_name)
 
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)
