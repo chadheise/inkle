@@ -476,6 +476,14 @@ def edit_profile_information_view(request):
         if (not invalid["errors"]):
             phone = data["phone1"] + data["phone2"] + data["phone3"]
             birthday = datetime.date(day = int(data["day"]), month = int(data["month"]), year = int(data["year"]))
+
+            # If the user has not changed their profile picture and they switch their gender, change their profile picture to reflect the correct gender
+            if ((member.changed_image == 0) and (data["gender"] != member.gender)):
+                if (data["gender"] == "Male"):
+                    shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+                else:
+                    shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+
             member.update_profile_information(data["first_name"], data["last_name"], phone, data["street"], data["city"], data["state"], data["zip_code"], birthday, data["gender"])
             member.save()
             return HttpResponse()
