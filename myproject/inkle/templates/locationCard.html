@@ -1,4 +1,4 @@
-{% load clean_url from extraTags %}
+{% load truncate_characters clean_url from extraTags %}
 
 <!-- Location card -->
 <div class="grid_17 alpha omega">
@@ -10,7 +10,7 @@
         <div class="info">
             <div class="infoRow">
                 <!-- Name -->
-                <a class="cardName" href="{{ location.get_absolute_url }}">{{ location.name }}</a>
+                <a class="cardName" href="{{ location.get_absolute_url }}">{{ location.name|truncate_characters:30 }}</a>
             
                 <!-- Contact information -->
                 <div class="contactInfo">
