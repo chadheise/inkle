@@ -1677,31 +1677,26 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
 
 
 def get_member_inklings_view(request):
-    print "a"
     # Get the member who is logged in (or throw a 404 error if their member ID is invalid)
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
         raise Http404()
-    print "a"
 
     # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
     try:
         other_member = Member.active.get(pk = request.POST["other_member_id"])
     except Member.DoesNotExist:
         raise Http404()
-    print "a"
 
     try:
         date = request.POST["date"].split("/")
         date = datetime.date(int(date[2]), int(date[0]), int(date[1]))
     except KeyError:
         raise Http404()
-    print "a"
 
     # Determine the privacy rating for the logged in member and the current member whose page is being viewed
     other_member.privacy = get_privacy(member, other_member)
-    print "a"
 
     inklings = {}
     if (other_member.privacy >= other_member.inklings_privacy):
