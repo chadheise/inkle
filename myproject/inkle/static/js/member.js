@@ -7,6 +7,13 @@ $(document).ready(function() {
         return date = $("#calendar").attr("selectedMonth") + delimiter + $("#calendar").attr("selectedDay") + delimiter + $("#calendar").attr("selectedYear");
     }
 
+    /* Define a startsWith() string function */
+    if(!String.prototype.startsWith) {
+        String.prototype.startsWith = function (str) {
+            return !this.indexOf(str);
+        }
+    }
+
     // Populate the main content with the initially selected main content link
     var contentType = $("#memberContentLinks .selectedContentLink").attr("contentType");
     var date = getSelectedDate("/");
@@ -26,12 +33,17 @@ $(document).ready(function() {
                 if (firstLoad)
                 {
                     loadContentHelper(html, contentType);
-                    if (contentType == "Inklings")  {
-                        $("#calendarContainer").show();
-                    }
-                    else if (contentType == "Place") {
-                        $("#memberPlaceContentLinks").show();
-                        $("#calendarContainer").show();
+                    if (html.startsWith("<div class=\"grid_17 alpha omega\">You do not have") == false)
+                    {
+                        if (contentType == "Inklings")
+                        {
+                            $("#calendarContainer").show();
+                        }
+                        else if (contentType == "Place")
+                        {
+                            $("#memberPlaceContentLinks").show();
+                            $("#calendarContainer").show();
+                        }
                     }
                 }
                 // Otherwise, fade out the current member content and fade the new member content back in
@@ -40,15 +52,18 @@ $(document).ready(function() {
                     if (dontReloadAll)
                     {
                         $("#memberContent").fadeOut("medium", function() {
-                            if (contentType == "Inklings")
+                            if (html.startsWith("<div class=\"grid_17 alpha omega\">You do not have") == false)
                             {
-                                $("#calendarContainer").show();
-                                $(".subsectionContentLinks").hide();
-                            }
-                            else if(contentType == "Place")
-                            {
-                                $("#calendarContainer").show();
-                                $("#memberPlaceContentLinks").show();
+                                if (contentType == "Inklings")
+                                {
+                                    $("#calendarContainer").show();
+                                    $(".subsectionContentLinks").hide();
+                                }
+                                else if(contentType == "Place")
+                                {
+                                    $("#calendarContainer").show();
+                                    $("#memberPlaceContentLinks").show();
+                                }
                             }
                     
                             loadContentHelper(html, contentType);
@@ -59,20 +74,23 @@ $(document).ready(function() {
                     else
                     {
                         $("#allMemberContent").fadeOut("medium", function() {
-                            if (contentType == "Inklings")
+                            if (html.startsWith("<div class=\"grid_17 alpha omega\">You do not have") == false)
                             {
-                                $("#calendarContainer").show();
-                                $(".subsectionContentLinks").hide();
-                            }
-                            else if(contentType == "Place")
-                            {
-                                $("#calendarContainer").show();
-                                $("#memberPlaceContentLinks").show();
-                            }
-                            else
-                            {
-                                $("#calendarContainer").hide();
-                                $(".subsectionContentLinks").hide();
+                                if (contentType == "Inklings")
+                                {
+                                    $("#calendarContainer").show();
+                                    $(".subsectionContentLinks").hide();
+                                }
+                                else if(contentType == "Place")
+                                {
+                                    $("#calendarContainer").show();
+                                    $("#memberPlaceContentLinks").show();
+                                }
+                                else
+                                {
+                                    $("#calendarContainer").hide();
+                                    $(".subsectionContentLinks").hide();
+                                }
                             }
                     
                             loadContentHelper(html, contentType);
