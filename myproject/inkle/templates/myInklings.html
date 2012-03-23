@@ -24,11 +24,13 @@
                     {% endif %}
                 {% endif %}
             {% else %}
-                {% if member.dinner_inkling.member_place %}
-                    <p class="pastInklingText">{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place</p>
-                {% else %}
-                    <p class="pastInklingText">{{ member.dinner_inkling.location.name|default:"" }}</p>
-                {% endif %}
+                <div style="margin-top: 5px;">
+                    {% if member.dinner_inkling.member_place %}
+                        <a class="pastInklingText" href="{{ member.dinner_inkling.member_place.get_absolute_url }}">{{ member.dinner_inkling.member_place.get_full_name }}'s Place</a>
+                    {% else %}
+                        <a class="pastInklingText" href="{{ member.dinner_inkling.location.get_absolute_url }}dinner/{{ member.dinner_inkling.get_date_url }}">{{ member.dinner_inkling.location.name|default:"" }}</a>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
 
@@ -92,11 +94,13 @@
                     {% endif %}
                 {% endif %}
             {% else %}
-                {% if member.pregame_inkling.member_place %}
-                    <p class="pastInklingText">{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place</p>
-                {% else %}
-                    <p class="pastInklingText">{{ member.pregame_inkling.location.name|default:"" }}</p>
-                {% endif %}
+                <div style="margin-top: 5px;">
+                    {% if member.pregame_inkling.member_place %}
+                        <a class="pastInklingText" href="{{ member.pregame_inkling.member_place.get_absolute_url }}">{{ member.pregame_inkling.member_place.get_full_name }}'s Place</a>
+                    {% else %}
+                        <a class="pastInklingText" href="{{ member.pregame_inkling.location.get_absolute_url }}pregame/{{ member.pregame_inkling.get_date_url }}">{{ member.pregame_inkling.location.name|default:"" }}</a>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
 
@@ -160,11 +164,13 @@
                     {% endif %}
                 {% endif %}
             {% else %}
-                {% if member.main_event_inkling.member_place %}
-                    <p class="pastInklingText">{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place</p>
-                {% else %}
-                    <p class="pastInklingText">{{ member.main_event_inkling.location.name|default:"" }}</p>
-                {% endif %}
+                <div style="margin-top: 5px;">
+                    {% if member.main_event_inkling.member_place %}
+                        <a class="pastInklingText" href="{{ member.main_event_inkling.member_place.get_absolute_url }}">{{ member.main_event_inkling.member_place.get_full_name }}'s Place</a>
+                    {% else %}
+                        <a class="pastInklingText" href="{{ member.main_event_inkling.location.get_absolute_url }}mainEvent/{{ member.main_event_inkling.get_date_url }}">{{ member.main_event_inkling.location.name|default:"" }}</a>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
 
