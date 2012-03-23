@@ -7,10 +7,14 @@
             {% if inklings.dinner %}
                 {% if inklings.dinner.location %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ inklings.dinner.location.id }}.jpg" />
-                    <p class="locationName">{{ inklings.dinner.location.name }}</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.dinner.location.get_absolute_url }}dinner/{{ inklings.dinner.get_date_url }}">{{ inklings.dinner.location.name }}</a>
+                    </div>
                 {% else %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ inklings.dinner.member_place.id }}.jpg" />
-                    <p class="locationName">{{ inklings.dinner.member_place.get_full_name }}'s Place</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.dinner.member_place.get_absolute_url }}">{{ inklings.dinner.member_place.get_full_name }}'s Place</a>
+                    </div>
                 {% endif %}
             {% else %}
                 <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/default.jpg" />
@@ -26,10 +30,14 @@
             {% if inklings.pregame %}
                 {% if inklings.pregame.location %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ inklings.pregame.location.id }}.jpg" />
-                    <p class="locationName">{{ inklings.pregame.location.name }}</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.pregame.location.get_absolute_url }}pregame/{{ inklings.pregame.get_date_url }}">{{ inklings.pregame.location.name }}</a>
+                    </div>
                 {% else %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ inklings.pregame.member_place.id }}.jpg" />
-                    <p class="locationName">{{ inklings.pregame.member_place.get_full_name }}'s Place</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.pregame.member_place.get_absolute_url }}">{{ inklings.pregame.member_place.get_full_name }}'s Place</a>
+                    </div>
                 {% endif %}
             {% else %}
                 <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/default.jpg" />
@@ -45,10 +53,14 @@
             {% if inklings.mainEvent %}
                 {% if inklings.mainEvent.location %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ inklings.mainEvent.location.id }}.jpg" />
-                    <p class="locationName">{{ inklings.mainEvent.location.name }}</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.mainEvent.location.get_absolute_url }}mainEvent/{{ inklings.mainEvent.get_date_url }}">{{ inklings.mainEvent.location.name }}</a>
+                    </div>
                 {% else %}
                     <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ inklings.mainEvent.member_place.id }}.jpg" />
-                    <p class="locationName">{{ inklings.mainEvent.member_place.get_full_name }}'s Place</p>
+                    <div style="margin-top: 5px;">
+                        <a class="locationName" href="{{ inklings.mainEvent.member_place.get_absolute_url }}">{{ inklings.mainEvent.member_place.get_full_name }}'s Place</a>
+                    </div>
                 {% endif %}
             {% else %}
                 <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/default.jpg" />
