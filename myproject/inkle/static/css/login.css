@@ -59,10 +59,26 @@ table td
     width: 234px;
 }
 
-table .questionMark
+table .information, table .lock
 {
+    padding-top: 5px;
     width: 20px;
     height: 20px;
+    cursor: pointer;
+}
+
+.registrationFormDialog
+{
+    position: absolute;
+    border: solid 1px black;
+    font-size: 14px;
+    width: 200px;
+    text-align: justify;
+    padding: 5px;
+    background-color: #EEE;
+    border-radius: 3px;
+    border: solid 2px #AAA;
+    display: none;
     cursor: default;
 }
 

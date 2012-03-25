@@ -191,4 +191,35 @@ $(document).ready(function() {
             }
         });
     });
+
+    /* Pop of the correct information dialog when either an information or lock icon is clicked on the registration form */
+    $(".information, .lock").live("click", function() {
+        // Fade in and position invite container
+        var button = $(this).find("img");
+        var buttonOffset = button.offset();
+        var infoDialog = button.next();
+        if (infoDialog.is(":visible"))
+        {
+            infoDialog.fadeOut("medium");
+        }
+        else
+        {
+            $(".registrationFormDialog").fadeOut("medium");
+            infoDialog
+                .css("left", buttonOffset.left - 219)
+                .css("top", buttonOffset.top - 2)
+                .fadeIn("medium");
+        }
+    });
+
+    /* Fades out the registration form information dialogs when a click occurs on an element which is not part of the dialog */
+    $("html").live("click", function(e) {
+        if ($(".registrationFormDialog:visible").length != 0)
+        {
+            if ((!($(e.target).hasClass("information"))) && (!($(e.target).hasClass("lock"))) && (!($(e.target).parent().hasClass("information"))) && (!($(e.target).parent().hasClass("lock"))))
+            {
+                $(".registrationFormDialog").fadeOut("medium");
+            }
+        }
+    });
 });
