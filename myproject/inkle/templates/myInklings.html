@@ -5,6 +5,11 @@
             <!-- Inkling category -->
             <p class="inklingTitle">Dinner</p>
 
+            {% if not pastDate %}
+                <!-- Inkling invitation button -->
+                <button class="button inklingInviteButton {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}" inklingType="dinner">Invite</button>
+            {% endif %}
+
             <!-- Inkling location image -->
             {% if member.dinner_inkling.member_place %}
                 <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
@@ -40,9 +45,6 @@
     
     <!-- Invitations -->
     {% if not pastDate %}
-        <!-- Inkling invitation button -->
-        <button class="button inklingInviteButton {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}">Invite</button>
-
         <!-- Inkling invitation container -->
         <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.dinner_inkling.id }}">
             <!-- Invitees -->
@@ -74,6 +76,11 @@
         <div>
             <!-- Inkling category -->
             <p class="inklingTitle">Pregame</p>
+
+            {% if not pastDate %}
+                <!-- Inkling invitation button -->
+                <button class="button inklingInviteButton {% if not member.pregame_inkling or member.pregame_inkling.member_place and member.pregame_inkling.member_place != member %}hidden{% endif %}" inklingType="pregame">Invite</button>
+            {% endif %}
 
             <!-- Inkling location image -->
             {% if member.pregame_inkling.member_place %}
@@ -110,9 +117,6 @@
 
     <!-- Invitations -->
     {% if not pastDate %}
-        <!-- Inkling invitation button -->
-        <button class="button inklingInviteButton {% if not member.pregame_inkling or member.pregame_inkling.member_place and member.pregame_inkling.member_place != member %}hidden{% endif %}">Invite</button>
-
         <!-- Inkling invitation container -->
         <div id="pregameInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.pregame_inkling.id }}">
             <!-- Invitees -->
@@ -144,6 +148,11 @@
         <div>
             <!-- Inkling category -->
             <p class="inklingTitle">Main Event</p>
+
+            {% if not pastDate %}
+                <!-- Inkling invitation button -->
+                <button class="button inklingInviteButton {% if not member.main_event_inkling or member.main_event_inkling.member_place and member.main_event_inkling.member_place != member %}hidden{% endif %}" inklingType="mainEvent">Invite</button>
+            {% endif %}
 
             <!-- Inkling location image -->
             {% if member.main_event_inkling.member_place %}
@@ -180,9 +189,6 @@
     
     <!-- Invitations -->
     {% if not pastDate %}
-        <!-- Inkling invitation button -->
-        <button class="button inklingInviteButton {% if not member.main_event_inkling or member.main_event_inkling.member_place and member.main_event_inkling.member_place != member %}hidden{% endif %}">Invite</button>
-
         <!-- Inkling invitation container -->
         <div id="mainEventInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.main_event_inkling.id }}">
             <!-- Invitees -->
