@@ -19,7 +19,12 @@
         <tr>
             <th><label for="registrationFirstName">First name:</label></th>
             <td><input id="registrationFirstName" class="{% if registrationInvalid.first_name %}invalid{% endif %}" type="text" maxlength="30" value="{{ registrationData.first_name }}" /></td>
-            <td class="questionMark" title="Inkle connects you with your friends and the best way to do this is by using your real name."><p>?</p></td>
+            <td class="information">
+                <img src="{{ STATIC_URL }}/media/images/main/information.png" />
+                <div class="registrationFormDialog">
+                    Inkle allows you to connect with your friends. The best way to do this is by using your real name, not usernames or pseudonyms.
+                </div>
+            </td>
         </tr>
 
         <!-- Last name -->
@@ -32,7 +37,12 @@
         <tr>
             <th><label for="registrationEmail">Email:</label></th>
             <td><input id="registrationEmail" class="{% if registrationInvalid.email %}invalid{% endif %}" type="text" maxlength="50" value="{{ registrationData.email }}" /></td>
-            <td class="questionMark" title="Your email is safe with us! It will be your username and will be our way of communicating with you. We promise to never share it with anyone!"><p>?</p></td>
+            <td class="lock">
+                <img src="{{ STATIC_URL }}/media/images/main/lock.png" />
+                <div class="registrationFormDialog">
+                    We promise to never share your email address with anyone! It will only be used to log in and to receive optional notifications from Inkle.
+                </div>
+            </td>
         </tr>
 
         <!-- Confirm email -->
@@ -45,6 +55,12 @@
         <tr>
             <th><label for="registrationPassword">Password:</label></th>
             <td><input id="registrationPassword" class="{% if registrationInvalid.password %}invalid{% endif %}" type="password" maxlength="100" value="{{ registrationData.password }}" /></td>
+            <td class="information">
+                <img src="{{ STATIC_URL }}/media/images/main/information.png" />
+                <div class="registrationFormDialog">
+                    Your password must contain at least eight characters.
+                </div>
+            </td>
         </tr>
 
         <!-- Confirm password -->
@@ -76,7 +92,12 @@
                     {% endfor %}
                 </select>
             </td>
-            <td class="questionMark" title="Everyone must be at least 16 years old to use our site. Your birthday information can be easily hidden once you join our site."><p>?</p></td>
+            <td class="information">
+                <img src="{{ STATIC_URL }}/media/images/main/information.png" />
+                <div class="registrationFormDialog">
+                    You must be at least 16 years old to use Inkle. Your birthday information can be hidden once you join.
+                </div>
+            </td>
         </tr>
 
         <!-- Gender -->
@@ -88,6 +109,12 @@
                     <option value="Male" {% if registrationData.gender == "Male" %}selected{% endif %}>Male</option>
                     <option value="Female" {% if registrationData.gender == "Female" %}selected{% endif %}>Female</option>
                 </select>
+            </td>
+            <td class="information">
+                <img src="{{ STATIC_URL }}/media/images/main/information.png" />
+                <div class="registrationFormDialog">
+                    You gender will make it that much easier for other members to find you.
+                </div>
             </td>
         </tr>
 
