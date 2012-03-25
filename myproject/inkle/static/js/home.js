@@ -319,7 +319,7 @@ $(document).ready(function() {
                 }
                 
                 var inviteButton = inklingElement.next();
-                var inviteContainer = inviteButton.next();
+                var inviteContainer = $("#" + inviteButton.attr("inklingType") + "InklingInviteContainer");
                 inviteContainer.attr("inklingID", inklingID);
                 inviteButton.fadeIn("medium");
 
@@ -481,15 +481,27 @@ $(document).ready(function() {
 
     /* Fades the inkling invite container in and out */
     $(".inklingInviteButton").live("click", function() {
-        var inviteContainer = $(this).next();
+        var inklingType = $(this).attr("inklingType");
+        var inviteContainer = $("#" + inklingType + "InklingInviteContainer");
+
+        // Fade out invite container if it is currently visible
         if (inviteContainer.is(":visible"))
         {
             inviteContainer.fadeOut("medium");
         }
+
+        // Fade in invite container if it is not currently visible
         else
         {
+            // Fade out other invite containers
             $(".inklingInviteContainer").fadeOut("medium");
-            inviteContainer.fadeIn("medium");
+
+            // Fade in and position invite container
+            var inklingImageOffset = $(this).next().offset();
+            inviteContainer
+                .css("left", inklingImageOffset.left)
+                .css("top", inklingImageOffset.top)
+                .fadeIn("medium");
         }
     });
 
@@ -534,8 +546,8 @@ $(document).ready(function() {
                         inviteContainer.find("textarea").val("Send a message with this invitation").addClass("emptyInput");
                         var inviteConfirmation = inviteContainer.siblings(".inklingInviteConfirmation");
                         inviteConfirmation
-                                .css("left", inviteContainerOffset.left + 12)
-                                .css("top", (inviteContainerOffset.top))
+                                .css("left", inviteContainerOffset.left)
+                                .css("top", inviteContainerOffset.top)
                                 .html("Invitations are being sent...")
                                 .fadeIn("medium");
 

@@ -17,20 +17,21 @@
 
 .inklingTitle
 {
-    margin: -7px 0px 3px 0px;
+    margin: -7px 0px 3px 24%;
     font-size: 24px;
     text-align: center;
     font-weight: bold;
     color: #288D42;
+    width: 52%;
+    float: left;
 }
 
 .inklingInviteButton
 {
     background-color: #1B5898;
     border-color: #2A4360;
-    position: relative;
-    top: -350px;
-    left: 106px;
+    float: left;
+    margin: -4px 0px 0px 8px;
 }
 
 .inklingInviteButton:hover
@@ -89,20 +90,18 @@
 .inklingInviteContainer
 {
     text-align: left;
-    position: relative;
+    position: absolute;
     border: solid 2px #1B5898;
     background-color: #ABC2E5;
     width: 225px;
     padding: 5px 10px 10px 10px;
-    left: 12px;
-    top: -344px;
     display: none;
 }
 
 .inklingInviteConfirmation
 {
-    position: absolute;
     text-align: left;
+    position: absolute;
     border: solid 2px #1B5898;
     background-color: #ABC2E5;
     width: 225px;
