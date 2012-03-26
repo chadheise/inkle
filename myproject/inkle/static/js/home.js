@@ -254,11 +254,11 @@ $(document).ready(function() {
                         $(this).fadeIn("medium");
                     });
 
-                    var inviteButton = thisElement.parents(".inkling").next();
+                    var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
                     inviteButton.fadeOut("medium");
 
                     // Set attribute of invite container
-                    inviteButton.next().attr("inklingID", "");
+                    $("#" + inklingType + "InklingInviteContainer").attr("inklingID", "");
                 },
                 error: function(jqXHR, textStatus, error) {
                     if ($("body").attr("debug") == "True")
@@ -318,10 +318,12 @@ $(document).ready(function() {
                     });
                 }
                 
-                var inviteButton = inklingElement.next();
-                var inviteContainer = $("#" + inviteButton.attr("inklingType") + "InklingInviteContainer");
-                inviteContainer.attr("inklingID", inklingID);
+                // Fade in the invite button
+                var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
                 inviteButton.fadeIn("medium");
+
+                // Set attribute of invite container
+                $("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);
 
                 // Fade out the inkling's suggestions
                 inklingElement.find(".inklingSuggestions").fadeOut("medium", function() {
