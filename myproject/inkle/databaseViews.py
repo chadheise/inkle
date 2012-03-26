@@ -549,7 +549,8 @@ def send_invitation_response_email_view(request):
     try:
         invitation = Invitation.objects.get(pk = request.POST["invitationID"])
         response = request.POST["response"]
-        send_invitation_response_email(invitation.from_member, to_member, invitation.inkling, response)
+        if (invitation.from_member.response_email_preference):
+            send_invitation_response_email(invitation.from_member, to_member, invitation.inkling, response)
     except:
         raise Http404()
 

@@ -633,9 +633,10 @@ def edit_profile_email_preferences_view(request):
         requested_preference = (request.POST["requestedPreference"] == "true")
         accepted_preference = (request.POST["acceptedPreference"] == "true")
         invited_preference = (request.POST["invitedPreference"] == "true")
+        response_preference = (request.POST["invitationResponsePreference"] == "true")
         general_preference = (request.POST["generalPreference"] == "true")
 
-        member.update_email_preferences(requested_preference, accepted_preference, invited_preference, general_preference)
+        member.update_email_preferences(requested_preference, accepted_preference, invited_preference, response_preference, general_preference)
         member.save()
     except KeyError:
         pass
