@@ -22,6 +22,12 @@
             <td><label for="invitedPreference">Email me when someone invites me to an inkling</label></td>
         </tr>
 
+        <!-- Invitation response -->
+        <tr>
+            <th><input id="invitationResponsePreference" type="checkbox" {% if member.response_email_preference %}checked{% endif %}></th>
+            <td><label for="invitationResponsePreference">Email me when someone responds to one of my inkling invitations</label></td>
+        </tr>
+
         <!-- General -->
         <tr>
             <th><input id="generalPreference" type="checkbox" {% if member.general_email_preference %}checked{% endif %}></th>

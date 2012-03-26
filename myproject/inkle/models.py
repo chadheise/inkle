@@ -240,6 +240,7 @@ class Member(User):
     requested_email_preference = models.BooleanField(default = True)
     accepted_email_preference = models.BooleanField(default = True)
     invited_email_preference = models.BooleanField(default = True)
+    response_email_preference = models.BooleanField(default = True)
     general_email_preference = models.BooleanField(default = True)
     email_format_html = models.BooleanField(default = False)
 
@@ -307,9 +308,10 @@ class Member(User):
         self.place_privacy = place
         self.inklings_privacy = inklings
 
-    def update_email_preferences(self, requested, accepted, invited, general):
+    def update_email_preferences(self, requested, accepted, invited, response, general):
         """Updates the current member's email preferences."""
         self.requested_email_preference = requested
         self.accepted_email_preference = accepted
         self.invited_email_preference = invited
+        self.response_email_preference = response
         self.general_email_preference = general
