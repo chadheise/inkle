@@ -193,9 +193,9 @@ $(document).ready(function() {
     });
 
     /* Pop of the correct information dialog when either an information or lock icon is clicked on the registration form */
-    $(".information, .lock").live("click", function() {
+    $(".information img, .lock img").live("click", function(e) {
         // Fade in and position invite container
-        var button = $(this).find("img");
+        var button = $(this);
         var buttonOffset = button.offset();
         var infoDialog = button.next();
         if (infoDialog.is(":visible"))

@@ -64,6 +64,10 @@ table .information, table .lock
     padding-top: 5px;
     width: 20px;
     height: 20px;
+}
+
+table .information img, table .lock img
+{
     cursor: pointer;
 }
 
@@ -75,9 +79,9 @@ table .information, table .lock
     width: 200px;
     text-align: justify;
     padding: 5px;
-    background-color: #EEE;
+    background-color: #ABC2E5;
     border-radius: 3px;
-    border: solid 2px #AAA;
+    border: solid 2px #1B5898;
     display: none;
     cursor: default;
 }
