@@ -34,16 +34,7 @@ def send_email_verification_email(member):
     subject = "Verify your Inkle email address"
     
     # Specify the text body
-    body_text = """Hi %s,
-
-        Welcome to Inkle! Click on the following link to verify this email address and complete the registration process:
-
-        http://www.inkleit.com/verifyEmail/%s/%s/
-
-        Once your account is verified, you'll be able to log into Inkle and redefine how you plan your weekends!
-    
-    Welcome aboard,
-    The Inkle team""" % (member.first_name, member.email, member.verification_hash)
+    body_text = ""
     
     # Specify the HTML body
     body_html = """<html>
@@ -52,6 +43,35 @@ def send_email_verification_email(member):
             <p>Hi %s,</p>
 
             <p>Click <a href="http://www.inkleit.com/verifyEmail/%s/%s/">here</a> to verify your email address and start redefining how you plan your nights.</p>
+
+            <p>Thanks,<br />
+            The Inkle team</p>
+        </body>
+    </html>""" % (member.first_name, member.email, member.verification_hash)
+
+    # Send the email
+    send_email(from_address, to_addresses, subject, body_text, body_html)
+
+
+def resend_email_verification_email(member):
+    """Resends the email verification email in case the user never verified their email address."""
+    # Specify the from address and to addresses
+    from_address = "inkle@inkleit.com"
+    to_addresses = [member.email]
+
+    # Specify the subject
+    subject = "Inkle email verification problems"
+    
+    # Specify the text body
+    body_text = ""
+    
+    # Specify the HTML body
+    body_html = """<html>
+        <head></head>
+        <body>
+            <p>Hi %s,</p>
+
+            <p>It seems that you had some trouble verifying your email address and thus couldn't use Inkle. You can still verify your email by clicking <a href="http://www.inkleit.com/verifyEmail/%s/%s/">here</a>. If the link does not work, please let us know by sending us an email at <a id="mailto" href="mailto:support@inkleit.com">support@inkleit.com</a></p>
 
             <p>Thanks,<br />
             The Inkle team</p>
@@ -373,7 +393,7 @@ def send_invitation_response_email(from_member, to_member, inkling, invitation_r
             Type: %s<br />
             Date: %s</p>
 
-            <p>Click <a href="http://www.inkleit.com/%s">here</a> to see who is going to this inkling.</p>
+            <p>Click <a href="http://www.inkleit.com%s">here</a> to see who is going to this inkling.</p>
     
             <p>Thanks,<br />
             The Inkle team</p>
