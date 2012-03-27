@@ -410,7 +410,7 @@ def accept_request_view(request):
     from_member.accepted.add(to_member)
     
     return render_to_response( "requestConfirmation.html",
-        { "member" : from_member, "acceptedOrDeclined" : "declined" },
+        { "member" : from_member, "acceptedOrDeclined" : "accepted" },
         context_instance = RequestContext(request) )
 
 
@@ -1031,9 +1031,10 @@ def send_request_to_follow_email_view(request, to_member_id = None):
 
     # If the from_member has actually requested to follow the to_member, send the request to follow email
     if ((to_member.requested_email_preference) and (to_member.verified) and (from_member in to_member.requested.all())):
-        send_request_to_follow_email(from_member, to_member)
-    else:
-        raise Http404()
+        try:
+            send_request_to_follow_email(from_member, to_member)
+        except:
+            raise Http404()
 
     return HttpResponse()
 
@@ -1054,9 +1055,10 @@ def send_accept_request_email_view(request, from_member_id = None):
 
     # If the from_member is actually following the to_member, send the request accepted email
     if ((from_member.accepted_email_preference) and (from_member.verified) and (from_member in to_member.followers.all())):
-        send_accept_request_email(from_member, to_member)
-    else:
-        raise Http404()
+        try:
+            send_accept_request_email(from_member, to_member)
+        except:
+            raise Http404()
 
     return HttpResponse()
 
