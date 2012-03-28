@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+{% if invitations %}
+    <invitations number={{invitations|length}}>
+    {% for invite in invitations %}
+        <invite>
+            {% if invite.location %}
+                <location>{{ }}</location>
+            {% endif %}
+            {% if invite.description %}
+                <inviter>{{  }}</inviter>
+		    <inviteType>{{}}</inviteType>
+		    <date>{{}}</date>
+		(% endif %}
+		{% if invite.message %}
+			<message>{{}}</message>
+            {% endif %}
+            
+        </invite>
+    {% endfor %}
+    </invitations>
+{% else %}
+    <invitations number=0>
+    </invitations>
+{% endif %}
