@@ -129,8 +129,8 @@ def m_get_others_inklings_view(request):
     #       return HttpResponse("Session not found")
 
     # Get the logged in member
-    #member = Member.active.get(pk = request.session["member_id"])
-    member = Member.active.get(pk = 3)
+    member = Member.active.get(pk = request.session["member_id"])
+    #member = Member.active.get(pk = 3)
 
     # Get the POST data
     if request.method == 'POST':
@@ -160,3 +160,66 @@ def m_get_others_inklings_view(request):
     #dates = [date + datetime.timedelta(days = x) for x in range(5)] 
 
     return render_to_response( "othersInklings.xml", {"locations" : locations}, mimetype='text/xml' )
+
+@csrf_exempt
+def m_notifications_view(request):
+    """Gets the logged in member's request and returns the XML with the notifications."""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        return HttpResponse("Error getting active member.")
+
+    # Get the members who have requested to follow the logged in member
+    #requested_members = member.requested.all()
+
+    # For each requested member, determine their networks, mutual followings, and button list and allow their contact info to be seen
+    #for m in requested_members:
+    #    m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
+    #    m.button_list = [buttonDictionary["reject"], buttonDictionary["accept"]]
+    #    # Determine the privacy rating for the logged in member and the current member
+    #    m.privacy = get_privacy(member, m)
+        
+    return render_to_response( "notifications.html",
+        { "member" : member, "requestedMembers" : requested_members },
+        context_instance = RequestContext(request) )
+
+#@csrf_exempt
+#def invitation_response_view(request):
+#    """Responds to the current invitation."""
+#    # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
+#    try:
+#        member = Member.active.get(pk = request.session["member_id"])
+#    except:
+#        raise Http404()
+#
+#    # Get the invitation which is being responded to (or raise a 404 error if the invitation ID is invalid)
+#    try:
+#        invitation = member.invitations.get(pk = request.POST["invitationID"])
+#        response = request.POST["response"]
+#    except:
+#       raise Http404()
+#
+#    # Make sure the invitation is actually in the logged in member's invitation list
+#   if (invitation not in member.invitations.all()):
+#        raise Http404()
+#
+#    # Update the logged in member's inkling if they accepted the current invitation
+#    if (response == "accepted"):
+#        # See if the logged in member already has an inkling for the location/date combination
+#        try:
+#            conflicting_inkling = member.inklings.get(category = invitation.inkling.category, date = invitation.inkling.date)
+#            if (conflicting_inkling != invitation.inkling):
+#                remove_inkling(member, conflicting_inkling)
+#        except Inkling.DoesNotExist:
+#            pass
+#
+#        # Add the inkling to the logged in member's inklings list
+#        member.inklings.add(invitation.inkling)
+#
+#    # Remove the invitation from the logged in member's invitations
+#    member.invitations.remove(invitation)
+#
+#    return render_to_response( "invitationConfirmation.html",
+#        { "invitation" : invitation, "response" : response },
+#        context_instance = RequestContext(request) )
