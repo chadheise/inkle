@@ -3,6 +3,7 @@
 <invitations number={{member.invitations.all|length}}>
 {% for invitation in member.invitations.all %}
     <invitation>
+        <id>{{ invitation.id }}</id>
         <location>
             {% if invitation.inkling.member_place %}
                 {{ invitation.inkling.member_place.get_full_name }}'s Place
