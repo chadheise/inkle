@@ -21,7 +21,11 @@
         <!-- People select -->
         <select id="locationBoardPeopleSelect" class="locationBoardSelect" style="display: inline-block; margin-right: 30px; width: 300px;">
             <optgroup label="Blots">
-                <option people="blots" selected="selected">All blots</option>
+                {% if member.networks.all %}
+                    <option people="blots">All blots</option>
+                {% else %}
+                    <option people="blots" selected="selected">All blots</option>
+                {% endif %}
                 {% for blot in member.blots.all %}
                     <option blotID="{{ blot.id }}">{{ blot.name }}</option>
                 {% endfor %}
@@ -30,7 +34,11 @@
             {% if member.networks.all %}
                 <optgroup label="Networks">
                     {% for network in member.networks.all %}
-                        <option networkID="{{ network.id }}">{{ network.name }}</option>
+                        {% if forloop.counter == 1 %}
+                            <option networkID="{{ network.id }}" selected="selected">{{ network.name }}</option>
+                        {% else %}    
+                            <option networkID="{{ network.id }}">{{ network.name }}</option>
+                        {% endif %}
                     {% endfor %}
                 </optgroup>
             {% endif %}
