@@ -179,42 +179,57 @@ def m_get_invitations_view(request):
     
     return render_to_response( "invitations.xml", {"member" : member, "numInvitations" : numInvitations}, mimetype='text/xml' )  
 
-#@csrf_exempt
-#def invitation_response_view(request):
-#    """Responds to the current invitation."""
-#    # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
-#    try:
-#        member = Member.active.get(pk = request.session["member_id"])
-#    except:
-#        raise Http404()
-#
-#    # Get the invitation which is being responded to (or raise a 404 error if the invitation ID is invalid)
-#    try:
-#        invitation = member.invitations.get(pk = request.POST["invitationID"])
-#        response = request.POST["response"]
-#    except:
-#       raise Http404()
-#
-#    # Make sure the invitation is actually in the logged in member's invitation list
-#   if (invitation not in member.invitations.all()):
-#        raise Http404()
-#
-#    # Update the logged in member's inkling if they accepted the current invitation
-#    if (response == "accepted"):
-#        # See if the logged in member already has an inkling for the location/date combination
-#        try:
-#            conflicting_inkling = member.inklings.get(category = invitation.inkling.category, date = invitation.inkling.date)
-#            if (conflicting_inkling != invitation.inkling):
-#                remove_inkling(member, conflicting_inkling)
-#        except Inkling.DoesNotExist:
-#            pass
-#
-#        # Add the inkling to the logged in member's inklings list
-#        member.inklings.add(invitation.inkling)
-#
-#    # Remove the invitation from the logged in member's invitations
-#    member.invitations.remove(invitation)
-#
-#    return render_to_response( "invitationConfirmation.html",
-#        { "invitation" : invitation, "response" : response },
-#        context_instance = RequestContext(request) )
+@csrf_exempt
+def m_invitation_response_view(request):
+    """Responds to the current invitation."""
+    return HttpResponse("Called correct view.")
+    # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        return HttpResponse("Error getting active member.")
+
+
+    #Get the POST data
+    if request.method == 'POST':
+        try:
+            postXML = request.POST['xml']
+        except Exception as e:
+            return HttpResponse("copy error: " + type(e).__name__ + " - " + e.message)
+        try:
+            postDom = parseString(postXML)
+        except Exception as e:
+            return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
+        try:
+            invitationID = stripTag( postDom.getElementsByTagName("id")[0].toxml() )
+            response = stripTag( postDom.getElementsByTagName("response")[0].toxml() )
+        except Exception as e:
+            return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
+
+    # Get the invitation which is being responded to (or raise a 404 error if the invitation ID is invalid)
+    try:
+        invitation = member.invitations.get(pk = invitationID)
+    except:
+        return HttpResponse("Error: Could not get invitation object")
+
+    # Make sure the invitation is actually in the logged in member's invitation list
+    if (invitation not in member.invitations.all()):
+        return HttpResponse("Error: Invitation does not belong to logged in member")
+
+    # Update the logged in member's inkling if they accepted the current invitation
+    if (response == "accepted"):
+        # See if the logged in member already has an inkling for the location/date combination
+        try:
+            conflicting_inkling = member.inklings.get(category = invitation.inkling.category, date = invitation.inkling.date)
+            if (conflicting_inkling != invitation.inkling):
+                remove_inkling(member, conflicting_inkling)
+        except Inkling.DoesNotExist:
+            pass
+
+        # Add the inkling to the logged in member's inklings list
+        member.inklings.add(invitation.inkling)
+
+    # Remove the invitation from the logged in member's invitations
+    member.invitations.remove(invitation)
+
+    return HttpResponse("completed")
