@@ -162,27 +162,15 @@ def m_get_others_inklings_view(request):
     return render_to_response( "othersInklings.xml", {"locations" : locations}, mimetype='text/xml' )
 
 @csrf_exempt
-def m_notifications_view(request):
+def m_get_invitations_view(request):
     """Gets the logged in member's request and returns the XML with the notifications."""
     # Get the member who is logged in (or redirect them to the login page)
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
         return HttpResponse("Error getting active member.")
-
-    # Get the members who have requested to follow the logged in member
-    #requested_members = member.requested.all()
-
-    # For each requested member, determine their networks, mutual followings, and button list and allow their contact info to be seen
-    #for m in requested_members:
-    #    m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-    #    m.button_list = [buttonDictionary["reject"], buttonDictionary["accept"]]
-    #    # Determine the privacy rating for the logged in member and the current member
-    #    m.privacy = get_privacy(member, m)
-        
-    return render_to_response( "notifications.html",
-        { "member" : member, "requestedMembers" : requested_members },
-        context_instance = RequestContext(request) )
+    
+    return render_to_response( "invitations.xml", {"member" : member}, mimetype='text/xml' )  
 
 #@csrf_exempt
 #def invitation_response_view(request):
