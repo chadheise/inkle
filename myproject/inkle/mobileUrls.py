@@ -11,6 +11,6 @@ urlpatterns = patterns(
     (r"^login/$", "m_login_view"),
     (r"^test/$", "m_test_view"),
     (r"^othersInklings/$", "m_get_others_inklings_view"),
-    (r"^invites/$", "m_notifications_view")),
+    (r"^getInvitations/$", "m_get_invitations_view")),
 
 )
