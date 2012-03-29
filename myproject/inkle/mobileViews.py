@@ -132,6 +132,10 @@ def m_get_others_inklings_view(request):
     member = Member.active.get(pk = request.session["member_id"])
     #member = Member.active.get(pk = 3)
 
+    date = ""
+    people_type = ""
+    people_id = ""
+    inkling_type =""
     # Get the POST data
     if request.method == 'POST':
         try:
@@ -170,7 +174,10 @@ def m_get_invitations_view(request):
     except:
         return HttpResponse("Error getting active member.")
     
-    return render_to_response( "invitations.xml", {"member" : member}, mimetype='text/xml' )  
+    numInvitations = str(len(member.invitations.all()))
+    print numInvitations
+    
+    return render_to_response( "invitations.xml", {"member" : member, "numInvitations" : numInvitations}, mimetype='text/xml' )  
 
 #@csrf_exempt
 #def invitation_response_view(request):

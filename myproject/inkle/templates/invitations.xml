@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<invitations number={{invitation in member.invitations.all|length}}>
+<invitations number={{member.invitations.all|length}}>
 {% for invitation in member.invitations.all %}
     <invitation>
         <location>

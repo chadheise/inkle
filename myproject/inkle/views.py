@@ -1627,6 +1627,7 @@ def get_others_inklings_view(request):
 def get_others_inklings(member, date, people_type, people_id, inkling_type):
     """Returns the others' inklings for the inputted date."""
     # Determine the members whose inklings we are retrieving
+    people = []
     if (people_type == "other"):
         people = member.following.filter(is_active = True)
 
