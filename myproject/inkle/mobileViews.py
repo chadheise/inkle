@@ -234,13 +234,15 @@ def m_invitation_response_view(request):
     return HttpResponse("completed")
 
 @csrf_exempt
-def m_get_blots_networks(request):
+def m_get_people_groups(request, people_type = "blots"):
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
         return HttpResponse("Error getting active member.")
     
-    return render_to_response( "blotsnetworks.xml", {"member" : member}, mimetype='text/xml' )  
+    if people_type == "networks":
+        return render_to_response( "networks.xml", {"member" : member}, mimetype='text/xml' )
+    return render_to_response( "blots.xml", {"member" : member}, mimetype='text/xml' )
 
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):
