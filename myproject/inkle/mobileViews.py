@@ -177,12 +177,11 @@ def m_get_invitations_view(request):
     numInvitations = str(len(member.invitations.all()))
     print numInvitations
     
-    return render_to_response( "invitations.xml", {"member" : member, "numInvitations" : numInvitations}, mimetype='text/xml' )  
+    return render_to_response( "invitations.xml", {"member" : member}, mimetype='text/xml' )  
 
 @csrf_exempt
 def m_invitation_response_view(request):
     """Responds to the current invitation."""
-    return HttpResponse("Called correct view.")
     # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -234,17 +233,26 @@ def m_invitation_response_view(request):
 
     return HttpResponse("completed")
 
-"""@csrf_exempt
-def m_image_location(request, location_type = "location", location_id = None):
-    """Gets an image for a specified location or member place"""
-    response = HttpResponse(mimetype="image/jpg")
-    if location_type == "place":
-        image = Image.open(MEDIA_ROOT + "images/main/man.jpg");
-        image = image.resize((75, 75))
-        image.save(response, "JPG")
-    else:
-        image = Image.open(MEDIA_ROOT + "images/main/woman.jpg");
-        image = image.resize((75, 75))
-        image.save(response, "JPG")
-    return response"""
+@csrf_exempt
+def m_get_blots_networks(request):
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        return HttpResponse("Error getting active member.")
+    
+    return render_to_response( "blotsnetworks.xml", {"member" : member}, mimetype='text/xml' )  
+
+#@csrf_exempt
+#def m_image_location(request, location_type = "location", location_id = None):
+#    """Gets an image for a specified location or member place"""
+#    response = HttpResponse(mimetype="image/jpg")
+#    if location_type == "place":
+#        image = Image.open(MEDIA_ROOT + "images/main/man.jpg");
+#        image = image.resize((75, 75))
+#        image.save(response, "JPG")
+#    else:
+#        image = Image.open(MEDIA_ROOT + "images/main/woman.jpg");
+#        image = image.resize((75, 75))
+#        image.save(response, "JPG")
+#    return response
     
