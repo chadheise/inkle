@@ -13,5 +13,5 @@ urlpatterns = patterns(
     (r"^othersInklings/$", "m_get_others_inklings_view"),
     (r"^getInvitations/$", "m_get_invitations_view"),
     (r"^invitationResponse/$", "m_invitation_response_view"),
-
+    #(r"^image/location/(?P<location_type>location|place)/(?P<location_id>\d+)/$", "m_image_location"),
 )

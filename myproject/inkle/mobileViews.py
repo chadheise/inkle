@@ -233,3 +233,18 @@ def m_invitation_response_view(request):
     member.invitations.remove(invitation)
 
     return HttpResponse("completed")
+
+"""@csrf_exempt
+def m_image_location(request, location_type = "location", location_id = None):
+    """Gets an image for a specified location or member place"""
+    response = HttpResponse(mimetype="image/jpg")
+    if location_type == "place":
+        image = Image.open(MEDIA_ROOT + "images/main/man.jpg");
+        image = image.resize((75, 75))
+        image.save(response, "JPG")
+    else:
+        image = Image.open(MEDIA_ROOT + "images/main/woman.jpg");
+        image = image.resize((75, 75))
+        image.save(response, "JPG")
+    return response"""
+    
