@@ -3,8 +3,11 @@ from django.contrib.auth.models import User
 
 from hashlib import md5
 from random import randint
+from PIL import Image
 
 import datetime
+
+from myproject.settings import MEDIA_ROOT
 
 class ActiveLocationManager(models.Manager):
     """Manager which returns active location objects."""
@@ -41,6 +44,12 @@ class Location(models.Model):
     def __unicode__(self):
         """String representation for the current location."""
         return "%s (%s, %s)" % (self.name, self.city, self.state)
+
+    def is_image_updated(self):
+        """Returns True if the current location's image has been updated; returns False otherwise."""
+        location_default = Image.open(MEDIA_ROOT + "images/main/location.jpg")
+        current_location = Image.open(MEDIA_ROOT + "/images/locations/" + str(self.id) + ".jpg")
+        return (location_default.histogram() != current_location.histogram())
 
     def get_absolute_url(self, category = None, date = None):
         """Returns the URL for the current location."""
