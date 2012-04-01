@@ -129,9 +129,13 @@ def m_get_others_inklings_view(request):
     #       return HttpResponse("Session not found")
 
     # Get the logged in member
-    #member = Member.active.get(pk = request.session["member_id"])
-    member = Member.active.get(pk = 3)
+    member = Member.active.get(pk = request.session["member_id"])
+    #member = Member.active.get(pk = 3)
 
+    date = ""
+    people_type = ""
+    people_id = ""
+    inkling_type =""
     # Get the POST data
     if request.method == 'POST':
         try:
@@ -160,3 +164,87 @@ def m_get_others_inklings_view(request):
     #dates = [date + datetime.timedelta(days = x) for x in range(5)] 
 
     return render_to_response( "othersInklings.xml", {"locations" : locations}, mimetype='text/xml' )
+
+@csrf_exempt
+def m_get_invitations_view(request):
+    """Gets the logged in member's request and returns the XML with the notifications."""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        return HttpResponse("Error getting active member.")
+    
+    numInvitations = str(len(member.invitations.all()))
+    print numInvitations
+    
+    return render_to_response( "invitations.xml", {"member" : member, "numInvitations" : numInvitations}, mimetype='text/xml' )  
+
+@csrf_exempt
+def m_invitation_response_view(request):
+    """Responds to the current invitation."""
+    return HttpResponse("Called correct view.")
+    # Get the member who is logged in (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        return HttpResponse("Error getting active member.")
+
+
+    #Get the POST data
+    if request.method == 'POST':
+        try:
+            postXML = request.POST['xml']
+        except Exception as e:
+            return HttpResponse("copy error: " + type(e).__name__ + " - " + e.message)
+        try:
+            postDom = parseString(postXML)
+        except Exception as e:
+            return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
+        try:
+            invitationID = stripTag( postDom.getElementsByTagName("id")[0].toxml() )
+            response = stripTag( postDom.getElementsByTagName("response")[0].toxml() )
+        except Exception as e:
+            return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
+
+    # Get the invitation which is being responded to (or raise a 404 error if the invitation ID is invalid)
+    try:
+        invitation = member.invitations.get(pk = invitationID)
+    except:
+        return HttpResponse("Error: Could not get invitation object")
+
+    # Make sure the invitation is actually in the logged in member's invitation list
+    if (invitation not in member.invitations.all()):
+        return HttpResponse("Error: Invitation does not belong to logged in member")
+
+    # Update the logged in member's inkling if they accepted the current invitation
+    if (response == "accepted"):
+        # See if the logged in member already has an inkling for the location/date combination
+        try:
+            conflicting_inkling = member.inklings.get(category = invitation.inkling.category, date = invitation.inkling.date)
+            if (conflicting_inkling != invitation.inkling):
+                remove_inkling(member, conflicting_inkling)
+        except Inkling.DoesNotExist:
+            pass
+
+        # Add the inkling to the logged in member's inklings list
+        member.inklings.add(invitation.inkling)
+
+    # Remove the invitation from the logged in member's invitations
+    member.invitations.remove(invitation)
+
+    return HttpResponse("completed")
+
+"""@csrf_exempt
+def m_image_location(request, location_type = "location", location_id = None):
+    """Gets an image for a specified location or member place"""
+    response = HttpResponse(mimetype="image/jpg")
+    if location_type == "place":
+        image = Image.open(MEDIA_ROOT + "images/main/man.jpg");
+        image = image.resize((75, 75))
+        image.save(response, "JPG")
+    else:
+        image = Image.open(MEDIA_ROOT + "images/main/woman.jpg");
+        image = image.resize((75, 75))
+        image.save(response, "JPG")
+    return response"""
+    

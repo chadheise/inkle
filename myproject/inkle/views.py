@@ -32,8 +32,12 @@ def home_view(request):
     dates = [today + datetime.timedelta(days = x) for x in range(5)] 
 
     # Get others' dinner inklings for today
-    locations = get_others_inklings(member, today, "other", "blots", "all")
-
+    if member.networks:
+        networkList = member.networks.all()
+        locations = get_others_inklings(member, today, "network", networkList[0].id, "all")
+    else:
+        locations = get_others_inklings(member, today, "other", "blots", "all")
+    
     return render_to_response( "home.html",
         { "member" : member, "locations" : locations, "dates" : dates, "selectedDate" : today },
         context_instance = RequestContext(request) )
@@ -1603,6 +1607,15 @@ def get_others_inklings_view(request):
         date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
         people_type = request.POST["peopleType"]
         people_id = request.POST["peopleID"]
+        if people_type == "none": #Set default people_type value
+            people_type = "network" #Will only work if user belongs to at least one network
+        if people_id == "none":
+            networkList = member.networks.all()
+            if networkList[0]: #If the user is in at least one network
+                people_id = networkList[0].id #Set the peopleID to the id of their first network
+            else: # If the user is not in a network
+                people_type = "other" #Default to "All Blots"
+                people_id = "blots" #Default to "All Blots"
         inkling_type = request.POST["inklingType"]
         include_member = request.POST["includeMember"]
     except KeyError:
@@ -1627,6 +1640,7 @@ def get_others_inklings_view(request):
 def get_others_inklings(member, date, people_type, people_id, inkling_type):
     """Returns the others' inklings for the inputted date."""
     # Determine the members whose inklings we are retrieving
+    people = []
     if (people_type == "other"):
         people = member.following.filter(is_active = True)
 
@@ -1637,7 +1651,6 @@ def get_others_inklings(member, date, people_type, people_id, inkling_type):
     elif (people_type == "blot"):
         blot = Blot.objects.get(pk = people_id)
         people = blot.members.filter(is_active = True)
-
     # Get the locations which match the inputted criteria
     locations = []
     for p in people:
