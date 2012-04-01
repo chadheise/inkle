@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
     // Set the "All blots" and "Dinner" options as the selected options
-    $("#locationBoardPeopleSelect option:first").attr("selected", "selected");
+    //$("#locationBoardPeopleSelect option:first").attr("selected", "selected");
 
     /* Returns the currently selected date */
     function getSelectedDate(delimiter)
@@ -101,8 +101,10 @@ $(document).ready(function() {
         }
         else
         {
-            var peopleType = "other";
-            var peopleID = "blots";
+            var peopleType = "none";
+            var peopleID = "none";
+            //var peopleType = "other";
+            //var peopleID = "blots";
             var inklingType = "all";
             var includeMember = "true";
         }
