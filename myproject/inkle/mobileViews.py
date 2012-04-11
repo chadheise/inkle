@@ -244,6 +244,43 @@ def m_get_people_groups(request, people_type = "blots"):
         return render_to_response( "networks.xml", {"member" : member}, mimetype='text/xml' )
     return render_to_response( "blots.xml", {"member" : member}, mimetype='text/xml' )
 
+@csrf_exempt
+def m_get_my_inklings_view(request):
+    """Returns the logged in member's inklings for the inputted date."""
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    #Get the POST data
+    if request.method == 'POST':
+        try:
+            postXML = request.POST['xml']
+        except Exception as e:
+            return HttpResponse("copy error: " + type(e).__name__ + " - " + e.message)
+        try:
+            postDom = parseString(postXML)
+        except Exception as e:
+            return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
+        try:
+            date = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
+            day = date.split('/')[1]
+            month = date.split('/')[0]
+            year = date.split('/')[2]
+            date = datetime.date(year, month, day)
+        except Exception as e:
+            return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
+
+    #pastDate = False
+    #if (date < datetime.date.today()):
+    #    pastDate = True
+
+    # Get the names and images for the logged in member's inkling locations
+    member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
+    
+    return render_to_response( "myInklings.xml", { "member" : member }, mimetype='text/xml' )
+
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):
 #    """Gets an image for a specified location or member place"""
