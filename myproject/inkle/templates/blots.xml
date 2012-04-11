@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<blots number={{member.blots.all|length}}>
+{% for blot in member.blots.all %}
+    <blot>
+        <id>{{ blot.id }}</id>
+        <name>{{ blot.name }}</name>
+    </blot>
+{% empty %}
+    <blots number=0>
+    </blots>
+{% endfor %}
+</blots>
