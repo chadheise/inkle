@@ -265,17 +265,11 @@ def m_get_my_inklings_view(request):
             return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
         try:
             date = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
-            day = date.split('/')[1]
-            month = date.split('/')[0]
-            year = date.split('/')[2]
-            date = datetime.date(year, month, day)
+            date = date.split("/")
+            date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
-
-    #pastDate = False
-    #if (date < datetime.date.today()):
-    #    pastDate = True
-
+    
     # Get the names and images for the logged in member's inkling locations
     member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
     

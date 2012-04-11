@@ -2,18 +2,18 @@
 <inklings>
     <dinner>
         {% if member.dinner_inkling.member_place %}
-            <location>{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place"</location>
+            <location>{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place</location>
             <locationID>{{ member.dinner_inkling.member_place.id }}</locationID>
             <address1></address1>
             <address2></address2>
         {% else %}
             {% if member.dinner_inkling.location %}
-                <location>{{ member.dinner_inkling.location.name }}"</location>
+                <location>{{ member.dinner_inkling.location.name }}</location>
                 <locationID>{{ member.dinner_inkling.location.id }}</location>
                 <address1>{{ member.dinner_inkling.location.street }}</address1>
                 <address2>{{ member.dinner_inkling.location.city }}, {{ member.dinner_inkling.location.state }} {{ member.dinner_inkling.location.zip }} </address2>
             {% else %}
-                <location>"Where are you going?"</locaiton>
+                <location>Where are you going?</locaiton>
                 <locationID></locationID>
                 <address1></address1>
                 <address2></address2>
@@ -22,18 +22,18 @@
     </dinner>
     <pregame>
         {% if member.pregame_inkling.member_place %}
-            <location>{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place"</location>
+            <location>{{ member.pregame_inkling.member_place.first_name }} {{ member.pregame_inkling.member_place.last_name }}'s Place</location>
             <locationID>{{ member.pregame_inkling.member_place.id }}</locationID>
             <address1></address1>
             <address2></address2>
         {% else %}
             {% if member.pregame_inkling.location %}
-                <location>{{ member.pregame_inkling.location.name }}"</location>
+                <location>{{ member.pregame_inkling.location.name }}</location>
                 <locationID>{{ member.pregame_inkling.location.id }}</location>
                 <address1>{{ member.pregame_inkling.location.street }}</address1>
                 <address2>{{ member.pregame_inkling.location.city }}, {{ member.pregame_inkling.location.state }} {{ member.pregame_inkling.location.zip }} </address2>
             {% else %}
-                <location>"Where are you going?"</locaiton>
+                <location>Where are you going?</locaiton>
                 <locationID></locationID>
                 <address1></address1>
                 <address2></address2>
@@ -42,13 +42,13 @@
     </pregame>
     <main_event>
         {% if member.main_event_inkling.member_place %}
-            <location>{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place"</location>
+            <location>{{ member.main_event_inkling.member_place.first_name }} {{ member.main_event_inkling.member_place.last_name }}'s Place</location>
             <locationID>{{ member.main_event_inkling.member_place.id }}</locationID>
             <address1></address1>
             <address2></address2>
         {% else %}
             {% if member.main_event_inkling.location %}
-                <location>{{ member.main_event_inkling.location.name }}"</location>
+                <location>{{ member.main_event_inkling.location.name }}</location>
                 <locationID>{{ member.main_event_inkling.location.id }}</location>
                 <address1>{{ member.main_event_inkling.location.street }}</address1>
                 <address2>{{ member.main_event_inkling.location.city }}, {{ member.main_event_inkling.location.state }} {{ member.main_event_inkling.location.zip }} </address2>
