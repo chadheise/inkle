@@ -1,2 +1,8 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
+body
+{
+    width: 320px;
+    height: 220px;
+    background-color: blue;
+}
