@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- 
+Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="author" content="Chad Heise and Jacob Wenger">
+
+        <!-- CSS files -->
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/setMyInklingsMobile.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/suggestions.css" />
+        
+        <!-- JavaScript files -->
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/js/ajaxPost.js"></script>
+    </head>
+
+    <body>
+        <div class="inklingContainer">
+            <div id="dinnerInkling" class="inkling" inklingType="dinner">
+                <div>
+                    <!-- Inkling category -->
+                    <p class="inklingTitle">Dinner</p>
+
+                    {% if not pastDate %}
+                        <!-- Inkling invitation button -->
+                        <button class="button inklingInviteButton {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}" inklingType="dinner">Invite</button>
+                    {% endif %}
+
+                    <!-- Inkling location image -->
+                    {% if member.dinner_inkling.member_place %}
+                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
+                    {% else %}
+                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
+                    {% endif %}
+
+                    <!-- Inkling location name -->
+                    {% if not pastDate %}
+                        {% if member.dinner_inkling.member_place %}
+                            <input type="text" location="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
+                        {% else %}
+                            {% if member.dinner_inkling.location %}
+                                <input type="text" location="{{ member.dinner_inkling.location.name }}" />
+                            {% else %}
+                                <input type="text" class="emptyInklingInput" location="Where are you going?" />
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <div style="margin-top: 5px;">
+                            {% if member.dinner_inkling.member_place %}
+                                <a class="pastInklingText" href="{{ member.dinner_inkling.member_place.get_absolute_url }}">{{ member.dinner_inkling.member_place.get_full_name }}'s Place</a>
+                            {% else %}
+                                <a class="pastInklingText" href="{{ member.dinner_inkling.location.get_absolute_url }}dinner/{{ member.dinner_inkling.get_date_url }}">{{ member.dinner_inkling.location.name|default:"" }}</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Inkling suggestions -->
+                <div class="suggestions inklingSuggestions"></div>
+            </div>
+
+            <!-- Invitations -->
+            {% if not pastDate %}
+                <!-- Inkling invitation container -->
+                <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.dinner_inkling.id }}">
+                    <!-- Invitees -->
+                    <p class="invitationLabel">Invitees:</p>
+                    <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
+                    <div class="inviteesContainer"></div>
+
+                    <!-- Invitation message -->
+                    <p class="invitationLabel" style="padding-top: 7px;">Message:</p>
+                    <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
+
+                    <!-- Send button -->
+                    <div style="text-align: center;">
+                        <button class="button sendInklingInviteButton">Send</button>
+                    </div>
+                </div>
+
+                <!-- Inkling invitation suggestions -->
+                <div class="suggestions inklingInviteSuggestions"></div>
+
+                <!-- Inkling invitation confirmation -->
+                <div class="inklingInviteConfirmation"></div>
+            {% endif %}
+        </div>
+    </body>
+</html>
