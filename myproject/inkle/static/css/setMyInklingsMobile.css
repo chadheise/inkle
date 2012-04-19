@@ -1,8 +1,80 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
-body
+#main
 {
     width: 320px;
-    height: 220px;
-    background-color: blue;
+    height: 480px;
+    /*background-color: #70A9DB;*/
+    background-color: #6ABB6A;
+    font-style: helvetica;
+}
+
+.emptyInput
+{
+    color: #888;
+}
+
+#inklingInput
+{
+   height: 25px;
+   width: 220px;
+   margin: 5px;
+   font-size: 16px;
+}
+
+#pastInklingText
+{
+    height: 25px;
+    margin: 5px;
+    
+}
+
+#suggestions
+{
+    width: 310px;
+    margin: 5px;
+}
+
+.suggestion
+{
+    height: 55px;
+    width: 155px;
+    background-color: #EEE;
+    border: solid 2px #AAA;
+}
+
+.suggestion img
+{
+    height: 38px;
+    width: 38px;
+    float: left;
+    margin: 8px 3px 0px 3px;
+    border: solid 1px #000;
+}
+
+.suggestionTitle
+{
+    font-style: helvetica;
+    font-size: 12px;
+    color: #1B5898;
+    display: block;
+    float: left;
+    width: 100px;
+    height: 28px;
+    margin: 3px 0px 0px 0px;
+}
+
+.suggestionAddress
+{
+    font-style: helvetica;
+    font-size: 8px;
+    color: black;
+    width: 155px;
+    margin: 3px 0px 0px 0px;
+    display: block;
+}
+
+.suggestionAddress p
+{
+    margin: 0px;
 }
