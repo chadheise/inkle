@@ -276,7 +276,7 @@ def m_get_my_inklings_view(request):
     return render_to_response( "myInklings.xml", { "member" : member }, mimetype='text/xml' )
 
 @csrf_exempt
-def m_set_my_inklings_view(request):
+def m_set_my_inkling_view(request):
     """Returns the logged in member's inklings for the inputted date."""
     # Get the logged in member (or raise a 404 error if the member ID is invalid)
     try:
@@ -300,6 +300,8 @@ def m_set_my_inklings_view(request):
             date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
+    else:
+        date = datetime.date(2012, 4, 19) #Initialize date for testing
 
     pastDate = False
     if (date < datetime.date.today()):
