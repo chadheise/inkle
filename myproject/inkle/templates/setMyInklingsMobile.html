@@ -42,61 +42,54 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
             <!-- Suggestions -->
             <div id="suggestions">
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+                    <div class="suggestionTitle">
+                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                    </div>
                     <div class="suggestionImage">
                         <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
                     </div>
-                    <div class="suggestionText">
-                        <div class="suggestionTitle">
-                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                        </div>
-                        <div class="suggestionAddress">
-                            <p>7329 Mariner Drive</p>
-                            <p>Maple Grove, MN 55311</p>
-                        </div>
+                    <div class="suggestionAddress">
+                        <p>7329 Mariner Drive</p>
+                        <p>Maple Grove, MN 55311</p>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+                    <div class="suggestionTitle">
+                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                    </div>
                     <div class="suggestionImage">
                         <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
                     </div>
-                    <div class="suggestionText">
-                        <div class="suggestionTitle">
-                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                        </div>
-                        <div class="suggestionAddress">
-                            <p>7329 Mariner Drive</p>
-                            <p>Maple Grove, MN 55311</p>
-                        </div>
+                    <div class="suggestionAddress">
+                        <p>7329 Mariner Drive</p>
+                        <p>Maple Grove, MN 55311</p>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+                    <div class="suggestionTitle">
+                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                    </div>
                     <div class="suggestionImage">
                         <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
                     </div>
-                    <div class="suggestionText">
-                        <div class="suggestionTitle">
-                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                        </div>
-                        <div class="suggestionAddress">
-                            <p>7329 Mariner Drive</p>
-                            <p>Maple Grove, MN 55311</p>
-                        </div>
+                    <div class="suggestionAddress">
+                        <p>7329 Mariner Drive</p>
+                        <p>Maple Grove, MN 55311</p>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+                    <div class="suggestionTitle">
+                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                    </div>
                     <div class="suggestionImage">
                         <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
                     </div>
-                    <div class="suggestionText">
-                        <div class="suggestionTitle">
-                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                        </div>
-                        <div class="suggestionAddress">
-                            <p>7329 Mariner Drive</p>
-                            <p>Maple Grove, MN 55311</p>
-                        </div>
+                    <div class="suggestionAddress">
+                        <p>7329 Mariner Drive</p>
+                        <p>Maple Grove, MN 55311</p>
                     </div>
                 </div>
+                
             </div>
             
             <div id="dinnerInkling" class="inkling" inklingType="dinner">
@@ -109,9 +102,9 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
 
                     <!-- Inkling location image -->
                     {% if member.dinner_inkling.member_place %}
-                        <img class="inklingImage" width="960px" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
+                        <img class="inklingImage" width="290px" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
                     {% else %}
-                        <img class="inklingImage"  width="960px" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
+                        <img class="inklingImage"  width="290px" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
                     {% endif %}
 
                     

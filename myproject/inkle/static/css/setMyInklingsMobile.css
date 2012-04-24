@@ -1,10 +1,7 @@
 /* Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved */
 
-#main
+body
 {
-    width: 320px;
-    height: 480px;
-    /*background-color: #70A9DB;*/
     background-color: #6ABB6A;
     font-style: helvetica;
 }
@@ -16,10 +13,10 @@
 
 #inklingInput
 {
-   height: 25px;
-   width: 220px;
-   margin: 5px;
-   font-size: 16px;
+   height: 15px;
+   width: 290px;
+   font-size: 13px;
+   margin: 0px;
 }
 
 #pastInklingText
@@ -31,37 +28,48 @@
 
 #suggestions
 {
-    width: 310px;
-    margin: 5px;
+    width: 296px;
+    margin-bottom: 5px;
 }
 
 .suggestion
 {
-    height: 55px;
-    width: 155px;
+    height: 58px;
+    width: 144px;
     background-color: #EEE;
     border: solid 2px #AAA;
-}
-
-.suggestion img
-{
-    height: 38px;
-    width: 38px;
     float: left;
-    margin: 8px 3px 0px 3px;
-    border: solid 1px #000;
 }
 
 .suggestionTitle
 {
     font-style: helvetica;
-    font-size: 12px;
+    font-size: 10px;
     color: #1B5898;
     display: block;
     float: left;
-    width: 100px;
-    height: 28px;
-    margin: 3px 0px 0px 0px;
+    width: 100%;
+    height: 18px;
+}
+
+.suggestionTitle p
+{
+    margin: 2px 0px 0px 2px;
+}
+
+.suggestionImage
+{
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+
+.suggestion img
+{
+    width: 34px;
+    height: 34px;
+    margin: 2px 2px 2px 2px;
+    border: solid 1px #000;
 }
 
 .suggestionAddress
@@ -69,11 +77,15 @@
     font-style: helvetica;
     font-size: 8px;
     color: black;
-    margin: 3px 0px 0px 0px;
     display: block;
+    float: left;
+    width: 104px;
+    height: 40px;
 }
 
 .suggestionAddress p
 {
-    margin: 0px;
+    margin: 2px 0px 0px 2px;
+    display: block;
+    vertical-align: text-bottom;
 }
