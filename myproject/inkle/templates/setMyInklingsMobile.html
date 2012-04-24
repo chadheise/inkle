@@ -19,7 +19,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
     <body>
         <div id="main">
             <!-- Inkling location name -->
-            {% if not pastDate %}
+            {% if pastDate %} <!-- Should be "if not pastDate" but was changed for testing -->
                 {% if member.dinner_inkling.member_place %}
                     <input id="inklingInput" type="text" value="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
                 {% else %}
@@ -42,35 +42,59 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
             <!-- Suggestions -->
             <div id="suggestions">
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    <p class="suggestionTitle" fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
+                    <div class="suggestionImage">
+                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
+                    </div>
+                    <div class="suggestionText">
+                        <div class="suggestionTitle">
+                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                        </div>
+                        <div class="suggestionAddress">
+                            <p>7329 Mariner Drive</p>
+                            <p>Maple Grove, MN 55311</p>
+                        </div>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    <p class="suggestionTitle" fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
+                    <div class="suggestionImage">
+                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
+                    </div>
+                    <div class="suggestionText">
+                        <div class="suggestionTitle">
+                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                        </div>
+                        <div class="suggestionAddress">
+                            <p>7329 Mariner Drive</p>
+                            <p>Maple Grove, MN 55311</p>
+                        </div>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    <p class="suggestionTitle" fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
+                    <div class="suggestionImage">
+                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
+                    </div>
+                    <div class="suggestionText">
+                        <div class="suggestionTitle">
+                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                        </div>
+                        <div class="suggestionAddress">
+                            <p>7329 Mariner Drive</p>
+                            <p>Maple Grove, MN 55311</p>
+                        </div>
                     </div>
                 </div>
                 <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    <p class="suggestionTitle" fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
+                    <div class="suggestionImage">
+                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
+                    </div>
+                    <div class="suggestionText">
+                        <div class="suggestionTitle">
+                            <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+                        </div>
+                        <div class="suggestionAddress">
+                            <p>7329 Mariner Drive</p>
+                            <p>Maple Grove, MN 55311</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,9 +109,9 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
 
                     <!-- Inkling location image -->
                     {% if member.dinner_inkling.member_place %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
+                        <img class="inklingImage" width="960px" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
                     {% else %}
-                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
+                        <img class="inklingImage"  width="960px" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
                     {% endif %}
 
                     
