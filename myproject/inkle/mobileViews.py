@@ -274,7 +274,7 @@ def m_get_my_inklings_view(request):
     member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
     
     return render_to_response( "myInklings.xml", { "member" : member }, mimetype='text/xml' )
-
+    
 @csrf_exempt
 def m_set_my_inkling_view(request):
     """Returns the logged in member's inklings for the inputted date."""
@@ -295,14 +295,15 @@ def m_set_my_inkling_view(request):
         except Exception as e:
             return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
         try:
-            date = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
-            date = date.split("/")
+            inklingDate = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
+            date = inklingDate.split("/")
             date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
             inklingType = stripTag( postDom.getElementsByTagName("inklingType")[0].toxml() )
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
     else:
-        date = datetime.date(2012, 4, 24) #Initialize date for testing
+        inklingDate = "04/25/2012"
+        date = datetime.date(2012, 4, 25) #Initialize date for testing
         inklingType = "dinner"
 
     pastDate = False
@@ -324,7 +325,7 @@ def m_set_my_inkling_view(request):
     dates = [date + datetime.timedelta(days = x) for x in range(5)] 
     
     return render_to_response( "setMyInklingsMobile.html",
-            { "member" : member, "pastDate" : pastDate, "inklingType" : inklingType},
+            { "member" : member, "pastDate" : pastDate, "inklingType" : inklingType, "inklingDate" : inklingDate},
             context_instance = RequestContext(request) )
 
 @csrf_exempt
@@ -339,14 +340,25 @@ def m_location_suggestions_view(request):
     # Get the POST data
     query = request.POST["query"].strip()
     
+    categories = []
+    
     # Get the location suggestions (and add them to the categories list if there are any)
-    suggestions = locations_search_query(query)[0:4]
+    locations = locations_search_query(query)[0:4]
+    member_place = members_search_query(query, Member.active.filter(pk = request.session["member_id"]))
+    if (member_place):
+        member_place.suggestionType = "members"
+        categories.append((member_place,))
+        locations = locations[0:3]
+    if (locations):
+        locations.suggestionType = "locations"
+        categories.append((locations,))
+    
   
     # Set the number of characters to show for each suggestion
     num_chars = 23
 
     return render_to_response( "inklingSuggestionsMobile.html",
-        { "member" : member, "suggestions" : suggestions, "numChars" : num_chars },
+        { "member" : member, "categories" : categories, "numChars" : num_chars },
         context_instance = RequestContext(request) )
 
 #@csrf_exempt
