@@ -321,14 +321,14 @@ $(document).ready(function() {
                 }
                 
                 // Fade in the invite button
-                var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
+                /*var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
                 inviteButton.fadeIn("medium");
 
                 // Set attribute of invite container
-                $("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);
+                $("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);*/
 
                 // Fade out the inkling's suggestions
-                inklingElement.find(".inklingSuggestions").fadeOut("medium", function() {
+                $(".inklingSuggestions").fadeOut("medium", function() {
                     $(this).children().remove();
                 });
             },

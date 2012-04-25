@@ -11,7 +11,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/setMyInklingsMobile.css" />
         
         <!-- JavaScript files -->
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.7.2.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/js/ajaxPost.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/js/setMyInklingMobile.js"></script>
     </head>
@@ -20,22 +20,22 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
         <div id="main">
             <div class="inkling" inklingType="{{ inklingType }}" inklingDate="{{ inklingDate }}">
                 <!-- Inkling location name -->
-                {% if not pastDate %} <!-- Should be "if not pastDate" but was changed for testing -->
+                {% if not pastDate %}
                     {% if member.inkling.member_place %}
-                        <input id="inklingInput" type="text" value="{{ member.inkling.member_place.first_name }} {{ member.inkling.member_place.last_name }}'s Place" />
+                        <input type="text" location="{{ member.inkling.member_place.first_name }} {{ member.inkling.member_place.last_name }}'s Place" />
                     {% else %}
                         {% if member.inkling.location %}
-                            <input id="inklingInput" type="text" value="{{ member.inkling.location.name }}" />
+                            <input type="text" location="{{ member.inkling.location.name }}" />
                         {% else %}
-                            <input id="inklingInput" type="text" class="emptyInklingInput" value="Where are you going?" />
+                            <input type="text" class="emptyInklingInput" location="Where are you going?" />
                         {% endif %}
                     {% endif %}
                 {% else %}
                     <div>
-                        {% if member.inkling.member_place %}
-                            <a id="pastInklingText" href="{{ member.inkling.member_place.get_absolute_url }}">{{ member.inkling.member_place.get_full_name }}'s Place</a>
+                        {% if member.pregame_inkling.member_place %}
+                            <p class="pastInklingText" href="{{ member.inkling.member_place.get_absolute_url }}">{{ member.inkling.member_place.get_full_name }}'s Place</p>
                         {% else %}
-                            <a id="pastInklingText" href="{{ member.inkling.location.get_absolute_url }}{{ inklingType }}/{{ member.inkling.get_date_url }}">{{ member.inkling.location.name|default:"" }}</a>
+                            <p class="pastInklingText" href="{{ member.inkling.location.get_absolute_url }}{{ inklingType }}/{{ member.inkling.get_date_url }}">{{ member.inkling.location.name|default:"" }}</p>
                         {% endif %}
                     </div>
                 {% endif %}
@@ -50,7 +50,6 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
                 
                 <!-- Suggestions -->
                 <div id="inklingSuggestions">
-                    <p>Suggestions</p>
                 </div>   
             </div>
             

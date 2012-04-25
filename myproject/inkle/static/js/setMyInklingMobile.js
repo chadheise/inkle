@@ -2,10 +2,8 @@
 
 $(document).ready(function() {
 
-    /*var suggestionPosition = $("#inklingImageDiv").position();
-    $("#inklingSuggestions")
-        .css("left", suggestionPosition.left)
-        .css("top", suggestionPosition.top);*/
+    // Set the value of the my inkling inputs
+    $(".inkling input").val($(".inkling input").attr("location"));
 
     /* If an inkling input gains focus and it says "Where are you going?" grayed out, make the text blue and empty it */
     $(".inkling input").live("focus", function() {
@@ -67,14 +65,12 @@ $(document).ready(function() {
         // Otherwise, simply fade out the inkling suggestions
         else
         {
-            //alert("fadeout");
             $("#inklingSuggestions").fadeOut("medium");
         }
     });
 
     /* Updates the inkling when an inkling suggestion is clicked */
     $("#inklingSuggestions .suggestion").live("click", function() {
-        alert("clicked");
         // Get the ID of the selected location
         var locationID = $(this).attr("suggestionID");
 
