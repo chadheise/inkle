@@ -77,9 +77,9 @@ $(document).ready(function() {
         // Get the type of the selected inkling
         var inklingElement = $(this).parents(".inkling");
         var inklingType = inklingElement.attr("inklingType");
-
+        
         // Get the selected date
-        var date = getSelectedDate("/");
+        var date = inklingElement.attr("inklingDate");;
 
         // Create the selected inkling and update its corresponding content
         $.ajax({
@@ -129,7 +129,7 @@ $(document).ready(function() {
     });
 
     $(".inkling input").live("keyup", function(e) {
-
+        
         // Get the current search query and strip its whitespace
         var query = $(this).val().replace(/^\s+|\s+$/g, "");
 
@@ -145,14 +145,13 @@ $(document).ready(function() {
                     $(".selectedSuggestion").trigger("click");
                 }
             }
-
             // Otherwise, if the left or right arrow keys are not pressed, update the search suggestions
             else if ((e.keyCode != 37) && (e.keyCode != 39))
             {
                 $.ajax({
                     type: "POST",
                     url: "/mobile/suggestions/location/",
-                    data: { "type" : "inkling", "query" : query },
+                    data: {"query" : query },
                     success: function(html) {
                         // Update the HTML of the suggestions element
                         $("#inklingSuggestions").html(html);
@@ -163,7 +162,7 @@ $(document).ready(function() {
                     error: function(jqXHR, textStatus, error) {
                         if ($("body").attr("debug") == "True")
                         {
-                            alert("home.js (5): " + error);
+                            alert("setMyInklingMobile.js (5): " + error);
                         }
                     }
                 });

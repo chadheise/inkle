@@ -1,14 +1,29 @@
-{% for s in suggestions %]
-    <div class="suggestion" suggestionID="{{ s.id }}" category="{{ categoryTitle|lower|default:"" }}">
+{% load truncate_characters from extraTags %}
+
+{% for category, categoryTitle in categories %}
+    {% for suggestion in category %}
+    <div class="suggestion" suggestionID="{{ suggestion.id }}" suggestionType="{{ category.suggestionType }}">
         <div class="suggestionTitle">
-            <p fullName="{{ s.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+            {% if suggestion == member %}
+                <p>{{ member.first_name}} {{ member.last_name}}'s Place</p>
+            {% else %}
+                <p>{{ suggestion.name|truncate_characters:numChars }}</p>
+            {% endif %}
         </div>
         <div class="suggestionImage">
             <img src="{{ STATIC_URL }}/media/images/locations/{{s.id}}.jpg" />
         </div>
         <div class="suggestionAddress">
-            <p>7329 Mariner Drive</p>
-            <p>Maple Grove, MN 55311</p>
+            {% if suggestion.street %}
+                <p class="street">{{ suggestion.street }}</p>
+            {% endif %}
+            {% if suggestion.city and suggestion.state %}
+                <p class="cityState">{{ suggestion.city }}, {{ suggestion.state }}</p>
+            {% endif %}
         </div>
     </div>
+    {% endfor %}
+{% empty %}
+    <!-- No suggestions -->
+    <div id="noSuggestions">No results</div>
 {% endfor %}

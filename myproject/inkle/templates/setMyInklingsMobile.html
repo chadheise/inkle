@@ -19,6 +19,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
     <body>
         <div id="main">
             <div class="inkling" inklingType="{{ inklingType }}" inklingDate="{{ inklingDate }}">
+                <p> {{ inklingType }} -- {{ inklingDate }} </p>
                 <!-- Inkling location name -->
                 {% if not pastDate %} <!-- Should be "if not pastDate" but was changed for testing -->
                     {% if member.inkling.member_place %}
