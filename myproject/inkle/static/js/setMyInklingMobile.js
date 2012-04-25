@@ -2,6 +2,11 @@
 
 $(document).ready(function() {
 
+    /*var suggestionPosition = $("#inklingImageDiv").position();
+    $("#inklingSuggestions")
+        .css("left", suggestionPosition.left)
+        .css("top", suggestionPosition.top);*/
+
     /* If an inkling input gains focus and it says "Where are you going?" grayed out, make the text blue and empty it */
     $(".inkling input").live("focus", function() {
         if ($(this).hasClass("emptyInklingInput"))
@@ -62,12 +67,14 @@ $(document).ready(function() {
         // Otherwise, simply fade out the inkling suggestions
         else
         {
+            //alert("fadeout");
             $("#inklingSuggestions").fadeOut("medium");
         }
     });
 
     /* Updates the inkling when an inkling suggestion is clicked */
-    $(".inklingSuggestions .suggestion").live("click", function() {
+    $("#inklingSuggestions .suggestion").live("click", function() {
+        alert("clicked");
         // Get the ID of the selected location
         var locationID = $(this).attr("suggestionID");
 
@@ -173,25 +180,6 @@ $(document).ready(function() {
         else
         {
             $(".inklingSuggestions").fadeOut("medium");
-        }
-    });
-    
-    /* Goes to a member place or location when a location board card is clicked */
-    $(".locationBoardCard").live("click", function() {
-        // Get the selected date and inkling type
-        var date = getSelectedDate("_");
-        var inklingType = $("#othersInklingsContentLinks .selectedSubsectionContentLink").attr("contentType");
-
-        // If the the clicked location is a member place, go the that member's page
-        if ( $(this).attr("type") == "memberPlace" )
-        {
-            window.location = $(this).attr("url") + "place/" + date + "/" + inklingType + "/";
-        }
-
-        // Otherwise, simply go to the location page
-        else
-        {
-            window.location = $(this).attr("url") + inklingType + "/" + date + "/";
         }
     });
 
