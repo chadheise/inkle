@@ -1,0 +1,14 @@
+{% for s in suggestions %]
+    <div class="suggestion" suggestionID="{{ s.id }}" category="{{ categoryTitle|lower|default:"" }}">
+        <div class="suggestionTitle">
+            <p fullName="{{ s.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
+        </div>
+        <div class="suggestionImage">
+            <img src="{{ STATIC_URL }}/media/images/locations/{{s.id}}.jpg" />
+        </div>
+        <div class="suggestionAddress">
+            <p>7329 Mariner Drive</p>
+            <p>Maple Grove, MN 55311</p>
+        </div>
+    </div>
+{% endfor %}

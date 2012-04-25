@@ -298,24 +298,56 @@ def m_set_my_inkling_view(request):
             date = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
             date = date.split("/")
             date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+            inklingType = stripTag( postDom.getElementsByTagName("inklingType")[0].toxml() )
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
     else:
-        date = datetime.date(2012, 4, 19) #Initialize date for testing
+        date = datetime.date(2012, 4, 24) #Initialize date for testing
+        inklingType = "dinner"
 
     pastDate = False
     if (date < datetime.date.today()):
         pastDate = True
 
     # Get the names and images for the logged in member's inkling locations
-    member.dinner_inkling, member.pregame_inkling, member.main_event_inkling = get_inklings(member, date)
+    dinner_inkling, pregame_inkling, main_event_inkling = get_inklings(member, date)
+    if inklingType == "dinner":
+        member.inkling = dinner_inkling
+    elif inklingType == "pregame":
+        member.inkling = pregame_inkling
+    elif inklingType == "main_event":
+        member.inkling = main_event_inkling
+    else:
+       return HttpResponse("Error: Invalid inkling type") 
 
     # Get date objects
     dates = [date + datetime.timedelta(days = x) for x in range(5)] 
     
     return render_to_response( "setMyInklingsMobile.html",
-            { "member" : member, "pastDate" : pastDate},
+            { "member" : member, "pastDate" : pastDate, "inklingType" : inklingType},
             context_instance = RequestContext(request) )
+
+@csrf_exempt
+def m_location_suggestions_view(request):
+    """Returns suggestions for the inputted query."""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+    
+    # Get the POST data
+    query = request.POST["query"].strip()
+    
+    # Get the location suggestions (and add them to the categories list if there are any)
+    suggestions = locations_search_query(query)[0:4]
+  
+    # Set the number of characters to show for each suggestion
+    num_chars = 23
+
+    return render_to_response( "inklingSuggestionsMobile.html",
+        { "member" : member, "suggestions" : suggestions, "numChars" : num_chars },
+        context_instance = RequestContext(request) )
 
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):

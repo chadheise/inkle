@@ -6,9 +6,9 @@ body
     font-style: helvetica;
 }
 
-.emptyInput
+input 
 {
-    color: #888;
+    color: #1B5898;
 }
 
 #inklingInput
@@ -19,6 +19,11 @@ body
    margin: 0px;
 }
 
+.emptyInklingInput
+{
+    color: #888;
+}
+
 #pastInklingText
 {
     height: 25px;
@@ -26,9 +31,25 @@ body
     
 }
 
-#suggestions
+#inklingImageDiv
 {
     width: 296px;
+    height: 120px;
+    margin-bottom: 5px;
+}
+
+#inklingImageDiv img
+{
+    width: 100px;
+    height: 100px;
+    margin: 10px 98px 10px 98px;
+    border: solid 1px black;
+}
+
+#inklingSuggestions
+{
+    width: 296px;
+    height: 120px;
     margin-bottom: 5px;
 }
 
