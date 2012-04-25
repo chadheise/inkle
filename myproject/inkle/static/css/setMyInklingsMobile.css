@@ -11,7 +11,7 @@ input
     color: #1B5898;
 }
 
-#inklingInput
+.inkling input
 {
    height: 15px;
    width: 290px;
