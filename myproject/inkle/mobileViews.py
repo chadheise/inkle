@@ -352,8 +352,7 @@ def m_location_suggestions_view(request):
     if (locations):
         locations.suggestionType = "locations"
         categories.append((locations,))
-    
-  
+
     # Set the number of characters to show for each suggestion
     num_chars = 23
 

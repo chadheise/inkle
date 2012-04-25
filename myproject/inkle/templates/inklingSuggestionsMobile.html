@@ -11,7 +11,7 @@
             {% endif %}
         </div>
         <div class="suggestionImage">
-            <img src="{{ STATIC_URL }}/media/images/locations/{{s.id}}.jpg" />
+            <img src="{{ STATIC_URL }}/media/images/{{ category.suggestionType }}/{{ suggestion.id }}.jpg" />
         </div>
         <div class="suggestionAddress">
             {% if suggestion.street %}
