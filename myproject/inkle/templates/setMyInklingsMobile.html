@@ -9,104 +9,55 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
 
         <!-- CSS files -->
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/setMyInklingsMobile.css" />
-        <!-- <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/suggestions.css" /> -->
         
         <!-- JavaScript files -->
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/js/ajaxPost.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/js/setMyInklingMobile.js"></script>
     </head>
 
     <body>
         <div id="main">
-            <!-- Inkling location name -->
-            {% if pastDate %} <!-- Should be "if not pastDate" but was changed for testing -->
-                {% if member.dinner_inkling.member_place %}
-                    <input id="inklingInput" type="text" value="{{ member.dinner_inkling.member_place.first_name }} {{ member.dinner_inkling.member_place.last_name }}'s Place" />
+            <div class="inkling" inklingType="{{ inklingType }}" inklingDate="{{ inklingDate }}">
+                <!-- Inkling location name -->
+                {% if not pastDate %} <!-- Should be "if not pastDate" but was changed for testing -->
+                    {% if member.inkling.member_place %}
+                        <input id="inklingInput" type="text" value="{{ member.inkling.member_place.first_name }} {{ member.inkling.member_place.last_name }}'s Place" />
+                    {% else %}
+                        {% if member.inkling.location %}
+                            <input id="inklingInput" type="text" value="{{ member.inkling.location.name }}" />
+                        {% else %}
+                            <input id="inklingInput" type="text" class="emptyInklingInput" value="Where are you going?" />
+                        {% endif %}
+                    {% endif %}
                 {% else %}
-                    {% if member.dinner_inkling.location %}
-                        <input id="inklingInput" type="text" value="{{ member.dinner_inkling.location.name }}" />
-                    {% else %}
-                        <input id="inklingInput" type="text" class="emptyInput" value="Where are you going?" />
-                    {% endif %}
+                    <div>
+                        {% if member.inkling.member_place %}
+                            <a id="pastInklingText" href="{{ member.inkling.member_place.get_absolute_url }}">{{ member.inkling.member_place.get_full_name }}'s Place</a>
+                        {% else %}
+                            <a id="pastInklingText" href="{{ member.inkling.location.get_absolute_url }}{{ inklingType }}/{{ member.inkling.get_date_url }}">{{ member.inkling.location.name|default:"" }}</a>
+                        {% endif %}
+                    </div>
                 {% endif %}
-            {% else %}
-                <div>
-                    {% if member.dinner_inkling.member_place %}
-                        <a id="pastInklingText" href="{{ member.dinner_inkling.member_place.get_absolute_url }}">{{ member.dinner_inkling.member_place.get_full_name }}'s Place</a>
+                <!-- Inkling location image -->
+                <div id="inklingImageDiv">
+                    {% if member.inkling.member_place %}
+                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/members/{{ member.inkling.member_place.id|default:"default" }}.jpg" />
                     {% else %}
-                        <a id="pastInklingText" href="{{ member.dinner_inkling.location.get_absolute_url }}dinner/{{ member.dinner_inkling.get_date_url }}">{{ member.dinner_inkling.location.name|default:"" }}</a>
-                    {% endif %}
-                </div>
-            {% endif %}
-            
-            <!-- Suggestions -->
-            <div id="suggestions">
-                <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <div class="suggestionTitle">
-                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    </div>
-                    <div class="suggestionImage">
-                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    </div>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
-                    </div>
-                </div>
-                <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <div class="suggestionTitle">
-                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    </div>
-                    <div class="suggestionImage">
-                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    </div>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
-                    </div>
-                </div>
-                <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <div class="suggestionTitle">
-                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    </div>
-                    <div class="suggestionImage">
-                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    </div>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
-                    </div>
-                </div>
-                <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
-                    <div class="suggestionTitle">
-                        <p fullName="{{ suggestion.name }}"><!-- {{ suggestion.name }} --> South Bend Chocolate Factory</p>
-                    </div>
-                    <div class="suggestionImage">
-                        <img src="{{ STATIC_URL }}/media/images/locations/1.jpg" />
-                    </div>
-                    <div class="suggestionAddress">
-                        <p>7329 Mariner Drive</p>
-                        <p>Maple Grove, MN 55311</p>
-                    </div>
+                        <img class="inklingImage" src="{{ STATIC_URL }}/media/images/locations/{{ member.inkling.location.id|default:"default" }}.jpg" />
+                    {% endif %} 
                 </div>
                 
+                <!-- Suggestions -->
+                <div id="inklingSuggestions">
+                </div>   
             </div>
             
-            <div id="dinnerInkling" class="inkling" inklingType="dinner">
                 <div>
-
                     {% if not pastDate %}
                         <!-- Inkling invitation button -->
-                        <button class="button inklingInviteButton {% if not member.dinner_inkling or member.dinner_inkling.member_place and member.dinner_inkling.member_place != member %}hidden{% endif %}" inklingType="dinner">Invite</button>
+                        <button class="button inklingInviteButton {% if not member.inkling or member.inkling.member_place and member.inkling.member_place != member %}hidden{% endif %}" inklingType="dinner">Invite</button>
                     {% endif %}
-
-                    <!-- Inkling location image -->
-                    {% if member.dinner_inkling.member_place %}
-                        <img class="inklingImage" width="290px" src="{{ STATIC_URL }}/media/images/members/{{ member.dinner_inkling.member_place.id|default:"default" }}.jpg" />
-                    {% else %}
-                        <img class="inklingImage"  width="290px" src="{{ STATIC_URL }}/media/images/locations/{{ member.dinner_inkling.location.id|default:"default" }}.jpg" />
-                    {% endif %}
-
                     
                 </div>
             </div>
@@ -114,7 +65,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
             <!-- Invitations -->
             {% if not pastDate %}
                 <!-- Inkling invitation container -->
-                <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.dinner_inkling.id }}">
+                <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.inkling.id }}">
                     <!-- Invitees -->
                     <p class="invitationLabel">Invitees:</p>
                     <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
