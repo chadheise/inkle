@@ -19,7 +19,7 @@ input
    margin: 0px;
 }
 
-.emptyInklingInput
+.emptyInklingInput, .emptyInput
 {
     color: #888;
 }
@@ -27,9 +27,19 @@ input
 #pastInklingText
 {
     height: 25px;
-    margin: 5px;
-    
+    margin: 5px;  
 }
+
+/*.pastInklingText
+{
+    margin-top: 5px;
+    font-size: 18px;
+    padding: 5px;
+    height: 25px;
+    color: #1B5898;
+    text-align: center;
+    text-decoration: none;
+}*/
 
 #inklingImageDiv
 {
@@ -113,4 +123,46 @@ input
     margin: 2px 0px 0px 2px;
     display: block;
     vertical-align: text-bottom;
+}
+
+.inklingInviteContainer input
+{
+    height: 15px;
+    width: 240px;
+    font-size: 13px;
+    margin: 0px;
+}
+
+.sendInklingInviteButton
+{
+    margin: 0px 0px 10px 0px;
+    color: #FFF;
+    border-style: solid;
+    font-weight: bold;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    background-color: #1B5898;
+    border-color: #2A4360;
+    padding: 2px 5px 2px 5px;
+    width: 40px;
+    height: 18px;
+}
+
+.sendInklingInviteButton
+{
+    border-color: #002C45;
+}
+
+.inklingInviteContainer textarea
+{
+    width: 290px;
+    max-width: 290px;
+    min-width: 290px;
+    height: 36px;
+    font-size: 13px;
 }
