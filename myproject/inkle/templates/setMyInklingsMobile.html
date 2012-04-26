@@ -53,43 +53,29 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
                 </div>   
             </div>
             
-                <div>
-                    {% if not pastDate %}
-                        <!-- Inkling invitation button -->
-                        <button class="button inklingInviteButton {% if not member.inkling or member.inkling.member_place and member.inkling.member_place != member %}hidden{% endif %}" inklingType="dinner">Invite</button>
-                    {% endif %}
-                    
-                </div>
-            <</div>
+            <!-- Inkling invitation container -->
+            <div class="inklingInviteContainer" inklingID="{{ member.inkling.id }}" {% if pastDate %}style="display: none;"{% endif %}>
+                <!-- Invitees -->
+                <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
+                <!-- Send button -->
+                <button class="sendInklingInviteButton">Send</button>
+                
+                <div class="inviteesContainer"></div>
+
+                <!-- Invitation message -->
+                <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
+
+            </div>
+
+            <!-- Inkling invitation suggestions -->
+            <div class="suggestions inklingInviteSuggestions"></div>
+
+            <!-- Inkling invitation confirmation -->
+            <div class="inklingInviteConfirmation"></div>
             
             <p>inklingType={{ inklingType }}</p>
             <p>inklingDate={{ inklingDate }}</p>
             
-            <!-- Invitations -->
-            {% if not pastDate %}
-                <!-- Inkling invitation container -->
-                <div id="dinnerInklingInviteContainer" class="inklingInviteContainer" inklingID="{{ member.inkling.id }}">
-                    <!-- Invitees -->
-                    <p class="invitationLabel">Invitees:</p>
-                    <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
-                    <div class="inviteesContainer"></div>
-
-                    <!-- Invitation message -->
-                    <p class="invitationLabel" style="padding-top: 7px;">Message:</p>
-                    <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
-
-                    <!-- Send button -->
-                    <div style="text-align: center;">
-                        <button class="button sendInklingInviteButton">Send</button>
-                    </div>
-                </div>
-
-                <!-- Inkling invitation suggestions -->
-                <div class="suggestions inklingInviteSuggestions"></div>
-
-                <!-- Inkling invitation confirmation -->
-                <div class="inklingInviteConfirmation"></div>
-            {% endif %}
         </div>
     </body>
 </html>
