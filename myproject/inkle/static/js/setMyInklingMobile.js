@@ -107,20 +107,22 @@ $(document).ready(function() {
                     inklingImage.fadeOut("medium", function() {
                         inklingImage.attr("src", locationImage);
                         inklingImage.fadeIn("medium");
+                        // Fade in invite container if it is not currently visible
+                        $("#inviteContainer").fadeIn("medium");
                     });
                 }
-                
-                // Fade in the invite button
-                ///var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
-                ///inviteButton.fadeIn("medium");
+                else {
+                    // Fade in invite container if it is not currently visible
+                    $("#inviteContainer").fadeIn("medium");
+                }
 
                 // Set attribute of invite container
-                ///$("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);
+                $("#inviteContainer").attr("inklingID", inklingID);
 
                 // Fade out the inkling's suggestions
-                ///$("#inklingSuggestions").fadeOut("medium", function() {
-                ///    $(this).children().remove();
-                ///});
+                $("#inklingSuggestions").fadeOut("medium", function() {
+                    $(this).children().remove();
+                });
             },
             error: function(jqXHR, textStatus, error) {
                 alert(error);
@@ -180,7 +182,7 @@ $(document).ready(function() {
         }
     });
 
-    /* If the inkling invitation input gains focus and it is grayed out, make the text black and empty it */
+    /* If the inkling invitation input gains focus and it is grayed out, make the text blue and empty it */
     $(".inklingInviteContainer .emptyInput").live("focus", function() {
         $(this).val("").removeClass("emptyInput");
     });
@@ -202,33 +204,6 @@ $(document).ready(function() {
             $(this).val("Send a message with this invitation").addClass("emptyInput");
         }
     });
-
-    /* Fades the inkling invite container in and out */
-    $(".inklingInviteButton").live("click", function() {
-        var inklingType = $(this).attr("inklingType");
-        var inviteContainer = $("#" + inklingType + "InklingInviteContainer");
-
-        // Fade out invite container if it is currently visible
-        if (inviteContainer.is(":visible"))
-        {
-            inviteContainer.fadeOut("medium");
-        }
-
-        // Fade in invite container if it is not currently visible
-        else
-        {
-            // Fade out other invite containers
-            $(".inklingInviteContainer").fadeOut("medium");
-
-            // Fade in and position invite container
-            var inklingImageOffset = $(this).next().offset();
-            inviteContainer
-                .css("left", inklingImageOffset.left)
-                .css("top", inklingImageOffset.top)
-                .fadeIn("medium");
-        }
-    });
-
 
     $(".sendInklingInviteButton").live("click", function() {
         var inviteContainer = $(this).parents(".inklingInviteContainer");
