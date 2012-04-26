@@ -54,7 +54,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
             </div>
             
             <!-- Inkling invitation container -->
-            <div class="inklingInviteContainer" inklingID="{{ member.inkling.id }}" {% if pastDate %}style="display: none;"{% endif %}>
+            <div id="inviteContainer" class="inklingInviteContainer" inklingID="{{ member.inkling.id }}" {% if pastDate %}style="display: none;"{% endif %}>
                 <!-- Invitees -->
                 <input class="emptyInput" type="text" maxlength="100" value="Invite people or blots" />
                 <!-- Send button -->
