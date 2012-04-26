@@ -42,7 +42,7 @@ $(document).ready(function() {
                 data: {"inklingType" : inklingType, "date" : date},
                 success: function() {
                     thisElement.attr("location", "");
-                    
+                    $("#inklingSuggestions").fadeOut("medium");
                     inklingElement.find("img").fadeOut("medium", function() {
                         $(this).attr("src", "/static/media/images/locations/default.jpg");
                         $(this).fadeIn("medium");
