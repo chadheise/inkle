@@ -361,7 +361,7 @@ def m_location_suggestions_view(request):
         context_instance = RequestContext(request) )
 
 @csrf_exempt
-def m_people_invite_suggestions_view(request):
+def m_invitee_suggestions_view(request):
     """Returns people invite suggestions for the inputted query."""
     # Get the member who is logged in (or redirect them to the login page)
     try:

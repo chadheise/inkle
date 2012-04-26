@@ -353,7 +353,7 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: "POST",
-                    url: "/mobile/suggestions/peopleInvite/",
+                    url: "/mobile/suggestions/invitee/",
                     data: {"query" : query, "invitees" : invitees },
                     success: function(html) {
                         // Update the HTML of the suggestions element
