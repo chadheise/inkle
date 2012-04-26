@@ -359,7 +359,7 @@ $(document).ready(function() {
                         // Update the HTML of the suggestions element
                         $("#inviteeSuggestions").html(html);
                         
-                        $("#inviteSuggestions").fadeIn("medium");
+                        $("#inviteeSuggestions").fadeIn("medium");
                     },
                     error: function(jqXHR, textStatus, error) {
                         alert(error);

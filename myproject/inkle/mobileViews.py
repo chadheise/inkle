@@ -175,7 +175,6 @@ def m_get_invitations_view(request):
         return HttpResponse("Error getting active member.")
     
     numInvitations = str(len(member.invitations.all()))
-    print numInvitations
     
     return render_to_response( "invitations.xml", {"member" : member}, mimetype='text/xml' )  
 
@@ -418,10 +417,8 @@ def m_invitee_suggestions_view(request):
     # Set the number of characters to show for each suggestion
     num_chars = 20
     
-    print "here"
-    #return HttpResponse("Http Response")
-    return render_to_response( "peopleInviteSuggestionsMobile.html",
-        { "categories" : categories, "queryType" : query_type, "numChars" : num_chars },
+    return render_to_response( "inviteeSuggestionsMobile.html",
+        { "categories" : categories, "numChars" : num_chars },
         context_instance = RequestContext(request) )
 
 @csrf_exempt
