@@ -71,6 +71,7 @@ $(document).ready(function() {
 
     /* Updates the inkling when an inkling suggestion is clicked */
     $("#inklingSuggestions .suggestion").live("click", function() {
+        alert("click registered");
         // Get the ID of the selected location
         var locationID = $(this).attr("suggestionID");
 
@@ -90,6 +91,7 @@ $(document).ready(function() {
             url: "/createInkling/",
             data: {"inklingType" : inklingType, "locationID" : locationID, "locationType" : locationType, "date" : date},
             success: function(locationInfo) {
+                alert("Success after ajax");
                 // Split the location name and image
                 var locationInfo = locationInfo.split("|<|>|");
                 var locationName = locationInfo[0];
@@ -111,18 +113,19 @@ $(document).ready(function() {
                 }
                 
                 // Fade in the invite button
-                var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
-                inviteButton.fadeIn("medium");
+                ///var inviteButton = $(".inklingInviteButton[inklingType='" + inklingType + "']");
+                ///inviteButton.fadeIn("medium");
 
                 // Set attribute of invite container
-                $("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);
+                ///$("#" + inklingType + "InklingInviteContainer").attr("inklingID", inklingID);
 
                 // Fade out the inkling's suggestions
-                $("#inklingSuggestions").fadeOut("medium", function() {
-                    $(this).children().remove();
-                });
+                ///$("#inklingSuggestions").fadeOut("medium", function() {
+                ///    $(this).children().remove();
+                ///});
             },
             error: function(jqXHR, textStatus, error) {
+                alert("Error after ajax");
                 if ($("body").attr("debug") == "True")
                 {
                     alert("home.js (4): " + error);

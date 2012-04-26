@@ -2,7 +2,7 @@
 
 {% for category, categoryTitle in categories %}
     {% for suggestion in category %}
-    <div class="suggestion" suggestionID="{{ suggestion.id }}" suggestionType="{{ category.suggestionType }}">
+    <div class="suggestion" suggestionID="{{ suggestion.id }}" suggestionType="{{ category.suggestionType }}" onclick="">
         <div class="suggestionTitle">
             {% if suggestion == member %}
                 <p>{{ member.first_name}} {{ member.last_name}}'s Place</p>
