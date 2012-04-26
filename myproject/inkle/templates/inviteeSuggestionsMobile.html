@@ -1,21 +1,16 @@
-<p> file loaded </p>
-
 {% load truncate_characters from extraTags %}
 
 {% for category, categoryTitle, suggestionType in categories %}
     <!-- Category title -->
     {% if categoryTitle %}
-        <div class="suggestionCategory">
+        <div class="inviteeSuggestionCategory">
             <p>{{ categoryTitle }}</p>
         </div>
     {% endif %}
       
     <!-- Category suggestions -->
     {% for suggestion in category %}
-        {% if queryType == "search" %}
-            <a href="{{ suggestion.get_absolute_url }}">
-        {% endif %}
-        <div class="suggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+        <div class="inviteeSuggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
             {% if suggestionType == "blots" %}
                 <img src="{{ STATIC_URL }}/media/images/main/blot.jpg" />
             {% else %}
@@ -27,9 +22,6 @@
             {% endif %}
             <p fullName="{{ suggestion.name }}">{{ suggestion.name|truncate_characters:numChars }}</p>
         </div>
-        {% if queryType == "search" %}
-            </a>
-        {% endif %}
     {% endfor %}
 {% empty %}
     <!-- No suggestions -->
