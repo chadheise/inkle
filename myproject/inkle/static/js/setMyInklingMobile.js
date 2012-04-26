@@ -325,9 +325,6 @@ $(document).ready(function() {
     $(".inklingInviteContainer input").live("keyup", function(e) {
         var inputElement = $(this);
         
-        // Store the suggestions element
-        var suggestionsElement = $(this).parent(".inklingInviteContainer").next();
-
         // Get the current search query and strip its whitespace
         var query = $(this).val().replace(/^\s+|\s+$/g, "");
 
@@ -344,85 +341,28 @@ $(document).ready(function() {
                 }
             }
 
-            // If the up arrow key is pressed, scroll through the suggestions
-            else if (e.keyCode == 38)
-            {
-                // If there is no selected suggestion, set the last suggestion as selected
-                if ($(".selectedSuggestion").length == 0)
-                {
-                    $(".suggestion:last").addClass("selectedSuggestion");
-                }
-
-                // Otherwise, set the previous suggestion as selected
-                else
-                {
-                    var selectedSuggestionElement = $(".selectedSuggestion");
-                    var nextSuggestionElement = selectedSuggestionElement.prev(".suggestion");
-                    selectedSuggestionElement.removeClass("selectedSuggestion");
-                    nextSuggestionElement.addClass("selectedSuggestion");
-                    if ($(".selectedSuggestion").length == 0)
-                    {
-                        var nextSuggestionElement = selectedSuggestionElement.prev().prev();
-                        nextSuggestionElement.addClass("selectedSuggestion");
-                    }
-                }
-            }
-       
-            // If the down arrow key is pressed, scroll through the suggestions
-            else if (e.keyCode == 40)
-            {
-                // If there is no selected suggestion, set the first suggestion as selected
-                if ($(".selectedSuggestion").length == 0)
-                {
-                    $(".suggestion:first").addClass("selectedSuggestion");
-                }
-
-                // Otherwise, set the next suggestion as selected
-                else
-                {
-                    var selectedSuggestionElement = $(".selectedSuggestion");
-                    var nextSuggestionElement = selectedSuggestionElement.next(".suggestion");
-                    selectedSuggestionElement.removeClass("selectedSuggestion");
-                    nextSuggestionElement.addClass("selectedSuggestion");
-                    if ($(".selectedSuggestion").length == 0)
-                    {
-                        var nextSuggestionElement = selectedSuggestionElement.next().next();
-                        nextSuggestionElement.addClass("selectedSuggestion");
-                    }
-                }
-            }
-
             // Otherwise, if the left or right arrow keys are not pressed, update the search suggestions
             else if ((e.keyCode != 37) && (e.keyCode != 39))
             {
                 // Get the invited members/blots
-                var inviteesContainer = suggestionsElement.prev().find(".inviteesContainer");
                 var invitees = "";
-                inviteesContainer.find(".invitee").each(function(index) {
+                $("#inviteesContainer").find(".invitee").each(function(index) {
                     invitees += $(this).attr("category") + "|<|>|";
                     invitees += $(this).attr("suggestionID") + "|<|>|";
                 });
 
                 $.ajax({
                     type: "POST",
-                    url: "/suggestions/",
-                    data: { "type" : "inklingInvite", "query" : query, "invitees" : invitees },
+                    url: "/mobile/suggestions/peopleInvite/",
+                    data: {"query" : query, "invitees" : invitees },
                     success: function(html) {
                         // Update the HTML of the suggestions element
-                        suggestionsElement.html(html);
-
-                        // Set the first suggestion as selected
-                        suggestionsElement.find(".suggestion:first").addClass("selectedSuggestion");
-
-                        // Position the suggestions element and fade it in
-                        var inputOffset = inputElement.offset();
-                        var inputHeight = inputElement.height();
-                        suggestionsElement
-                            .css("left", inputOffset.left)
-                            .css("top", (inputOffset.top + inputHeight + 4))
-                            .fadeIn("medium");
+                        $("#inviteeSuggestions").html(html);
+                        
+                        $("#inviteSuggestions").fadeIn("medium");
                     },
                     error: function(jqXHR, textStatus, error) {
+                        alert(error);
                         if ($("body").attr("debug") == "True")
                         {
                             alert("setMyInklingMobile.js (7): " + error);
@@ -435,7 +375,7 @@ $(document).ready(function() {
         // If the search query is empty, fade out the inkling suggestions
         else
         {
-            $(".inklingInviteSuggestions").fadeOut("medium");
+            $(".inviteeSuggestions").fadeOut("medium");
         }
     });
     
