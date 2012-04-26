@@ -330,7 +330,7 @@ def m_set_my_inkling_view(request):
 
 @csrf_exempt
 def m_location_suggestions_view(request):
-    """Returns suggestions for the inputted query."""
+    """Returns location suggestions for the inputted query."""
     # Get the member who is logged in (or redirect them to the login page)
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -358,6 +358,70 @@ def m_location_suggestions_view(request):
 
     return render_to_response( "inklingSuggestionsMobile.html",
         { "member" : member, "categories" : categories, "numChars" : num_chars },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
+def m_people_invite_suggestions_view(request):
+    """Returns people invite suggestions for the inputted query."""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+    
+    # Get the POST data
+    query = request.POST["query"].strip()
+    
+    categories = []
+        
+    # Get the member suggestions (and add them to the categories list if there are any)
+    members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
+    members = list(members)
+
+    # Get the blots
+    blots = blots_search_query(query, member)[0:5]
+    blots = list(blots)
+    
+    # Remove members who have already been invited 
+    try:
+        invites = request.POST["invitees"].split("|<|>|")
+    except KeyError:
+        raise Http404()
+
+    i = 0
+    while (i < len(invites)):
+        if (invites[i] == "people"):
+            try:
+                m = Member.active.get(pk = int(invites[i + 1]))
+                if (m in members):
+                    members.remove(m)
+            except Member.DoesNotExist:
+                pass
+        elif (invites[i] == "blots"):
+            try:
+                blot = Blot.objects.get(pk = int(invites[i + 1]))
+                if (blot in blots):
+                    blots.remove(blot)
+            except Member.DoesNotExist:
+                pass
+        i += 1
+
+    if (members):
+        for m in members:
+            m.name = m.first_name + " " + m.last_name
+        categories.append((members, "People", "members"))
+        
+    # Get the blots suggestions (and add them to the categories list if there are any)
+    if (blots):
+        categories.append((blots, "Blots", "blots"))
+    
+    # Set the number of characters to show for each suggestion
+    num_chars = 20
+    
+    print "here"
+    #return HttpResponse("Http Response")
+    return render_to_response( "peopleInviteSuggestionsMobile.html",
+        { "categories" : categories, "queryType" : query_type, "numChars" : num_chars },
         context_instance = RequestContext(request) )
 
 @csrf_exempt
