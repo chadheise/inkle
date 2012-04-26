@@ -791,8 +791,6 @@ def create_inkling_view(request):
     elif request.POST["locationType"] == "members":
         return HttpResponse(member_place.first_name + " " + member_place.last_name + "'s Place|<|>|" + str(member_place.id) + "|<|>|" + str(inkling.id))
     
-
-
 def remove_inkling_view(request):
     """Removes an inkling from the logged in member's inklings."""
     # Get the logged in member (or raise a 404 error if the member ID is invalid)
@@ -814,7 +812,6 @@ def remove_inkling_view(request):
         pass
 
     return HttpResponse()
-
 
 def remove_inkling(member, inkling):
     """Removes and inkling from the member's inklings."""
