@@ -360,6 +360,83 @@ def m_location_suggestions_view(request):
         { "member" : member, "categories" : categories, "numChars" : num_chars },
         context_instance = RequestContext(request) )
 
+@csrf_exempt
+def m_create_inkling_view(request):
+    """Adds an inkling to the logged in member's inklings."""
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    # Get the POST data
+    try:
+        inkling_type = request.POST["inklingType"]
+        if request.POST["locationType"] == "locations":
+            location = Location.objects.get(pk = request.POST["locationID"])
+        elif request.POST["locationType"] == "members":
+            member_place = Member.active.get(pk = request.POST["locationID"])
+            if member_place != member:
+                raise Http404()
+        date = request.POST["date"].split("/")
+        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+    except KeyError:
+        raise Http404()
+
+    # Get the inkling for the location/type/date combination (or create it if no inkling exists)
+    try:
+        if request.POST["locationType"] == "locations":
+            inkling = Inkling.objects.get(location = location, category = inkling_type, date = date)
+        elif request.POST["locationType"] == "members":
+            inkling = Inkling.objects.get(member_place = member_place, category = inkling_type, date = date)
+    except Inkling.DoesNotExist:
+        if request.POST["locationType"] == "locations":
+            inkling = Inkling(location = location, category = inkling_type, date = date)
+            inkling.save()
+        elif request.POST["locationType"] == "members":
+            inkling =  inkling = Inkling(member_place = member_place, category = inkling_type, date = date)
+            inkling.save()
+        
+    # See if the logged in member already has an inkling for the location/date combination
+    try:
+        conflicting_inkling = member.inklings.get(category = inkling_type, date = date)
+        if (conflicting_inkling != inkling):
+            remove_inkling(member, conflicting_inkling)
+    except Inkling.DoesNotExist:
+        pass
+
+    # Add the inkling to the logged in member's inklings list
+    member.inklings.add(inkling)
+
+    # Return the location's name and image
+    if request.POST["locationType"] == "locations":
+        return HttpResponse(location.name + "|<|>|" + str(location.id) + "|<|>|" + str(inkling.id))
+    elif request.POST["locationType"] == "members":
+        return HttpResponse(member_place.first_name + " " + member_place.last_name + "'s Place|<|>|" + str(member_place.id) + "|<|>|" + str(inkling.id))
+    
+@csrf_exempt
+def m_remove_inkling_view(request):
+    """Removes an inkling from the logged in member's inklings."""
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+    
+    # Get the POST data
+    inkling_type = request.POST["inklingType"]
+    date = request.POST["date"].split("/")
+    date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+    
+    # Get the inkling for the member/type/date combination and remove it if possible
+    try:
+        inkling = member.inklings.get(category = inkling_type, date = date)
+        remove_inkling(member, inkling)
+    except Inkling.DoesNotExist:
+        pass
+
+    return HttpResponse()
+
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):
 #    """Gets an image for a specified location or member place"""
