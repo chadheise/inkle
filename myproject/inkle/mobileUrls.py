@@ -17,7 +17,7 @@ urlpatterns = patterns(
     (r"^getMyInklings/$", "m_get_my_inklings_view"),
     (r"^setMyInkling/$", "m_set_my_inkling_view"),
     (r"^suggestions/location/$", "m_location_suggestions_view"),
-    (r"^suggestions/peopleInvite/$", "m_people_invite_suggestions_view"),
+    (r"^suggestions/invitee/$", "m_invitee_suggestions_view"),
     (r"^createInkling/$", "m_create_inkling_view"),
     (r"^removeInkling/$", "m_remove_inkling_view"),
     #(r"^image/location/(?P<location_type>location|place)/(?P<location_id>\d+)/$", "m_image_location"),
