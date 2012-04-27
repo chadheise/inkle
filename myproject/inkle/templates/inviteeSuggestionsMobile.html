@@ -10,7 +10,7 @@
       
     <!-- Category suggestions -->
     {% for suggestion in category %}
-        <div class="inviteeSuggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}">
+        <div class="inviteeSuggestion" suggestionID="{{ suggestion.id }}" category="{{ categoryTitle|lower|default:"" }}" onclick="">
             {% if suggestionType == "blots" %}
                 <img src="{{ STATIC_URL }}/media/images/main/blot.jpg" />
             {% else %}

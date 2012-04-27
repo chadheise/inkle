@@ -374,11 +374,11 @@ def m_invitee_suggestions_view(request):
     categories = []
         
     # Get the member suggestions (and add them to the categories list if there are any)
-    members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
+    members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:3]
     members = list(members)
 
     # Get the blots
-    blots = blots_search_query(query, member)[0:5]
+    blots = blots_search_query(query, member)[0:3]
     blots = list(blots)
     
     # Remove members who have already been invited 
