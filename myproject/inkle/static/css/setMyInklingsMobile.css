@@ -175,12 +175,17 @@ input
 
 .inviteeSuggestionCategory
 {
-    width: 290px;
+    width: 240px;
+    height: 18px;
+    background-color: #EEE;
+    border: solid 1px #AAA;
+    display: inline;
+    float: left;
 }
 
 .inviteeSuggestion
 {
-    width: 290px;
+    width: 240px;
     height: 34px;
     background-color: #EEE;
     border: solid 1px #AAA;
@@ -197,12 +202,11 @@ input
 
 .inviteeSuggestion p
 {
-    width: 254px;
+    width: 220px;
     height: 30px;
     font-style: helvetica;
     font-size: 10px;
     color: #1B5898;
-    display: block;
     float: left;
     width: 100%;
     height: 18px;
