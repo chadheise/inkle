@@ -312,6 +312,9 @@ $(document).ready(function() {
         // Update the inkling container's input and invitees container
         inklingInviteContainer.find("input").val("");
         $("#inviteesContainer").append("<div class='invitee' category='" + suggestionCategory + "' suggestionID='" + suggestionID + "'><p class='inviteeName'>" + $(this).find("p").attr("fullName") + "</p><div class='removeInvitee'><p class='x'>x</p></div></div>");
+    
+        //Reset the invitee input field
+        $("#inviteContainer input").val("Invite people or blots").addClass("emptyInput");
     });
     
     /* Sets the current suggestion as the selected suggestion when it is hovered over */
