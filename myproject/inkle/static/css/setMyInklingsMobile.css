@@ -275,3 +275,10 @@ input
 {
     margin-top: -3px;
 }
+
+.inklingInviteConfirmation
+{
+    font-style: helvetica;
+    font-size: 18px;
+    color: #1B5898; 
+}
