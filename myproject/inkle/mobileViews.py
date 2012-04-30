@@ -301,8 +301,8 @@ def m_set_my_inkling_view(request):
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
     else:
-        inklingDate = "04/28/2012"
-        date = datetime.date(2012, 4, 28) #Initialize date for testing
+        inklingDate = "04/30/2012"
+        date = datetime.date(2012, 4, 30) #Initialize date for testing
         inklingType = "pregame"
 
     pastDate = False
