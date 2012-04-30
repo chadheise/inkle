@@ -211,9 +211,9 @@ $(document).ready(function() {
     });
 
     $(".sendInklingInviteButton").live("click", function() {
-        var inviteContainer = $(this).parents(".inklingInviteContainer");
-        var inviteesContainer = inviteContainer.find(".inviteesContainer");
-
+        var inviteContainer = $("#inviteContainer");
+        var inviteesContainer = $("#inviteesContainer");
+        
         // Get the invited members/blots
         var invitees = "";
         inviteesContainer.find(".invitee").each(function(index) {
@@ -237,14 +237,13 @@ $(document).ready(function() {
                 var message = messageContainer.val();
             }
 
-            // Update calendar
             $.ajax({
                 type: "POST",
                 url: "/inklingInvitations/",
                 data: { "invitees" : invitees, "message" : message, "inklingID" : inklingID },
                 success: function(invitationID) {
                     var inviteContainerOffset = inviteContainer.offset();
-                    inviteContainer.fadeOut("medium", function() {
+                    /*inviteContainer.fadeOut("medium", function() {*/
                         inviteesContainer.empty();
                         inviteContainer.find("input").val("Invite people or blots").addClass("emptyInput");
                         inviteContainer.find("textarea").val("Send a message with this invitation").addClass("emptyInput");
@@ -269,7 +268,7 @@ $(document).ready(function() {
                             }
                         }
                     });
-                    });
+                    //});
                 },
                 error: function(jqXHR, textStatus, error) {
                     if ($("body").attr("debug") == "True")
