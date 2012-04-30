@@ -239,7 +239,7 @@ $(document).ready(function() {
 
             $.ajax({
                 type: "POST",
-                url: "/inklingInvitations/",
+                url: "/mobile/inklingInvitations/",
                 data: { "invitees" : invitees, "message" : message, "inklingID" : inklingID },
                 success: function(invitationID) {
                     var inviteContainerOffset = inviteContainer.offset();
@@ -256,7 +256,7 @@ $(document).ready(function() {
 
                     $.ajax({
                         type: "POST",
-                        url: "/sendInklingInvitations/",
+                        url: "/mobile/sendInklingInvitations/",
                         data: { "invitees" : invitees, "message" : message, "inklingID" : inklingID, "invitationID" : invitationID },
                         success: function() {
                             inviteConfirmation.html("Invitiations sent!").delay(2000).fadeOut("medium");

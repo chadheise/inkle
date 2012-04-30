@@ -498,6 +498,98 @@ def m_remove_inkling_view(request):
 
     return HttpResponse()
 
+@csrf_exempt
+def m_inkling_invitations_view(request):
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    try:
+        invites = request.POST["invitees"].split("|<|>|")
+        message = request.POST["message"]
+        inkling = Inkling.objects.get(pk = request.POST["inklingID"])
+    except:
+        raise Http404()
+
+    members = []
+    i = 0
+    while (i < len(invites)):
+        if (invites[i] == "people"):
+            try:
+                m = Member.active.get(pk = int(invites[i + 1]))
+                if (((m in member.following.filter(is_active = True)) or (m in member.followers.filter(is_active = True))) and (m not in members)):
+                    members.append(m)
+            except:
+                pass
+        elif (invites[i] == "blots"):
+            try:
+                blot = Blot.objects.get(pk = int(invites[i + 1]))
+                if (blot in member.blots.all()):
+                    for m in blot.members.filter(is_active = True):
+                        if (m not in members):
+                            members.append(m)
+            except:
+                pass
+        i += 1
+
+    invitation = Invitation(description = message, inkling = inkling, from_member = member)
+    invitation.save()
+    for m in members:
+        conflicting_invitation = m.invitations.filter(inkling = inkling, from_member = member)
+        if (conflicting_invitation):
+            m.invitations.remove(conflicting_invitation[0])
+
+        m.invitations.add(invitation)
+
+    return HttpResponse(invitation.id)
+
+@csrf_exempt
+def m_send_inkling_invitations_view(request):
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        raise Http404()
+
+    try:
+        invites = request.POST["invitees"].split("|<|>|")
+        message = request.POST["message"]
+        inkling = Inkling.objects.get(pk = request.POST["inklingID"])
+        invitation = Invitation.objects.get(pk = request.POST["invitationID"])
+    except:
+        raise Http404()
+
+    members = []
+    i = 0
+    while (i < len(invites)):
+        if (invites[i] == "people"):
+            try:
+                m = Member.active.get(pk = int(invites[i + 1]))
+                if (((m in member.following.filter(is_active = True)) or (m in member.followers.filter(is_active = True))) and (m not in members)):
+                    members.append(m)
+            except:
+                pass
+        elif (invites[i] == "blots"):
+            try:
+                blot = Blot.objects.get(pk = int(invites[i + 1]))
+                if (blot in member.blots.all()):
+                    for m in blot.members.filter(is_active = True):
+                        if (m not in members):
+                            members.append(m)
+            except:
+                pass
+        i += 1
+
+    for m in members:
+        if (m.invitations.filter(inkling = inkling, from_member = member)):
+            if (m.invited_email_preference and m.verified):
+                send_inkling_invitation_email(member, m, inkling, message)
+
+    return HttpResponse()
+
+
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):
 #    """Gets an image for a specified location or member place"""
