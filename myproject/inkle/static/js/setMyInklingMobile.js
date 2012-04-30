@@ -5,6 +5,11 @@ $(document).ready(function() {
     // Set the value of the my inkling inputs
     $(".inkling input").val($(".inkling input").attr("location"));
 
+    //Initially hide the invite section if no inkling is set
+    if ( $(".inkling input").hasClass("emptyInklingInput") ) {
+        $("#inviteContainer").hide();
+    }
+
     /* If an inkling input gains focus and it says "Where are you going?" grayed out, make the text blue and empty it */
     $(".inkling input").live("focus", function() {
         if ($(this).hasClass("emptyInklingInput"))
@@ -125,7 +130,6 @@ $(document).ready(function() {
                 });
             },
             error: function(jqXHR, textStatus, error) {
-                alert(error);
                 if ($("body").attr("debug") == "True")
                 {
                     alert("home.js (4): " + error);
@@ -179,6 +183,7 @@ $(document).ready(function() {
         else
         {
             $(".inklingSuggestions").fadeOut("medium");
+            $("#inviteContainer").fadeOut("medium");
         }
     });
 
@@ -278,11 +283,11 @@ $(document).ready(function() {
 
     /* Fades out the invitation container when a click occurs on an element which is not part of an invitation container */
     $("html").live("click", function(e) {
-        if ($(".inklingInviteContainer:visible").length != 0)
+        if ($("#inviteeSuggestions").length != 0)
         {
-            if ((!($(e.target).hasClass("inklingInviteContainer"))) && (!($(e.target).hasClass("inklingInviteSuggestions"))) && (($(e.target).parents(".inklingInviteSuggestions").size() == 0)) && (!($(e.target).hasClass("inklingInviteButton"))) && (($(e.target).parents(".inklingInviteContainer").size() == 0)) && (!($(e.target).parents("html").size() == 0)))
+            if (! ($(e.target).is("#inviteeSuggestions")))
             {
-                $(".inklingInviteContainer").fadeOut("medium");
+                $("#inviteeSuggestions").fadeOut("medium");
             }
         }
     });
@@ -293,7 +298,7 @@ $(document).ready(function() {
     });
 
     /* Add an invitee to the invitees container when an invitation suggestion is clicked */
-    $(".inklingInviteSuggestions .selectedSuggestion").live("click", function() {
+    $(".inviteeSuggestion").live("click", function() {
         // Fade out the invitation suggestions
         $(".inklingInviteSuggestions").fadeOut("medium");
 
@@ -306,7 +311,7 @@ $(document).ready(function() {
 
         // Update the inkling container's input and invitees container
         inklingInviteContainer.find("input").val("");
-        inklingInviteContainer.find(".inviteesContainer").append("<div class='invitee' category='" + suggestionCategory + "' suggestionID='" + suggestionID + "'><p class='inviteeName'>" + $(this).find("p").attr("fullName") + "</p><div class='removeInvitee'><p class='x'>x</p></div></div>");
+        $("#inviteesContainer").append("<div class='invitee' category='" + suggestionCategory + "' suggestionID='" + suggestionID + "'><p class='inviteeName'>" + $(this).find("p").attr("fullName") + "</p><div class='removeInvitee'><p class='x'>x</p></div></div>");
     });
     
     /* Sets the current suggestion as the selected suggestion when it is hovered over */
@@ -375,7 +380,7 @@ $(document).ready(function() {
         // If the search query is empty, fade out the inkling suggestions
         else
         {
-            $(".inviteeSuggestions").fadeOut("medium");
+            $("#inviteeSuggestions").fadeOut("medium");
         }
     });
     
