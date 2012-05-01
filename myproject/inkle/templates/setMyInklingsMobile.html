@@ -33,9 +33,9 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
                 {% else %}
                     <div>
                         {% if member.inkling.member_place %}
-                            <p class="pastInklingText" href="{{ member.inkling.member_place.get_absolute_url }}">{{ member.inkling.member_place.get_full_name }}'s Place</p>
+                            <p class="pastInklingText">{{ member.inkling.member_place.get_full_name }}'s Place</p>
                         {% else %}
-                            <p class="pastInklingText" href="{{ member.inkling.location.get_absolute_url }}{{ inklingType }}/{{ member.inkling.get_date_url }}">{{ member.inkling.location.name|default:"" }}</p>
+                            <p class="pastInklingText">{{ member.inkling.location.name|default:"" }}</p>
                         {% endif %}
                     </div>
                 {% endif %}
@@ -64,7 +64,7 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
                 
                 <!--Invitee list-->
                 <div id="inviteesContainer"></div>
-
+                
                 <!-- Invitation message -->
                 <textarea class="emptyInput" maxlength="200" type="text">Send a message with this invitation</textarea>
 
@@ -72,9 +72,6 @@ Copyright 2012 Chad Heise & Jacob Wenger - All Rights Reserved
 
             <!-- Inkling invitation confirmation -->
             <div class="inklingInviteConfirmation"></div>
-            
-            <p>inklingType={{ inklingType }}</p>
-            <p>inklingDate={{ inklingDate }}</p>
             
         </div>
     </body>
