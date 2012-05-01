@@ -301,8 +301,8 @@ def m_set_my_inkling_view(request):
         except Exception as e:
             return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
     else:
-        inklingDate = "04/30/2012"
-        date = datetime.date(2012, 4, 30) #Initialize date for testing
+        inklingDate = "05/01/2012"
+        date = datetime.date(2012, 5, 1) #Initialize date for testing
         inklingType = "pregame"
 
     pastDate = False
@@ -433,6 +433,8 @@ def m_create_inkling_view(request):
     # Get the POST data
     try:
         inkling_type = request.POST["inklingType"]
+        if inkling_type == "main_event":
+            inkling_type = "mainEvent"
         if request.POST["locationType"] == "locations":
             location = Location.objects.get(pk = request.POST["locationID"])
         elif request.POST["locationType"] == "members":
@@ -486,6 +488,8 @@ def m_remove_inkling_view(request):
     
     # Get the POST data
     inkling_type = request.POST["inklingType"]
+    if inkling_type == "main_event":
+        inkling_type = "mainEvent"
     date = request.POST["date"].split("/")
     date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
     
