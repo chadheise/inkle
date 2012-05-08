@@ -14,7 +14,7 @@ input
 .inkling input
 {
    height: 22px;
-   width: 290px;
+   width: 285px;
    font-size: 19px;
    margin: 2px 0px 0px 0px;
    text-align: center;
@@ -58,7 +58,7 @@ input
     margin-bottom: 5px;
     position: absolute;
     z-index: 2;
-    top: 35px;
+    top: 40px;
     left: 10px;
 }
 
@@ -158,9 +158,9 @@ input
 
 .inklingInviteContainer textarea
 {
-    width: 290px;
-    max-width: 290px;
-    min-width: 290px;
+    width: 295px;
+    max-width: 295px;
+    min-width: 295px;
     height: 36px;
     font-size: 14px;
     display: block;

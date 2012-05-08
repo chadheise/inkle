@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<networks number={{member.networks.all|length}}>
+{% for network in member.networks.all %}
+    <network>
+        <id>{{ network.id }}</id>
+        <name>{{ network.name }}</name>
+    </network>
+{% empty %}
+    <networks number=0>
+    </networks>
+{% endfor %}
+</networks>
+
