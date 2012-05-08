@@ -1,37 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<location_inklings>
-    
-    <dinner>
-        {% for m in member.dinner_members %}
-            <name>{{ m.get_full_name }}</name>
-        {% endfor %}
-        {% if member.dinner_members %}
-            <message>There {% if member.num_dinner_others == 1 %}is{% else %}are{% endif %} {{ member.num_dinner_others }} other member{{ member.num_dinner_others|pluralize }} attending this inkling.</message>
-        {% else %}
-            <message>There {% if member.num_dinner_others == 1 %}is{% else %}are{% endif %} {{ member.num_dinner_others }} member{{ member.num_dinner_others|pluralize }} attending this inkling.</message>
-        {% endif %}
-    </dinner>
-
-    <pregame>
-        {% for m in member.pregame_members %}
-            <name>{{ m.get_full_name }}</name>
-        {% endfor %}
-        {% if member.pregame_members %}
-            <message>There {% if member.num_pregame_others == 1 %}is{% else %}are{% endif %} {{ member.num_pregame_others }} other member{{ member.num_pregame_others|pluralize }} attending this inkling.</message>
-        {% else %}
-            <message>There {% if member.num_pregame_others == 1 %}is{% else %}are{% endif %} {{ member.num_pregame_others }} member{{ member.num_pregame_others|pluralize }} attending this inkling.</message>
-        {% endif %}
-    </pregame>
-
-    <main_event>
-        {% for m in member.main_event_members %}
-            <name>{{ m.get_full_name }}</name>
-        {% endfor %}
-        {% if member.main_event_members %}
-            <message>There {% if member.num_main_event_others == 1 %}is{% else %}are{% endif %} {{ member.num_main_event_others }} other member{{ member.num_main_event_others|pluralize }} attending this inkling.</message>
-        {% else %}
-            <message>There {% if member.num_main_event_others == 1 %}is{% else %}are{% endif %} {{ member.num_main_event_others }} member{{ member.num_main_event_others|pluralize }} attending this inkling.</message>
-        {% endif %}
-    </main_event>
-
-</location_inklings>
+<networks number={{member.networks.all|length}}>
+{% for network in member.networks.all %}
+    <network>
+        <id>{{ network.id }}</id>
+        <name>{{ network.name }}</name>
+    </network>
+{% empty %}
+    <networks number=0>
+    </networks>
+{% endfor %}
+</networks>
