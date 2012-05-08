@@ -613,7 +613,10 @@ def m_location_view(request):
     except:
         raise Http404()
 
-    member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
+    if request.POST["locationType"] == "memberPlace":
+        member = m_get_location_inklings(request.session["member_id"], None, location_id, date)
+    else:
+        member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
 
     return render_to_response( "locationMobile.xml", { "member" : member }, mimetype='text/xml' )
 
