@@ -593,7 +593,120 @@ def m_send_inkling_invitations_view(request):
 
     return HttpResponse()
 
+@csrf_exempt
+def m_location_view(request, location_id = None, content_type = "all", date = "today"):
+    """Gets the members who are going to the inputted location today and returns the HTML for the location page."""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except:
+        if (location_id):
+            return HttpResponseRedirect("/login/?next=/location/" + location_id + "/")
+        else:
+            return HttpResponseRedirect("/login/")
 
+    # Get the location corresponding to the inputted ID (or throw a 404 error if it is invalid)
+    try:
+        location = Location.objects.get(pk = location_id)
+    except:
+        raise Http404()
+
+    # Get date objects
+    if date == "today":
+        date1 = datetime.date.today()
+    else:
+        try:
+            date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
+        except:
+            date1 = datetime.date.today()
+    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
+
+    member = m_get_location_inklings(request.session["member_id"], location_id, None, date1)
+
+    return render_to_response( "locationMobile.xml", { "member" : member }, mimetype='text/xml' )
+
+@csrf_exempt
+def m_get_location_inklings(member_id = None, location_id = None, member_place_id = None, date = datetime.date.today()):
+    """Returns a member object with additional fields indicating inklings at the input location for the input datetime date object"""
+    # Get the member who is logged in (or redirect them to the login page)
+    try:
+        member = Member.active.get(pk = member_id)
+    except:
+        if (location_id):
+            return HttpResponseRedirect("/login/?next=/location/" + location_id + "/")
+        elif (member_place_id):
+            return HttpResponseRedirect("/login/?next=/member/" + member_place_id + "/place/")
+        else:
+            return HttpResponseRedirect("/login/")
+    # Get the location or member_place corresponding to the inputted ID (or throw a 404 error if it is invalid)
+    try:
+        if (location_id):
+            location = Location.objects.get(pk = int(location_id))
+            # Get all of the specified date's inklings at the provided location
+            location_inklings = Inkling.objects.filter(date = date, location = location)
+        else:
+            member_place = Member.active.get(pk = int(member_place_id))
+            # Get all of the specified date's inklings at the provided location
+            location_inklings = Inkling.objects.filter(date = date, member_place = member_place)
+    except:
+        raise Http404()
+
+    # Get the people whom the logged in member is following
+    following = member.following.filter(is_active = True)
+
+    # Get the logged in member's dinner inkling and the members who are attending
+    try:
+        dinner_inkling = location_inklings.get(category = "dinner")
+        all_dinner_members = dinner_inkling.member_set.all()
+        member.dinner_members = [m for m in all_dinner_members if (m in following or m == member or m.inklings_privacy == 0)]
+        member.num_dinner_others = len(all_dinner_members) - len(member.dinner_members)
+        for m in member.dinner_members:
+            m.show_contact_info = True
+            m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
+            if m in following:
+                m.button_list = [buttonDictionary["blots"]]
+            # Determine the privacy rating for the logged in member and the current member
+            m.privacy = get_privacy(member, m)
+    except Inkling.DoesNotExist:
+        member.dinner_members = []
+        member.num_dinner_others = 0
+
+    # Get the logged in member's pregame inkling and the members who are attending
+    try:
+        pregame_inkling = location_inklings.get(category = "pregame")
+        all_pregame_members = pregame_inkling.member_set.all()
+        member.pregame_members = [m for m in all_pregame_members if (m in following or m == member or m.inklings_privacy == 0)]
+        member.num_pregame_others = len(all_pregame_members) - len(member.pregame_members)
+        for m in member.pregame_members:
+            m.show_contact_info = True
+            m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
+            if m in following:
+                m.button_list = [buttonDictionary["blots"]]
+            # Determine the privacy rating for the logged in member and the current member
+            m.privacy = get_privacy(member, m)
+    except Inkling.DoesNotExist:
+        member.pregame_members = []
+        member.num_pregame_others = 0
+
+    # Get the logged in member's main event inkling and the members who are attending
+    try:
+        main_event_inkling = location_inklings.get(category = "mainEvent")
+        all_main_event_members = main_event_inkling.member_set.all()
+        member.main_event_members = [m for m in all_main_event_members if (m in following or m == member or m.inklings_privacy == 0)]
+        member.num_main_event_others = len(all_main_event_members) - len(member.main_event_members)
+        for m in member.main_event_members:
+            m.show_contact_info = True
+            m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
+            if m in following:
+                m.button_list = [buttonDictionary["blots"]]
+            # Determine the privacy rating for the logged in member and the current member
+            m.privacy = get_privacy(member, m)
+    except Inkling.DoesNotExist:
+        member.main_event_members = []
+        member.num_main_event_others = 0
+
+    return member
+            
 #@csrf_exempt
 #def m_image_location(request, location_type = "location", location_id = None):
 #    """Gets an image for a specified location or member place"""
