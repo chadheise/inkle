@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <location_inklings>
     
-    <dinner>
+    <dinner number={{member.dinner_members|length}}>
         {% for m in member.dinner_members %}
             <name>{{ m.get_full_name }}</name>
         {% endfor %}
@@ -12,7 +12,7 @@
         {% endif %}
     </dinner>
 
-    <pregame>
+    <pregame number={{member.pregame_members|length}}>
         {% for m in member.pregame_members %}
             <name>{{ m.get_full_name }}</name>
         {% endfor %}
@@ -23,7 +23,7 @@
         {% endif %}
     </pregame>
 
-    <main_event>
+    <main_event number={{member.main_event_members|length}}>
         {% for m in member.main_event_members %}
             <name>{{ m.get_full_name }}</name>
         {% endfor %}
