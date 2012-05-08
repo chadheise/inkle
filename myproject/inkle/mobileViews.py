@@ -602,19 +602,27 @@ def m_location_view(request):
     except:
         raise Http404()
 
-    # Get the POST data
-    locationId = request.POST["locationId"]
-    date = request.POST["date"].split("/")
-    date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+    if request.POST:
+        # Get the POST data
+        location_id = request.POST["locationId"]
+        date = request.POST["date"].split("/")
+        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+    else:
+        location_id = str(3)
+        date = datetime.date(day = 30, month = 4, year = 2012)
 
     # Get the location corresponding to the inputted ID (or throw a 404 error if it is invalid)
     try:
         location = Location.objects.get(pk = location_id)
     except:
+        print "here"
         raise Http404()
 
-    if request.POST["locationType"] == "memberPlace":
-        member = m_get_location_inklings(request.session["member_id"], None, location_id, date)
+    if request.POST:
+        if request.POST["locationType"] == "memberPlace":
+            member = m_get_location_inklings(request.session["member_id"], None, location_id, date)
+        else:
+            member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
     else:
         member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
 

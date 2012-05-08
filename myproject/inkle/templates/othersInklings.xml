@@ -16,6 +16,12 @@
             {% if location.city and location.state %}
                 <citystate>{{ location.city }}, {{ location.state }}</citystate>
             {% endif %}
+            <id>192</id>
+            {% if location.name %}
+                <type>location</type>
+            {% else %}
+                <type>memberPlace</type>
+            {% endif %}
         </location>
     {% endfor %}
     </locations>
