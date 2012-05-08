@@ -600,26 +600,38 @@ def m_location_view(request):
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
-        raise Http404()
+        return HttpResponse("Error getting member")
 
-    if request.POST:
-        # Get the POST data
-        location_id = request.POST["locationId"]
-        date = request.POST["date"].split("/")
-        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+    # If the request type is POST, validate the username and password combination
+    if request.method == 'POST':
+        try:
+            postXML = request.POST['xml']
+        except Exception as e:
+            return HttpResponse("copy error: " + type(e).__name__ + " - " + e.message)
+        try:
+            postDom = parseString(postXML)
+        except Exception as e:
+            return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
+        try:
+            location_id = stripTag( postDom.getElementsByTagName("locationId")[0].toxml() )
+            location_type = stripTag( postDom.getElementsByTagName("locationType")[0].toxml() )
+            date = stripTag( postDom.getElementsByTagName("date")[0].toxml() )
+            date = date.split("/")
+            date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
+        except Exception as e:
+            return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
     else:
-        location_id = str(3)
+        location_id = 192
         date = datetime.date(day = 30, month = 4, year = 2012)
 
     # Get the location corresponding to the inputted ID (or throw a 404 error if it is invalid)
     try:
         location = Location.objects.get(pk = location_id)
     except:
-        print "here"
-        raise Http404()
+        return HttpResponse("Error getting location")
 
-    if request.POST:
-        if request.POST["locationType"] == "memberPlace":
+    if request.method == 'POST':
+        if location_type == "memberPlace":
             member = m_get_location_inklings(request.session["member_id"], None, location_id, date)
         else:
             member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
@@ -635,12 +647,7 @@ def m_get_location_inklings(member_id = None, location_id = None, member_place_i
     try:
         member = Member.active.get(pk = member_id)
     except:
-        if (location_id):
-            return HttpResponseRedirect("/login/?next=/location/" + location_id + "/")
-        elif (member_place_id):
-            return HttpResponseRedirect("/login/?next=/member/" + member_place_id + "/place/")
-        else:
-            return HttpResponseRedirect("/login/")
+        return HttpResponse("m_get_locations_inklings failed to get member")
     # Get the location or member_place corresponding to the inputted ID (or throw a 404 error if it is invalid)
     try:
         if (location_id):
@@ -709,18 +716,4 @@ def m_get_location_inklings(member_id = None, location_id = None, member_place_i
         member.num_main_event_others = 0
 
     return member
-            
-#@csrf_exempt
-#def m_image_location(request, location_type = "location", location_id = None):
-#    """Gets an image for a specified location or member place"""
-#    response = HttpResponse(mimetype="image/jpg")
-#    if location_type == "place":
-#        image = Image.open(MEDIA_ROOT + "images/main/man.jpg");
-#        image = image.resize((75, 75))
-#        image.save(response, "JPG")
-#    else:
-#        image = Image.open(MEDIA_ROOT + "images/main/woman.jpg");
-#        image = image.resize((75, 75))
-#        image.save(response, "JPG")
-#    return response
     
