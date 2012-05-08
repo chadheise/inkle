@@ -594,16 +594,18 @@ def m_send_inkling_invitations_view(request):
     return HttpResponse()
 
 @csrf_exempt
-def m_location_view(request, location_id = None, content_type = "all", date = "today"):
-    """Gets the members who are going to the inputted location today and returns the HTML for the location page."""
-    # Get the member who is logged in (or redirect them to the login page)
+def m_location_view(request):
+    """Gets the members who are going to the inputted location today and returns XML."""
+    # Get the logged in member (or raise a 404 error if the member ID is invalid)
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except:
-        if (location_id):
-            return HttpResponseRedirect("/login/?next=/location/" + location_id + "/")
-        else:
-            return HttpResponseRedirect("/login/")
+        raise Http404()
+
+    # Get the POST data
+    locationId = request.POST["locationId"]
+    date = request.POST["date"].split("/")
+    date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
 
     # Get the location corresponding to the inputted ID (or throw a 404 error if it is invalid)
     try:
@@ -611,17 +613,7 @@ def m_location_view(request, location_id = None, content_type = "all", date = "t
     except:
         raise Http404()
 
-    # Get date objects
-    if date == "today":
-        date1 = datetime.date.today()
-    else:
-        try:
-            date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
-        except:
-            date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
-
-    member = m_get_location_inklings(request.session["member_id"], location_id, None, date1)
+    member = m_get_location_inklings(request.session["member_id"], location_id, None, date)
 
     return render_to_response( "locationMobile.xml", { "member" : member }, mimetype='text/xml' )
 
