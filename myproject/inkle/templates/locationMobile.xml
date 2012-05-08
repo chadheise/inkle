@@ -4,7 +4,7 @@
         {% for m in member.dinner_members %}
             <member>
                 <name>{{ m.get_full_name }}</name>
-                <id>1</id>
+                <id>{{ m.id }}</id>
             </member>
         {% endfor %}
         {% if member.dinner_members %}
@@ -18,7 +18,7 @@
         {% for m in member.pregame_members %}
             <member>
                 <name>{{ m.get_full_name }}</name>
-                <id>1</id>
+                <id>{{ m.id }}</id>
             </member>
         {% endfor %}
         {% if member.pregame_members %}
@@ -32,7 +32,7 @@
         {% for m in member.main_event_members %}
             <member>
                 <name>{{ m.get_full_name }}</name>
-                <id>1</id>
+                <id>{{ m.id }}</id>
             </member>
         {% endfor %}
         {% if member.main_event_members %}
