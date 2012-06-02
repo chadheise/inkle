@@ -134,7 +134,7 @@ def send_update_email_verification_email(member):
 
         Looks like you've changed the email address associated with your account. Click on the following link to verify this email address and get back to using Inkle:
 
-        http://www.inkleit.com/verifyEmail/%s/%s/
+        http://www.inkleit.com/updateEmail/%s/%s/
     
     Welcome aboard,
     The Inkle team""" % (member.first_name, member.email, member.verification_hash)
@@ -145,7 +145,7 @@ def send_update_email_verification_email(member):
         <body>
             <p>Hi %s,</p>
 
-            <p>Looks like you've changed the email address associated with your account. Click <a href="http://www.inkleit.com/verifyEmail/%s/%s/">here</a> to verify your new email address and get back to using <a href="http://www.inkleit.com">Inkle</a>.</p>
+            <p>Looks like you've changed the email address associated with your account. Click <a href="http://www.inkleit.com/updateEmail/%s/%s/">here</a> to verify your new email address and get back to using <a href="http://www.inkleit.com">Inkle</a>.</p>
     
             <p>Welcome aboard,<br />
             The Inkle team</p>

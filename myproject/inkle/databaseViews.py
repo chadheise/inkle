@@ -973,7 +973,7 @@ def send_update_email_verification_email_view(request, email = None):
     """Sends an email to the provided email allowing them to verify their new email."""
     # Get the member who corresponds to the provided email (or raise a 404 error if no corresponding member exists)
     try:
-        member = Member.active.get(email = email)
+        member = Member.objects.get(email = email)
     except Member.DoesNotExist:
         raise Http404()
 
