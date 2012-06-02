@@ -12,6 +12,7 @@ urlpatterns = patterns(
     (r"^login/$", "login_view"),
     (r"^register/$", "register_view"),
     (r"^verifyEmail/(?P<email>.+)/(?P<verification_hash>\w+)/$", "verify_email_view"),
+    (r"^updateEmail/(?P<email>.+)/(?P<verification_hash>\w+)/$", "update_email_view"),
     (r"^requestPasswordReset/$", direct_to_template, { "template" : "requestPasswordReset.html" }),
     (r"^passwordResetConfirmation/(?P<email>.+)/$", direct_to_template, { "template" : "passwordResetConfirmation.html" }),
 

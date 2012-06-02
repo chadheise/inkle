@@ -32,7 +32,7 @@ def home_view(request):
     dates = [today + datetime.timedelta(days = x) for x in range(5)] 
 
     # Get others' dinner inklings for today
-    if member.networks:
+    if member.networks.all():
         networkList = member.networks.all()
         locations = get_others_inklings(member, today, "network", networkList[0].id, "all")
     else:
@@ -250,10 +250,10 @@ def update_account_email_view(request):
             invalid["confirm_new_email"] = True
             invalid["errors"].append("An account already exists for the provided new email")
 
-        elif (not ((data["new_email"].endswith("@nd.edu")) or (data["new_email"].endswith("@saintmarys.edu")) or (data["new_email"].endswith("@hcc-nd.edu")))):
-            invalid["new_email"] = True
-            invalid["confirm_new_email"] = True
-            invalid["errors"].append("Inkle is currently limited to Notre Dame, Saint Mary's, and Holy Cross email addresses only")
+        #elif (not ((data["new_email"].endswith("@nd.edu")) or (data["new_email"].endswith("@saintmarys.edu")) or (data["new_email"].endswith("@hcc-nd.edu")))):
+        #    invalid["new_email"] = True
+        #    invalid["confirm_new_email"] = True
+        #    invalid["errors"].append("Inkle is currently limited to Notre Dame, Saint Mary's, and Holy Cross email addresses only")
 
         # Validate the confirm new email
         if (not data["confirm_new_email"]):
@@ -2051,6 +2051,26 @@ def verify_email_view(request, email = None, verification_hash = None):
 
     # Send the welcome email
     send_welcome_email(member)
+
+    return render_to_response( "login.html",
+        { "selectedContentLink" : "registration", "registrationContent" : "verifyEmail", "m" : member },
+        context_instance = RequestContext(request) )
+
+def update_email_view(request, email = None, verification_hash = None):
+    """Verifies a member's email address using the inputted verification hash."""
+    # Get the member corresponding to the provided email (otherwise, throw a 404 error)
+    try:
+        member = Member.objects.get(email = email)
+    except Member.DoesNotExist:
+        raise Http404()
+
+    # If the member has not yet been verified and the verification hash is correct, verify the member and give them a new verification hash (otherwise, throw a 404 error)
+    if ((not member.verified) and (member.verification_hash == verification_hash)):
+        member.update_verification_hash()
+        member.verified = True
+        member.save()
+    else:
+        raise Http404()
 
     return render_to_response( "login.html",
         { "selectedContentLink" : "registration", "registrationContent" : "verifyEmail", "m" : member },
