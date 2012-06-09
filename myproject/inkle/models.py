@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from hashlib import md5
 from random import randint
-from PIL import Image
+#from PIL import Image
 
 import datetime
 

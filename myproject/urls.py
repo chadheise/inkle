@@ -10,4 +10,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     (r'^',  include('myproject.inkle.urls')),
     (r'^mobile/',  include('myproject.inkle.mobileUrls')),
+    (r'^sencha/',  include('myproject.inkle.senchaUrls')),
 )

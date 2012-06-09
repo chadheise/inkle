@@ -13,7 +13,7 @@ from django.db.models import Q
 
 import datetime
 import shutil
-from PIL import Image
+#from PIL import Image
 
 from databaseViews import *
 

@@ -6,6 +6,8 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
 from django.contrib import auth
 
+from django.utils import simplejson
+
 from myproject.inkle.models import *
 from myproject.inkle.emails import *
 
@@ -39,42 +41,22 @@ def stripTag(string):
     return string.lstrip().rstrip()[ tagLength : -(tagLength + 1) ]
    
 @csrf_exempt
-def m_login_view(request):
+def s_login_view(request):
     """Either logs in a member or returns the login errors."""
+    print "in"
     
-    """# If a member is already logged in, redirect them to the home page
-    if ("member_id" in request.session):
-        return HttpResponseRedirect("/")"""
-
     # Create dictionaries to hold the POST data and the invalid errors
     data = { "email" : "", "password" : "", "month" : 0, "year" : 0 }
     invalid = { "errors" : [] }
     valid = False #Assume invalid data by default
 
-    """# Get the next location after the login is successful (or set it to the home page if it is not set)
-    try:
-        next_location = request.GET["next"]
-    except:
-        next_location = "/" """
-    
     # If the request type is POST, validate the username and password combination
     if request.method == 'POST':
         try:
-            #temp = request.POST.copy()
-            #postXML = serializers.deserialize('xml', temp)
-            postXML = request.POST['xml']
+            data["email"] = request.POST["email"]
+            data["password"] = request.POST["password"]
         except Exception as e:
-            return HttpResponse("copy error: " + type(e).__name__ + " - " + e.message)
-        try:
-            postDom = parseString(postXML)
-        except Exception as e:
-            return HttpResponse("postDom error: " + type(e).__name__ + " - " + e.message)
-        
-        try:
-            data["email"] = stripTag( postDom.getElementsByTagName("email")[0].toxml() )
-            data["password"] = stripTag( postDom.getElementsByTagName("password")[0].toxml() )
-        except Exception as e:
-            return HttpResponse("Error accessing xml data in dom: " + type(e).__name__ + " - " + e.message)
+            return HttpResponse("Error accessing request POST data: " + e.message)
     
         # Validate the email
         if (not data["email"]):
@@ -97,7 +79,6 @@ def m_login_view(request):
                 member = Member.active.get(email = data["email"])
             except:
                 member = []
-
             # Confirm the username and password combination
             if (member and (member.verified) and (member.is_active) and (member.check_password(data["password"]))):
                 request.session["member_id"] = member.id
@@ -108,9 +89,18 @@ def m_login_view(request):
             else:
                 invalid["email"] = True
                 invalid["password"] = True
-                invalid["errors"].append("Invalid email/password combination")
+                invalid["errors"].append("Invalid login combination")
     
-    return render_to_response( "login.xml", {"loginInvalid" : invalid}, mimetype='text/xml' )
+    # Set success attribute
+    if invalid["errors"] == []:
+        invalid["success"] = True
+    else:
+        invalid["success"] = False
+
+    # Create JSON object
+    response = simplejson.dumps(invalid)
+
+    return HttpResponse(response, mimetype="application/json")
 
 @csrf_exempt
 def m_test_view(request):
