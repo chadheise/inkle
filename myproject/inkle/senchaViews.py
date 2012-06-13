@@ -29,21 +29,9 @@ import os
 import sys
 from views import *
 
-def stripTag(string):
-    tagLength = 0
-    for c in string:
-        if tagLength > 0:
-            tagLength += 1
-        if c == "<":
-            tagLength = 1
-        elif c == ">":
-            break
-    return string.lstrip().rstrip()[ tagLength : -(tagLength + 1) ]
-   
 @csrf_exempt
 def s_login_view(request):
     """Either logs in a member or returns the login errors."""
-    print "in"
     
     # Create dictionaries to hold the POST data and the invalid errors
     data = { "email" : "", "password" : "", "month" : 0, "year" : 0 }
@@ -90,7 +78,7 @@ def s_login_view(request):
                 invalid["email"] = True
                 invalid["password"] = True
                 invalid["errors"].append("Invalid login combination")
-    
+
     # Set success attribute
     if invalid["errors"] == []:
         invalid["success"] = True
@@ -99,6 +87,26 @@ def s_login_view(request):
 
     # Create JSON object
     response = simplejson.dumps(invalid)
+
+    return HttpResponse(response, mimetype="application/json")
+   
+@csrf_exempt
+def s_get_blots_view(request):
+    """Returns the names and IDs of the logged in user's blots."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Add "All Blots" to the response data
+    data = {}
+    data["entries"] = [{ "text" : "All Blots", "value" : -1 }]
+
+    # Add each of the logged in member's blots to the response data
+    for blot in member.blots.all():
+        data["entries"].append({ "text" : blot.name, "value" : blot.id })
+
+    # Create JSON object
+    response = simplejson.dumps(data)
 
     return HttpResponse(response, mimetype="application/json")
 
