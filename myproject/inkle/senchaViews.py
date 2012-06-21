@@ -111,6 +111,22 @@ def s_get_blots_view(request):
     return HttpResponse(response, mimetype="application/json")
 
 @csrf_exempt
+def s_get_all_inklings_view(request):
+    """Returns all the inklings."""
+
+    return render_to_response( "s_allInklings.html",
+        {  },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
+def s_get_inkling_view(request):
+    """Returns a single inkling."""
+
+    return render_to_response( "s_inkling.html",
+        {  },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
 def m_test_view(request):
     """Tests if a request session is saved."""
     

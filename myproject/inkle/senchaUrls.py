@@ -10,4 +10,6 @@ urlpatterns = patterns(
     "myproject.inkle.senchaViews",
     (r"^login/$", "s_login_view"),
     (r"^getBlots/$", "s_get_blots_view"),
+    (r"^getAllInklings/$", "s_get_all_inklings_view"),
+    (r"^getInkling/$", "s_get_inkling_view"),
 )
