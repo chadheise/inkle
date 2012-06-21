@@ -12,4 +12,5 @@ urlpatterns = patterns(
     (r"^getBlots/$", "s_get_blots_view"),
     (r"^getAllInklings/$", "s_get_all_inklings_view"),
     (r"^getInkling/$", "s_get_inkling_view"),
+    (r"^getMyInklings/$", "s_get_my_inklings_view"),
 )
