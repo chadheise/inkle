@@ -129,7 +129,8 @@ def s_get_inkling_view(request):
     """Returns a single inkling."""
 
     # Get the current inkling
-    inkling = Inkling.objects.get(pk = 1)
+    inkling_id = request.POST["inkling_id"]
+    inkling = Inkling.objects.get(pk = inkling_id)
 
     return render_to_response( "s_inkling.html",
         { "inkling" : inkling },
