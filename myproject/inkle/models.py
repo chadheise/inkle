@@ -78,6 +78,9 @@ class Inkling(models.Model):
         """String representation for the current inkling."""
         return "%s (%s)" % (self.location.name, self.get_formatted_date())
 
+    def get_attendees(self):
+        return self.member_set.all()
+
     def get_num_attendees(self):
         return self.member_set.count()
 
