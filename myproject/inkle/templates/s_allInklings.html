@@ -2,7 +2,7 @@
     {% for inkling in inklings %}
         <div class="inkling" inklingId="{{ inkling.id }}">
             <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-            <div class="allInklingsInfo">
+            <div class="inklingInfo">
                 <div class="location">{{ inkling.location.name }}</div>
                 <div>
                     {% if inkling.time %}
