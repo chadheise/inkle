@@ -125,11 +125,13 @@ class Member(User):
     inklings = models.ManyToManyField(Inkling)
 
     # Member lists
-    pending = models.ManyToManyField("self", symmetrical = False, related_name = "pending_related")
-    accepted = models.ManyToManyField("self", symmetrical = False, related_name = "accepted_related")
-    requested = models.ManyToManyField("self", symmetrical = False, related_name = "requested_related")
-    followers = models.ManyToManyField("self", symmetrical = False, related_name = "followers_related")
-    following = models.ManyToManyField("self", symmetrical = False, related_name = "following_related")
+    #pending = models.ManyToManyField("self", symmetrical = False, related_name = "pending_related")
+    #accepted = models.ManyToManyField("self", symmetrical = False, related_name = "accepted_related")
+    #requested = models.ManyToManyField("self", symmetrical = False, related_name = "requested_related")
+    #followers = models.ManyToManyField("self", symmetrical = False, related_name = "followers_related")
+    #following = models.ManyToManyField("self", symmetrical = False, related_name = "following_related")
+    friends = models.ManyToManyField("self")
+    
 
     # Email verification
     verification_hash = models.CharField(max_length = 32)

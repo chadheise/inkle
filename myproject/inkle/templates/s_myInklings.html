@@ -1,6 +1,7 @@
 <div id="myInklingsView">
+    <!-- Today's inklings -->
     <div class="banner">Today</div>
-    {% for inkling in inklings %}
+    {% for inkling in todaysInklings %}
         <div class="inkling" inklingId="{{ inkling.id }}">
             <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
             <div class="inklingInfo">
@@ -19,9 +20,13 @@
             </div>
             <div class="clear"></div>
         </div>
+    {% empty %}
+        <div class="noInklings">No inklings</div>
     {% endfor %}
+
+    <!-- This week's inklings -->
     <div class="banner">This Week</div>
-    {% for inkling in inklings %}
+    {% for inkling in thisWeeksInklings %}
         <div class="inkling" inklingId="{{ inkling.id }}">
             <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
             <div class="inklingInfo">
@@ -40,7 +45,32 @@
             </div>
             <div class="clear"></div>
         </div>
+    {% empty %}
+        <div class="noInklings">No inklings</div>
     {% endfor %}
+
+    <!-- Future inklings -->
     <div class="banner">Future</div>
-    <div class="noInklings">No inklings</div>
+    {% for inkling in futureInklings %}
+        <div class="inkling" inklingId="{{ inkling.id }}">
+            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+            <div class="inklingInfo">
+                <div class="location">{{ inkling.location.name }}</div>
+                <div>
+                    {% if inkling.time %}
+                        <div class="time">{{ inkling.time }}</div>
+                        {% if inkling.category %}
+                            <div class="dot">&middot</div>
+                        {% endif %}
+                    {% endif %}
+                    {% if inkling.category %}
+                        <div class="category">{{ inkling.category }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    {% empty %}
+        <div class="noInklings">No inklings</div>
+    {% endfor %}
 </div>
