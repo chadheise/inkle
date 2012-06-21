@@ -95,7 +95,8 @@ def s_get_blots_view(request):
     """Returns the names and IDs of the logged in user's blots."""
 
     # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    #member = Member.active.get(pk = request.session["member_id"])
+    member = Member.active.get(pk = 1)
 
     # Add "All Blots" to the response data
     data = {}
@@ -114,16 +115,24 @@ def s_get_blots_view(request):
 def s_get_all_inklings_view(request):
     """Returns all the inklings."""
 
+    # Get the logged in member
+    member = Member.objects.get(pk = 1)
+
+    inklings = member.inklings.all()
+
     return render_to_response( "s_allInklings.html",
-        {  },
+        { "inklings" : inklings  },
         context_instance = RequestContext(request) )
 
 @csrf_exempt
 def s_get_inkling_view(request):
     """Returns a single inkling."""
 
+    # Get the current inkling
+    inkling = Inkling.objects.get(pk = 1)
+
     return render_to_response( "s_inkling.html",
-        {  },
+        { "inkling" : inkling },
         context_instance = RequestContext(request) )
 
 @csrf_exempt

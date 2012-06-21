@@ -2,7 +2,7 @@ from inkle.models import *
 import shutil
 
 def load_members():
-    for line in open("databaseData/members.txt", "r"):
+    for line in open("webDatabaseData/members.txt", "r"):
         data = [x.strip() for x in line.split("|")]
         m = Member(first_name = data[0], last_name = data[1], username = data[2], email = data[3], birthday = datetime.date(day = int(data[4]), month = int(data[5]), year = int(data[6])), gender = data[7], verified = data[8], is_staff = data[9])
         m.set_password("password")
@@ -15,7 +15,7 @@ def load_members():
 
 
 def load_member_followings():
-    for line in open("databaseData/memberFollowings.txt", "r"):
+    for line in open("webDatabaseData/memberFollowings.txt", "r"):
         data = [x.strip() for x in line.split("|")]
         if (data[0] != data[1]):
             from_member = Member.objects.get(pk = data[0])
@@ -27,7 +27,7 @@ def load_member_followings():
 
 
 def load_member_networks():
-    for line in open("databaseData/memberNetworks.txt", "r"):
+    for line in open("webDatabaseData/memberNetworks.txt", "r"):
         data = [x.strip() for x in line.split("|")]
         member = Member.objects.get(pk = data[0])
         network = Network.objects.get(pk = data[1])
@@ -45,42 +45,42 @@ def load_locations(filename):
 
 
 def load_dorms():
-    load_locations("databaseData/notreDameDorms.txt")
-    load_locations("databaseData/saintMarysDorms.txt")
-    load_locations("databaseData/holyCrossDorms.txt")
+    load_locations("webDatabaseData/notreDameDorms.txt")
+    load_locations("webDatabaseData/saintMarysDorms.txt")
+    load_locations("webDatabaseData/holyCrossDorms.txt")
 
 
 def load_campus_locations():
-    load_locations("databaseData/notreDameCampusLocations.txt")
-    load_locations("databaseData/saintMarysCampusLocations.txt")
-    load_locations("databaseData/holyCrossCampusLocations.txt")
+    load_locations("webDatabaseData/notreDameCampusLocations.txt")
+    load_locations("webDatabaseData/saintMarysCampusLocations.txt")
+    load_locations("webDatabaseData/holyCrossCampusLocations.txt")
 
 
 def load_bars():
-    load_locations("databaseData/bars.txt")
+    load_locations("webDatabaseData/bars.txt")
 
 
 def load_clubs():
-    load_locations("databaseData/clubs.txt")
+    load_locations("webDatabaseData/clubs.txt")
 
 
 def load_restaurants():
-    load_locations("databaseData/restaurants.txt")
+    load_locations("webDatabaseData/restaurants.txt")
 
 
 def load_apartments():
-    load_locations("databaseData/apartments.txt")
+    load_locations("webDatabaseData/apartments.txt")
 
 def load_extra():
-    load_locations("databaseData/extra.txt")
+    load_locations("webDatabaseData/extra.txt")
 
 
 def load_miscellaneous():
-    load_locations("databaseData/miscellaneous.txt")
+    load_locations("webDatabaseData/miscellaneous.txt")
 
 
 def load_networks():
-    for line in open("databaseData/networks.txt", "r"):
+    for line in open("webDatabaseData/networks.txt", "r"):
         data = [x.strip() for x in line.split("|")]
         s = Network.objects.create(name = data[0])
         shutil.copyfile("inkle/static/media/images/main/network.jpg", "inkle/static/media/images/networks/" + str(s.id) + ".jpg")

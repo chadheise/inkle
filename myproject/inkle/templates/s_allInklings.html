@@ -1,122 +1,16 @@
 <div id="allInklingsView">
-    <div class="inkling">
-        <div class="numAttendees">7</div>
-        <div class="allInklingsInfo">
-            <div class="location">Brother's Bar & Grill</div>
-            <div>
-                <div class="time">Late</div>
-                <div class="dot">&middot</div>
-                <div class="category">Karaoke</div>
+    {% for inkling in inklings %}
+        <div class="inkling">
+            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+            <div class="allInklingsInfo">
+                <div class="location">{{ inkling.location.name }}</div>
+                <div>
+                    <div class="time">{{ inkling.time }}</div>
+                    <div class="dot">&middot</div>
+                    <div class="category">{{ inkling.category }}</div>
+                </div>
             </div>
+            <div class="clear"></div>
         </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">11</div>
-        <div class="allInklingsInfo">
-            <div class="location">Papa Vino's</div>
-            <div>
-                <div class="time">6:30 PM</div>
-                <div class="dot">&middot</div>
-                <div class="category">Dinner</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">223</div>
-        <div class="allInklingsInfo">
-            <div class="location">Finny's</div>
-            <div>
-                <div class="time">Late</div>
-                <div class="dot">&middot</div>
-                <div class="category">Grindin'</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">23</div>
-        <div class="allInklingsInfo">
-            <div class="location">Morrissey</div>
-            <div>
-                <div class="time">11:00 PM</div>
-                <div class="dot">&middot</div>
-                <div class="category">Party</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">5</div>
-        <div class="allInklingsInfo">
-            <div class="location">Chipotle</div>
-            <div>
-                <div class="time">Evening</div>
-                <div class="dot">&middot</div>
-                <div class="category">Grub</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">7</div>
-        <div class="allInklingsInfo">
-            <div class="location">Brother's Bar & Grill</div>
-            <div>
-                <div class="time">Late</div>
-                <div class="dot">&middot</div>
-                <div class="category">Karaoke</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">11</div>
-        <div class="allInklingsInfo">
-            <div class="location">Papa Vino's</div>
-            <div>
-                <div class="time">6:30 PM</div>
-                <div class="dot">&middot</div>
-                <div class="category">Dinner</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">223</div>
-        <div class="allInklingsInfo">
-            <div class="location">Finny's</div>
-            <div>
-                <div class="time">Late</div>
-                <div class="dot">&middot</div>
-                <div class="category">Grindin'</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">23</div>
-        <div class="allInklingsInfo">
-            <div class="location">Morrissey</div>
-            <div>
-                <div class="time">11:00 PM</div>
-                <div class="dot">&middot</div>
-                <div class="category">Party</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="inkling">
-        <div class="numAttendees">5</div>
-        <div class="allInklingsInfo">
-            <div class="location">Chipotle</div>
-            <div>
-                <div class="time">Evening</div>
-                <div class="dot">&middot</div>
-                <div class="category">Grub</div>
-            </div>
-        </div>
-        <div class="clear"></div>
-    </div>
+    {% endfor %}
 </div>
