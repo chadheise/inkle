@@ -9,28 +9,85 @@ import datetime
 
 from myproject.settings import MEDIA_ROOT
 
+class ActiveLocationManager(models.Manager):
+    """Manager which returns active location objects."""
+    def get_query_set(self):
+        return Location.objects.filter(is_active = True)
+
+
 class Location(models.Model):
     """Location class definition."""
     # General information
     name = models.CharField(max_length = 100)
+    category = models.CharField(max_length = 20, default = "Other")
+    
+    # Address
+    street = models.CharField(max_length = 50, default = "")
+    city = models.CharField(max_length = 50, default = "")
+    state = models.CharField(max_length = 2, default = "")
+    zip_code = models.CharField(max_length = 5, default = "")
+    
+    # Contact info
+    phone = models.CharField(max_length = 10, default = "")
+    website = models.CharField(max_length = 100, default = "")
+    
+    # Whether or not location is still open
+    is_active =  models.BooleanField(default = True)
+
+    # Managers
+    objects = models.Manager()
+    active = ActiveLocationManager()
+
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         """String representation for the current location."""
+        return "%s (%s, %s)" % (self.name, self.city, self.state)
+
+    def is_image_updated(self):
+        """Returns True if the current location's image has been updated; returns False otherwise."""
+        location_default = Image.open(MEDIA_ROOT + "images/main/location.jpg")
+        current_location = Image.open(MEDIA_ROOT + "/images/locations/" + str(self.id) + ".jpg")
+        return (location_default.histogram() != current_location.histogram())
+
+    def get_absolute_url(self, category = None, date = None):
+        """Returns the URL for the current location."""
+        if category and date:
+            return "/location/%i/%s/%d_%d_%d/" % (self.id, category, date.month, date.day, date.year)
+        elif category:
+            return "/location/%i/%s/" % (self.id, category)
+        elif date:
+            return "/location/%i/%d_%d_%d/" % (self.id, date.month, date.day, date.year)
+        else:
+            return "/location/%i/" % (self.id)
+
+    def get_formatted_phone(self):
+        """Returns the current location's formatted phone number."""
+        return "(%s) %s-%s" % (self.phone[0:3], self.phone[3:6], self.phone[6:10])
+
+
+class Network(models.Model):
+    """Network class definition."""
+    name = models.CharField(max_length = 50)
+    
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __unicode__(self):
+        """String representation for the current network."""
         return "%s" % (self.name)
+
+    def get_absolute_url(self):
+        """Returns the URL for current network's network page."""
+        return "/network/%i/" % (self.id)
 
 
 class Blot(models.Model):
     """Blot class definition."""
-    # General information
     name = models.CharField(max_length = 50)
     members = models.ManyToManyField("Member")
-
-    # Metadata
-    date_created = models.DateTimeField(auto_now_add = True)
-    date_last_modified = models.DateTimeField(auto_now = True)
-    num_modifications = models.IntegerField(max_length = 4, default = 0)
     
-    # Class methods
     def __unicode__(self):
         """String representation for the current blot."""
         return "%s" % (self.name)
@@ -50,13 +107,10 @@ class CurrentInklingManager(models.Manager):
 
 class Inkling(models.Model):
     """Inkling class definition."""
-    # General information
-    location = models.ForeignKey(Location, blank = True, null = True)
-    category = models.CharField(max_length = 30, blank = True)
+    location = models.ForeignKey(Location, blank=True, null=True)
+    member_place = models.ForeignKey("Member", blank=True, null=True)
+    category = models.CharField(max_length = 20)
     date = models.DateField()
-    time = models.CharField(max_length = 15, blank = True)
-    notes = models.CharField(max_length = 100, blank = True)
-    is_private = models.BooleanField(default = False)
 
     # Managers
     objects = models.Manager()
@@ -64,22 +118,14 @@ class Inkling(models.Model):
     current = CurrentInklingManager()
     
     # Metadata
-    date_created = models.DateTimeField(auto_now_add = True)
-    date_last_modified = models.DateTimeField(auto_now = True)
-    num_location_changes = models.IntegerField(max_length = 4, default = 0)
-    num_category_changes = models.IntegerField(max_length = 4, default = 0)
-    num_date_changes = models.IntegerField(max_length = 4, default = 0)
-    num_time_changes = models.IntegerField(max_length = 4, default = 0)
-    num_notes_changes = models.IntegerField(max_length = 4, default = 0)
-    num_is_private_changes = models.IntegerField(max_length = 4, default = 0)
-
-    # Class methods
+    date_created = models.DateTimeField(auto_now_add=True)
+    
     def __unicode__(self):
         """String representation for the current inkling."""
-        return "%s (%s)" % (self.location.name, self.get_formatted_date())
-
-    def get_num_attendees(self):
-        return self.member_set.count()
+        if self.location is not None:
+            return "%s (%s, %s)" % (self.location.name, self.date, self.category)
+        else:
+            return "%s (%s, %s)" % (self.member_place.first_name + " " + self.member_place.last_name + "'s Place", self.date, self.category)          
 
     def get_formatted_date(self, year = True, weekday = False):
         """Returns the current inkling's formatted date."""
@@ -96,6 +142,55 @@ class Inkling(models.Model):
             else:
                 return "%s %d" % (months[self.date.month - 1], self.date.day)
 
+    def get_date_url(self):
+        """Returns the current inkling's date for use in a url."""
+        return "%s_%s_%s/" % (self.date.month, self.date.day, self.date.year)
+
+    def get_formatted_category(self):
+        """Returns the current member's formatted category."""
+        if (self.category == "dinner"):
+            return "Dinner"
+        elif (self.category == "pregame"):
+            return "Pregame"
+        elif (self.category == "mainEvent"):
+            return "Main Event"
+    
+    def is_location_inkling(self):
+        """Returns true if the inkling is for a loaction"""
+        return bool(self.location)
+    
+    def is_member_place_inkling(self):
+       """Returns true if the inkling is for a member place"""
+       return bool(self.member_place)
+
+
+class PastInvitationManager(models.Manager):
+    """Manager which returns past invitation objects."""
+    def get_query_set(self):
+        return Invitation.objects.filter(inkling__date__lt = datetime.date.today())
+
+
+class CurrentInvitationManager(models.Manager):
+    """Manager which returns current invitation objects."""
+    def get_query_set(self):
+        return Invitation.objects.filter(inkling__date__gte = datetime.date.today())
+
+
+class Invitation(models.Model):
+    """Invitation class definition."""
+    description = models.CharField(max_length = 200, default = "")
+    inkling = models.ForeignKey(Inkling)
+    from_member = models.ForeignKey("Member")
+
+    # Managers
+    objects = models.Manager()
+    past = PastInvitationManager()
+    current = CurrentInvitationManager()
+    
+    def __unicode__(self):
+        """String representation for the current invitation."""
+        return "%s - %s (%s)" % (self.inkling, self.from_member, self.description)
+
 
 class ActiveMemberManager(models.Manager):
     """Manager which returns active member objects."""
@@ -105,20 +200,8 @@ class ActiveMemberManager(models.Manager):
 
 class Member(User):
     """Member class definition. Inherits from built-in Django User class."""
-    # Note: inherits from built-in Django User class which contains:
-    #       id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined
-   
-    # General information
-    gender = models.CharField(max_length = 6)
-    birthday = models.DateField()
-    phone = models.CharField(max_length = 10, default = "")
-    street = models.CharField(max_length = 100, default = "")
-    city = models.CharField(max_length = 50, default = "")
-    state = models.CharField(max_length = 2, default = "")
-    zip_code = models.CharField(max_length = 5, default = "")
-    
-    # Lists
     blots = models.ManyToManyField(Blot)
+    networks = models.ManyToManyField(Network)
     inklings = models.ManyToManyField(Inkling)
 
     # Member lists
@@ -127,6 +210,18 @@ class Member(User):
     requested = models.ManyToManyField("self", symmetrical = False, related_name = "requested_related")
     followers = models.ManyToManyField("self", symmetrical = False, related_name = "followers_related")
     following = models.ManyToManyField("self", symmetrical = False, related_name = "following_related")
+    
+    # Profile information
+    gender = models.CharField(max_length = 6)
+    birthday = models.DateField()
+    phone = models.CharField(max_length = 10, default = "")
+    street = models.CharField(max_length = 100, default = "")
+    city = models.CharField(max_length = 50, default = "")
+    state = models.CharField(max_length = 2, default = "")
+    zip_code = models.CharField(max_length = 5, default = "")
+
+    # Invitations
+    invitations = models.ManyToManyField(Invitation)
 
     # Email verification
     verification_hash = models.CharField(max_length = 32)
@@ -160,13 +255,18 @@ class Member(User):
     active = ActiveMemberManager()
     
     # Metadata
-    changed_image = models.IntegerField(max_length = 4, default = 0)
-    changed_email_address = models.IntegerField(max_length = 4, default = 0)
+    changed_image = models.IntegerField(max_length = 3, default = 0)
 
-    # Class methods
+    # Note: inherits from built-in Django User class which contains:
+    #       id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined
+   
     def __unicode__(self):
         """String representation for the current member."""
         return "%s (%s %s)" % (self.email, self.first_name, self.last_name)
+
+    def get_absolute_url(self):
+        """Returns the URL for the current member's member page."""
+        return "/member/%i/" % (self.id)
 
     def get_formatted_phone(self):
         """Returns the current member's formatted phone number."""
@@ -176,6 +276,15 @@ class Member(User):
         """Returns the current member's formatted birthday."""
         months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         return "%s %s, %s" % (months[self.birthday.month - 1], self.birthday.day, self.birthday.year)
+
+    def get_num_notifications(self):
+        """Removes old inkling invitations and returns the current member's notification count."""
+        # Remove old inkling invitations
+        for invitation in self.invitations.all():
+            if (invitation.inkling.date < datetime.date.today()):
+                self.invitations.remove(invitation)
+
+        return self.requested.count() + self.invitations.count()
 
     def update_verification_hash(self):
         """Updates the current member's verification hash."""
