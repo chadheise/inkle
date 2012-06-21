@@ -5,9 +5,15 @@
             <div class="allInklingsInfo">
                 <div class="location">{{ inkling.location.name }}</div>
                 <div>
-                    <div class="time">{{ inkling.time }}</div>
-                    <div class="dot">&middot</div>
-                    <div class="category">{{ inkling.category }}</div>
+                    {% if inkling.time %}
+                        <div class="time">{{ inkling.time }}</div>
+                        {% if inkling.category %}
+                            <div class="dot">&middot</div>
+                        {% endif %}
+                    {% endif %}
+                    {% if inkling.category %}
+                        <div class="category">{{ inkling.category }}</div>
+                    {% endif %}
                 </div>
             </div>
             <div class="clear"></div>

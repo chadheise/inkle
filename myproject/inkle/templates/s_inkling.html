@@ -1,31 +1,37 @@
 <div id="inklingView">
     <div id="inklingHeader">
         <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-        <div class="location">{{ inkling.location.name }}</div>
+        <div class="location">{{ inkling.location.name|default:"Location TBD" }}</div>
         <div class="clear"></div>
     </div>
     <div id="inklingInfo">
         <div class="banner">Basic Info</div>
         <div class="infoContainer">
-            <div class="time">{{ inkling.time }}</div>
-            <div class="dot">&middot</div>
-            <div class="category">{{ inkling.category }}</div>
+            {% if inkling.time %}
+                <div class="time">{{ inkling.time }}</div>
+                {% if inkling.category %}
+                    <div class="dot">&middot</div>
+                {% endif %}
+            {% endif %}
+            {% if inkling.category %}
+                <div class="category">{{ inkling.category }}</div>
+            {% endif %}
             <div class="clear"></div>
         </div>
-        <div class="banner">Friends</div>
+        <div class="banner">Attendees</div>
         <div class="infoContainer">
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
-            <div class="friendPicture">&nbsp;</div>
+            {% for attendee in inkling.get_attendees %}
+                <div class="attendeePicture">&nbsp;</div>
+            {% empty %}
+                <div>No attendees</div>
+            {% endfor %}
             <div class="clear"></div>
         </div>
-        <div class="banner">Notes</div>
-        <div class="infoContainer">
-            <div>{{ inkling.notes }}</div>
-        </div>
+        {% if inkling.notes %}
+            <div class="banner">Notes</div>
+            <div class="infoContainer">
+                <div>{{ inkling.notes }}</div>
+            </div>
+        {% endif %}
     </div>
 </div>
