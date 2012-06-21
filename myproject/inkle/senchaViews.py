@@ -118,7 +118,11 @@ def s_get_all_inklings_view(request):
     # Get the logged in member
     member = Member.objects.get(pk = 1)
 
-    inklings = member.inklings.all()
+    inklings = []
+    for m in member.friends.all():
+        for i in m.inklings.all():
+            if i not in inklings:
+                inklings.append(i)
 
     return render_to_response( "s_allInklings.html",
         { "inklings" : inklings  },
@@ -141,10 +145,16 @@ def s_get_my_inklings_view(request):
     """Returns my inklings."""
 
     # Get the logged in member
-    member = Member.objects.get(pk = 3)
+    member = Member.objects.get(pk = 1)
 
-    inklings = member.inklings.all()
+    # Get date objects
+    today = datetime.date.today()
+    seven_days = today + datetime.timedelta(days = 7)
+    
+    todays_inklings = member.inklings.filter(date = datetime.date.today())
+    this_weeks_inklings = member.inklings.filter(date__gt = today).filter(date__lte = seven_days)
+    future_inklings = member.inklings.filter(date__gte = seven_days)
 
     return render_to_response( "s_myInklings.html",
-        { "inklings" : inklings  },
+        { "todaysInklings" : todays_inklings, "thisWeeksInklings" : this_weeks_inklings, "futureInklings" : future_inklings },
         context_instance = RequestContext(request) )

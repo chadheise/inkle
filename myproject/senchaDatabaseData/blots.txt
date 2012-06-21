@@ -1,7 +1,8 @@
-Best Friends | 1
-London Buddies | 1
-Morrissey Gang | 1
-Trivia | 1
-Best Friends | 2
-Spain Engineers | 2
-Morrissey | 2
+# BLOT NAME | MEMBER ID OF BLOT CREATOR | MEMBER IDS OF MEMBERS IN BLOT
+Best Friends | 1 | 2, 3, 4, 5, 6, 7, 8
+London Buddies | 1 | 3, 7, 8, 10
+Morrissey Gang | 1 | 2, 4, 7, 8, 9
+Trivia | 1 | 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+Best Friends | 2 | 1, 3, 7, 9, 11
+Spain Engineers | 2 | 1,  5, 7
+Morrissey | 2 | 1, 3, 5, 13

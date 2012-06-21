@@ -13,9 +13,20 @@ def load_members():
         else:
             shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(m.id) + ".jpg")
 
+def load_friendships():
+    for line in open("senchaDatabaseData/friendships.txt", "r"):
+        data = [x.strip() for x in line.split("|")]
+        m0 = Member.objects.get(pk = data[0])
+        m1 = Member.objects.get(pk = data[1])
+        if ((m0 != m1) and (m1 not in m0.friends.all())):
+            m0.friends.add(m1)
 
 def load_blots():
+    first = True
     for line in open("senchaDatabaseData/blots.txt", "r"):
+        if first:
+            first = False
+            continue
         data = [x.strip() for x in line.split("|")]
         b = Blot(name = data[0])
         b.save()
@@ -23,26 +34,32 @@ def load_blots():
         m = Member.objects.get(pk = data[1])
         m.blots.add(b)
 
+        blot_members = [x.strip() for x in data[2].split(",")]
+        for m_id in blot_members:
+            m = Member.objects.get(pk = m_id)
+            b.members.add(m)
+
 
 def load_inklings():
+    first = True
     for line in open("senchaDatabaseData/inklings.txt", "r"):
         data = [x.strip() for x in line.split("|")]
+        if first:
+            first = False
+            continue
         l = Location(name = data[0])
         l.save()
-        i = Inkling(date = datetime.date.today(), location = l, time = data[1], category = data[2], notes = data[3], is_private = data[4])
+        i = Inkling(date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = l, time = data[2], category = data[3], notes = data[4], is_private = data[5])
         i.save()
 
-
-def load_member_inklings():
-    for line in open("senchaDatabaseData/memberInklings.txt", "r"):
-        data = [x.strip() for x in line.split("|")]
-        m = Member.objects.get(pk = data[0])
-        i = Inkling.objects.get(pk = data[1])
-        m.inklings.add(i)
+        inkling_members = [x.strip() for x in data[6].split(",")]
+        for m_id in inkling_members:
+            m = Member.objects.get(pk = m_id)
+            m.inklings.add(i)
 
 
 def populate_dev_database():
     load_members()
+    load_friendships()
     load_blots()
     load_inklings()
-    load_member_inklings()
