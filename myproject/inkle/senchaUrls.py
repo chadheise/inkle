@@ -8,7 +8,9 @@ from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns(
     "myproject.inkle.senchaViews",
+    (r"^isLoggedIn/$", "s_is_logged_in"),
     (r"^login/$", "s_login_view"),
+    (r"^logout/$", "s_logout_view"),
     (r"^getBlots/$", "s_get_blots_view"),
     (r"^getAllInklings/$", "s_get_all_inklings_view"),
     (r"^getInkling/$", "s_get_inkling_view"),

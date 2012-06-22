@@ -30,6 +30,15 @@ import sys
 from views import *
 
 @csrf_exempt
+def s_is_logged_in(request):
+    """Returns True if the user is logged in; returns false otherwise."""
+    if ("member_id" in request.session):
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
+
+
+@csrf_exempt
 def s_login_view(request):
     """Either logs in a member or returns the login errors."""
     
@@ -88,15 +97,26 @@ def s_login_view(request):
     # Create JSON object
     response = simplejson.dumps(invalid)
 
-    return HttpResponse(response, mimetype="application/json")
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_logout_view(request):
+    """Logs out the logged in member."""
+    try:
+        del request.session["member_id"]
+    except KeyError:
+        pass
+
+    return HttpResponse()
+
    
 @csrf_exempt
 def s_get_blots_view(request):
     """Returns the names and IDs of the logged in user's blots."""
 
     # Get the logged in member
-    #member = Member.active.get(pk = request.session["member_id"])
-    member = Member.active.get(pk = 1)
+    member = Member.active.get(pk = request.session["member_id"])
 
     # Add "All Blots" to the response data
     data = {}
@@ -111,12 +131,13 @@ def s_get_blots_view(request):
 
     return HttpResponse(response, mimetype="application/json")
 
+
 @csrf_exempt
 def s_get_all_inklings_view(request):
     """Returns all the inklings."""
 
     # Get the logged in member
-    member = Member.objects.get(pk = 1)
+    member = Member.active.get(pk = request.session["member_id"])
 
     inklings = []
     for m in member.friends.all():
@@ -145,7 +166,7 @@ def s_get_my_inklings_view(request):
     """Returns my inklings."""
 
     # Get the logged in member
-    member = Member.objects.get(pk = 1)
+    member = Member.active.get(pk = request.session["member_id"])
 
     # Get date objects
     today = datetime.date.today()
