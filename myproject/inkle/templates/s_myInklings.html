@@ -1,76 +1,27 @@
 <div id="myInklingsView">
-    <!-- Today's inklings -->
-    <div class="banner">Today</div>
-    {% for inkling in todaysInklings %}
-        <div class="inkling" inklingId="{{ inkling.id }}">
-            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-            <div class="inklingInfo">
-                <div class="location">{{ inkling.location.name }}</div>
-                <div>
-                    {% if inkling.time %}
-                        <div class="time">{{ inkling.time }}</div>
-                        {% if inkling.category %}
-                            <div class="dot">&middot</div>
+    {% for bannerHeader, inklings in inklings %}
+        <div class="banner">{{ bannerHeader }}</div>
+        {% for inkling in inklings %}
+            <div class="inkling" inklingId="{{ inkling.id }}">
+                <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+                <div class="inklingInfo">
+                    <div class="location">{{ inkling.location.name }}</div>
+                    <div>
+                        {% if inkling.time %}
+                            <div class="time">{{ inkling.time }}</div>
+                            {% if inkling.category %}
+                                <div class="dot">&middot</div>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                    {% if inkling.category %}
-                        <div class="category">{{ inkling.category }}</div>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="clear"></div>
-        </div>
-    {% empty %}
-        <div class="noInklings">No inklings</div>
-    {% endfor %}
-
-    <!-- This week's inklings -->
-    <div class="banner">This Week</div>
-    {% for inkling in thisWeeksInklings %}
-        <div class="inkling" inklingId="{{ inkling.id }}">
-            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-            <div class="inklingInfo">
-                <div class="location">{{ inkling.location.name }}</div>
-                <div>
-                    {% if inkling.time %}
-                        <div class="time">{{ inkling.time }}</div>
                         {% if inkling.category %}
-                            <div class="dot">&middot</div>
+                            <div class="category">{{ inkling.category }}</div>
                         {% endif %}
-                    {% endif %}
-                    {% if inkling.category %}
-                        <div class="category">{{ inkling.category }}</div>
-                    {% endif %}
+                    </div>
                 </div>
+                <div class="clear"></div>
             </div>
-            <div class="clear"></div>
-        </div>
-    {% empty %}
-        <div class="noInklings">No inklings</div>
-    {% endfor %}
-
-    <!-- Future inklings -->
-    <div class="banner">Future</div>
-    {% for inkling in futureInklings %}
-        <div class="inkling" inklingId="{{ inkling.id }}">
-            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-            <div class="inklingInfo">
-                <div class="location">{{ inkling.location.name }}</div>
-                <div>
-                    {% if inkling.time %}
-                        <div class="time">{{ inkling.time }}</div>
-                        {% if inkling.category %}
-                            <div class="dot">&middot</div>
-                        {% endif %}
-                    {% endif %}
-                    {% if inkling.category %}
-                        <div class="category">{{ inkling.category }}</div>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="clear"></div>
-        </div>
-    {% empty %}
-        <div class="noInklings">No inklings</div>
+        {% empty %}
+            <div class="noInklings">No inklings</div>
+        {% endfor %}
     {% endfor %}
 </div>

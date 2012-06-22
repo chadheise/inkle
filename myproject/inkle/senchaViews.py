@@ -163,19 +163,35 @@ def s_get_inkling_view(request):
 
 @csrf_exempt
 def s_get_my_inklings_view(request):
-    """Returns my inklings."""
+    """Returns the HTML for the logged in user's inklings."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     # Get date objects
     today = datetime.date.today()
-    seven_days = today + datetime.timedelta(days = 7)
+    tomorrow = today + datetime.timedelta(days = 1)
+    this_week = today + datetime.timedelta(days = 6)
     
-    todays_inklings = member.inklings.filter(date = datetime.date.today())
-    this_weeks_inklings = member.inklings.filter(date__gt = today).filter(date__lte = seven_days)
-    future_inklings = member.inklings.filter(date__gte = seven_days)
+    # Get the logged in member's inklings for each time period
+    inklings = []
+    inklings.append(["Today", member.inklings.filter(date = datetime.date.today())])
+    inklings.append(["Tomorrow", member.inklings.filter(date__gt = today).filter(date__lte = tomorrow)])
+    inklings.append(["This Week", member.inklings.filter(date__gt = today).filter(date__lte = this_week)])
+    inklings.append(["Future", member.inklings.filter(date__gte = this_week)])
 
     return render_to_response( "s_myInklings.html",
-        { "todaysInklings" : todays_inklings, "thisWeeksInklings" : this_weeks_inklings, "futureInklings" : future_inklings },
+        { "inklings" : inklings },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_get_profile_view(request):
+    """Returns the HTML for the logged in user's profile."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    return render_to_response( "s_profile.html",
+        { "member" : member },
         context_instance = RequestContext(request) )
