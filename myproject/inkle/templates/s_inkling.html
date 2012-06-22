@@ -5,19 +5,21 @@
         <div class="clear"></div>
     </div>
     <div id="inklingInfo">
-        <div class="banner">Basic Info</div>
-        <div class="infoContainer">
-            {% if inkling.time %}
-                <div class="time">{{ inkling.time }}</div>
-                {% if inkling.category %}
-                    <div class="dot">&middot</div>
+        {% if inkling.time or inkling.category %}
+            <div class="banner">Basic Info</div>
+            <div class="infoContainer">
+                {% if inkling.time %}
+                    <div class="time">{{ inkling.time }}</div>
+                    {% if inkling.category %}
+                        <div class="dot">&middot</div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-            {% if inkling.category %}
-                <div class="category">{{ inkling.category }}</div>
-            {% endif %}
-            <div class="clear"></div>
-        </div>
+                {% if inkling.category %}
+                    <div class="category">{{ inkling.category }}</div>
+                {% endif %}
+                <div class="clear"></div>
+            </div>
+        {% endif %}
         <div class="banner">Attendees</div>
         <div class="infoContainer">
             {% for attendee in inkling.get_attendees %}
