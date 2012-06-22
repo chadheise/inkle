@@ -15,4 +15,5 @@ urlpatterns = patterns(
     (r"^getAllInklings/$", "s_get_all_inklings_view"),
     (r"^getInkling/$", "s_get_inkling_view"),
     (r"^getMyInklings/$", "s_get_my_inklings_view"),
+    (r"^getProfile/$", "s_get_profile_view"),
 )

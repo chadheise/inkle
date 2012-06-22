@@ -1,39 +1,13 @@
-<div id="inklingView">
-    <div id="inklingHeader">
-        <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-        <div class="location">{{ inkling.location.name|default:"Location TBD" }}</div>
+<div id="profileView">
+    <div id="header">
+        <img id="picture" src="{{ STATIC_URL }}/media/images/members/{{ member.id }}.jpg" />
+        <div id="name">{{ member.get_full_name }}</div>
         <div class="clear"></div>
     </div>
     <div id="inklingInfo">
-        {% if inkling.time or inkling.category %}
-            <div class="banner">Basic Info</div>
-            <div class="infoContainer">
-                {% if inkling.time %}
-                    <div class="time">{{ inkling.time }}</div>
-                    {% if inkling.category %}
-                        <div class="dot">&middot</div>
-                    {% endif %}
-                {% endif %}
-                {% if inkling.category %}
-                    <div class="category">{{ inkling.category }}</div>
-                {% endif %}
-                <div class="clear"></div>
-            </div>
-        {% endif %}
-        <div class="banner">Attendees</div>
+        <div class="banner">Basic Info</div>
         <div class="infoContainer">
-            {% for attendee in inkling.get_attendees %}
-                <img class="attendeePicture" src="{{ STATIC_URL }}/media/images/members/{{ attendee.id }}.jpg" />
-            {% empty %}
-                <div>No attendees</div>
-            {% endfor %}
             <div class="clear"></div>
         </div>
-        {% if inkling.notes %}
-            <div class="banner">Notes</div>
-            <div class="infoContainer">
-                <div>{{ inkling.notes }}</div>
-            </div>
-        {% endif %}
     </div>
 </div>
