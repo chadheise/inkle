@@ -41,7 +41,6 @@ def s_is_logged_in(request):
 @csrf_exempt
 def s_login_view(request):
     """Either logs in a member or returns the login errors."""
-    
     # Create dictionaries to hold the POST data and the invalid errors
     data = { "email" : "", "password" : "", "month" : 0, "year" : 0 }
     invalid = { "errors" : [] }
@@ -76,12 +75,12 @@ def s_login_view(request):
                 member = Member.active.get(email = data["email"])
             except:
                 member = []
+
             # Confirm the username and password combination
             if (member and (member.verified) and (member.is_active) and (member.check_password(data["password"]))):
                 request.session["member_id"] = member.id
                 member.last_login = datetime.datetime.now()
                 member.save()
-
             # Otherwise, set the invalid dictionary
             else:
                 invalid["email"] = True
@@ -96,7 +95,6 @@ def s_login_view(request):
 
     # Create JSON object
     response = simplejson.dumps(invalid)
-
     return HttpResponse(response, mimetype = "application/json")
 
 
