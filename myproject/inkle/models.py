@@ -100,6 +100,23 @@ class Inkling(models.Model):
                 return "%s %d" % (months[self.date.month - 1], self.date.day)
 
 
+class Comment(models.Model):
+    """Comment class definition."""
+    # General information
+    inkling = models.ForeignKey(Inkling)
+    creator = models.ForeignKey("Member")
+    date_created = models.DateTimeField(auto_now_add = True)
+    text = models.CharField(max_length = 150, blank = True)
+    
+    # Metadata
+    date_last_modified = models.DateTimeField(auto_now = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current comment."""
+        return "%s (%s)" % (self.creator.get_full_name(), self.text)
+
+
 class ActiveMemberManager(models.Manager):
     """Manager which returns active member objects."""
     def get_query_set(self):
@@ -131,7 +148,6 @@ class Member(User):
     #followers = models.ManyToManyField("self", symmetrical = False, related_name = "followers_related")
     #following = models.ManyToManyField("self", symmetrical = False, related_name = "following_related")
     friends = models.ManyToManyField("self")
-    
 
     # Email verification
     verification_hash = models.CharField(max_length = 32)

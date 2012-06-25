@@ -151,12 +151,15 @@ def s_get_all_inklings_view(request):
 def s_get_inkling_view(request):
     """Returns a single inkling."""
 
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
     # Get the current inkling
     inkling_id = request.POST["inkling_id"]
     inkling = Inkling.objects.get(pk = inkling_id)
 
     return render_to_response( "s_inkling.html",
-        { "inkling" : inkling },
+        { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
 
 @csrf_exempt

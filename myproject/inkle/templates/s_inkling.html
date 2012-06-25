@@ -1,25 +1,28 @@
+{% load humanize %}
+
 <div id="inklingView">
+    <!-- Inkling name and number of attendees -->
     <div id="inklingHeader">
         <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
         <div class="location">{{ inkling.location.name|default:"Location TBD" }}</div>
         <div class="clear"></div>
     </div>
     <div id="inklingInfo">
+        <!-- Inkling basic information -->
         {% if inkling.time or inkling.category %}
-            <div class="banner">Basic Info</div>
+            <div class="banner">Basic Information</div>
             <div class="infoContainer">
                 {% if inkling.time %}
-                    <div class="time">{{ inkling.time }}</div>
-                    {% if inkling.category %}
-                        <div class="dot">&middot</div>
-                    {% endif %}
+                    <div class="time"><span class="basicInfoLabel">Time</span>: {{ inkling.time }}</div>
                 {% endif %}
                 {% if inkling.category %}
-                    <div class="category">{{ inkling.category }}</div>
+                    <div class="category"><span class="basicInfoLabel">Category</span>: {{ inkling.category }}</div>
                 {% endif %}
                 <div class="clear"></div>
             </div>
         {% endif %}
+
+        <!-- Inkling attendees -->
         <div class="banner">Attendees</div>
         <div class="infoContainer">
             {% for attendee in inkling.get_attendees %}
@@ -29,10 +32,32 @@
             {% endfor %}
             <div class="clear"></div>
         </div>
+
+        <!-- Inkling notes -->
         {% if inkling.notes %}
             <div class="banner">Notes</div>
             <div class="infoContainer">
                 <div>{{ inkling.notes }}</div>
+            </div>
+        {% endif %}
+
+        <!-- Group message -->
+        {% if inkling in member.inklings.all %}
+            <div class="banner">Group Message</div>
+            <div class="infoContainer">
+                {% for comment in inkling.comment_set.all.reverse %}
+                    <div class="comment">
+                        <img class="commentMemberPicture" src="{{ STATIC_URL }}/media/images/members/{{ comment.creator.id }}.jpg" />
+                        <div class="commentInfo">
+                            <p class="commentMemberName">{{ comment.creator.get_full_name }}</p>
+                            <p class="commentText">{{ comment.text }}</p>
+                            <p class="commentTime">{{ comment.date_created|naturaltime }}</p>
+                        </div>
+
+                        <div class="clear"></div>
+                    </div>
+                {% endfor %}
+                <input id="newCommentInput" type="text" value="Add a comment" />
             </div>
         {% endif %}
     </div>
