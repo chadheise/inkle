@@ -58,8 +58,23 @@ def load_inklings():
             m.inklings.add(i)
 
 
+def load_comments():
+    first = True
+    for line in open("senchaDatabaseData/comments.txt", "r"):
+        data = [x.strip() for x in line.split("|")]
+        if first:
+            first = False
+            continue
+        i = Inkling.objects.get(pk = data[0])
+        m = Member.objects.get(pk = data[1])
+
+        c = Comment(inkling = i, creator = m, text = data[2])
+        c.save()
+
+
 def populate_dev_database():
     load_members()
     load_friendships()
     load_blots()
     load_inklings()
+    load_comments()

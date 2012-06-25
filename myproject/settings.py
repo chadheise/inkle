@@ -60,7 +60,7 @@ STATIC_ROOT = 'inkle/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = 'http://127.0.0.1:8000/static'
+STATIC_URL = 'file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     #'django.contrib.admindocs',
     'inkle',
     #'south',
+    'django.contrib.humanize'
 )
 
 # A sample logging configuration. The only tangible logging
