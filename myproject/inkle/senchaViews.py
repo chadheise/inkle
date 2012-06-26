@@ -110,7 +110,7 @@ def s_logout_view(request):
 
    
 @csrf_exempt
-def s_get_blots_view(request):
+def s_blots_view(request):
     """Returns the names and IDs of the logged in user's blots."""
 
     # Get the logged in member
@@ -131,7 +131,7 @@ def s_get_blots_view(request):
 
 
 @csrf_exempt
-def s_get_all_inklings_view(request):
+def s_all_inklings_view(request):
     """Returns all the inklings."""
 
     # Get the logged in member
@@ -148,22 +148,62 @@ def s_get_all_inklings_view(request):
         context_instance = RequestContext(request) )
 
 @csrf_exempt
-def s_get_inkling_view(request):
+def s_inkling_view(request):
     """Returns a single inkling."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     # Get the current inkling
-    inkling_id = request.POST["inkling_id"]
+    inkling_id = request.POST["inklingId"]
     inkling = Inkling.objects.get(pk = inkling_id)
 
     return render_to_response( "s_inkling.html",
         { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
 
+
 @csrf_exempt
-def s_get_my_inklings_view(request):
+def s_inkling_feed_view(request):
+    """Returns the feed for a single inkling."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling
+    inkling_id = request.POST["inklingId"]
+    inkling = Inkling.objects.get(pk = inkling_id)
+
+    return render_to_response( "s_inklingFeed.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_post_new_comment_view(request):
+    """Posts a new comment to an inkling."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling
+    inkling_id = request.POST["inklingId"]
+    inkling = Inkling.objects.get(pk = inkling_id)
+
+    # Get the comment text
+    text = request.POST["text"]
+
+    # Create the new comment
+    comment = Comment(inkling = inkling, creator = member, text = text)
+    comment.save()
+
+    return render_to_response( "s_inklingFeed.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_my_inklings_view(request):
     """Returns the HTML for the logged in user's inklings."""
 
     # Get the logged in member
@@ -187,7 +227,7 @@ def s_get_my_inklings_view(request):
 
 
 @csrf_exempt
-def s_get_profile_view(request):
+def s_profile_view(request):
     """Returns the HTML for the logged in user's profile."""
 
     # Get the logged in member

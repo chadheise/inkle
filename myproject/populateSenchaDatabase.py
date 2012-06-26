@@ -49,7 +49,10 @@ def load_inklings():
             continue
         l = Location(name = data[0])
         l.save()
-        i = Inkling(date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = l, time = data[2], category = data[3], notes = data[4], is_private = data[5])
+
+        creator = Member.objects.get(pk = data[7])
+
+        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = l, time = data[2], category = data[3], notes = data[4], is_private = data[5])
         i.save()
 
         inkling_members = [x.strip() for x in data[6].split(",")]
@@ -72,9 +75,24 @@ def load_comments():
         c.save()
 
 
+def load_events():
+    first = True
+    for line in open("senchaDatabaseData/events.txt", "r"):
+        data = [x.strip() for x in line.split("|")]
+        if first:
+            first = False
+            continue
+        i = Inkling.objects.get(pk = data[0])
+        m = Member.objects.get(pk = data[1])
+
+        e = Event(inkling = i, member = m, category = data[2], text = data[3])
+        e.save()
+
+
 def populate_dev_database():
     load_members()
     load_friendships()
     load_blots()
     load_inklings()
     load_comments()
+    load_events()

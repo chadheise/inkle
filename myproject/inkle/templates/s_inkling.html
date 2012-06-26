@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<div id="inklingView">
+<div class="view" id="inklingView">
     <!-- Inkling name and number of attendees -->
     <div id="inklingHeader">
         <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
@@ -38,28 +38,6 @@
             <div class="banner">Notes</div>
             <div class="infoContainer">
                 <div>{{ inkling.notes }}</div>
-            </div>
-        {% endif %}
-
-        <!-- Group message -->
-        {% if inkling in member.inklings.all %}
-            <div class="banner">Group Message</div>
-            <div class="infoContainer">
-                {% for comment in inkling.comment_set.all.reverse %}
-                    <div class="comment">
-                        <img class="commentMemberPicture" src="{{ STATIC_URL }}/media/images/members/{{ comment.creator.id }}.jpg" />
-                        <div class="commentInfo">
-                            <p class="commentMemberName">{{ comment.creator.get_full_name }}</p>
-                            <p class="commentText">{{ comment.text }}</p>
-                            <p class="commentTime">{{ comment.date_created|naturaltime }}</p>
-                        </div>
-
-                        <div class="clear"></div>
-                    </div>
-                {% endfor %}
-                <input id="newCommentInput" type="text" value="Add a comment" />
-                <input id="newCommentSendButton" type="button" value="Send" />
-                <div class="clear"></div>
             </div>
         {% endif %}
     </div>
