@@ -1,0 +1,25 @@
+{% load humanize %}
+
+<div class="view" id="inklingFeedView">
+    <div class="feedEvent">
+        <img class="feedEventLogo" src="resources/images/plus.png" />
+        <p class="feedEventText">{{ inkling.creator.get_full_name }} created this inkling.</p>
+        <p class="feedEventTime">{{ inkling.date_created|naturaltime }}</p>
+    </div>
+
+    <!-- Inkling events -->
+    {% for event in inkling.event_set.all %}
+        <div class="feedEvent">
+            <img class="feedEventLogo" src="resources/images/{{ event.get_logo }}" />
+            <p class="feedEventText">{{ event.text }}.</p>
+            <p class="feedEventTime">{{ event.date_created|naturaltime }}</p>
+        </div>
+    {% endfor %}
+    <!-- Group feed -->
+    <div id="feedComments">
+        {% for comment in inkling.comment_set.all %}
+            {% include "s_inklingFeedComment.html" %}
+        {% endfor %}
+    </div>
+    <div class="clear"></div>
+</div>

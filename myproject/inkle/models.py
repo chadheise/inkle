@@ -48,9 +48,42 @@ class CurrentInklingManager(models.Manager):
         return Inkling.objects.filter(date__gte = datetime.date.today())
 
 
+class Event(models.Model):
+    """InklingEvent class definition."""
+    # General information
+    member = models.ForeignKey("Member")
+    inkling = models.ForeignKey("Inkling")
+    category = models.CharField(max_length = 100)
+    text = models.CharField(max_length = 150)
+    
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current inkling event."""
+        return "%s - %d (%s)" % (self.member.get_full_name(), self.inkling.id, self.category)
+
+    def get_logo(self):
+        """Returns the logo for the current inkling event according to its category."""
+        if (self.category == "creation"):
+            return "plus.png"
+        elif (self.category == "time"):
+            return "clock.png"
+        elif (self.category == "location"):
+            return "location.png"
+        elif (self.category == "category"):
+            return "notes.png"
+        elif (self.category == "notes"):
+            return "notes.png"
+
+
+
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
+    creator = models.ForeignKey("Member")
+    location = models.ForeignKey(Location, blank = True, null = True)
     location = models.ForeignKey(Location, blank = True, null = True)
     category = models.CharField(max_length = 30, blank = True)
     date = models.DateField()
