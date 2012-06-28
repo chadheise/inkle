@@ -167,10 +167,25 @@ def s_all_inklings_view(request):
         { "inklings" : inklings  },
         context_instance = RequestContext(request) )
 
+
+@csrf_exempt
+def s_is_member_inkling_view(request):
+    """Returns True if the inkling is one of the logged in member's inklings."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling id
+    inkling_id = request.POST["inklingId"]
+
+    if (member.inklings.filter(pk = inkling_id)):
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
+
+
 @csrf_exempt
 def s_inkling_view(request):
     """Returns a single inkling."""
-
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
@@ -181,6 +196,22 @@ def s_inkling_view(request):
     return render_to_response( "s_inkling.html",
         { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_join_inkling_view(request):
+    """Adds the logged in member to an inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling
+    inkling_id = request.POST["inklingId"]
+    inkling = Inkling.objects.get(pk = inkling_id)
+
+    # Add the inkling to the logged in member's inklings
+    member.inklings.add(inkling)
+    
+    return HttpResponse()
 
 
 @csrf_exempt
