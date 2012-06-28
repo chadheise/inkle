@@ -137,9 +137,29 @@ def s_all_inklings_view(request):
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
+    # Get the date, or set it to today if no date is specified
+    if ("day" in request.POST):
+        day = int(request.POST["day"])
+        month = int(request.POST["month"])
+        year = int(request.POST["year"])
+        date = datetime.date(year, month, day)
+    else:
+        date = datetime.date.today()
+
+    # Get the blot, or set it to all blots if no blot is specified
+    if ("blotId" in request.POST):
+        blot_id = int(request.POST["blotId"])
+        if (blot_id != -1):
+            blot = member.blots.get(pk = blot_id)
+            members = blot.members.all()
+        else:
+            members = member.friends.all()
+    else:
+        members = member.friends.all()
+
     inklings = []
-    for m in member.friends.all():
-        for i in m.inklings.all():
+    for m in members:
+        for i in m.inklings.filter(date = date):
             if i not in inklings:
                 inklings.append(i)
 
