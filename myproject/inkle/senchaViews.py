@@ -199,6 +199,62 @@ def s_inkling_view(request):
 
 
 @csrf_exempt
+def s_edit_inkling_view(request):
+    """Returns the HTML for editing an inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling
+    inkling_id = request.POST["inklingId"]
+    inkling = Inkling.objects.get(pk = inkling_id)
+
+    return render_to_response( "s_editInkling.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_save_inkling_view(request):
+    """Saves any changes to an inkling and returns the HTML for that inkling's page."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the current inkling
+    inkling_id = request.POST["inklingId"]
+    inkling = Inkling.objects.get(pk = inkling_id)
+
+    # Get the inkling info
+    location = request.POST["location"]
+    time = request.POST["time"]
+    category = request.POST["category"]
+    notes = request.POST["notes"]
+
+    # Create an event for everything that changed
+    if (location != inkling.location):
+        event = Event(inkling = inkling, member = member, category = "location", text = member.get_full_name() + " updated the location for this inkling to " + location)
+        event.save()
+        inkling.location = location
+    if (time != inkling.time):
+        event = Event(inkling = inkling, member = member, category = "time", text = member.get_full_name() + " updated the time for this inkling to " + time)
+        event.save()
+        inkling.time = time
+    if (category != inkling.category):
+        event = Event(inkling = inkling, member = member, category = "category", text = member.get_full_name() + " updated the category for this inkling to " + category)
+        event.save()
+        inkling.category = category
+    if (notes != inkling.notes):
+        event = Event(inkling = inkling, member = member, category = "notes", text = member.get_full_name() + " updated the notes for this inkling to " + notes)
+        event.save()
+        inkling.notes = notes
+
+    inkling.save()
+
+    return render_to_response( "s_inkling.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
 def s_join_inkling_view(request):
     """Adds the logged in member to an inkling."""
     # Get the logged in member
@@ -225,8 +281,16 @@ def s_inkling_feed_view(request):
     inkling_id = request.POST["inklingId"]
     inkling = Inkling.objects.get(pk = inkling_id)
 
+    feed_items = []
+    for comment in inkling.comment_set.all():
+        feed_items.append((comment, "comment"))
+    for event in inkling.event_set.all():
+        feed_items.append((event, "event"))
+
+    feed_items.sort(key = lambda i : i[0].date_created)
+
     return render_to_response( "s_inklingFeed.html",
-        { "member" : member, "inkling" : inkling },
+        { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
         context_instance = RequestContext(request) )
 
 
@@ -248,8 +312,17 @@ def s_post_new_comment_view(request):
     comment = Comment(inkling = inkling, creator = member, text = text)
     comment.save()
 
+    # Get the feed items
+    feed_items = []
+    for comment in inkling.comment_set.all():
+        feed_items.append((comment, "comment"))
+    for event in inkling.event_set.all():
+        feed_items.append((event, "event"))
+
+    feed_items.sort(key = lambda i : i[0].date_created)
+
     return render_to_response( "s_inklingFeed.html",
-        { "member" : member, "inkling" : inkling },
+        { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
         context_instance = RequestContext(request) )
 
 

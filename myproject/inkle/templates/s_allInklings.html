@@ -3,7 +3,7 @@
         <div class="inkling" inklingId="{{ inkling.id }}">
             <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
             <div class="inklingInfo">
-                <div class="location">{{ inkling.location.name }}</div>
+                <div class="location">{{ inkling.location }}</div>
                 <div>
                     {% if inkling.time %}
                         <div class="time">{{ inkling.time }}</div>

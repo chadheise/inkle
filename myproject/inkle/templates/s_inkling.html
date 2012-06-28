@@ -4,7 +4,10 @@
     <!-- Inkling name and number of attendees -->
     <div id="inklingHeader">
         <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
-        <div class="location">{{ inkling.location.name|default:"Location TBD" }}</div>
+        <div class="location">{{ inkling.location|default:"Location TBD" }}</div>
+        {% if inkling in member.inklings.all %}
+            <img id="editInklingButton" src="resources/images/gear.png" />
+        {% endif %}
         <div class="clear"></div>
     </div>
     <div id="inklingInfo">
