@@ -47,12 +47,10 @@ def load_inklings():
         if first:
             first = False
             continue
-        l = Location(name = data[0])
-        l.save()
 
         creator = Member.objects.get(pk = data[7])
 
-        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = l, time = data[2], category = data[3], notes = data[4], is_private = data[5])
+        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], category = data[3], notes = data[4], is_private = data[5])
         i.save()
 
         inkling_members = [x.strip() for x in data[6].split(",")]

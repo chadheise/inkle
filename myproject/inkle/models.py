@@ -9,16 +9,6 @@ import datetime
 
 from myproject.settings import MEDIA_ROOT
 
-class Location(models.Model):
-    """Location class definition."""
-    # General information
-    name = models.CharField(max_length = 100)
-
-    def __unicode__(self):
-        """String representation for the current location."""
-        return "%s" % (self.name)
-
-
 class Blot(models.Model):
     """Blot class definition."""
     # General information
@@ -49,7 +39,7 @@ class CurrentInklingManager(models.Manager):
 
 
 class Event(models.Model):
-    """InklingEvent class definition."""
+    """Event class definition."""
     # General information
     member = models.ForeignKey("Member")
     inkling = models.ForeignKey("Inkling")
@@ -83,8 +73,7 @@ class Inkling(models.Model):
     """Inkling class definition."""
     # General information
     creator = models.ForeignKey("Member")
-    location = models.ForeignKey(Location, blank = True, null = True)
-    location = models.ForeignKey(Location, blank = True, null = True)
+    location = models.CharField(max_length = 100, blank = True)
     category = models.CharField(max_length = 30, blank = True)
     date = models.DateField()
     time = models.CharField(max_length = 15, blank = True)
@@ -109,7 +98,7 @@ class Inkling(models.Model):
     # Class methods
     def __unicode__(self):
         """String representation for the current inkling."""
-        return "%s (%s)" % (self.location.name, self.get_formatted_date())
+        return "%s (%s)" % (self.location, self.get_formatted_date())
 
     def get_attendees(self):
         return self.member_set.all()
