@@ -110,7 +110,7 @@ def s_logout_view(request):
 
    
 @csrf_exempt
-def s_blots_view(request):
+def s_blot_names_view(request):
     """Returns the names and IDs of the logged in user's blots."""
 
     # Get the logged in member
@@ -347,6 +347,48 @@ def s_my_inklings_view(request):
 
     return render_to_response( "s_myInklings.html",
         { "inklings" : inklings },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_friends_view(request):
+    """Returns the HTML for the friends view friends content."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    friends = []
+    for m in member.friends.all():
+        m.num_mutual_friends = m.get_num_mutual_friends(member)
+        friends.append(m)
+    friends.sort(key = lambda m : m.last_name)
+
+    return render_to_response( "s_friends.html",
+        { "member" : member, "friends" : friends },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_blots_view(request):
+    """Returns the HTML for the friends view blots content."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    return render_to_response( "s_blots.html",
+        { "member" : member },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_sharing_view(request):
+    """Returns the HTML for the friends view sharing content."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    return render_to_response( "s_sharing.html",
+        { "member" : member },
         context_instance = RequestContext(request) )
 
 
