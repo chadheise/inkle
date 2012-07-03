@@ -215,6 +215,10 @@ class Member(User):
         """Returns the current member's full name."""
         return "%s %s" % (self.first_name, self.last_name)
 
+    def get_num_mutual_friends(self, m):
+        """Returns the number of mutual friends the current member has with the inputted member."""
+        return len(self.friends.filter(is_active = True) & m.friends.filter(is_active = True))
+
     def get_formatted_phone(self):
         """Returns the current member's formatted phone number."""
         return "(%s) %s-%s" % (self.phone[0:3], self.phone[3:6], self.phone[6:10])

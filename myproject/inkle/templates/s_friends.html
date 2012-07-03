@@ -1,0 +1,14 @@
+<div class="view" id="friendsView">
+    {% for m in friends %}
+        <div class="member" memberId="{{ m.id }}">
+            <img class="memberPicture" src="{{ STATIC_URL }}/media/images/members/{{ m.id }}.jpg" />
+            <div class="friendInfo">
+                <p class="memberName">{{ m.get_full_name }}</p>
+                <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+    {% empty %}
+        <div class="noFriends">No friends :(</div>
+    {% endfor %}
+</div>
