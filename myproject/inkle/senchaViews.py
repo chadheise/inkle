@@ -351,7 +351,7 @@ def s_my_inklings_view(request):
 
 
 @csrf_exempt
-def s_friends_view(request):
+def s_friends2_view(request):
     """Returns the HTML for the friends view friends content."""
 
     # Get the logged in member
@@ -366,6 +366,35 @@ def s_friends_view(request):
     return render_to_response( "s_friends.html",
         { "member" : member, "friends" : friends },
         context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_friends_view(request):
+    """Returns the."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of mutual friends for each of the logged in member's friends
+    friends = []
+    for m in member.friends.all():
+        friends.append({
+            "id" : m.id,
+            "firstName" : m.first_name,
+            "lastName" : m.last_name,
+            "numMutualFriends" : member.get_num_mutual_friends(m) }
+        )
+    
+    # Sort and add the friends list to the data dictionary
+    friends.sort(key = lambda m : m["lastName"])
+    data["friends"] = friends
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
