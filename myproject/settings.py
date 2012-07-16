@@ -123,7 +123,7 @@ INSTALLED_APPS = (
     #'django.contrib.admindocs',
     'inkle',
     #'south',
-    #'django.contrib.humanize'
+    'django.contrib.humanize'
 )
 
 # A sample logging configuration. The only tangible logging

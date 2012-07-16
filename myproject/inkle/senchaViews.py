@@ -108,27 +108,6 @@ def s_logout_view(request):
 
     return HttpResponse()
 
-   
-@csrf_exempt
-def s_blot_names_view(request):
-    """Returns the names and IDs of the logged in user's blots."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Add "All Blots" to the response data
-    data = {}
-    data["entries"] = [{ "text" : "All Blots", "value" : -1 }]
-
-    # Add each of the logged in member's blots to the response data
-    for blot in member.blots.all():
-        data["entries"].append({ "text" : blot.name, "value" : blot.id })
-
-    # Create JSON object
-    response = simplejson.dumps(data)
-
-    return HttpResponse(response, mimetype="application/json")
-
 
 @csrf_exempt
 def s_all_inklings_view(request):
@@ -351,24 +330,6 @@ def s_my_inklings_view(request):
 
 
 @csrf_exempt
-def s_friends2_view(request):
-    """Returns the HTML for the friends view friends content."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    friends = []
-    for m in member.friends.all():
-        m.num_mutual_friends = m.get_num_mutual_friends(member)
-        friends.append(m)
-    friends.sort(key = lambda m : m.last_name)
-
-    return render_to_response( "s_friends.html",
-        { "member" : member, "friends" : friends },
-        context_instance = RequestContext(request) )
-
-
-@csrf_exempt
 def s_friends_view(request):
     """Returns the."""
 
@@ -400,13 +361,47 @@ def s_friends_view(request):
 @csrf_exempt
 def s_blots_view(request):
     """Returns the HTML for the friends view blots content."""
-
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    return render_to_response( "s_blots.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
+    try:
+        include_all_blots_blot = request.POST["includeAllBlotsBlot"]
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of member for each of the logged in member's blots
+    blots = []
+
+    if (include_all_blots_blot == "true"):
+        blots.append({
+            "text" : "All Blots",
+            "value" : -1,
+        })
+
+    for b in member.blots.all():
+        if (include_all_blots_blot == "true"):
+            blots.append({
+                "text" : b.name,
+                "value" : b.id
+            })
+        else:
+            blots.append({
+                "id" : b.id,
+                "name" : b.name,
+                "numMembers" : b.members.count()
+            })
+
+    # Sort and add the blots list to the data dictionary
+    if (include_all_blots_blot == "false"):
+        blots.sort(key = lambda b : b["name"])
+    data["blots"] = blots
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
