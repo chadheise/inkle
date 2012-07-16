@@ -68,7 +68,6 @@ class Event(models.Model):
             return "notes.png"
 
 
-
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
