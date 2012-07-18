@@ -2,6 +2,7 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 from django.contrib import auth
@@ -339,18 +340,25 @@ def s_friends_view(request):
     # Create a dictionary for the data
     data = {}
 
+    member_friends = list(member.friends.all())
+    member_friends.sort(key = lambda m : m.last_name)
+
     # Get the name and number of mutual friends for each of the logged in member's friends
     friends = []
-    for m in member.friends.all():
+    for m in member_friends:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m,
+            "includeDeleteItems" : True
+        })
+        
         friends.append({
             "id" : m.id,
-            "firstName" : m.first_name,
             "lastName" : m.last_name,
-            "numMutualFriends" : member.get_num_mutual_friends(m) }
-        )
+            "html": html
+        })
     
     # Sort and add the friends list to the data dictionary
-    friends.sort(key = lambda m : m["lastName"])
     data["friends"] = friends
 
     # Create and return a JSON object
@@ -381,22 +389,25 @@ def s_blots_view(request):
             "value" : -1,
         })
 
-    for b in member.blots.all():
+    # Sort the member's blot alphabetically
+    member_blots = list(member.blots.all())
+    member_blots.sort(key = lambda b : b.name)
+    
+    for b in member_blots:
         if (include_all_blots_blot == "true"):
             blots.append({
                 "text" : b.name,
                 "value" : b.id
             })
         else:
+            html = render_to_string( "s_blotListItem.html", {
+                "b" : b,
+            })
             blots.append({
                 "id" : b.id,
-                "name" : b.name,
-                "numMembers" : b.members.count()
+                "html" : html
             })
 
-    # Sort and add the blots list to the data dictionary
-    if (include_all_blots_blot == "false"):
-        blots.sort(key = lambda b : b["name"])
     data["blots"] = blots
 
     # Create and return a JSON object
@@ -422,7 +433,67 @@ def s_profile_view(request):
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
+    t =  render_to_response( "s_profile.html",
+        { "member" : member },
+        context_instance = RequestContext(request) )
 
     return render_to_response( "s_profile.html",
         { "member" : member },
         context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_people_search_view(request):
+    """Returns the people who match the search question."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the search query
+    try:
+        query = request.POST["query"]
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Split the query into words
+    query_split = query.split()
+
+    # If the query is only one word long, match the members' first or last names alone
+    if (len(query_split) == 1):
+        members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
+
+    # If the query is two words long, match the members' first and last names
+    elif (len(query_split) == 2):
+        members = Member.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
+
+    # if the query is more than two words long, return no results
+    else:
+        members = []
+    
+
+    # Sort the members by last name
+    members = list(members)
+    members.sort(key = lambda m : m.last_name)
+
+    # Get the HTML for each member's list item
+    people = []
+    for m in members:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m,
+            "includeDeleteItems" : False
+        })
+        
+        people.append({
+            "id" : m.id,
+            "html": html
+        })
+
+    # Add the people list to the data dictionary
+    data["people"] = people
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")

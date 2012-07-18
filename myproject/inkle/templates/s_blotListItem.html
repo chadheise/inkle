@@ -1,0 +1,8 @@
+<div id="blot{{ b.id }}" class="blot">
+    <img id="blot{{ b.id }}DeleteLock" class="deleteLock deleteLockHidden" blotId="{{ b.id }}" src="resources/images/delete.png">
+    <div class="numMembers">{{ b.members.count }}</div>
+    <div class="blotInfo">
+        <div class="name">{{ b.name }}</div>
+    </div>
+    <input id="blot{{ b.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" blotId="{{ b.id }}" />
+</div>
