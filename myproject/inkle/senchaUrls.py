@@ -24,4 +24,5 @@ urlpatterns = patterns(
     (r"^blots/$", "s_blots_view"),
     (r"^sharing/$", "s_sharing_view"),
     (r"^profile/$", "s_profile_view"),
+    (r"^peopleSearch/$", "s_people_search_view"),
 )

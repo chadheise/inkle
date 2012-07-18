@@ -1,0 +1,16 @@
+<div id="member{{ m.id }}" class="member">
+    {% if includeDeleteItems %}
+        <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
+    {% endif %}
+    <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
+        <div class="memberInfo">
+        <div class="name">
+            <span class="firstName">{{ m.first_name }}</span> 
+            <span class="lastName">{{ m.last_name }}</span>
+        </div>
+        <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+    </div>
+    {% if includeDeleteItems %}
+        <input id="member{{ m.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" memberId="{{ m.id }}" />
+    {% endif %}
+</div>
