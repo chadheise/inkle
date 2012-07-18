@@ -1,5 +1,5 @@
 <div id="member{{ m.id }}" class="member">
-    {% if includeDeleteItems %}
+    {% if include_delete_items %}
         <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
     {% endif %}
     <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
@@ -10,7 +10,19 @@
         </div>
         <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
     </div>
-    {% if includeDeleteItems %}
+
+    <!-- Right-hand button -->
+    {% if include_delete_items %}
         <input id="member{{ m.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" memberId="{{ m.id }}" />
+    {% else %}
+        {% if m in member.friends.all %}
+            <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
+        {% else %}
+            {% if m == member %}
+                <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+            {% else %}
+                <input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+            {% endif %}
+        {% endif %}
     {% endif %}
 </div>

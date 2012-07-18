@@ -349,7 +349,7 @@ def s_friends_view(request):
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "includeDeleteItems" : True
+            "include_delete_items" : True
         })
         
         friends.append({
@@ -481,9 +481,12 @@ def s_people_search_view(request):
     people = []
     for m in members:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
+        m.is_friend = False
+        if m in member.friends.all():
+            m.is_friend = True
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "includeDeleteItems" : False
+            "member" : member
         })
         
         people.append({
@@ -497,3 +500,59 @@ def s_people_search_view(request):
     # Create and return a JSON object
     response = simplejson.dumps(data)
     return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_add_friend_view(request):
+    """Adds a new friend."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    member.friends.add(m)
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_remove_friend_view(request):
+    """Removes a friend."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    try:
+        member.friends.remove(m)
+    except:
+        raise Http404()
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_delete_blot_view(request):
+    """Deletes a blot."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+    except:
+        raise Http404()
+
+    try:
+        member.blots.remove(blot)
+    except:
+        raise Http404()
+
+    blot.delete()
+    
+    return HttpResponse()

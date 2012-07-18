@@ -25,4 +25,7 @@ urlpatterns = patterns(
     (r"^sharing/$", "s_sharing_view"),
     (r"^profile/$", "s_profile_view"),
     (r"^peopleSearch/$", "s_people_search_view"),
+    (r"^addFriend/$", "s_add_friend_view"),
+    (r"^removeFriend/$", "s_remove_friend_view"),
+    (r"^deleteBlot/$", "s_delete_blot_view"),
 )
