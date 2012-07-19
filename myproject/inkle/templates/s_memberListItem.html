@@ -1,7 +1,18 @@
 <div id="member{{ m.id }}" class="member">
+    <!-- Left-hand button -->
     {% if include_delete_items %}
         <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
+    {% else %}
+        {% if include_selection_item %}
+            {% if m in blot.members.all %}
+                <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/selected.png">
+            {% else %}
+                <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/deselected.png">
+            {% endif %}
+        {% endif %}
     {% endif %}
+
+    <!-- Member info -->
     <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
         <div class="memberInfo">
         <div class="name">
@@ -15,13 +26,15 @@
     {% if include_delete_items %}
         <input id="member{{ m.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" memberId="{{ m.id }}" />
     {% else %}
-        {% if m in member.friends.all %}
-            <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
-        {% else %}
-            {% if m == member %}
-                <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+        {% if include_add_friend_buttons %}
+            {% if m in member.friends.all %}
+                <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
             {% else %}
-                <input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+                {% if m == member %}
+                    <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+                {% else %}
+                    <input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+                {% endif %}
             {% endif %}
         {% endif %}
     {% endif %}
