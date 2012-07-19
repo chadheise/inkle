@@ -1,0 +1,419 @@
+//Inkle colors (dark->light = 1->5)
+$green1: #1A492B;
+$green2: #336E34;
+$green3: #288D42; //Primary green color
+$green4: #6ABB6A;
+$green5: #ABD4B0;
+$blue1: #002C45;
+$blue2: #2A4360;
+$blue3: #1B5898; //Primary blue color
+$blue4: #70A9DB;
+$blue5: #ABC2E5;
+$red1: #7E181A;
+$red2: #914044;
+$red3: #CD1A26; //Primary red color
+$red4: #E5736F;
+$red5: #EAB0B5;
+
+// Sencha variable overrides
+$body-bg-color: #000;
+
+$active-color: $green3;
+$alert-color: $red5;
+$base-color: $green3;
+$base-gradient: 'matte';
+$bright-color: $green5;
+$button-gradient: 'matte';
+//$button-height
+$button-radius: .3em;
+//$button-stroke-weight
+ 
+$tabs-dark: $green1;
+$tabs-light: $green4;
+ 
+$tabs-bottom-radius: .3em;
+$tabs-bottom-gradient: 'matte';
+$tabs-bar-gradient: 'matte';
+$tabs-bottom-active-gradient: 'recessed';
+ 
+
+@import 'sencha-touch/default/all';
+
+// You may remove any of the following modules that you
+// do not use in order to create a smaller css file.
+@include sencha-panel;
+@include sencha-buttons;
+@include sencha-sheet;
+@include sencha-picker;
+@include sencha-tabs;
+@include sencha-toolbar;
+@include sencha-toolbar-forms;
+@include sencha-indexbar;
+@include sencha-list;
+@include sencha-layout;
+@include sencha-carousel;
+@include sencha-form;
+@include sencha-msgbox;
+
+// Your custom code goes here...
+.view {
+	padding: 5px 10px 1px 10px;
+	background-color: #DDD;
+}
+
+#allInklingsView .inkling, #inklingView #inklingHeader, #inklingInfo, .feedComment, .feedEvent, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .blot {
+	color: #888;
+	border: solid 1px #EFEFEF;
+	background-color: #EFEFEF;
+	border-radius: 3px;
+	margin: 10px 0px 20px 0px;
+	box-shadow: 0px 0px 5px #888;
+	height: 60px;
+}
+
+.noInklings, .noFriends, .noBlots
+{
+	color: #888;
+	border: solid 1px #EFEFEF;
+	background-color: #EFEFEF;
+	border-radius: 3px;
+	margin: 10px 0px 20px 0px;
+	padding: 5px;
+	box-shadow: 0px 0px 5px #888;
+}
+
+.clear
+{
+	clear: both;
+}
+
+.numAttendees, #friendsView .numMembers {
+	float: left;
+	color: #EFEFEF;
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 15px;
+	height: 70px;
+	width: 70px;
+	margin: -6px 10px 0px 7px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $green5;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#allInklingsView .inklingInfo, #myInklingsView .inklingInfo, #friendsView .friendInfo, #friendsView .blotInfo {
+	float: left;
+	text-align: left;
+	padding-top: 3px;
+}
+
+.location, #friendsView .memberName, #friendsView .blotName {
+	color: $green3;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.time, .category {
+	float: left;
+}
+
+#inklingView .time, #inlingView .category {
+	float: none;
+}
+
+#inklingView .basicInfoLabel {
+	font-weight: bold;
+}
+
+.dot {
+	float: left;
+	margin: 0px 5px 0px 5px;
+}
+
+#inklingView .location {
+	float: left;
+	padding-top: 8px;
+	font-size: 32px;
+}
+
+#inklingView #editInklingButton {
+	float: right;
+	height: 20px;
+	margin: 5px 5px 0px 0px;
+}
+
+#inklingView #editInklingButton:hover {
+	box-shadow: 0px 0px 10px #888;
+}
+
+#inklingView #inklingInfo {
+	height: auto;
+}
+
+.banner {
+	color: #EFEFEF;
+	text-align: left;
+	font-size: 16px;
+	font-weight: bold;
+	height: 30px;
+	width: 200px;
+	padding-top: 3px;
+	padding-left: 20px;
+	margin: 5px 0px 0px -15px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $blue5;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#inklingView .infoContainer {
+	padding: 5px;
+}
+
+#inklingView .attendeePicture {
+	height: 50px;
+	width: 50px;
+    margin: 5px 10px 0px 0px;
+	float: left;
+}
+
+#inklingFeedView .feedEventLogo, #inklingFeedView .commentMemberPicture, #friendsView .memberPicture {
+	float: left;
+	height: 70px;
+	width: 70px;
+	margin: -6px 10px 0px 7px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $blue5;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#inklingFeedView .loggedInCommentMemberPicture {
+	float: right;
+	margin: -6px 7px 0px 0px;
+}
+
+#inklingFeedView .commentInfo {
+	float: left;
+}
+
+#inklingFeedView .loggedInCommentInfo {
+	margin-left: 10px;
+}
+
+#inklingFeedView .commentMemberName {
+	font-size: 16px;
+	font-weight: bold;
+	color: $green3;
+}
+
+#inklingFeedView .commentText {
+	font-size: 16px;
+}
+
+#inklingFeedView .commentTime, #inklingFeedView .feedEventTime {
+	font-size: 12px;
+}
+
+#myInklingsView .banner {
+	margin-bottom: 15px;
+	padding-left: 25px;
+}
+
+#profileView #picture {
+	float: left;
+	height: 70px;
+	width: 70px;
+	margin: -6px 10px 0px 7px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#profileView #name {
+	color: #288D42;
+	padding-top: 8px;
+	font-weight: bold;
+	font-size: 32px;
+}
+
+#friendsView .mutualFriends {
+	float: left;
+}
+
+/* Friends view friends list */
+#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #friendsViewBlotsList .x-list-item-label, #blotMembersList .x-list-item-label {
+	height: 60px;
+	padding: 5px;
+}
+
+#friendsViewFriendsList .image, #addFriendsSuggestions .image, #blotMembersList .image {
+	float: left;
+	height: 50px;
+	width: 50px;
+}
+
+#friendsViewFriendsList .memberInfo, #addFriendsSuggestions .memberInfo, #blotMembersList .memberInfo {
+	float: left;
+	padding: 3px 0px 0px 10px;
+	vertical-align: top;
+}
+
+#friendsViewFriendsList .name, #addFriendsSuggestions .name, #blotMembersList .name {
+	font-size: 20px;
+}
+
+#friendsViewFriendsList .lastName, #addFriendsSuggestions .lastName, #blotMembersList .lastName {
+	font-weight: bold;
+}
+
+#friendsViewFriendsList .mutualFriends, #addFriendsSuggestions .mutualFriends, #blotMembersList .mutualFriends {
+	font-size: 16px;
+	color: #777;
+}
+
+.deleteLock {
+	float: left;
+	margin: 8px 5px 0px 0px;
+}
+
+.deleteLockHidden {
+	margin-left: -50px;
+}
+
+.deleteLockSlideLeft {
+	-webkit-animation: deleteLockSlideLeftAnimation 0.5s 1; 
+}
+
+.deleteLockSlideRight {
+	-webkit-animation: deleteLockSlideRightAnimation 0.5s 1; 
+}
+
+@-webkit-keyframes deleteLockSlideLeftAnimation {
+	0% 	 { opacity: 1;	margin-left: 0px; }
+	100% { opacity: 0; margin-left: -50px; }
+}
+
+@-webkit-keyframes deleteLockSlideRightAnimation {
+	0% 	 { opacity: 0;	margin-left: -50px; }
+	100% { opacity: 1; margin-left: 0px; }
+}
+
+.deleteLockRotateLeft {
+	-webkit-animation: deleteLockRotateLeftAnimation 0.5s 1; 
+	-webkit-animation-fill-mode: forwards;
+}
+
+.deleteLockRotateRight {
+	-webkit-animation: deleteLockRotateRightAnimation 0.5s 1; 
+	-webkit-animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes deleteLockRotateLeftAnimation {
+	0% 	 { 	-webkit-transform: rotate(0deg);  	}
+	100% { 	-webkit-transform: rotate(-90deg);  }
+}
+
+@-webkit-keyframes deleteLockRotateRightAnimation {
+	0% 	 { 	-webkit-transform: rotate(-90deg);  	}
+	100% { 	-webkit-transform: rotate(0deg);  }
+}
+
+.deleteLockRotateRight {
+	-webkit-transform:rotate(-90deg);
+}
+
+.deleteButton {
+	float: right;
+	padding: 2px 5px 2px 5px;
+	font-size: 14px;
+	color: #FFFFFF;
+	background-color: $red3;
+	border: solid 1px $red1;
+	border-radius: 5px;
+	margin: 14px 10px 0px 0px;
+}
+
+.deleteButtonHidden {
+	margin-right: -75px;
+}
+
+.deleteButtonSlideLeft {
+	-webkit-animation: deleteButtonSlideLeftAnimation 0.5s 1; 
+}
+
+.deleteButtonSlideRight {
+	-webkit-animation: deleteButtonSlideRightAnimation 0.5s 1; 
+}
+
+@-webkit-keyframes deleteButtonSlideLeftAnimation {
+	0% 	 { opacity: 0;	margin-right: -75px; }
+	100% { opacity: 1; margin-right: 10px; }
+}
+
+@-webkit-keyframes deleteButtonSlideRightAnimation {
+	0% 	 { opacity: 1;	margin-right: 10px; }
+	100% { opacity: 0; margin-right: -75px; }
+}
+
+#friendsViewBlotsList .numMembers {
+	float: left;
+	color: #EFEFEF;
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+	height: 50px;
+	width: 50px;
+	margin: 0px 0px 0px 0px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $green5;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#friendsViewBlotsList .blotInfo {
+	float: left;
+	padding: 12px 0px 0px 10px;
+	vertical-align: top;
+}
+
+#friendsViewBlotsList .name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.isFriendButton {
+	float: right;
+	font-size: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #FFFFFF;
+	background-color: $green3;
+	border: solid 1px $green1;
+	border-radius: 5px;
+	margin: 14px 10px 0px 0px;
+}
+
+.addFriendButton {
+	float: right;
+	font-size: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #FFFFFF;
+	background-color: $blue3;
+	border: solid 1px $blue1;
+	border-radius: 5px;
+	margin: 14px 10px 0px 0px;
+}
+
+.emptyListText {
+	padding-top: 10px;
+	color: #999;
+	text-align: center;
+}
+
+.selectionItem {
+	float: left;
+	padding: 8px 4px 0px 0px;
+}
