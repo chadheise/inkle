@@ -11,6 +11,7 @@ urlpatterns = patterns(
     (r"^isLoggedIn/$", "s_is_logged_in"),
     (r"^login/$", "s_login_view"),
     (r"^logout/$", "s_logout_view"),
+    
     (r"^allInklings/$", "s_all_inklings_view"),
     (r"^isMemberInkling/$", "s_is_member_inkling_view"),
     (r"^inkling/$", "s_inkling_view"),
@@ -19,11 +20,13 @@ urlpatterns = patterns(
     (r"^joinInkling/$", "s_join_inkling_view"),
     (r"^inklingFeed/$", "s_inkling_feed_view"),
     (r"^postNewComment/$", "s_post_new_comment_view"),
+    
     (r"^myInklings/$", "s_my_inklings_view"),
+    (r"^createInkling/$", "s_create_inkling_view"),
+
     (r"^friends/$", "s_friends_view"),
     (r"^blots/$", "s_blots_view"),
     (r"^sharing/$", "s_sharing_view"),
-    (r"^profile/$", "s_profile_view"),
     (r"^peopleSearch/$", "s_people_search_view"),
     (r"^addFriend/$", "s_add_friend_view"),
     (r"^removeFriend/$", "s_remove_friend_view"),
@@ -31,4 +34,6 @@ urlpatterns = patterns(
     (r"^blotMembers/$", "s_blot_members_view"),
     (r"^addToBlot/$", "s_add_to_blot_view"),
     (r"^removeFromBlot/$", "s_remove_from_blot_view"),
+
+    (r"^profile/$", "s_profile_view"),
 )

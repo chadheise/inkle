@@ -50,7 +50,11 @@ def load_inklings():
 
         creator = Member.objects.get(pk = data[7])
 
-        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], category = data[3], notes = data[4], is_private = data[5])
+        is_private = True
+        if (data[5] == "False"):
+            is_private = False
+
+        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], category = data[3], notes = data[4], is_private = is_private)
         i.save()
 
         inkling_members = [x.strip() for x in data[6].split(",")]

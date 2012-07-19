@@ -1,5 +1,5 @@
 Ext.define("inkle.view.Profile", {
-	extend: "Ext.navigation.View",
+	extend: "Ext.Container",
 	
 	xtype: "profileView",
 	
@@ -10,7 +10,8 @@ Ext.define("inkle.view.Profile", {
 		title: "Profile",
 		iconCls: "settings",
     	
-    	navigationBar: false,
+    	scrollable: true,
+    	layout: "vbox",
     	
     	items: [
     		{
@@ -33,10 +34,34 @@ Ext.define("inkle.view.Profile", {
                     }
                 ]
     		},
+    		
     		{
     			xtype: "htmlcontainer",
     			scrollable: true,
 				url: "http://127.0.0.1:8000/sencha/profile/",
+    		},
+    		
+    		{
+    			xtype: "container",
+    			style: {
+    				"padding": "10px"
+    			},
+    			html: "ADSFASDF"
+    		},
+    		{
+    			xtype: "button",
+    			id: "profileViewNotificationsButton",
+    			text: "Notifications"
+    		},
+    		{
+    			xtype: "button",
+    			id: "profileViewSettingsButton",
+    			text: "Settings"
+    		},
+    		{
+    			xtype: "button",
+    			id: "profileViewPrivacyButton",
+    			text: "Privacy"
     		}
     	],
     	

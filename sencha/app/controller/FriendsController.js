@@ -366,7 +366,7 @@ Ext.define("inkle.controller.FriendsController", {
 					blotId: this.getBlotMembersView().getData()["blotId"]
 				},
 				failure: function(response) {
-				console.log(response.responseText);
+					console.log(response.responseText);
 					Ext.Msg.alert("Error", response.responseText);
 	        	}
 			});
