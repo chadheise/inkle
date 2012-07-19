@@ -349,7 +349,8 @@ def s_friends_view(request):
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : True
+            "include_delete_items" : True,
+            "include_selection_item" : False
         })
         
         friends.append({
@@ -486,7 +487,10 @@ def s_people_search_view(request):
             m.is_friend = True
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "member" : member
+            "member" : member,
+            "include_add_friend_buttons" : True,
+            "include_delete_items" : False,
+            "include_selection_item" : False
         })
         
         people.append({
@@ -554,5 +558,95 @@ def s_delete_blot_view(request):
         raise Http404()
 
     blot.delete()
+    
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_blot_members_view(request):
+    """Returns the."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the blot
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+    except:
+        raise Http404()
+
+    if (blot not in member.blots.all()):
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    member_friends = list(member.friends.all())
+    member_friends.sort(key = lambda m : m.last_name)
+
+    # Get the name and number of mutual friends for each of the logged in member's friends
+    friends = []
+    for m in member_friends:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m,
+            "include_delete_items" : False,
+            "include_selection_item" : True,
+            "blot" : blot
+        })
+        
+        friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Sort and add the friends list to the data dictionary
+    data["friends"] = friends
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_add_to_blot_view(request):
+    """Adds a member to a blot."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    if (blot not in member.blots.all()):
+        raise Http404()
+
+    blot.members.add(m)
+    
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_remove_from_blot_view(request):
+    """Removes a member from a blot."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    if (blot not in member.blots.all()):
+        raise Http404()
+
+    try:
+        blot.members.remove(m)
+    except:
+        raise Http404()
     
     return HttpResponse()
