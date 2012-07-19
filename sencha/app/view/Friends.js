@@ -1,0 +1,273 @@
+Ext.define("inkle.view.Friends", {
+	extend: "Ext.navigation.View",
+	
+	xtype: "friendsView",
+	
+    requires: [
+    	"Ext.SegmentedButton",
+    	"Ext.dataview.List"
+    ],
+	
+	config: {        
+		title: "Friends",
+		iconCls: "star",
+    	
+    	navigationBar: false,
+    	
+    	items: [
+    		// Top toolbar
+    		{
+    			xtype: "toolbar",
+    			id: "friendsViewToolbar",
+                docked: "top",
+                items: [
+                	{
+                		xtype: "button",
+                		itemId: "friendsViewRemoveFriendsButton",
+                		//ui: "action",
+                		text: "-"
+                	},
+                	{
+                		xtype: "button",
+                		itemId: "friendsViewEditBlotsButton",
+                		//ui: "action",
+                		text: "Edit",
+                		hidden: true
+                	},
+                	{ xtype: "spacer" },
+                    {
+                    	xtype: "segmentedbutton",
+                    	itemId: "friendsViewSegmentedButton",
+                    	allowDepress: false,
+                    	allowMultiple: false,
+                    	centered: true,
+                    	items: [
+                    		{
+								text: "Friends",
+								itemId: "friendsViewFriendsButton",
+								width: 80,
+								pressed: true
+							},
+							{
+								text: "Blots",
+								itemId: "friendsViewBlotsButton",
+								width: 80
+							},
+							{
+								text: "Sharing",
+								itemId: "friendsViewSharingButton",
+								width: 80
+							}
+						]
+                    },
+                    { xtype: "spacer" },
+                    {
+                		xtype: "button",
+                		//ui: "action",
+                		text: "+",
+                		itemId: "friendsViewAddFriendsButton"
+                	},
+                	{
+                		xtype: "button",
+                		itemId: "friendsViewCreateBlotButton",
+                		//ui: "action",
+                		text: "+",
+                		hidden: true
+                	}
+                ]
+    		},
+    		
+    		// Main content
+    		{
+    			xtype: "container",
+    			itemId: "friendsViewContainer",
+    			layout: "card",
+    			items: [
+    				// Friends
+					{
+						xtype: "list",
+						id: "friendsViewFriendsList",
+						loadingText: "Loading friends...",
+						emptyText: "<div class='emptyListText'>No friends</div>",
+						grouped: true,
+						disableSelection: true,
+						indexBar: true,
+						itemTpl: [
+							"{ html }"
+						],
+						store: {
+        					fields: [
+        						"id",
+        						"lastName",
+        						"html"
+        					],
+        					proxy: {
+        						type: "ajax",
+        						url: "http://127.0.0.1:8000/sencha/friends/",
+        						actionMethods: {
+        							read: "POST"
+        						},
+        						
+        						reader: {
+        							type: "json",
+        							rootProperty: "friends"
+        						}
+        					},
+        					grouper: {
+								groupFn: function(record) {
+									return record.get("lastName").substr(0, 1);
+								}
+							},
+        					autoLoad: true
+        				}
+					},
+					
+					// Blots
+					{
+						xtype: "list",
+						id: "friendsViewBlotsList",
+						loadingText: "Loading blots...",
+						emptyText: "<div class='emptyListText'>No blots</div>",
+						disableSelection: true,
+						itemTpl: [
+							"{ html }"
+						],
+						store: {
+        					fields: [
+        						"id",
+        						"html"
+        					],
+        					proxy: {
+        						type: "ajax",
+        						method: "POST",
+        						actionMethods: {
+        							read: "POST"
+        						},
+        						url: "http://127.0.0.1:8000/sencha/blots/",
+        						extraParams: {
+                    				includeAllBlotsBlot: "false"
+								},
+        	
+        						reader: {
+        							type: "json",
+        							rootProperty: "blots"
+        						}
+        					},
+        					autoLoad: true
+        				}
+					},
+					
+					// Sharing
+					{
+						xtype: "htmlcontainer",
+						url: "http://127.0.0.1:8000/sencha/sharing/"
+					}
+				]
+    		}
+    	],
+    	
+    	listeners: [
+    		{
+            	delegate: "#friendsViewFriendsButton",
+            	event: "tap",
+            	fn: "onFriendsViewFriendsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewBlotsButton",
+            	event: "tap",
+            	fn: "onFriendsViewBlotsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewSharingButton",
+            	event: "tap",
+            	fn: "onFriendsViewSharingButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewEditBlotsButton",
+            	event: "tap",
+            	fn: "onFriendsViewEditBlotsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewRemoveFriendsButton",
+            	event: "tap",
+            	fn: "onFriendsViewRemoveFriendsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewAddFriendsButton",
+            	event: "tap",
+            	fn: "onFriendsViewAddFriendsButtonTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+				delegate: ".deleteLock",
+				fn: "onDeleteLockTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+				delegate: ".deleteButton",
+				fn: "onDeleteButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewBlotsList",
+            	event: "itemtap",
+            	fn: "onFriendsViewBlotsListItemTap"
+        	}
+        ]
+	},
+	
+	// Event firings
+	onFriendsViewFriendsButtonTap: function() {
+        this.fireEvent("friendsViewFriendsButtonTapped", 0);
+    },
+    
+    onFriendsViewBlotsButtonTap: function() {
+        this.fireEvent("friendsViewBlotsButtonTapped", 1);
+    },
+    
+    onFriendsViewSharingButtonTap: function() {
+        this.fireEvent("friendsViewSharingButtonTapped", 2);
+    },
+    
+    onFriendsViewRemoveFriendsButtonTap: function() {
+		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "-");
+    },
+    
+    onFriendsViewAddFriendsButtonTap: function() {
+		this.fireEvent("friendsViewAddFriendsButtonTapped");
+    },
+    
+    onFriendsViewEditBlotsButtonTap: function() {
+		this.fireEvent("friendsViewEditBlotsButtonTapped", "friendsViewBlotsList", "Edit");
+    },
+    
+    onDeleteLockTap: function(event) {
+		var tappedId = event.getTarget(".deleteLock").getAttribute("blotId");
+        if (tappedId) {
+        	tappedId = "blot" + tappedId;
+        }
+        else {
+        	tappedId = event.getTarget(".deleteLock").getAttribute("memberId");
+        	tappedId = "member" + tappedId;
+        }
+        this.fireEvent("deleteLockTapped", tappedId);
+    },
+    
+    onDeleteButtonTap: function(event) {
+		var tappedId = event.getTarget(".deleteButton").getAttribute("blotId");
+		var idType = "blot";
+		if (tappedId == null) {
+        	tappedId = event.getTarget(".deleteButton").getAttribute("memberId");
+        	idType = "member"
+        }
+        this.fireEvent("deleteButtonTapped", tappedId, idType);
+    },
+    
+    onFriendsViewBlotsListItemTap: function(blotsList, index, target, record, event, options) {
+    	if ((!event.getTarget(".deleteLock")) && (!event.getTarget(".deleteButton"))) {
+    		var blotId = record.internalId;
+    		this.fireEvent("friendsViewBlotsListItemTapped", blotId);
+    	}
+    }
+});
