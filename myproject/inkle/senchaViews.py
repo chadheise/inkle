@@ -331,6 +331,63 @@ def s_my_inklings_view(request):
 
 
 @csrf_exempt
+def s_create_inkling_view(request):
+    """Creates an inkling."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the POST data
+    try:
+        location = request.POST["location"]
+        date = request.POST["date"]
+        time = request.POST["time"]
+        category = request.POST["category"]
+        notes = request.POST["notes"]
+        is_private = request.POST["isPrivate"]
+    except:
+        raise Http404()
+
+    # Create a Python date object
+    date_split = date.split("T")[0].split("-")
+    date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
+
+    # Set the is_private boolean
+    if (is_private == "true"):
+        is_private = True
+    else:
+        is_private = False
+    
+    # Create the new inkling
+    inkling = Inkling(creator = member, date = date, is_private = is_private)
+
+    # Add any provided data to the inkling
+    if (location):
+        inkling.location = location
+        inkling.num_location_changes = 1
+    if (time):
+        inkling.time = time
+        inkling.num_time_changes = 1
+    if (category):
+        inkling.category = category
+        inkling.num_category_changes = 1
+    if (notes):
+        inkling.notes = notes
+        inkling.num_notes_changes = 1
+
+    # Save the inkling
+    inkling.save()
+
+    # Add the inkling to the logged in member's inkling
+    member.inklings.add(inkling)
+
+    # Create and return the JSON object
+    data = { "success" : True }
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
 def s_friends_view(request):
     """Returns the."""
 

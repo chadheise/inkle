@@ -72,11 +72,11 @@ class Inkling(models.Model):
     """Inkling class definition."""
     # General information
     creator = models.ForeignKey("Member")
-    location = models.CharField(max_length = 100, blank = True)
-    category = models.CharField(max_length = 30, blank = True)
+    location = models.CharField(max_length = 50, blank = True)
     date = models.DateField()
-    time = models.CharField(max_length = 15, blank = True)
-    notes = models.CharField(max_length = 100, blank = True)
+    time = models.CharField(max_length = 50, blank = True)
+    category = models.CharField(max_length = 50, blank = True)
+    notes = models.CharField(max_length = 150, blank = True)
     is_private = models.BooleanField(default = False)
 
     # Managers
@@ -88,16 +88,19 @@ class Inkling(models.Model):
     date_created = models.DateTimeField(auto_now_add = True)
     date_last_modified = models.DateTimeField(auto_now = True)
     num_location_changes = models.IntegerField(max_length = 4, default = 0)
-    num_category_changes = models.IntegerField(max_length = 4, default = 0)
-    num_date_changes = models.IntegerField(max_length = 4, default = 0)
+    num_date_changes = models.IntegerField(max_length = 4, default = 1)
     num_time_changes = models.IntegerField(max_length = 4, default = 0)
+    num_category_changes = models.IntegerField(max_length = 4, default = 0)
     num_notes_changes = models.IntegerField(max_length = 4, default = 0)
-    num_is_private_changes = models.IntegerField(max_length = 4, default = 0)
+    num_is_private_changes = models.IntegerField(max_length = 4, default = 1)
 
     # Class methods
     def __unicode__(self):
         """String representation for the current inkling."""
-        return "%s (%s)" % (self.location, self.get_formatted_date())
+        location = self.location
+        if (not location):
+            location = "Location TBD"
+        return "%s (%s)" % (location, self.get_formatted_date())
 
     def get_attendees(self):
         return self.member_set.all()

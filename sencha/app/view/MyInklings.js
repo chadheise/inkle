@@ -13,6 +13,7 @@ Ext.define("inkle.view.MyInklings", {
     		// Top toolbar
     		{
     			xtype: "toolbar",
+    			id: "myInklingsViewToolbar",
                 docked: "top",
                 title: "My Inklings",
                 items: [
@@ -28,6 +29,13 @@ Ext.define("inkle.view.MyInklings", {
                 		ui: "back",
                 		text: "My Inklings",
                 		itemId: "myInklingsInklingBackButton",
+                		hidden: true
+                	},
+                	{
+                		xtype: "button",
+                		ui: "action",
+                		text: "Cancel",
+                		itemId: "newInklingCancelButton",
                 		hidden: true
                 	},
                     { xtype: "spacer" },
@@ -50,7 +58,14 @@ Ext.define("inkle.view.MyInklings", {
                         text: "Feed",
                         itemId: "inklingFeedButton",
                         hidden: true
-                    }
+                    },
+                    {
+                		xtype: "button",
+                		ui: "action",
+                		text: "Done",
+                		itemId: "newInklingDoneButton",
+                		hidden: true
+                	},
                 ]
     		},
     		
@@ -74,6 +89,16 @@ Ext.define("inkle.view.MyInklings", {
             	fn: "onMyInklingsInklingBackButtonTap"
         	},
         	{
+            	delegate: "#newInklingCancelButton",
+            	event: "tap",
+            	fn: "onNewInklingCancelButtonTap"
+        	},
+        	{
+            	delegate: "#newInklingDoneButton",
+            	event: "tap",
+            	fn: "onNewInklingDoneButtonTap"
+        	},
+        	{
 				event: "tap",
 				element: "element",
 				delegate: ".inkling",
@@ -84,7 +109,6 @@ Ext.define("inkle.view.MyInklings", {
 	
 	// Event firings
     onNewInklingButtonTap: function () {
-        console.log("newInklingButtonTapped");
         this.fireEvent("newInklingButtonTapped");
     },
     
@@ -93,10 +117,16 @@ Ext.define("inkle.view.MyInklings", {
     },
     
     onInklingTap: function (event, target) {
-		console.log("inklingTapped");
-        
         var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
         
         this.fireEvent("inklingTapped", tappedInklingId);
+    },
+    
+    onNewInklingCancelButtonTap: function() {
+        this.fireEvent("newInklingCancelButtonTapped");
+    },
+    
+    onNewInklingDoneButtonTap: function() {
+        this.fireEvent("newInklingDoneButtonTapped");
     }
 });

@@ -159,8 +159,34 @@ Ext.define("inkle.view.Friends", {
 					
 					// Sharing
 					{
-						xtype: "htmlcontainer",
-						url: "http://127.0.0.1:8000/sencha/sharing/"
+						/*xtype: "fieldset",
+						//url: "http://127.0.0.1:8000/sencha/sharing/"
+						items: [
+							{
+								xtype: "togglefield",
+								name: "d",
+								label: 'Are you awesome?',
+								labelWidth: '40%'
+							},
+							{
+								xtype: "selectfield",
+								label: "Default sharing option",
+								options: [
+									{
+										text: "All Blots",
+										value: "first"
+									},
+									{
+										text: 'Second Option',
+										value: 'second'
+									},
+									{	
+										text: 'Third Option',
+										value: "third"
+									}
+								]
+							}
+						]*/
 					}
 				]
     		}

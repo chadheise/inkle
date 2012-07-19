@@ -417,3 +417,28 @@ $tabs-bottom-active-gradient: 'recessed';
 	float: left;
 	padding: 8px 4px 0px 0px;
 }
+
+/* Profile  view */
+#profileViewSegmentedButton .x-button {
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	margin: 0px 10px 0px 10px;
+}
+
+#profileViewSegmentedButton .x-button:first-child {
+	-webkit-border-top-left-radius: 0.4em;
+	border-top-left-radius: 0.4em;
+	-webkit-border-top-right-radius: 0.4em;
+	border-top-right-radius: 0.4em;
+}
+
+#profileViewSegmentedButton .x-button:last-child {
+	-webkit-border-bottom-left-radius: 0.4em;
+	border-bottom-left-radius: 0.4em;
+	-webkit-border-bottom-right-radius: 0.4em;
+	border-bottom-right-radius: 0.4em;
+}
+
+#profileViewSegmentedButton .x-button:not(:first-child) {
+	border-top: 0px;
+}
