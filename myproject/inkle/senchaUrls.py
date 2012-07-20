@@ -34,6 +34,8 @@ urlpatterns = patterns(
     (r"^blotMembers/$", "s_blot_members_view"),
     (r"^addToBlot/$", "s_add_to_blot_view"),
     (r"^removeFromBlot/$", "s_remove_from_blot_view"),
+    (r"^createBlot/$", "s_create_blot_view"),
+    (r"^renameBlot/$", "s_rename_blot_view"),
 
     (r"^profile/$", "s_profile_view"),
 )

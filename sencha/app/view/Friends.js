@@ -209,11 +209,6 @@ Ext.define("inkle.view.Friends", {
             	fn: "onFriendsViewSharingButtonTap"
         	},
         	{
-            	delegate: "#friendsViewEditBlotsButton",
-            	event: "tap",
-            	fn: "onFriendsViewEditBlotsButtonTap"
-        	},
-        	{
             	delegate: "#friendsViewRemoveFriendsButton",
             	event: "tap",
             	fn: "onFriendsViewRemoveFriendsButtonTap"
@@ -222,6 +217,16 @@ Ext.define("inkle.view.Friends", {
             	delegate: "#friendsViewAddFriendsButton",
             	event: "tap",
             	fn: "onFriendsViewAddFriendsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewEditBlotsButton",
+            	event: "tap",
+            	fn: "onFriendsViewEditBlotsButtonTap"
+        	},
+        	{
+            	delegate: "#friendsViewCreateBlotButton",
+            	event: "tap",
+            	fn: "onFriendsViewCreateBlotButtonTap"
         	},
         	{
 				event: "tap",
@@ -234,6 +239,12 @@ Ext.define("inkle.view.Friends", {
 				element: "element",
 				delegate: ".deleteButton",
 				fn: "onDeleteButtonTap"
+        	},
+        	{
+				event: "blur",
+				element: "element",
+				delegate: ".blotNameInput",
+				fn: "onBlotNameInputBlurred"
         	},
         	{
             	delegate: "#friendsViewBlotsList",
@@ -268,6 +279,10 @@ Ext.define("inkle.view.Friends", {
 		this.fireEvent("friendsViewEditBlotsButtonTapped", "friendsViewBlotsList", "Edit");
     },
     
+    onFriendsViewCreateBlotButtonTap: function() {
+		this.fireEvent("friendsViewCreateBlotButtonTapped");
+    },
+    
     onDeleteLockTap: function(event) {
 		var tappedId = event.getTarget(".deleteLock").getAttribute("blotId");
         if (tappedId) {
@@ -295,5 +310,10 @@ Ext.define("inkle.view.Friends", {
     		var blotId = record.internalId;
     		this.fireEvent("friendsViewBlotsListItemTapped", blotId);
     	}
+    },
+    
+    onBlotNameInputBlurred: function(event) {
+    	var blotId = event.getTarget(".blotNameInput").getAttribute("blotId");
+    	this.fireEvent("blotNameInputBlurred", blotId);
     }
 });

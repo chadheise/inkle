@@ -274,6 +274,21 @@ $tabs-bottom-active-gradient: 'recessed';
 	color: #777;
 }
 
+#friendsViewBlotsList .blotNameHidden {
+	display: none;
+}
+
+#friendsViewBlotsList .blotNameInput {
+	font-size: 20px;
+	font-weight: bold;
+	border-width: 0px;
+	width: 220px;
+}
+
+#friendsViewBlotsList .blotNameInputHidden {
+	display: none;
+}
+
 .deleteLock {
 	float: left;
 	margin: 8px 5px 0px 0px;
@@ -349,12 +364,38 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 @-webkit-keyframes deleteButtonSlideLeftAnimation {
-	0% 	 { opacity: 0;	margin-right: -75px; }
+	0% 	 { opacity: 0; margin-right: -75px; }
 	100% { opacity: 1; margin-right: 10px; }
 }
 
 @-webkit-keyframes deleteButtonSlideRightAnimation {
-	0% 	 { opacity: 1;	margin-right: 10px; }
+	0% 	 { opacity: 1; margin-right: 10px; }
+	100% { opacity: 0; margin-right: -75px; }
+}
+
+.disclosureArrow {
+	float: right;
+}
+
+.disclosureArrowHidden {
+	margin-right: -150px;
+}
+
+.disclosureArrowSlideLeft {
+	-webkit-animation: disclosureArrowSlideLeftAnimation 0.5s 1; 
+}
+
+.disclosureArrowSlideRight {
+	-webkit-animation: disclosureArrowSlideRightAnimation 0.5s 1; 
+}
+
+@-webkit-keyframes disclosureArrowSlideLeftAnimation {
+	0% 	 { opacity: 0; margin-right: -75px; }
+	100% { opacity: 1; margin-right: 0px; }
+}
+
+@-webkit-keyframes disclosureArrowSlideRightAnimation {
+	0% 	 { opacity: 1; margin-right: 0px; }
 	100% { opacity: 0; margin-right: -75px; }
 }
 
