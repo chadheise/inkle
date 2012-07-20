@@ -322,7 +322,7 @@ def s_my_inklings_view(request):
     inklings = []
     inklings.append(["Today", member.inklings.filter(date = datetime.date.today())])
     inklings.append(["Tomorrow", member.inklings.filter(date__gt = today).filter(date__lte = tomorrow)])
-    inklings.append(["This Week", member.inklings.filter(date__gt = today).filter(date__lte = this_week)])
+    inklings.append(["This Week", member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week)])
     inklings.append(["Future", member.inklings.filter(date__gte = this_week)])
 
     return render_to_response( "s_myInklings.html",
