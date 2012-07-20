@@ -36,10 +36,12 @@ Ext.define("inkle.controller.FriendsController", {
             	friendsViewSharingButtonTapped: "updateFriendsViewActiveItem",
            		
            		friendsViewEditBlotsButtonTapped: "toggleDeleteLocksVisibility",
+           		friendsViewCreateBlotButtonTapped: "createBlot",
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
            		deleteLockTapped: "toggleBlotsListDeleteLockRotation",
            		deleteButtonTapped: "deleteListItem",
+           		blotNameInputBlurred: "renameBlot",
            		
            		friendsViewBlotsListItemTapped: "activateBlotMembersView"
            	},
@@ -106,7 +108,7 @@ Ext.define("inkle.controller.FriendsController", {
 	
 	/* Activates the blot members view from the friends view blots list */
 	activateBlotMembersView: function(blotId) {
-		if (this.getEditBlotsButton().getText() == "Done") {
+		if (this.getEditBlotsButton().getText() == "Edit") {
 			// Push the blot members view onto the friends view
 			this.getFriendsView().push({
 				xtype: "blotMembersView",
@@ -198,6 +200,15 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.addCls("deleteButtonHidden");
 		}
+		
+		var disclosureArrows = Ext.query(".disclosureArrow");
+		for (var i = 0; i < disclosureArrows.length; i++) {
+			var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+			
+			disclosureArrow.removeCls("disclosureArrowSlideRight");
+			disclosureArrow.removeCls("disclosureArrowSlideLeft");
+			disclosureArrow.removeCls("disclosureArrowHidden");
+		}
 	},
 	
 	/* Toggles the visibility of the delete locks */
@@ -229,6 +240,27 @@ Ext.define("inkle.controller.FriendsController", {
 		
 		if (button.getText() == buttonText) {
 			button.setText("Done");
+			
+			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
+			for (var i = 0; i < disclosureArrows.length; i++) {
+				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+				
+				disclosureArrow.removeCls("disclosureArrowSlideLeft");
+				disclosureArrow.addCls("disclosureArrowSlideRight");
+				disclosureArrow.addCls("disclosureArrowHidden");
+			}
+			
+			var blotNameInputs = Ext.query("#" + listId + " .blotNameInput");
+			for (var i = 0; i < blotNameInputs.length; i++) {
+				var blotNameInput = Ext.fly(blotNameInputs[i].getAttribute("id"));
+				blotNameInput.removeCls("blotNameInputHidden");
+			}
+			
+			var blotNames = Ext.query("#" + listId + " .name");
+			for (var i = 0; i < blotNames.length; i++) {
+				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
+				blotName.addCls("blotNameHidden");
+			}
 		}
 		else {
 			button.setText(buttonText);
@@ -243,17 +275,38 @@ Ext.define("inkle.controller.FriendsController", {
 					deleteButton.addCls("deleteButtonHidden");
 				}
 			}
+			
+			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
+			for (var i = 0; i < disclosureArrows.length; i++) {
+				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+				
+				disclosureArrow.removeCls("disclosureArrowSlideRight");
+				disclosureArrow.removeCls("disclosureArrowHidden");
+				disclosureArrow.addCls("disclosureArrowSlideLeft");
+			}
+			
+			var blotNameInputs = Ext.query("#" + listId + " .blotNameInput");
+			for (var i = 0; i < blotNameInputs.length; i++) {
+				var blotNameInput = Ext.fly(blotNameInputs[i].getAttribute("id"));
+				blotNameInput.addCls("blotNameInputHidden");
+			}
+			
+			var blotNames = Ext.query("#" + listId + " .name");
+			for (var i = 0; i < blotNames.length; i++) {
+				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
+				blotName.removeCls("blotNameHidden");
+			}
 		}
 	},
 	
 	/* Toggles the rotation of the inputted blots list delete lock */
 	toggleBlotsListDeleteLockRotation: function(tappedId) {
 		var deleteLock = Ext.fly(tappedId + "DeleteLock");
-		var deleteButton = Ext.fly(tappedId + "DeleteButton");
 		if (deleteLock.hasCls("deleteLockRotateLeft")) {
 			deleteLock.removeCls("deleteLockRotateLeft");
 			deleteLock.addCls("deleteLockRotateRight");
 			
+			var deleteButton = Ext.fly(tappedId + "DeleteButton");
 			deleteButton.removeCls("deleteButtonSlideLeft");
 			deleteButton.addCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideRight");
@@ -262,6 +315,7 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteLock.removeCls("deleteLockRotateRight");
 			deleteLock.addCls("deleteLockRotateLeft");
 			
+			var deleteButton = Ext.fly(tappedId + "DeleteButton");
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.removeCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideLeft");
@@ -301,7 +355,48 @@ Ext.define("inkle.controller.FriendsController", {
 				}
 			});
 		}
+	},
+	
+	createBlot: function() {
+		var blotId;
+		Ext.Ajax.request({
+    		async: false,
+    		url: "http://127.0.0.1:8000/sencha/createBlot/",
+		    success: function(response) {
+        		blotId = response.responseText;
+        	},
+        	failure: function(response) {
+        		Ext.Msg.alert("Errors", response.errors);
+        		console.log(response.responseText);
+        	}
+		});
 		
+		this.getBlotsList().getStore().load();
+	},
+	
+	renameBlot: function(blotId) {
+		var blotName = Ext.fly("blot" + blotId + "Name");
+		blotName = blotName.getHtml();
+		
+		var blotNameInput = Ext.fly("blot" + blotId + "NameInput");
+		blotNameInputValue = blotNameInput.getValue();
+		
+		if (blotName != blotNameInputValue) {
+			var blotName = Ext.fly("blot" + blotId + "Name");
+			blotName.setHtml(blotNameInputValue);
+			
+			Ext.Ajax.request({
+				url: "http://127.0.0.1:8000/sencha/renameBlot/",
+				params: {
+					blotId: blotId,
+					name: blotNameInputValue
+				},
+				failure: function(response) {
+					Ext.Msg.alert("Errors", response.errors);
+					console.log(response.responseText);
+				}
+			});
+		}
 	},
 	
 	updateAddFriendsSuggestions: function() {
@@ -317,7 +412,7 @@ Ext.define("inkle.controller.FriendsController", {
 	
 	addFriend: function(memberId) {
 		var addFriendButton = Ext.fly("member" + memberId + "AddFriendButton");
-		console.log(addFriendButton);
+		
 		addFriendButton.set({
 			"value" : "Pending"
 		});

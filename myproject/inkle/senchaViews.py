@@ -707,3 +707,43 @@ def s_remove_from_blot_view(request):
         raise Http404()
     
     return HttpResponse()
+
+
+@csrf_exempt
+def s_create_blot_view(request):
+    """Creates a new blot and adds it to the logged in member's blots."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    blot = Blot(name = "")
+    blot.save()
+
+    member.blots.add(blot)
+    
+    return HttpResponse(blot.id)
+
+
+@csrf_exempt
+def s_rename_blot_view(request):
+    """Renames a blot."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    print "a"
+    print request.POST
+    try:
+        print "a"
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+        print "a"
+        name = request.POST["name"]
+        print "a"
+    except:
+        raise Http404()
+    print "a"
+
+    blot.name = name
+    print "a"
+    blot.save()
+    print "a"
+    
+    return HttpResponse(blot.id)
