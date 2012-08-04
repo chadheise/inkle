@@ -66,6 +66,20 @@ Ext.define("inkle.view.MyInklings", {
                 		itemId: "newInklingDoneButton",
                 		hidden: true
                 	},
+                	{
+                		xtype: "button",
+                		ui: "action",
+                		text: "Done",
+                		itemId: "inklingInviteesDoneButton",
+                		hidden: true
+                	},
+                	{
+                		xtype: "button",
+                		ui: "action",
+                		text: "Done",
+                		itemId: "allFriendsInviteesDoneButton",
+                		hidden: true
+                	}
                 ]
     		},
     		
@@ -99,6 +113,16 @@ Ext.define("inkle.view.MyInklings", {
             	fn: "onNewInklingDoneButtonTap"
         	},
         	{
+            	delegate: "#inklingInviteesDoneButton",
+            	event: "tap",
+            	fn: "onInklingInviteesDoneButtonTap"
+        	},
+        	{
+            	delegate: "#allFriendsInviteesDoneButton",
+            	event: "tap",
+            	fn: "onAllFriendsInviteesDoneButtonTap"
+        	},
+        	{
 				event: "tap",
 				element: "element",
 				delegate: ".inkling",
@@ -108,7 +132,7 @@ Ext.define("inkle.view.MyInklings", {
 	},
 	
 	// Event firings
-    onNewInklingButtonTap: function () {
+    onNewInklingButtonTap: function() {
         this.fireEvent("newInklingButtonTapped");
     },
     
@@ -116,7 +140,7 @@ Ext.define("inkle.view.MyInklings", {
         this.fireEvent("myInklingsInklingBackButtonTapped");
     },
     
-    onInklingTap: function (event, target) {
+    onInklingTap: function(event, target) {
         var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
         
         this.fireEvent("inklingTapped", tappedInklingId);
@@ -128,5 +152,13 @@ Ext.define("inkle.view.MyInklings", {
     
     onNewInklingDoneButtonTap: function() {
         this.fireEvent("newInklingDoneButtonTapped");
+    },
+    
+    onInklingInviteesDoneButtonTap: function() {
+    	this.fireEvent("inklingInviteesDoneButtonTapped");
+    },
+    
+    onAllFriendsInviteesDoneButtonTap: function() {
+    	this.fireEvent("allFriendsInviteesDoneButtonTapped");
     }
 });

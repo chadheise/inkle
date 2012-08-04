@@ -25,7 +25,9 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		itemId: "friendsViewRemoveFriendsButton",
                 		//ui: "action",
-                		text: "-"
+                		text: "-",
+                		//iconMask: true,
+                		//iconCls: "minus1"
                 	},
                 	{
                 		xtype: "button",
@@ -107,6 +109,9 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
+								extraParams: {
+									mode: "friends"
+								},
         						
         						reader: {
         							type: "json",
@@ -145,7 +150,8 @@ Ext.define("inkle.view.Friends", {
         						},
         						url: "http://127.0.0.1:8000/sencha/blots/",
         						extraParams: {
-                    				includeAllBlotsBlot: "false"
+                    				includeAllBlotsBlot: "false",
+                    				inviteesMode: "false"
 								},
         	
         						reader: {

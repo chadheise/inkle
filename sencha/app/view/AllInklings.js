@@ -151,7 +151,8 @@ Ext.define("inkle.view.AllInklings", {
         						},
         						url: "http://127.0.0.1:8000/sencha/blots/",
         						extraParams: {
-                    				includeAllBlotsBlot: "true"
+                    				includeAllBlotsBlot: "true",
+                    				inviteesMode: "true"
 								},
         						reader: {
         							type: "json",

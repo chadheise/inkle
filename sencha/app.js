@@ -11,6 +11,8 @@ Ext.application({
     	"AllInklings",
     	"MyInklings",
     	"NewInkling",
+    	"InklingInvitees",
+    	"AllFriendsInvitees",
     	"Inkling",
     	"InklingFeed",
     	"Friends",

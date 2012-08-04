@@ -71,13 +71,16 @@ class Event(models.Model):
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
-    creator = models.ForeignKey("Member")
+    creator = models.ForeignKey("Member", related_name = "creator")
     location = models.CharField(max_length = 50, blank = True)
-    date = models.DateField()
+    date = models.DateField(null = True, blank = True)
     time = models.CharField(max_length = 50, blank = True)
     category = models.CharField(max_length = 50, blank = True)
     notes = models.CharField(max_length = 150, blank = True)
     is_private = models.BooleanField(default = False)
+
+    # Invitees
+    invitees = models.ManyToManyField("Member", related_name = "invitees")
 
     # Managers
     objects = models.Manager()
@@ -88,7 +91,7 @@ class Inkling(models.Model):
     date_created = models.DateTimeField(auto_now_add = True)
     date_last_modified = models.DateTimeField(auto_now = True)
     num_location_changes = models.IntegerField(max_length = 4, default = 0)
-    num_date_changes = models.IntegerField(max_length = 4, default = 1)
+    num_date_changes = models.IntegerField(max_length = 4, default = 0)
     num_time_changes = models.IntegerField(max_length = 4, default = 0)
     num_category_changes = models.IntegerField(max_length = 4, default = 0)
     num_notes_changes = models.IntegerField(max_length = 4, default = 0)

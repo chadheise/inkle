@@ -65,7 +65,8 @@ Ext.define("inkle.view.NewInkling", {
 								},
 								url: "http://127.0.0.1:8000/sencha/blots/",
 								extraParams: {
-									includeAllBlotsBlot: "true"
+									includeAllBlotsBlot: "true",
+									inviteesMode: "false"
 								},
 								reader: {
 									type: "json",
@@ -82,7 +83,30 @@ Ext.define("inkle.view.NewInkling", {
 						checked: false
 					}
 				]
+			},
+			{
+				xtype: "container",
+				html: [
+					"<div id='inviteesCountContainer'>",
+						"<p id='inviteesCount' style='float: left;'>0 invitees</p>",
+						"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />",
+					"</div>"
+				].join("")
 			}
-		]
+		],
+    	
+    	listeners: [
+			{
+				event: "tap",
+				element: "element",
+            	delegate: "#inviteesCountContainer",
+            	fn: "onInviteesCountContainerTap"
+        	}
+        ]
+    },
+	
+	// Event firings
+    onInviteesCountContainerTap: function() {
+        this.fireEvent("inviteesCountContainerTapped");
     }
 });
