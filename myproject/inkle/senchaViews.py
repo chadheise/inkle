@@ -332,7 +332,22 @@ def s_my_inklings_view(request):
 
 @csrf_exempt
 def s_create_inkling_view(request):
-    """Creates an inkling."""
+    """Creates an empty inkling."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Create and save the new inkling
+    inkling = Inkling(creator = member)
+    inkling.save()
+
+    # Return the new inkling's ID
+    return HttpResponse(inkling.id)
+
+
+@csrf_exempt
+def s_update_inkling_view(request):
+    """Updates and inkling's information."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
@@ -345,35 +360,35 @@ def s_create_inkling_view(request):
         category = request.POST["category"]
         notes = request.POST["notes"]
         is_private = request.POST["isPrivate"]
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
-
-    # Create a Python date object
-    date_split = date.split("T")[0].split("-")
-    date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
-
+        
     # Set the is_private boolean
     if (is_private == "true"):
         is_private = True
     else:
         is_private = False
-    
-    # Create the new inkling
-    inkling = Inkling(creator = member, date = date, is_private = is_private)
 
     # Add any provided data to the inkling
     if (location):
         inkling.location = location
-        inkling.num_location_changes = 1
+        inkling.num_location_changes += 1
+    if (date):
+        # Create a Python date object
+        date_split = date.split("T")[0].split("-")
+        date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
+        inkling.date = date
+        inkling.num_date_changes += 1
     if (time):
         inkling.time = time
-        inkling.num_time_changes = 1
+        inkling.num_time_changes += 1
     if (category):
         inkling.category = category
-        inkling.num_category_changes = 1
+        inkling.num_category_changes += 1
     if (notes):
         inkling.notes = notes
-        inkling.num_notes_changes = 1
+        inkling.num_notes_changes += 1
 
     # Save the inkling
     inkling.save()
@@ -388,11 +403,289 @@ def s_create_inkling_view(request):
 
 
 @csrf_exempt
+def s_inkling_blots_invitees_view(request):
+    """Returns."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of member for each of the logged in member's blots
+    blots = []
+
+    html = render_to_string( "s_blotInviteeListItem.html", {
+        "allFriendsItem" : True
+    })
+    blots.append({
+        "id" : -1,
+        "html" : html
+    })
+
+
+    # Sort the member's blot alphabetically
+    member_blots = list(member.blots.all())
+    member_blots.sort(key = lambda b : b.name)
+    
+    for b in member_blots:
+        html = render_to_string( "s_blotInviteeListItem.html", {
+            "b" : b,
+            "allFriendsItem" : False,
+            "inkling" : inkling
+        })
+        blots.append({
+            "id" : b.id,
+            "html" : html
+        })
+
+    data["blots"] = blots
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_inkling_friend_invitees_view(request):
+    """Returns"""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    member_friends = list(member.friends.all())
+    member_friends.sort(key = lambda m : m.last_name)
+
+    # Get the name and number of mutual friends for each of the logged in member's friends
+    friends = []
+    for m in member_friends:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        html = render_to_string( "s_inklingFriendInvitees.html", {
+            "m" : m,
+            "inkling" : inkling
+        })
+        
+        friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Sort and add the friends list to the data dictionary
+    data["friends"] = friends
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_num_invitees_view(request):
+    """Returns the number of invitees for the inputted inkling."""
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    num_invitees = inkling.invitees.count()
+    
+    return HttpResponse(num_invitees)
+
+
+@csrf_exempt
+def s_blot_invitees_view(request):
+    """."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of member for each of the logged in member's blots
+    blots = []
+
+    html = render_to_string( "s_blotInviteeListItem.html", {
+        "allFriendsItem" : True
+    })
+    blots.append({
+        "id" : -1,
+        "html" : html
+    })
+
+    # Sort the member's blot alphabetically
+    member_blots = list(member.blots.all())
+    member_blots.sort(key = lambda b : b.name)
+    
+    for b in member_blots:
+        b.selected = True
+        for m in b.members.all():
+            if (m not in inkling.invitees.all()):
+                b.selected = False
+                break
+        html = render_to_string( "s_blotInviteeListItem.html", {
+            "b" : b,
+            "allFriendsItem" : False
+        })
+        blots.append({
+            "id" : b.id,
+            "html" : html
+        })
+
+    data["blots"] = blots
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_friend_invitees_view(request):
+    """Returns the."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    member_friends = list(member.friends.all())
+    member_friends.sort(key = lambda m : m.last_name)
+
+    # Get the name and number of mutual friends for each of the logged in member's friends
+    friends = []
+    for m in member_friends:
+        m.selected = m in inkling.invitees.all()
+        html = render_to_string( "s_friendInviteeListItem.html", {
+            "m" : m
+        })
+        
+        friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Sort and add the friends list to the data dictionary
+    data["friends"] = friends
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_invite_blot_view(request):
+    """Invites everyone in a blot to a certain inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    for m in blot.members.all():
+        if m not in inkling.invitees.all():
+            inkling.invitees.add(m)
+
+    inkling.save()
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_uninvite_blot_view(request):
+    """Uninvites everyone in a blot to a certain inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        blot = Blot.objects.get(pk = request.POST["blotId"])
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    for m in blot.members.all():
+        if m in inkling.invitees.all():
+            inkling.invitees.remove(m)
+
+    inkling.save()
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_invite_friend_view(request):
+    """Invites one of the logged in member's friends to a certain inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    if m not in inkling.invitees.all():
+        inkling.invitees.add(m)
+        inkling.save()
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def s_uninvite_friend_view(request):
+    """Uninvites one of the logged in member's friends to a certain inkling."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    if m in inkling.invitees.all():
+        inkling.invitees.remove(m)
+        inkling.save()
+
+    return HttpResponse()
+
+
+@csrf_exempt
 def s_friends_view(request):
     """Returns the."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        mode = request.POST["mode"]
+    except:
+        raise Http404()
 
     # Create a dictionary for the data
     data = {}
@@ -406,8 +699,8 @@ def s_friends_view(request):
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : True,
-            "include_selection_item" : False
+            "include_delete_items" : mode == "friends",
+            "include_selection_item" : mode == "invite"
         })
         
         friends.append({
@@ -432,6 +725,7 @@ def s_blots_view(request):
 
     try:
         include_all_blots_blot = request.POST["includeAllBlotsBlot"]
+        invitees_mode = request.POST["inviteesMode"]
     except:
         raise Http404()
 
@@ -446,6 +740,15 @@ def s_blots_view(request):
             "text" : "All Blots",
             "value" : -1,
         })
+    elif (invitees_mode == "true"):
+        html = render_to_string( "s_blotInviteeListItem.html", {
+            "allFriendsItem" : True
+        })
+        blots.append({
+            "id" : -1,
+            "html" : html
+        })
+
 
     # Sort the member's blot alphabetically
     member_blots = list(member.blots.all())
@@ -456,6 +759,15 @@ def s_blots_view(request):
             blots.append({
                 "text" : b.name,
                 "value" : b.id
+            })
+        elif (invitees_mode == "true"):
+            html = render_to_string( "s_blotInviteeListItem.html", {
+                "b" : b,
+                "allFriendsItem" : False
+            })
+            blots.append({
+                "id" : b.id,
+                "html" : html
             })
         else:
             html = render_to_string( "s_blotListItem.html", {
@@ -729,21 +1041,13 @@ def s_rename_blot_view(request):
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    print "a"
-    print request.POST
     try:
-        print "a"
         blot = Blot.objects.get(pk = request.POST["blotId"])
-        print "a"
         name = request.POST["name"]
-        print "a"
     except:
         raise Http404()
-    print "a"
 
     blot.name = name
-    print "a"
     blot.save()
-    print "a"
     
     return HttpResponse(blot.id)

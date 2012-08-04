@@ -256,7 +256,7 @@ Ext.define("inkle.controller.FriendsController", {
 				blotNameInput.removeCls("blotNameInputHidden");
 			}
 			
-			var blotNames = Ext.query("#" + listId + " .name");
+			var blotNames = Ext.query("#" + listId + " .blotName");
 			for (var i = 0; i < blotNames.length; i++) {
 				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
 				blotName.addCls("blotNameHidden");
@@ -291,7 +291,7 @@ Ext.define("inkle.controller.FriendsController", {
 				blotNameInput.addCls("blotNameInputHidden");
 			}
 			
-			var blotNames = Ext.query("#" + listId + " .name");
+			var blotNames = Ext.query("#" + listId + " .blotName");
 			for (var i = 0; i < blotNames.length; i++) {
 				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
 				blotName.removeCls("blotNameHidden");

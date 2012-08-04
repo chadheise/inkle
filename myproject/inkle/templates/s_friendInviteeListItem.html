@@ -1,0 +1,17 @@
+<div id="member{{ m.id }}" class="member">
+    <!-- Left-hand selection item -->
+    {% if m.selected %}
+        <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/selected.png">
+    {% else %}
+         <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/deselected.png">
+    {% endif %}
+
+    <!-- Member info -->
+    <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
+    <div class="memberInfo">
+        <div class="name">
+            <span class="firstName">{{ m.first_name }}</span> 
+            <span class="lastName">{{ m.last_name }}</span>
+        </div>
+    </div>
+</div>

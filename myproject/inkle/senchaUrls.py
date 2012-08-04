@@ -23,6 +23,14 @@ urlpatterns = patterns(
     
     (r"^myInklings/$", "s_my_inklings_view"),
     (r"^createInkling/$", "s_create_inkling_view"),
+    (r"^updateInkling/$", "s_update_inkling_view"),
+    (r"^numInvitees/$", "s_num_invitees_view"),
+    (r"^blotInvitees/$", "s_blot_invitees_view"),
+    (r"^friendInvitees/$", "s_friend_invitees_view"),
+    (r"^inviteBlot/$", "s_invite_blot_view"),
+    (r"^uninviteBlot/$", "s_uninvite_blot_view"),
+    (r"^inviteFriend/$", "s_invite_friend_view"),
+    (r"^uninviteFriend/$", "s_uninvite_friend_view"),
 
     (r"^friends/$", "s_friends_view"),
     (r"^blots/$", "s_blots_view"),
