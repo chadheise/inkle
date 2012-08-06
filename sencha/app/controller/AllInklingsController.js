@@ -231,9 +231,5 @@ Ext.define("inkle.controller.AllInklingsController", {
 				blot: -1
 			});
 		}
-    },
-    
-    init: function () {
-        this.callParent(arguments);
     }
 });

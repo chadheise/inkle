@@ -4,6 +4,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     config: {
         refs: {
         	// Views
+        	mainTabView: "mainTabView",
             myInklingsView: "myInklingsView",
             newInklingView: "newInklingView",
             
@@ -12,8 +13,12 @@ Ext.define("inkle.controller.MyInklingsController", {
             blotInviteesList: "#blotInviteesList",
         	allFriendsInviteesList: "#allFriendsInviteesList",
         
+        	shareWithSelect: "#shareWithSelect",
+        
             // Toolbar buttons
+            inklingInvitesButton: "#inklingInvitesButton",
             newInklingButton: "#newInklingButton",
+            inviteResponseBackButton: "#inviteResponseBackButton",
             myInklingsInklingBackButton: "#myInklingsInklingBackButton",
             inklingFeedBackButton: "#inklingFeedBackButton",
             inklingFeedButton: "#inklingFeedButton",
@@ -26,6 +31,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         control: {
             myInklingsView: {
             	inklingTapped: "activateInklingView",
+            	inklingInvitesButtonTapped: "activateInviteResponseView",
+            	onInviteResponseBackButtonTapped: "activateMyInklingsView",
             	newInklingButtonTapped: "activateNewInklingView",
             	newInklingCancelButtonTapped: "activateMyInklingsView",
             	newInklingDoneButtonTapped: "createInkling",
@@ -34,7 +41,9 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             newInklingView: {
-            	inviteesCountContainerTapped: "activateInklingInviteesView"
+            	newInklingInviteesTapped: "activateInklingInviteesView",
+            	isPrivateCheckboxChecked: "toggleShareWithSelect",
+            	isPrivateCheckboxUnchecked: "toggleShareWithSelect"
             },
             
             inklingInviteesView: {
@@ -59,6 +68,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getInklingFeedButton().hide();
 		this.getNewInklingCancelButton().hide();
 		this.getNewInklingDoneButton().hide();
+		this.getInviteResponseBackButton().hide();
+		this.getInklingInvitesButton().show();
 		this.getNewInklingButton().show();
     	
     	// Update the toolbar title
@@ -71,6 +82,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 	activateInklingView: function(inklingId) {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
+		this.getInklingInvitesButton().hide();
 		this.getMyInklingsInklingBackButton().show();
 		this.getInklingFeedButton().show();
 		
@@ -85,10 +97,26 @@ Ext.define("inkle.controller.MyInklingsController", {
         });
     },
     
+    // Activates the invite response view
+    activateInviteResponseView: function() {
+    	// Show appropriate buttons
+		this.getNewInklingButton().hide();
+		this.getInklingInvitesButton().hide();
+		this.getInviteResponseBackButton().show();
+		
+		// Update the toolbar title
+		this.getMyInklingsViewToolbar().setTitle("Inkling Invites");
+		
+    	this.getMyInklingsView().push({
+        	xtype: "inviteResponseView"
+        });
+    },
+    
     // Activates the new inkling view
 	activateNewInklingView: function() {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
+		this.getInklingInvitesButton().hide();
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
 		
@@ -144,10 +172,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 			}
 		});
 		if (numInvitees == 1) {
-			Ext.fly("inviteesCount").setText("1 invitee");	
+			Ext.fly("numInvitees").setText("1 friend invited");	
 		}
 		else {
-			Ext.fly("inviteesCount").setText(numInvitees + " invitees");
+			Ext.fly("numInvitees").setText(numInvitees + " friends invited");
 		}
 		
     	this.getMyInklingsView().pop();
@@ -161,7 +189,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getInklingInviteesDoneButton().show();
 		
 		// Update the toolbar title
-		this.getMyInklingsViewToolbar().setTitle("New Inkling Invitees");
+		this.getMyInklingsViewToolbar().setTitle("Invite Friends");
 		
     	this.getMyInklingsView().push({
         	xtype: "inklingInviteesView",
@@ -219,16 +247,23 @@ Ext.define("inkle.controller.MyInklingsController", {
     // Commands //
     /************/
     createInkling: function() {
-    	this.getNewInklingView().submit({
-    		async: false,
-			url: "http://127.0.0.1:8000/sencha/updateInkling/",
-			method: "POST",
-			params: {
-				inklingId : this.getNewInklingView().getData()["inklingId"]
-			}
-		});
+    	var newInklingValues = this.getNewInklingView().getValues();
+    	if ((newInklingValues["location"] == "") && (newInklingValues["date"] == null) && (newInklingValues["time"] == "") && (newInklingValues["category"] == "") && (newInklingValues["notes"] == "") && (Ext.fly("numInvitees").getHtml() == "0 invitees"))
+    	{
+    		Ext.Msg.alert("Error", "No inkling information entered.");
+    	}
+    	else {
+			this.getNewInklingView().submit({
+				async: false,
+				url: "http://127.0.0.1:8000/sencha/updateInkling/",
+				method: "POST",
+				params: {
+					inklingId : this.getNewInklingView().getData()["inklingId"]
+				}
+			});
 		
-		this.activateMyInklingsView();
+			this.activateMyInklingsView();
+		}
     },
     
     toggleBlotSelectionItem: function(blotId) {
@@ -305,9 +340,47 @@ Ext.define("inkle.controller.MyInklingsController", {
 				},
 				failure: function(response) {
 					console.log(response.responseText);
-					Ext.Msg.alert("Error", response.responseText);
 	        	}
 			});
 		}
-	}
+	},
+	
+	// Toggles the new inkling's "Share with" field
+	toggleShareWithSelect: function() {
+		var shareWithSelect = this.getShareWithSelect();
+		if (shareWithSelect.getHidden()) {
+			this.getShareWithSelect().show();
+		}
+		else {
+			this.getShareWithSelect().hide();
+		}
+	},
+	
+	/**************************/
+	/*  BASE CLASS FUNCTIONS  */
+	/**************************/
+    launch: function () {
+        this.callParent(arguments);
+        
+        // If the main tab view is created, update the inkling invites button
+        if (this.getMainTabView()) {
+			// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
+			var mainTabView = this.getMainTabView();
+			var inklingInvitesButton = this.getInklingInvitesButton();
+			Ext.Ajax.request({
+				url: "http://127.0.0.1:8000/sencha/numInklingInvites/",
+				success: function(response) {
+					numInklingInvites = response.responseText;
+					if (numInklingInvites != 0) {
+						inklingInvitesButton.show();
+						inklingInvitesButton.setBadgeText(numInklingInvites);
+						mainTabView.getTabBar().getAt(1).setBadgeText(numInklingInvites);
+					}
+				},
+				failure: function(response) {
+					console.log(response.responseText);
+	        	}
+			});
+		}
+    }
 });

@@ -12,8 +12,11 @@ Ext.define("inkle.view.NewInkling", {
 		scrollable: true,
 		
 		items: [
+			// Basic info form field
 			{
 				xtype: "fieldset",
+				margin: "-10px -10px 10px -10px",
+				//title: "Basic Info",
 				
 				items: [
 					{
@@ -27,8 +30,8 @@ Ext.define("inkle.view.NewInkling", {
 						xtype: "datepickerfield",
 						name: "date",
 						label: "Date",
-						minValue: new Date(),
-						value: new Date()
+						placeHolder: "Optional",
+						minValue: new Date()
 					},
 					{
 						xtype: "textfield",
@@ -50,9 +53,39 @@ Ext.define("inkle.view.NewInkling", {
 						label: "Notes",
 						placeHolder: "Optional",
 						maxLength: 150
+					}
+				]
+			},
+			
+			// Invitees
+			{
+				xtype: "container",
+				id: "newInklingViewInvitees",
+				margin: "0px -10px 10px -10px",
+				html: [
+					"<p id='numInvitees'>0 friends invited</p>",
+					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
+				].join("")
+			},
+			
+			// Privacy form fields
+			{
+				xtype: "fieldset",
+				margin: "0px -10px 10px -10px",
+				//title: "Privacy",
+				
+				// Form fields
+				items: [
+					{
+						xtype: "checkboxfield",
+						id: "isPrivateCheckbox",
+						name: "isPrivate",
+						label: "Private?",
+						checked: false
 					},
 					{
 						xtype: "selectfield",
+						id: "shareWithSelect",
 						name: "shareWith",
 						label: "Share with",
 						usePicker: true,
@@ -75,38 +108,42 @@ Ext.define("inkle.view.NewInkling", {
 							},
 							autoLoad: true
 						}
-					},
-					{
-						xtype: "checkboxfield",
-						name: "isPrivate",
-						label: "Private?",
-						checked: false
 					}
 				]
-			},
-			{
-				xtype: "container",
-				html: [
-					"<div id='inviteesCountContainer'>",
-						"<p id='inviteesCount' style='float: left;'>0 invitees</p>",
-						"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />",
-					"</div>"
-				].join("")
 			}
 		],
     	
+    	// Listeners
     	listeners: [
 			{
 				event: "tap",
 				element: "element",
-            	delegate: "#inviteesCountContainer",
-            	fn: "onInviteesCountContainerTap"
+            	delegate: "#newInklingViewInvitees",
+            	fn: "onNewInklingViewInviteesTap"
+        	},
+        	{
+        		event: "check",
+        		delegate: "#isPrivateCheckbox",
+        		fn: "onIsPrivateCheckboxCheck"
+        	},
+        	{
+        		event: "uncheck",
+        		delegate: "#isPrivateCheckbox",
+        		fn: "onIsPrivateCheckboxUncheck"
         	}
         ]
     },
 	
 	// Event firings
-    onInviteesCountContainerTap: function() {
-        this.fireEvent("inviteesCountContainerTapped");
+    onNewInklingViewInviteesTap: function() {
+        this.fireEvent("newInklingInviteesTapped");
+    },
+    
+    onIsPrivateCheckboxCheck: function() {
+    	this.fireEvent("isPrivateCheckboxChecked");
+    },
+    
+    onIsPrivateCheckboxUncheck: function() {
+    	this.fireEvent("isPrivateCheckboxUnchecked");
     }
 });

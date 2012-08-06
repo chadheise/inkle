@@ -1,6 +1,9 @@
 Ext.define("inkle.view.Main", {
     extend: "Ext.tab.Panel",
-    requires: ["Ext.TitleBar"],
+    
+    requires: [
+    	"Ext.TitleBar"
+    ],
     
     xtype: "mainTabView",
     
