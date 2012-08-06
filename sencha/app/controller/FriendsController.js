@@ -4,6 +4,7 @@ Ext.define("inkle.controller.FriendsController", {
     config: {
         refs: {
         	// Views
+        	mainTabView: "mainTabView",
             friendsView: "friendsView",
             addFriendsView: "addFriendsView",
             blotMembersView: "blotMembersView",
@@ -22,6 +23,10 @@ Ext.define("inkle.controller.FriendsController", {
             friendsList: "#friendsViewFriendsList",
             blotsList: "#friendsViewBlotsList",
             blotMembersList: "#blotMembersList",
+            requestsList: "#friendsViewRequestsList",
+            
+            // Segmented buttons
+            requestsButton: "#friendsViewRequestsButton",
             
             // Elements
             addFriendsSearchField: "#addFriendsSearchField",
@@ -31,10 +36,8 @@ Ext.define("inkle.controller.FriendsController", {
         control: {
             friendsView: {
             	// Commands
-            	friendsViewFriendsButtonTapped: "updateFriendsViewActiveItem",
-            	friendsViewBlotsButtonTapped: "updateFriendsViewActiveItem",
-            	friendsViewSharingButtonTapped: "updateFriendsViewActiveItem",
-           		
+            	friendsViewSegmentedButtonToggled: "updateFriendsViewActiveItem",
+            	
            		friendsViewEditBlotsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewCreateBlotButtonTapped: "createBlot",
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
@@ -42,6 +45,9 @@ Ext.define("inkle.controller.FriendsController", {
            		deleteLockTapped: "toggleBlotsListDeleteLockRotation",
            		deleteButtonTapped: "deleteListItem",
            		blotNameInputBlurred: "renameBlot",
+           		
+           		acceptRequestButtonTapped: "respondToRequest",
+           		ignoreRequestButtonTapped: "respondToRequest",
            		
            		friendsViewBlotsListItemTapped: "activateBlotMembersView"
            	},
@@ -156,7 +162,7 @@ Ext.define("inkle.controller.FriendsController", {
 	/*  COMMANDS  */
 	/**************/
 	
-	/* Updates the HTML for the friends view */
+	/* Updates the active item for the friends view */
 	updateFriendsViewActiveItem: function(index) {
 		// Update the active friends view item
 		this.getFriendsViewContainer().setActiveItem(index);
@@ -185,6 +191,7 @@ Ext.define("inkle.controller.FriendsController", {
 			this.getCreateBlotButton().hide();
 		}
 		
+		// Hide the delete locks
 		var deleteLocks = Ext.query(".deleteLock");
 		for (var i = 0; i < deleteLocks.length; i++) {
 			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
@@ -193,6 +200,7 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteLock.addCls("deleteLockHidden");
 		}
 		
+		// Hide the delete buttons
 		var deleteButtons = Ext.query(".deleteButton");
 		for (var i = 0; i < deleteButtons.length; i++) {
 			var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
@@ -201,13 +209,16 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteButton.addCls("deleteButtonHidden");
 		}
 		
+		// Hide the disclosure arrows
 		var disclosureArrows = Ext.query(".disclosureArrow");
 		for (var i = 0; i < disclosureArrows.length; i++) {
 			var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
 			
-			disclosureArrow.removeCls("disclosureArrowSlideRight");
-			disclosureArrow.removeCls("disclosureArrowSlideLeft");
-			disclosureArrow.removeCls("disclosureArrowHidden");
+			if (disclosureArrow) {
+				disclosureArrow.removeCls("disclosureArrowSlideRight");
+				disclosureArrow.removeCls("disclosureArrowSlideLeft");
+				disclosureArrow.removeCls("disclosureArrowHidden");
+			}
 		}
 	},
 	
@@ -371,7 +382,12 @@ Ext.define("inkle.controller.FriendsController", {
         	}
 		});
 		
-		this.getBlotsList().getStore().load();
+		// Reload the blots list and set the focus on the new blot's input field
+		this.getBlotsList().getStore().load(
+			function(records, operation, success) {
+    			this.toggleDeleteLocksVisibility("friendsViewBlotsList", "Edit");
+			}
+		);
 	},
 	
 	renameBlot: function(blotId) {
@@ -466,5 +482,66 @@ Ext.define("inkle.controller.FriendsController", {
 	        	}
 			});
 		}
-	}
+	},
+	
+	respondToRequest: function(memberId, response) {
+		var mainTabView = this.getMainTabView();
+		var requestsButton = this.getRequestsButton();
+		var friendsList = this.getFriendsList();
+		var requestsList = this.getRequestsList();
+		
+		Ext.Ajax.request({
+			url: "http://127.0.0.1:8000/sencha/respondToRequest/",
+    		params: {
+    			memberId: memberId,
+    			response: response
+    		},
+    		success: function(response) {
+    			numFriendRequests = response.responseText;
+				if (numFriendRequests != 0) {
+					mainTabView.getTabBar().getAt(2).setBadgeText(numFriendRequests);
+					requestsButton.setBadgeText(numFriendRequests);
+				}
+				else {
+					mainTabView.getTabBar().getAt(2).setBadgeText("");
+					requestsButton.setBadgeText("");
+				}
+				
+				friendsList.getStore().load();
+				requestsList.getStore().load();
+    		},
+        	failure: function(response) {
+        		console.log(response.responseText);
+        		Ext.Msg.alert("Error", response.responseText);
+        	}
+		});
+	},
+	
+	
+	/**************************/
+	/*  BASE CLASS FUNCTIONS  */
+	/**************************/
+    launch: function () {
+        this.callParent(arguments);
+        
+        // If the main tab view is created, update the inkling invites button
+        if (this.getMainTabView()) {
+			// Update the badge text if there are any friend requests
+			var mainTabView = this.getMainTabView();
+			var requestsButton = this.getRequestsButton();
+			Ext.Ajax.request({
+				url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
+				success: function(response) {
+					numFriendRequests = response.responseText;
+					if (numFriendRequests != 0) {
+						mainTabView.getTabBar().getAt(2).setBadgeText(numFriendRequests);
+						requestsButton.setBadgeText(numFriendRequests);
+					}
+				},
+				failure: function(response) {
+					console.log(response.responseText);
+	        	}
+			});
+		}
+    }
 });

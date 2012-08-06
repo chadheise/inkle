@@ -4,16 +4,20 @@ Ext.define("inkle.view.Profile", {
 	xtype: "profileView",
 	
     requires: [
+    	"Ext.dataview.List"
     ],
 	
-	config: {        
+	config: {
+		// Tab information    
 		title: "Profile",
 		iconCls: "settings",
     	
+    	// Layout information
     	scrollable: true,
     	layout: "vbox",
     	
     	items: [
+    		// Top toolbar
     		{
     			xtype: "toolbar",
                 docked: "top",
@@ -24,44 +28,33 @@ Ext.define("inkle.view.Profile", {
                 		ui: "action",
                 		text: "Logout",
                 		itemId: "profileLogoutButton"
-                	},
-                    { xtype: "spacer" },
-                    {
-                        xtype: "button",
-                        ui: "action",
-                        text: "Edit",
-                        itemId: "profileEditButton"
-                    }
+                	}
                 ]
     		},
     		
+    		// Main content list
     		{
-    			xtype: "htmlcontainer",
-    			scrollable: true,
-				url: "http://127.0.0.1:8000/sencha/profile/",
-    		},
-    		
-    		{
-    			xtype: "container",
-    			style: {
-    				"padding": "10px"
-    			},
-    			html: "ADSFASDF"
-    		},
-    		{
-    			xtype: "button",
-    			id: "profileViewNotificationsButton",
-    			text: "Notifications"
-    		},
-    		{
-    			xtype: "button",
-    			id: "profileViewSettingsButton",
-    			text: "Settings"
-    		},
-    		{
-    			xtype: "button",
-    			id: "profileViewPrivacyButton",
-    			text: "Privacy"
+    			xtype: "list",
+    			id: "profileViewList",
+				disableSelection: true,
+				scrollable: false,
+				height: 236,
+				itemTpl: [
+					"<p>{ text }</p>",
+					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
+				],
+				store: {
+					fields: [
+						"text"
+					],
+					data: [
+						{ text: "Notifications" },
+						{ text: "Inkling Invites" },
+						{ text: "Settings" },
+						{ text: "Privacy" }
+					],
+					autoLoad: true
+				}
     		}
     	],
     	
@@ -70,23 +63,12 @@ Ext.define("inkle.view.Profile", {
             	delegate: "#profileLogoutButton",
             	event: "tap",
             	fn: "onProfileLogoutButtonTap"
-        	},
-			{
-            	delegate: "#profileEditButton",
-            	event: "tap",
-            	fn: "onProfileEditButtonTap"
         	}
         ]
 	},
 	
 	// Event firings
-	onProfileLogoutButtonTap: function () {
-        console.log("profileLogoutButtonTapped");
+	onProfileLogoutButtonTap: function() {
         this.fireEvent("profileLogoutButtonTapped");
-    },
-    
-    onProfileEditButtonTap: function () {
-        console.log("profileEditButtonTapped");
-        this.fireEvent("profileEditButtonTapped");
     }
 });

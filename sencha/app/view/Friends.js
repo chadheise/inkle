@@ -8,10 +8,12 @@ Ext.define("inkle.view.Friends", {
     	"Ext.dataview.List"
     ],
 	
-	config: {        
+	config: {
+	    // Tab information
 		title: "Friends",
 		iconCls: "star",
     	
+    	// Layout information
     	navigationBar: false,
     	
     	items: [
@@ -39,25 +41,25 @@ Ext.define("inkle.view.Friends", {
                 	{ xtype: "spacer" },
                     {
                     	xtype: "segmentedbutton",
-                    	itemId: "friendsViewSegmentedButton",
+                    	id: "friendsViewSegmentedButton",
                     	allowDepress: false,
                     	allowMultiple: false,
                     	centered: true,
                     	items: [
                     		{
 								text: "Friends",
-								itemId: "friendsViewFriendsButton",
+								id: "friendsViewFriendsButton",
 								width: 80,
 								pressed: true
 							},
 							{
 								text: "Blots",
-								itemId: "friendsViewBlotsButton",
+								id: "friendsViewBlotsButton",
 								width: 80
 							},
 							{
-								text: "Sharing",
-								itemId: "friendsViewSharingButton",
+								text: "Requests",
+								id: "friendsViewRequestsButton",
 								width: 80
 							}
 						]
@@ -85,7 +87,7 @@ Ext.define("inkle.view.Friends", {
     			itemId: "friendsViewContainer",
     			layout: "card",
     			items: [
-    				// Friends
+    				// Friends list
 					{
 						xtype: "list",
 						id: "friendsViewFriendsList",
@@ -127,7 +129,7 @@ Ext.define("inkle.view.Friends", {
         				}
 					},
 					
-					// Blots
+					// Blots list
 					{
 						xtype: "list",
 						id: "friendsViewBlotsList",
@@ -163,36 +165,36 @@ Ext.define("inkle.view.Friends", {
         				}
 					},
 					
-					// Sharing
+					// Friend requests list
 					{
-						/*xtype: "fieldset",
-						//url: "http://127.0.0.1:8000/sencha/sharing/"
-						items: [
-							{
-								xtype: "togglefield",
-								name: "d",
-								label: 'Are you awesome?',
-								labelWidth: '40%'
-							},
-							{
-								xtype: "selectfield",
-								label: "Default sharing option",
-								options: [
-									{
-										text: "All Blots",
-										value: "first"
-									},
-									{
-										text: 'Second Option',
-										value: 'second'
-									},
-									{	
-										text: 'Third Option',
-										value: "third"
-									}
-								]
-							}
-						]*/
+						xtype: "list",
+						id: "friendsViewRequestsList",
+						loadingText: "Loading friend requests...",
+						emptyText: "<div class='emptyListText'>No friend requests</div>",
+						disableSelection: true,
+						itemTpl: [
+							"{ html }"
+						],
+						store: {
+        					fields: [
+        						"id",
+        						"html"
+        					],
+        					proxy: {
+        						type: "ajax",
+        						method: "POST",
+        						actionMethods: {
+        							read: "POST"
+        						},
+        						url: "http://127.0.0.1:8000/sencha/friendRequests/",
+        	
+        						reader: {
+        							type: "json",
+        							rootProperty: "friendRequests"
+        						}
+        					},
+        					autoLoad: true
+        				}
 					}
 				]
     		}
@@ -200,20 +202,10 @@ Ext.define("inkle.view.Friends", {
     	
     	listeners: [
     		{
-            	delegate: "#friendsViewFriendsButton",
-            	event: "tap",
-            	fn: "onFriendsViewFriendsButtonTap"
-        	},
-        	{
-            	delegate: "#friendsViewBlotsButton",
-            	event: "tap",
-            	fn: "onFriendsViewBlotsButtonTap"
-        	},
-        	{
-            	delegate: "#friendsViewSharingButton",
-            	event: "tap",
-            	fn: "onFriendsViewSharingButtonTap"
-        	},
+    			delegate: "#friendsViewSegmentedButton",
+    			event: "toggle",
+    			fn: "onFriendsViewSegmentedButtonToggle"
+    		},
         	{
             	delegate: "#friendsViewRemoveFriendsButton",
             	event: "tap",
@@ -256,22 +248,27 @@ Ext.define("inkle.view.Friends", {
             	delegate: "#friendsViewBlotsList",
             	event: "itemtap",
             	fn: "onFriendsViewBlotsListItemTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+				delegate: ".acceptRequestButton",
+				fn: "onAcceptRequestButtonTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+				delegate: ".ignoreRequestButton",
+				fn: "onIgnoreRequestButtonTap"
         	}
         ]
 	},
 	
 	// Event firings
-	onFriendsViewFriendsButtonTap: function() {
-        this.fireEvent("friendsViewFriendsButtonTapped", 0);
-    },
-    
-    onFriendsViewBlotsButtonTap: function() {
-        this.fireEvent("friendsViewBlotsButtonTapped", 1);
-    },
-    
-    onFriendsViewSharingButtonTap: function() {
-        this.fireEvent("friendsViewSharingButtonTapped", 2);
-    },
+	onFriendsViewSegmentedButtonToggle: function(segmentedButton, button, isPressed, options) {
+		var tappedId = segmentedButton.getItems().indexOf(button);
+		this.fireEvent("friendsViewSegmentedButtonToggled", tappedId);
+	},
     
     onFriendsViewRemoveFriendsButtonTap: function() {
 		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "-");
@@ -321,5 +318,15 @@ Ext.define("inkle.view.Friends", {
     onBlotNameInputBlurred: function(event) {
     	var blotId = event.getTarget(".blotNameInput").getAttribute("blotId");
     	this.fireEvent("blotNameInputBlurred", blotId);
+    },
+    
+    onAcceptRequestButtonTap: function(event) {
+		var memberId = event.getTarget(".acceptRequestButton").getAttribute("memberId");
+        this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
+    },
+    
+    onIgnoreRequestButtonTap: function(event) {
+		var memberId = event.getTarget(".ignoreRequestButton").getAttribute("memberId");
+        this.fireEvent("ignoreRequestButtonTapped", memberId, "ignore");
     }
 });

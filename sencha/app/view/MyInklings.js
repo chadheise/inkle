@@ -18,6 +18,20 @@ Ext.define("inkle.view.MyInklings", {
                 title: "My Inklings",
                 items: [
                 	{
+                        xtype: "button",
+                        ui: "action",
+                        text: "Invites",
+                        itemId: "inklingInvitesButton",
+                        hidden: true,
+                    },
+                    {
+                		xtype: "button",
+                		ui: "back",
+                		text: "My Inklings",
+                		itemId: "inviteResponseBackButton",
+                		hidden: true
+                	},
+                	{
                 		xtype: "button",
                 		ui: "back",
                 		text: "Inkling",
@@ -92,10 +106,20 @@ Ext.define("inkle.view.MyInklings", {
     	],
     	
     	listeners: [
+    		{
+    			delegate: "#inklingInvitesButton",
+            	event: "tap",
+            	fn: "onInklingInvitesButtonTap"
+    		},
 			{
             	delegate: "#newInklingButton",
             	event: "tap",
             	fn: "onNewInklingButtonTap"
+        	},
+        	{
+            	delegate: "#inviteResponseBackButton",
+            	event: "tap",
+            	fn: "onInviteResponseBackButtonTap"
         	},
         	{
             	delegate: "#myInklingsInklingBackButton",
@@ -132,8 +156,16 @@ Ext.define("inkle.view.MyInklings", {
 	},
 	
 	// Event firings
+	onInklingInvitesButtonTap: function() {
+		this.fireEvent("inklingInvitesButtonTapped");
+	},
+	
     onNewInklingButtonTap: function() {
         this.fireEvent("newInklingButtonTapped");
+    },
+    
+    onInviteResponseBackButtonTap: function() {
+    	this.fireEvent("onInviteResponseBackButtonTapped");
     },
     
     onMyInklingsInklingBackButtonTap: function() {

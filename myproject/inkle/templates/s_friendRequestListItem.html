@@ -1,0 +1,17 @@
+<div id="member{{ m.id }}" class="member">
+    <!-- Member image -->
+    <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
+
+    <!-- Member info -->
+    <div class="memberInfo">
+        <div class="name">
+            <span class="firstName">{{ m.first_name }}</span> 
+            <span class="lastName">{{ m.last_name }}</span>
+        </div>
+        <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+    </div>
+
+    <!-- Accept/ignore buttons -->
+    <input id="member{{ m.id }}AcceptRequestButton" class="acceptRequestButton" type="button" value="Accept" memberId="{{ m.id }}" />
+    <input id="member{{ m.id }}IgnoreRequestButton" class="ignoreRequestButton" type="button" value="Ignore" memberId="{{ m.id }}" />
+</div>

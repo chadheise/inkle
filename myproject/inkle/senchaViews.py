@@ -331,6 +331,46 @@ def s_my_inklings_view(request):
 
 
 @csrf_exempt
+def s_num_inkling_invites_view(request):
+    """Returns the number of inklings to which the logged in member has been invited."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+    
+    return HttpResponse(member.invitees_related.count())
+
+
+@csrf_exempt
+def s_inkling_invites_view(request):
+    """Returns a list of the inklings to which the logged in member has been invited."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Create a dictionary for the data
+    data = {}
+
+    member_inkling_invites = member.invitees_related.all()
+
+    inkling_invites = []
+    for i in member_inkling_invites:
+        html = render_to_string( "s_inklingInviteListItem.html", {
+            "inkling" : i
+        })
+        
+        inkling_invites.append({
+            "id" : i.id,
+            "html": html
+        })
+    
+    # Add the inkling invites list to the data dictionary
+    data["inklingInvites"] = inkling_invites
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
 def s_create_inkling_view(request):
     """Creates an empty inkling."""
 
@@ -786,15 +826,47 @@ def s_blots_view(request):
 
 
 @csrf_exempt
-def s_sharing_view(request):
-    """Returns the HTML for the friends view sharing content."""
+def s_friend_requests_view(request):
+    """Returns the HTML for the friend requests."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    return render_to_response( "s_sharing.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
+    # Create a dictionary for the data
+    data = {}
+
+    member_friend_requests = list(member.friend_requests.all())
+    member_friend_requests.sort(key = lambda m : m.last_name)
+
+    # Get the name and number of mutual friends for each of the logged in member's friend requests
+    friend_requests = []
+    for m in member_friend_requests:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        html = render_to_string( "s_friendRequestListItem.html", {
+            "m" : m
+        })
+        
+        friend_requests.append({
+            "id" : m.id,
+            "html": html
+        })
+    
+    # Sort and add the friends list to the data dictionary
+    data["friendRequests"] = friend_requests
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_num_friend_requests_view(request):
+    """Returns the number of members who have requested to be friends with the logged in member."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    return HttpResponse(member.friend_requests.count())
 
 
 @csrf_exempt
@@ -886,9 +958,36 @@ def s_add_friend_view(request):
     except:
         raise Http404()
 
-    member.friends.add(m)
+    m.friend_requests.add(member)
 
     return HttpResponse()
+
+
+@csrf_exempt
+def s_respond_to_request_view(request):
+    """Adds a new friend."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the POST data
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+        response = request.POST["response"]
+    except:
+        raise Http404()
+
+    # Raise and error if no request exists or the two members are already friends
+    if ((m not in member.friend_requests.all()) or (m in member.friends.all())):
+        raise Http404()
+
+    # Add the friendship if the logged in member accepted the request
+    if (response == "accept"):
+        member.friends.add(m)
+
+    # Remove the friend request
+    member.friend_requests.remove(m)
+
+    return HttpResponse(member.friend_requests.count())
 
 
 @csrf_exempt

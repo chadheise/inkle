@@ -71,7 +71,7 @@ class Event(models.Model):
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
-    creator = models.ForeignKey("Member", related_name = "creator")
+    creator = models.ForeignKey("Member", related_name = "creator_related")
     location = models.CharField(max_length = 50, blank = True)
     date = models.DateField(null = True, blank = True)
     time = models.CharField(max_length = 50, blank = True)
@@ -80,7 +80,7 @@ class Inkling(models.Model):
     is_private = models.BooleanField(default = False)
 
     # Invitees
-    invitees = models.ManyToManyField("Member", related_name = "invitees")
+    invitees = models.ManyToManyField("Member", related_name = "invitees_related")
 
     # Managers
     objects = models.Manager()
@@ -113,19 +113,21 @@ class Inkling(models.Model):
 
     def get_formatted_date(self, year = True, weekday = False):
         """Returns the current inkling's formatted date."""
-        months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-        if (weekday):
-            days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            if (year):
-                return "%s, %s %d, %d" % (days[self.date.weekday()], months[self.date.month - 1], self.date.day, self.date.year)
+        if (self.date):
+            months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            if (weekday):
+                days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                if (year):
+                    return "%s, %s %d, %d" % (days[self.date.weekday()], months[self.date.month - 1], self.date.day, self.date.year)
+                else:
+                    return "%s, %s %d" % (days[self.date.weekday()], months[self.date.month - 1], self.date.day)
             else:
-                return "%s, %s %d" % (days[self.date.weekday()], months[self.date.month - 1], self.date.day)
+                if (year):
+                    return "%s %d, %d" % (months[self.date.month - 1], self.date.day, self.date.year)
+                else:
+                    return "%s %d" % (months[self.date.month - 1], self.date.day)
         else:
-            if (year):
-                return "%s %d, %d" % (months[self.date.month - 1], self.date.day, self.date.year)
-            else:
-                return "%s %d" % (months[self.date.month - 1], self.date.day)
-
+            return "No date"
 
 class Comment(models.Model):
     """Comment class definition."""
@@ -165,6 +167,7 @@ class Member(User):
     zip_code = models.CharField(max_length = 5, default = "")
     
     # Lists
+    friend_requests = models.ManyToManyField("self", symmetrical = False, related_name = "friend_requests_related")
     blots = models.ManyToManyField(Blot)
     inklings = models.ManyToManyField(Inkling)
 
