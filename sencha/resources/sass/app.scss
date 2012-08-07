@@ -129,6 +129,7 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 .x-button .x-badge {
+	border-radius: 20px;
 	margin-right: -10px;
 }
 
@@ -475,7 +476,10 @@ $tabs-bottom-active-gradient: 'recessed';
 	font-weight: bold;
 }
 
-/* All friends invitees list */
+/**********************/
+/*  TO DO: Get rid of */
+/**********************/
+
 #allFriendsInviteesList .x-list-item-label {
 	height: 60px;
 	padding: 5px;
@@ -503,6 +507,52 @@ $tabs-bottom-active-gradient: 'recessed';
 
 #allFriendsInviteesList .mutualFriends {
 	display: none;
+}
+
+/**************************************/
+/*  NEW INKLING INVITED FRIENDS VIEW  */
+/**************************************/
+
+/* New inkling invited blots list */
+#newInklingInvitedFriendsList .x-list-item-label {
+	height: 60px;
+	padding: 5px;
+}
+
+#newInklingInvitedFriendsList .selectionButton {
+	float: left;
+	padding: 8px 4px 0px 0px;
+}
+
+#newInklingInvitedFriendsList .image {
+	float: left;
+	height: 50px;
+	width: 50px;
+}
+
+#newInklingInvitedFriendsList .memberInfo {
+	float: left;
+	padding: 11px 0px 0px 10px;
+	vertical-align: top;
+}
+
+#newInklingInvitedFriendsList .name {
+	font-size: 20px;
+}
+
+#newInklingInvitedFriendsList .lastName {
+	font-weight: bold;
+}
+
+/* New inkling invited blots list */
+#newInklingInvitedBlotsList .selectionButton {
+	float: left;
+	margin: -4px 5px 0px -10px;
+}
+
+#newInklingInvitedBlotsList .blotName {
+	float: left;
+	font-weight: bold;
 }
 
 /******************/

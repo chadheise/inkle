@@ -1,28 +1,11 @@
-{% if b %}
-    <div id="blot{{ b.id }}" class="blot" blotId="{{ b.id }}">
-{% else %}
-    <div id="blot-1" class="blot" blotId="-1">
-{% endif %}
+<div class="blot">
     <!-- Selection button -->
-    {% if not allFriendsItem %}
-        {% if b.selected %}
-            <img id="blot{{ b.id }}SelectionItem" class="selectionItem" blotId="{{ b.id }}" src="resources/images/selected.png">
-        {% else %}
-            <img id="blot{{ b.id }}SelectionItem" class="selectionItem" blotId="{{ b.id }}" src="resources/images/deselected.png">
-        {% endif %}
+    {% if b.selected %}
+        <img id="blot{{ b.id }}SelectionButton" class="selectionButton" blotId="{{ b.id }}" src="resources/images/selected.png">
+    {% else %}
+        <img id="blot{{ b.id }}SelectionButton" class="selectionButton" blotId="{{ b.id }}" src="resources/images/deselected.png">
     {% endif %}
 
-    <!-- Blot info -->
-    <div class="blotInfo">
-        {% if b %}
-            <div id="blot{{ b.id }}Name" class="name blotName">{{ b.name }}</div>
-        {% else %}
-            <div id="allFriendsListItem" class="name blotName">All Friends</div>
-        {% endif %}
-    </div>
-
-    <!-- Disclosure arrow -->
-    {% if allFriendsItem %}
-        <img id="blot{{ b.id }}DisclosureArrow" class="disclosureArrow" blotId="{{ b.id }}" src="resources/images/disclosureArrow.png" />
-    {% endif %}
+    <!-- Blot name -->
+    <p class="blotName">{{ b.name }}</p>
 </div>

@@ -596,6 +596,89 @@ def s_blot_invitees_view(request):
 
 
 @csrf_exempt
+def s_inkling_invited_friends_view(request):
+    """Returns the logged in member's friends list with information about whether or not they are invited to theprovided inkling."""
+    
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    member_friends = list(member.friends.all())
+    member_friends.sort(key = lambda m : m.last_name)
+
+    # Get the name and number of mutual friends for each of the logged in member's friends
+    friends = []
+    for m in member_friends:
+        m.selected = m in inkling.invitees.all()
+        html = render_to_string( "s_friendInviteeListItem.html", {
+            "m" : m
+        })
+        
+        friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Sort and add the friends list to the data dictionary
+    data["friends"] = friends
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_inkling_invited_blots_view(request):
+    """."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of member for each of the logged in member's blots
+    blots = []
+
+    # Sort the member's blot alphabetically
+    member_blots = list(member.blots.all())
+    member_blots.sort(key = lambda b : b.name)
+
+    for b in member_blots:
+        b.selected = True
+        for m in b.members.all():
+            if (m not in inkling.invitees.all()):
+                b.selected = False
+                break
+        html = render_to_string( "s_blotInviteeListItem.html", {
+            "b" : b
+        })
+        blots.append({
+            "id" : b.id,
+            "html" : html
+        })
+
+    data["blots"] = blots
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
 def s_friend_invitees_view(request):
     """Returns the."""
 
@@ -642,7 +725,7 @@ def s_invite_blot_view(request):
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        blot = Blot.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
@@ -663,28 +746,49 @@ def s_uninvite_blot_view(request):
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        blot = Blot.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
+    
+    # Get a list of blots which are currently fully selected
+    selected_blots = []
+    for b in member.blots.all():
+        if (b != blot):
+            b.selected = True
+            for m in b.members.all():
+                if (m not in inkling.invitees.all()):
+                    b.selected = False
+                    break
+            if (b.selected):
+                selected_blots.append(b)
 
+    # Loop through each member in the current blot and remove them if they are invited to the current inkling and they are not part of another selected blot
     for m in blot.members.all():
-        if m in inkling.invitees.all():
-            inkling.invitees.remove(m)
+        if (m in inkling.invitees.all()):
+            remove = True
+            for b in selected_blots:
+                if (m in b.members.all()):
+                    remove = False
+                    break
 
+            if (remove):
+                inkling.invitees.remove(m)
+
+    # Save the inkling
     inkling.save()
 
     return HttpResponse()
 
 
 @csrf_exempt
-def s_invite_friend_view(request):
+def s_invite_member_view(request):
     """Invites one of the logged in member's friends to a certain inkling."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        m = Member.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
@@ -697,13 +801,13 @@ def s_invite_friend_view(request):
 
 
 @csrf_exempt
-def s_uninvite_friend_view(request):
+def s_uninvite_member_view(request):
     """Uninvites one of the logged in member's friends to a certain inkling."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        m = Member.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
@@ -1000,6 +1104,10 @@ def s_remove_friend_view(request):
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
+
+    for blot in member.blots.all():
+        if m in blot.members.all():
+            blot.members.remove(m)
 
     try:
         member.friends.remove(m)
