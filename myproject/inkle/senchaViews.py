@@ -763,6 +763,8 @@ def s_uninvite_blot_view(request):
             if (b.selected):
                 selected_blots.append(b)
 
+    print selected_blots
+
     # Loop through each member in the current blot and remove them if they are invited to the current inkling and they are not part of another selected blot
     for m in blot.members.all():
         if (m in inkling.invitees.all()):

@@ -50,7 +50,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         		id: "newInklingInvitedBlotsPanel",
         		hidden: true,
         		width: 250,
-        		height: 153,
+        		height: 300,
         		layout: "fit",
         		items: [
         			{
