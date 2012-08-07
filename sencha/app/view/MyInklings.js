@@ -52,6 +52,13 @@ Ext.define("inkle.view.MyInklings", {
                 		itemId: "newInklingCancelButton",
                 		hidden: true
                 	},
+                	{
+                		xtype: "button",
+                		ui: "back",
+                		text: "New Inkling",
+                		itemId: "newInklingInvitedFriendsBackButton",
+                		hidden: true
+                	},
                     { xtype: "spacer" },
                     {
                         xtype: "button",
@@ -93,6 +100,13 @@ Ext.define("inkle.view.MyInklings", {
                 		text: "Done",
                 		itemId: "allFriendsInviteesDoneButton",
                 		hidden: true
+                	},
+                	{
+                		xtype: "button",
+                		ui: "action",
+                		text: "Blots",
+                		itemId: "newInklingInvitedBlotsButton",
+                		hidden: true
                 	}
                 ]
     		},
@@ -132,6 +146,11 @@ Ext.define("inkle.view.MyInklings", {
             	fn: "onNewInklingCancelButtonTap"
         	},
         	{
+            	delegate: "#newInklingInvitedFriendsBackButton",
+            	event: "tap",
+            	fn: "onNewInklingInvitedFriendsBackButtonTap"
+        	},
+        	{
             	delegate: "#newInklingDoneButton",
             	event: "tap",
             	fn: "onNewInklingDoneButtonTap"
@@ -145,6 +164,11 @@ Ext.define("inkle.view.MyInklings", {
             	delegate: "#allFriendsInviteesDoneButton",
             	event: "tap",
             	fn: "onAllFriendsInviteesDoneButtonTap"
+        	},
+        	{
+        		delegate: "#newInklingInvitedBlotsButton",
+            	event: "tap",
+            	fn: "onNewInklingInvitedBlotsButtonTap"
         	},
         	{
 				event: "tap",
@@ -190,7 +214,15 @@ Ext.define("inkle.view.MyInklings", {
     	this.fireEvent("inklingInviteesDoneButtonTapped");
     },
     
+    onNewInklingInvitedFriendsBackButtonTap: function() {
+    	this.fireEvent("newInklingInvitedFriendsBackButtonTapped");
+    },
+    
     onAllFriendsInviteesDoneButtonTap: function() {
     	this.fireEvent("allFriendsInviteesDoneButtonTapped");
+    },
+    
+    onNewInklingInvitedBlotsButtonTap: function() {
+    	this.fireEvent("newInklingInvitedBlotsButtonTapped");
     }
 });
