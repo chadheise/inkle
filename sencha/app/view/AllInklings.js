@@ -10,7 +10,7 @@ Ext.define("inkle.view.AllInklings", {
 	config: {
 		// Tab title and icon
 		title: "All Inklings",
-		iconCls: "home",
+		iconCls: "allInklings",
     	
     	// Hide the navigation bar
     	navigationBar: false,
