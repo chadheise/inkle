@@ -57,6 +57,15 @@ $tabs-bottom-active-gradient: 'recessed';
 @include sencha-msgbox;
 
 // Your custom code goes here...
+
+/**********************/
+/*  CUSTOM TAB ICONS  */
+/**********************/
+.allInklings {
+	-webkit-mask-box-image: url("../images/allInklingsTabIcon.png");
+}
+
+
 .view {
 	padding: 5px 10px 1px 10px;
 	background-color: #DDD;

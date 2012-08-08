@@ -748,22 +748,16 @@ def s_uninvite_blot_view(request):
     try:
         blot = Blot.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        selected_blot_ids = request.POST["selectedBlotIds"]
     except:
         raise Http404()
-    
+
     # Get a list of blots which are currently fully selected
     selected_blots = []
-    for b in member.blots.all():
-        if (b != blot):
-            b.selected = True
-            for m in b.members.all():
-                if (m not in inkling.invitees.all()):
-                    b.selected = False
-                    break
-            if (b.selected):
-                selected_blots.append(b)
-
-    print selected_blots
+    if (selected_blot_ids):
+        for blot_id in selected_blot_ids.split(",")[:-1]:
+            b = Blot.objects.get(pk = int(blot_id))
+            selected_blots.append(b)
 
     # Loop through each member in the current blot and remove them if they are invited to the current inkling and they are not part of another selected blot
     for m in blot.members.all():

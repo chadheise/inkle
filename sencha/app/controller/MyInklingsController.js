@@ -310,6 +310,9 @@ Ext.define("inkle.controller.MyInklingsController", {
 		// Get the selection button
 		var selectionButton = Ext.fly(itemType + itemId + "SelectionButton");
 		
+		// Create a variable to hold a comma-separated string of selected blots
+		var selectedBlotIds = "";
+		
 		// If the inputted selection button is selected, deselect it
 		if (selectionButton.getAttribute("src") == "resources/images/selected.png") {
 			selectionButton.set({
@@ -318,6 +321,15 @@ Ext.define("inkle.controller.MyInklingsController", {
 
 			if (itemType == "blot") {
 				var url = "http://127.0.0.1:8000/sencha/uninviteBlot/";
+			
+				// Create the comma-separated string of selected blots
+				var blotSelectionButtons = Ext.query(".blot .selectionButton");
+				for (var i = 0; i < blotSelectionButtons.length; i++) {
+					var blotSelectionButton = Ext.fly(blotSelectionButtons[i].getAttribute("id"));
+					if (blotSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+						selectedBlotIds = selectedBlotIds + blotSelectionButton.getAttribute("blotId") + ",";
+					}
+				}
 			}
 			else if (itemType == "member") {
 				var url = "http://127.0.0.1:8000/sencha/uninviteMember/";
@@ -349,7 +361,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 			url: url,
 			params: {
 				itemId: itemId,
-				inklingId: this.getNewInklingView().getData()["inklingId"]
+				inklingId: this.getNewInklingView().getData()["inklingId"],
+				selectedBlotIds: selectedBlotIds
 			},
 			success: function(response) {
 				if (itemType == "blot") {
