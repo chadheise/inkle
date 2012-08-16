@@ -5,7 +5,7 @@ Ext.define("inkle.view.MyInklings", {
 	
 	config: {        
 		title: "My Inklings",
-		iconCls: "user",
+		iconCls: "myInklings",
     	
     	navigationBar: false,
     	

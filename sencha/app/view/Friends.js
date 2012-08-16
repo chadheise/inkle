@@ -11,7 +11,7 @@ Ext.define("inkle.view.Friends", {
 	config: {
 	    // Tab information
 		title: "Friends",
-		iconCls: "star",
+		iconCls: "friends",
     	
     	// Layout information
     	navigationBar: false,
@@ -26,15 +26,14 @@ Ext.define("inkle.view.Friends", {
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewRemoveFriendsButton",
-                		//ui: "action",
-                		text: "-",
-                		//iconMask: true,
-                		//iconCls: "minus1"
+                		ui: "action",
+                		iconMask: true,
+                		iconCls: "removeFriend"
                 	},
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewEditBlotsButton",
-                		//ui: "action",
+                		ui: "action",
                 		text: "Edit",
                 		hidden: true
                 	},
@@ -67,14 +66,15 @@ Ext.define("inkle.view.Friends", {
                     { xtype: "spacer" },
                     {
                 		xtype: "button",
-                		//ui: "action",
-                		text: "+",
+                		ui: "action",
+                		iconMask: true,
+                		iconCls: "addFriend",
                 		itemId: "friendsViewAddFriendsButton"
                 	},
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewCreateBlotButton",
-                		//ui: "action",
+                		ui: "action",
                 		text: "+",
                 		hidden: true
                 	}
@@ -271,7 +271,7 @@ Ext.define("inkle.view.Friends", {
 	},
     
     onFriendsViewRemoveFriendsButtonTap: function() {
-		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "-");
+		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "removeFriend");
     },
     
     onFriendsViewAddFriendsButtonTap: function() {
