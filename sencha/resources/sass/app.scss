@@ -65,6 +65,27 @@ $tabs-bottom-active-gradient: 'recessed';
 	-webkit-mask-box-image: url("../images/allInklingsTabIcon.png");
 }
 
+.myInklings {
+	-webkit-mask-box-image: url("../images/myInklingsTabIcon.png");
+}
+
+.friends {
+	-webkit-mask-box-image: url("../images/friendsTabIcon.png");
+}
+
+.settingsTab {
+	-webkit-mask-box-image: url("../images/settingsTabIcon.png");
+}
+
+.removeFriend {
+	-webkit-mask-box-image: url("../images/removeFriend.png");
+}
+
+.addFriend {
+	-webkit-mask-box-image: url("../images/addFriend.png");
+}
+
+
 
 .view {
 	padding: 5px 10px 1px 10px;

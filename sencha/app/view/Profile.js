@@ -9,8 +9,8 @@ Ext.define("inkle.view.Profile", {
 	
 	config: {
 		// Tab information    
-		title: "Profile",
-		iconCls: "settings",
+		title: "Settings",
+		iconCls: "settingsTab",
     	
     	// Layout information
     	scrollable: true,
@@ -49,7 +49,6 @@ Ext.define("inkle.view.Profile", {
 					],
 					data: [
 						{ text: "Notifications" },
-						{ text: "Inkling Invites" },
 						{ text: "Settings" },
 						{ text: "Privacy" }
 					],

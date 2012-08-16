@@ -108,8 +108,11 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteButton.addCls("deleteButtonHidden");
 		}
 		
-		// Reset the text for the remove friends button
-		this.getRemoveFriendsButton().setText("-");
+		// Reset the remove friends button
+		var removeFriendsButton = this.getRemoveFriendsButton();
+		removeFriendsButton.setIconMask(true);
+		removeFriendsButton.setIconCls("removeFriend");
+		removeFriendsButton.setText("");
     },
 	
 	/* Activates the blot members view from the friends view blots list */
@@ -174,7 +177,11 @@ Ext.define("inkle.controller.FriendsController", {
 			this.getEditBlotsButton().hide();
 			this.getCreateBlotButton().hide();
 			
-			this.getRemoveFriendsButton().setText("-");
+			// Reset the remove friends button
+			var removeFriendsButton = this.getRemoveFriendsButton();
+			removeFriendsButton.setIconMask(true);
+			removeFriendsButton.setIconCls("removeFriend");
+			removeFriendsButton.setText("");
 		}
 		else if (index == 1) {
 			this.getRemoveFriendsButton().hide();
@@ -242,15 +249,24 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 		
 		var button;
-		if (buttonText == "-") {
+		if (buttonText == "removeFriend") {
 			button = this.getRemoveFriendsButton();
 		}
 		else {
 			button = this.getEditBlotsButton();
 		}
 		
-		if (button.getText() == buttonText) {
-			button.setText("Done");
+		if ((button.getText() == buttonText) || (button.getIconMask())) {
+			if (buttonText == "removeFriend") {
+				button.setIconMask(false);
+				button.setIconCls("");
+				this.getAddFriendButton().hide();
+			}
+			else {
+				this.getCreateBlotButton().hide();
+			}
+			
+			button.setText("Done");			
 			
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
@@ -274,7 +290,16 @@ Ext.define("inkle.controller.FriendsController", {
 			}
 		}
 		else {
-			button.setText(buttonText);
+			if (buttonText == "removeFriend") {
+				button.setIconMask(true);
+				button.setIconCls("removeFriend");
+				button.setText("");
+				this.getAddFriendButton().show();
+			}
+			else {			
+				button.setText(buttonText);
+				this.getCreateBlotButton().show();
+			}
 			
 			var deleteButtons = Ext.query("#" + listId + " .deleteButton");
 			for (var i = 0; i < deleteButtons.length; i++) {
@@ -368,26 +393,28 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
+	/* Creates a new blot, puts the blots list in edit mode, and sets the focus on the new blot */
 	createBlot: function() {
-		var blotId;
 		Ext.Ajax.request({
-    		async: false,
     		url: "http://127.0.0.1:8000/sencha/createBlot/",
 		    success: function(response) {
         		blotId = response.responseText;
+        		
+				// Re-load the blots list, put it in edit mode, and set the focus on the new blot's input field
+				this.getBlotsList().getStore().load({
+					callback: function(records, operation, success) {
+						this.toggleDeleteLocksVisibility("friendsViewBlotsList", "Edit");
+						Ext.fly("blot" + blotId + "NameInput").dom.focus();
+					},
+					scope: this
+				});
         	},
         	failure: function(response) {
-        		Ext.Msg.alert("Errors", response.errors);
+        		Ext.Msg.alert("Error", "Blot not created");
         		console.log(response.responseText);
-        	}
+        	},
+        	scope: this
 		});
-		
-		// Reload the blots list and set the focus on the new blot's input field
-		this.getBlotsList().getStore().load(
-			function(records, operation, success) {
-    			this.toggleDeleteLocksVisibility("friendsViewBlotsList", "Edit");
-			}
-		);
 	},
 	
 	renameBlot: function(blotId) {
