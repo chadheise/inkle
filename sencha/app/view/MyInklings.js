@@ -104,8 +104,8 @@ Ext.define("inkle.view.MyInklings", {
                 	{
                 		xtype: "button",
                 		ui: "action",
-                		text: "Blots",
-                		itemId: "newInklingInvitedBlotsButton",
+                		text: "Groups",
+                		itemId: "newInklingInvitedGroupsButton",
                 		hidden: true
                 	}
                 ]
@@ -166,9 +166,9 @@ Ext.define("inkle.view.MyInklings", {
             	fn: "onAllFriendsInviteesDoneButtonTap"
         	},
         	{
-        		delegate: "#newInklingInvitedBlotsButton",
+        		delegate: "#newInklingInvitedGroupsButton",
             	event: "tap",
-            	fn: "onNewInklingInvitedBlotsButtonTap"
+            	fn: "onNewInklingInvitedGroupsButtonTap"
         	},
         	{
 				event: "tap",
@@ -222,7 +222,7 @@ Ext.define("inkle.view.MyInklings", {
     	this.fireEvent("allFriendsInviteesDoneButtonTapped");
     },
     
-    onNewInklingInvitedBlotsButtonTap: function() {
-    	this.fireEvent("newInklingInvitedBlotsButtonTapped");
+    onNewInklingInvitedGroupsButtonTap: function() {
+    	this.fireEvent("newInklingInvitedGroupsButtonTapped");
     }
 });

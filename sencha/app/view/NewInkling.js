@@ -57,13 +57,13 @@ Ext.define("inkle.view.NewInkling", {
 				]
 			},
 			
-			// Invitees
+			// Invited friends
 			{
 				xtype: "container",
 				id: "newInklingViewInvitees",
 				margin: "0px -10px 10px -10px",
 				html: [
-					"<p id='numInvitees'>0 friends invited</p>",
+					"<p id='numInvitedFriends'>0 friends invited</p>",
 					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
 				].join("")
 			},
@@ -96,14 +96,14 @@ Ext.define("inkle.view.NewInkling", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/blots/",
+								url: "http://127.0.0.1:8000/sencha/groups/",
 								extraParams: {
-									includeAllBlotsBlot: "true",
+									includeAllGroupsGroup: "true",
 									inviteesMode: "false"
 								},
 								reader: {
 									type: "json",
-									rootProperty: "blots"
+									rootProperty: "groups"
 								}
 							},
 							autoLoad: true

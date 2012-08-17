@@ -1,16 +1,33 @@
-Ext.define("inkle.view.AllFriendsInvitees", {
+Ext.define("inkle.view.GroupMembers", {
 	extend: "Ext.Container",
 	
-	xtype: "allFriendsInviteesView",
+	xtype: "groupMembersView",
 	
 	config: {
 		layout: "vbox",
 		scrollable: false,
 		    	
     	items: [
+    		// Top toolbar
+    		{
+    			xtype: "toolbar",
+    			id: "groupMembersViewToolbar",
+                docked: "top",
+                title: "Group Members",
+                items: [
+                	{
+                		xtype: "button",
+                		itemId: "groupMembersDoneButton",
+                		ui: "action",
+                		text: "Done"
+                	}
+                ]
+    		},
+    		
+    		// Friends list
     		{
     			xtype: "list",
-				id: "allFriendsInviteesList",
+				id: "groupMembersList",
 				flex: 1,
 				loadingText: "Loading friends...",
 				emptyText: "<div class='emptyListText'>No friends</div>",
@@ -28,11 +45,11 @@ Ext.define("inkle.view.AllFriendsInvitees", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/friendInvitees/",
+						url: "http://127.0.0.1:8000/sencha/groupMembers/",
 						actionMethods: {
 							read: "POST"
 						},
-						
+
 						reader: {
 							type: "json",
 							rootProperty: "friends"
@@ -49,6 +66,11 @@ Ext.define("inkle.view.AllFriendsInvitees", {
     	],
     	
     	listeners: [
+    		{
+            	delegate: "#groupMembersDoneButton",
+            	event: "tap",
+            	fn: "onGroupMembersDoneButtonTapped"
+        	},
         	{
 				event: "tap",
 				element: "element",
@@ -59,8 +81,12 @@ Ext.define("inkle.view.AllFriendsInvitees", {
     },
     
     // Event firings
+	onGroupMembersDoneButtonTapped: function() {
+        this.fireEvent("groupMembersDoneButtonTapped");
+    },
+    
     onSelectionItemTap: function(event) {
-    	var memberId = event.getTarget(".selectionItem").getAttribute("memberId");
-    	this.fireEvent("memberSelectionItemTapped", memberId);
+    	var tappedId = event.getTarget(".selectionItem").getAttribute("memberId");
+    	this.fireEvent("selectionItemTapped", tappedId);
     }
 });

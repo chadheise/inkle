@@ -9,8 +9,8 @@ import datetime
 
 from myproject.settings import MEDIA_ROOT
 
-class Blot(models.Model):
-    """Blot class definition."""
+class Group(models.Model):
+    """Group class definition."""
     # General information
     name = models.CharField(max_length = 50)
     members = models.ManyToManyField("Member")
@@ -22,7 +22,7 @@ class Blot(models.Model):
     
     # Class methods
     def __unicode__(self):
-        """String representation for the current blot."""
+        """String representation for the current group."""
         return "%s" % (self.name)
 
 
@@ -80,7 +80,7 @@ class Inkling(models.Model):
     is_private = models.BooleanField(default = False)
 
     # Invitees
-    invitees = models.ManyToManyField("Member", related_name = "invitees_related")
+    invited_friends = models.ManyToManyField("Member", related_name = "invited_friends_related")
 
     # Managers
     objects = models.Manager()
@@ -168,7 +168,7 @@ class Member(User):
     
     # Lists
     friend_requests = models.ManyToManyField("self", symmetrical = False, related_name = "friend_requests_related")
-    blots = models.ManyToManyField(Blot)
+    friend_groups = models.ManyToManyField(Group)
     inklings = models.ManyToManyField(Inkling)
 
     # Member lists

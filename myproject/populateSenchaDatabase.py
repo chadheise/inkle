@@ -21,21 +21,21 @@ def load_friendships():
         if ((m0 != m1) and (m1 not in m0.friends.all())):
             m0.friends.add(m1)
 
-def load_blots():
+def load_groups():
     first = True
-    for line in open("senchaDatabaseData/blots.txt", "r"):
+    for line in open("senchaDatabaseData/groups.txt", "r"):
         if first:
             first = False
             continue
         data = [x.strip() for x in line.split("|")]
-        b = Blot(name = data[0])
+        b = Group(name = data[0])
         b.save()
 
         m = Member.objects.get(pk = data[1])
-        m.blots.add(b)
+        m.friend_groups.add(b)
 
-        blot_members = [x.strip() for x in data[2].split(",")]
-        for m_id in blot_members:
+        group_members = [x.strip() for x in data[2].split(",")]
+        for m_id in group_members:
             m = Member.objects.get(pk = m_id)
             b.members.add(m)
 
@@ -94,7 +94,7 @@ def load_events():
 def populate_dev_database():
     load_members()
     load_friendships()
-    load_blots()
+    load_groups()
     load_inklings()
     load_comments()
     load_events()

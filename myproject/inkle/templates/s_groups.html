@@ -1,0 +1,13 @@
+<div class="view" id="friendsView">
+    {% for group in member.groups.all %}
+        <div class="group" groupId="{{ group.id }}">
+            <div class="numMembers">{{ group.members.all|length }}</div>
+            <div class="groupInfo">
+                <div class="groupName">{{ group.name }}</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    {% empty %}
+        <div class="nogroups">No groups :(</div>
+    {% endfor %}
+</div>

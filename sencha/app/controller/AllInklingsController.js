@@ -6,14 +6,22 @@ Ext.define("inkle.controller.AllInklingsController", {
         	// Views
         	mainTabView: "mainTabView",
             allInklingsView: "allInklingsView",
+            allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
+            allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
             inklingView: "inklingView",
             inklingFeedView: "inklingFeedView",
             
-            // Elements
-            datePicker: "#allInklingsDatePicker",
-            blotsPicker: "#allInklingsBlotsPicker",
+            // Toolbar buttons
             allInklingsDateButton: "#allInklingsDateButton",
-            allInklingsBlotsButton: "#allInklingsBlotsButton",
+            allInklingsGroupsButton: "#allInklingsGroupsButton",
+            
+            // Elements
+            allInklingsList: "#allInklingsList",
+            allInklingsDatePicker: "#allInklingsDatePicker",
+            
+            
+            
+            
             allInklingsInklingBackButton: "#allInklingsInklingBackButton",
             inklingFeedBackButton: "#inklingFeedBackButton",
             inklingFeedButton: "#inklingFeedButton",
@@ -30,10 +38,15 @@ Ext.define("inkle.controller.AllInklingsController", {
             	inklingTapped: "activateInklingView",
             	
             	// Commands
-                allInklingsDateButtonTapped: "showDatePicker",
-                allInklingsBlotsButtonTapped: "showBlotsPicker",
+                allInklingsDateButtonTapped: "toggleDatePickerVisibility",
+                allInklingsGroupsButtonTapped: "toggleGroupsListVisibility",
                 allInklingsDatePickerChanged: "changeDate",
-                allInklingsBlotsPickerChanged: "changeBlot"
+                allInklingsGroupsPickerChanged: "changeGroup",
+                deactivate: "hideAllInklingsPanels"
+            },
+            
+            allInklingsGroupsListPanel: {
+            	groupSelectionButtonTapped: "toggleGroupSelectionButton"
             }
         }
     },
@@ -47,7 +60,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 	activateInklingView: function (inklingId) {
 		// Display the appropriate top toolbar buttons
 		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsBlotsButton().hide();
+		this.getAllInklingsGroupsButton().hide();
 		this.getAllInklingsInklingBackButton().show();
 		
 		// Determine if the current member is attending the clicked inkling
@@ -105,38 +118,142 @@ Ext.define("inkle.controller.AllInklingsController", {
 	/*  COMMANDS  */
 	/**************/
 
+	// Hides the all inklings panels
+	hideAllInklingsPanels: function() {
+		var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();
+		if (allInklingsDatePickerPanel) {
+			allInklingsDatePickerPanel.hide();
+		}
+		
+		var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
+		if (allInklingsGroupsListPanel) {
+			allInklingsGroupsListPanel.hide();
+		}
+	},
+
     /* Un-hides the date picker */
-    showDatePicker: function() {
-        // Hide the blots picker
-        this.getBlotsPicker().hide();
+    toggleDatePickerVisibility: function() {
+        // Hide the groups list
+        this.getAllInklingsGroupsListPanel().hide();
         
-        // Un-hide the date picker
-	    this.getDatePicker().show();
+	    // Toggle the visibility of the  date picker
+	    var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();
+	    if (allInklingsDatePickerPanel.getHidden()) {
+	    	allInklingsDatePickerPanel.showBy(this.getAllInklingsDateButton());
+    	}
+    	else {
+    		this.changeDate(this.getAllInklingsDatePicker().getValue());
+    		allInklingsDatePickerPanel.hide();
+    	}
     },
     
-    /* Un-hides the blots picker */
-    showBlotsPicker: function() {
+    /* Toggles the visibility of the groups list */
+    toggleGroupsListVisibility: function() {
         // Hide the date picker
-        this.getDatePicker().hide();
+        this.getAllInklingsDatePickerPanel().hide();
         
-        // Un-hide the blots picker
-	    this.getBlotsPicker().show();
+        // Toggle the visibility of the groups panel
+	    var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
+	    if (allInklingsGroupsListPanel.getHidden()) {
+	    	allInklingsGroupsListPanel.showBy(this.getAllInklingsGroupsButton());
+    	}
+    	else {
+    		allInklingsGroupsListPanel.hide();
+    	}
     },
     
-    /* Changes the date on the date picker and updates the HTML for the all inklings view */
-    changeDate: function(datePicker, datePickerDate) {
-	    // Update the date picker
-	    datePicker.setValue(datePickerDate);
+    // Toggles the state of the inputted group selection button and re-loads the all inklings list
+    toggleGroupSelectionButton: function(groupId) {
+		// Get the group selection button
+		var groupSelectionButton = Ext.fly("allInklingsGroup" + groupId + "SelectionButton");
+		
+		// If the group selection button is selected, deselect it
+		if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+			groupSelectionButton.set({
+				"src": "resources/images/deselected.png"
+			});
+		}
+		
+		// Otherwise, select the group selection button
+		else {
+			groupSelectionButton.set({
+				"src": "resources/images/selected.png"
+			});
+		}
+		
+		// Create the comma-separated string of selected groups
+		var selectedGroupIds = "";
+		var groupSelectionButtons = Ext.query(".group .selectionButton");
+		for (var i = 0; i < groupSelectionButtons.length; i++) {
+			var groupSelectionButton = Ext.fly(groupSelectionButtons[i].getAttribute("id"));
+			if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+				selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
+			}
+		}
+		
+		// Update the date picker
+	    var date = this.getAllInklingsDatePicker().getValue();
 	    
 	    // Get the selected date into usable variables
-	    var dayOfWeek = datePickerDate.getDay();
-	    var day = datePickerDate.getDate();
-	    var month = datePickerDate.getMonth();
+	    var dayOfWeek = date.getDay();
+	    var day = date.getDate();
+	    var month = date.getMonth();
+	    var year = 2012;
+		
+		// Update the all inklings list
+		var allInklingsListStore = this.getAllInklingsList().getStore();
+		allInklingsListStore.setProxy({
+			extraParams: {
+				selectedGroupIds: selectedGroupIds,
+				day: day,
+    			month: month + 1,
+    			year: year
+			}
+		});
+		
+		allInklingsListStore.load();
+	},
+    
+    /* Changes the date on the date picker and updates the HTML for the all inklings view */
+    changeDate: function(date) {
+	    // Update the date picker
+	    this.getAllInklingsDatePicker().setValue(date);
+	    
+	    // Get the selected date into usable variables
+	    var dayOfWeek = date.getDay();
+	    var day = date.getDate();
+	    var month = date.getMonth();
+	    var year = 2012;
 	    
 	    // Update the all inklings date button text
 	    this.getAllInklingsDateButton().setText(this.getDayString(dayOfWeek) + ", " + this.getMonthString(month) + " " + day);
     
+    	// Create the comma-separated string of selected groups
+		var selectedGroupIds = "";
+		var groupSelectionButtons = Ext.query(".group .selectionButton");
+		for (var i = 0; i < groupSelectionButtons.length; i++) {
+			var groupSelectionButton = Ext.fly(groupSelectionButtons[i].getAttribute("id"));
+			if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+				selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
+			}
+		}
+    
+    	// Update the all inklings list
+		var allInklingsListStore = this.getAllInklingsList().getStore();
+		allInklingsListStore.setProxy({
+			extraParams: {
+				selectedGroupIds: selectedGroupIds,
+				day: day,
+    			month: month + 1,
+    			year: year
+			}
+		});
+		
+		allInklingsListStore.load();
+    	
+    
     	// Get the new HTML for the all inklings view
+    	/*
     	var html;
     	Ext.Ajax.request({
     		async: false,
@@ -145,7 +262,7 @@ Ext.define("inkle.controller.AllInklingsController", {
     			day: day,
     			month: month + 1,
     			year: 2012,
-    			blotId: this.getAllInklingsBlotsButton().getData()["blotId"]
+    			groupId: this.getAllInklingsGroupsButton().getData()["groupId"]
     		},
 		    success: function(response) {
 		    	html = response.responseText;
@@ -157,21 +274,22 @@ Ext.define("inkle.controller.AllInklingsController", {
 		
 		// Update the HTML for the all inklings view
 		this.getAllInklingsHtmlContainer().setHtml(html);
+		*/
     },
     
-    /* Changes the selected blot on the date picker and updates the HTML for the all inklings view */
-    changeBlot: function(blotsPicker, blotsPickerValue) {
-		// Update the blots picker and picker button text if the value has changed
-		var allInklingsBlotsButton = this.getAllInklingsBlotsButton();
-		if (allInklingsBlotsButton.getData()["blotId"] != blotsPickerValue) {
-			// Update the blots picker
-	    	blotsPicker.setValue(blotsPickerValue);
+    /* Changes the selected group on the date picker and updates the HTML for the all inklings view */
+    /*changeGroup: function(groupsPicker, groupsPickerValue) {
+		// Update the groups picker and picker button text if the value has changed
+		var allInklingsGroupsButton = this.getAllInklingsGroupsButton();
+		if (allInklingsGroupsButton.getData()["groupId"] != groupsPickerValue) {
+			// Update the groups picker
+	    	groupsPicker.setValue(groupsPickerValue);
 
-	    	// Update the all inklings blots button text and data
-	    	blotsPickerText = blotsPicker.getActiveItem()["selectedNode"]["innerText"];
-	    	allInklingsBlotsButton.setText(blotsPickerText);
-	    	allInklingsBlotsButton.setData({
-	    		"blotId" : blotsPickerValue
+	    	// Update the all inklings groups button text and data
+	    	groupsPickerText = groupsPicker.getActiveItem()["selectedNode"]["innerText"];
+	    	allInklingsGroupsButton.setText(groupsPickerText);
+	    	allInklingsGroupsButton.setData({
+	    		"groupId" : groupsPickerValue
 	    	});
     	}
     	
@@ -190,7 +308,7 @@ Ext.define("inkle.controller.AllInklingsController", {
     			day: day,
     			month: month + 1,
     			year: 2012,
-    			blotId: blotsPickerValue
+    			groupId: groupsPickerValue
     		},
 		    success: function(response) {
 		    	html = response.responseText;
@@ -203,7 +321,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 		// Update the HTML for the all inklings view
 		this.getAllInklingsHtmlContainer().setHtml(html);
     },
-    
+    */
     
     /**************************/
 	/*  BASE CLASS FUNCTIONS  */
@@ -211,12 +329,12 @@ Ext.define("inkle.controller.AllInklingsController", {
     launch: function () {    
         this.callParent(arguments);
         
-        // If the main tab view is created, set the date and blots picker
+        // If the main tab view is created, set the date and groups picker
         if (this.getMainTabView()) {
 			// Set the value of the date picker
-			var datePicker = this.getDatePicker();
+			var allInklingsDatePicker = this.getAllInklingsDatePicker();
 			today = new Date();
-			datePicker.setValue(today);
+			allInklingsDatePicker.setValue(today);
 			
 			// Set the date of the date picker button
 			var allInklingsDateButton = this.getAllInklingsDateButton();
@@ -224,12 +342,6 @@ Ext.define("inkle.controller.AllInklingsController", {
 			var date = today.getDate();
 			var month = this.getMonthString(today.getMonth());
 			allInklingsDateButton.setText(day + ", " + month + " " + date);
-		
-			// Set the blots picker to "All Blots"
-			var blotsPicker = this.getBlotsPicker();
-			blotsPicker.setValue({
-				blot: -1
-			});
 		}
     }
 });

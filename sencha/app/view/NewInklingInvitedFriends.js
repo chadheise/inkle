@@ -6,7 +6,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 	config: {
 		layout: "fit",
 		scrollable: false,
-		    	
+		
     	items: [
     		{
     			xtype: "list",
@@ -44,10 +44,10 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 				}
     		},
         	
-        	// Blots lists
+        	// Groups list
         	{
         		xtype: "panel",
-        		id: "newInklingInvitedBlotsPanel",
+        		id: "newInklingInvitedGroupsPanel",
         		hidden: true,
         		width: 250,
         		height: 300,
@@ -55,9 +55,9 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         		items: [
         			{
 						xtype: "list",
-						id: "newInklingInvitedBlotsList",
-						loadingText: "Loading blots...",
-						emptyText: "<div class='emptyListText'>No blots to invite</div>",
+						id: "newInklingInvitedGroupsList",
+						loadingText: "Loading groups...",
+						emptyText: "<div class='emptyListText'>No groups to invite</div>",
 						disableSelection: true,
 						itemTpl: "{ html }",
 						store: {
@@ -70,10 +70,10 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/inklingInvitedBlots/",
+								url: "http://127.0.0.1:8000/sencha/inklingInvitedGroups/",
 								reader: {
 									type: "json",
-									rootProperty: "blots"
+									rootProperty: "groups"
 								}
 							},
 							autoLoad: false
@@ -85,15 +85,15 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 					{
 						event: "tap",
 						element: "element",
-						delegate: ".blot .selectionButton",
-						fn: "onBlotSelectionButtonTap"
+						delegate: ".group .selectionButton",
+						fn: "onGroupSelectionButtonTap"
 					},
 				],
 				
 				// Event firings
-				onBlotSelectionButtonTap: function(event) {
-					var blotId = event.getTarget(".selectionButton").getAttribute("blotId");
-					this.fireEvent("blotSelectionButtonTapped", blotId, "blot");
+				onGroupSelectionButtonTap: function(event) {
+					var groupId = event.getTarget(".selectionButton").getAttribute("groupId");
+					this.fireEvent("groupSelectionButtonTapped", groupId, "Group");
 				}
         	}
     	],
@@ -111,6 +111,6 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
     // Event firings
     onMemberSelectionItemTap: function(event) {
     	var memberId = event.getTarget(".selectionButton").getAttribute("memberId");
-    	this.fireEvent("memberSelectionButtonTapped", memberId, "member");
+    	this.fireEvent("memberSelectionButtonTapped", memberId, "Member");
     }
 });

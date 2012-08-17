@@ -85,6 +85,65 @@ $tabs-bottom-active-gradient: 'recessed';
 	-webkit-mask-box-image: url("../images/addFriend.png");
 }
 
+/***********************/
+/*  ALL INKLINGS VIEW  */
+/***********************/
+/* All inklings list */
+#allInklingsList .x-list-item-label {
+	height: 60px;
+	padding: 5px;
+}
+
+#allInklingsList .numAttendees {
+	float: left;
+	color: #EFEFEF;
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+	height: 50px;
+	width: 50px;
+	margin: 0px 0px 0px 0px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $green5;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#allInklingsList .inklingInfo {
+	float: left;
+	margin-left: 10px;
+	vertical-align: top;
+}
+
+#allInklingsList .name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#allInklingsList .location {
+	color: $green3;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+#allInklingsList .time, #allInklingsList .category {
+	float: left;
+	color: #777;
+}
+
+/* All inklings groups list */
+#allInklingsGroupsList .selectionButton {
+	float: left;
+	margin: -4px 5px 0px -10px;
+}
+
+#allInklingsGroupsList .groupName {
+	float: left;
+	font-weight: bold;
+}
+
+
 
 
 .view {
@@ -92,7 +151,7 @@ $tabs-bottom-active-gradient: 'recessed';
 	background-color: #DDD;
 }
 
-#allInklingsView .inkling, #inklingView #inklingHeader, #inklingInfo, .feedComment, .feedEvent, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .blot {
+#inklingView #inklingHeader, #inklingInfo, .feedComment, .feedEvent, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {
 	color: #888;
 	border: solid 1px #EFEFEF;
 	background-color: #EFEFEF;
@@ -102,7 +161,7 @@ $tabs-bottom-active-gradient: 'recessed';
 	height: 60px;
 }
 
-.noInklings, .noFriends, .noBlots
+.noInklings, .noFriends, .noGroups
 {
 	color: #888;
 	border: solid 1px #EFEFEF;
@@ -118,7 +177,7 @@ $tabs-bottom-active-gradient: 'recessed';
 	clear: both;
 }
 
-.numAttendees, #friendsView .numMembers {
+#myInklingsView .numAttendees, #friendsView .numMembers {
 	float: left;
 	color: #EFEFEF;
 	font-size: 30px;
@@ -134,13 +193,13 @@ $tabs-bottom-active-gradient: 'recessed';
 	box-shadow: 0px 0px 10px #888;
 }
 
-#allInklingsView .inklingInfo, #myInklingsView .inklingInfo, #friendsView .friendInfo, #friendsView .blotInfo {
+#allInklingsView .inklingInfo, #myInklingsView .inklingInfo, #friendsView .friendInfo, #friendsView .groupInfo {
 	float: left;
 	text-align: left;
 	padding-top: 3px;
 }
 
-.location, #friendsView .memberName, #friendsView .blotName {
+.location, #friendsView .memberName, #friendsView .groupName {
 	color: $green3;
 	font-weight: bold;
 	font-size: 24px;
@@ -279,51 +338,9 @@ $tabs-bottom-active-gradient: 'recessed';
 	float: left;
 }
 
-/* Friends view friends list */
-#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #friendsViewBlotsList .x-list-item-label, #blotMembersList .x-list-item-label, #blotInviteesList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
-}
 
-#friendsViewFriendsList .image, #addFriendsSuggestions .image, #blotMembersList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
 
-#friendsViewFriendsList .memberInfo, #addFriendsSuggestions .memberInfo, #blotMembersList .blotInfo {
-	float: left;
-	padding: 3px 0px 0px 10px;
-	vertical-align: top;
-}
 
-#friendsViewFriendsList .name, #addFriendsSuggestions .name, #blotMembersList .name {
-	font-size: 20px;
-}
-
-#friendsViewFriendsList .lastName, #addFriendsSuggestions .lastName, #blotMembersList .name {
-	font-weight: bold;
-}
-
-#friendsViewFriendsList .mutualFriends, #addFriendsSuggestions .mutualFriends, #blotMembersList .mutualFriends {
-	font-size: 16px;
-	color: #777;
-}
-
-#friendsViewBlotsList .blotNameHidden {
-	display: none;
-}
-
-#friendsViewBlotsList .blotNameInput {
-	font-size: 20px;
-	font-weight: bold;
-	border-width: 0px;
-	width: 220px;
-}
-
-#friendsViewBlotsList .blotNameInputHidden {
-	display: none;
-}
 
 .deleteLock {
 	float: left;
@@ -435,7 +452,7 @@ $tabs-bottom-active-gradient: 'recessed';
 	100% { opacity: 0; margin-right: -75px; }
 }
 
-#friendsViewBlotsList .numMembers {
+#friendsViewGroupsList .numMembers {
 	float: left;
 	color: #EFEFEF;
 	font-size: 30px;
@@ -451,13 +468,13 @@ $tabs-bottom-active-gradient: 'recessed';
 	box-shadow: 0px 0px 10px #888;
 }
 
-#friendsViewBlotsList .blotInfo {
+#friendsViewGroupsList .groupInfo {
 	float: left;
 	padding: 12px 0px 0px 10px;
 	vertical-align: top;
 }
 
-#friendsViewBlotsList .name {
+#friendsViewGroupsList .name {
 	font-size: 20px;
 	font-weight: bold;
 }
@@ -496,54 +513,21 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 /* Inkling invitees list */
-#blotInviteesList .blotInfo {
+#groupInviteesList .groupInfo {
 	padding: 11px 0px 0px 3px;
 	float: left;
 }
 
-#blotInviteesList .name {
+#groupInviteesList .name {
 	font-size: 20px;
 	font-weight: bold;
-}
-
-/**********************/
-/*  TO DO: Get rid of */
-/**********************/
-
-#allFriendsInviteesList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
-}
-
-#allFriendsInviteesList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#allFriendsInviteesList .memberInfo {
-	float: left;
-	padding: 11px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#allFriendsInviteesList .name {
-	font-size: 20px;
-}
-
-#allFriendsInviteesList .lastName {
-	font-weight: bold;
-}
-
-#allFriendsInviteesList .mutualFriends {
-	display: none;
 }
 
 /**************************************/
 /*  NEW INKLING INVITED FRIENDS VIEW  */
 /**************************************/
 
-/* New inkling invited blots list */
+/* New inkling invited friends list */
 #newInklingInvitedFriendsList .x-list-item-label {
 	height: 60px;
 	padding: 5px;
@@ -574,21 +558,65 @@ $tabs-bottom-active-gradient: 'recessed';
 	font-weight: bold;
 }
 
-/* New inkling invited blots list */
-#newInklingInvitedBlotsList .selectionButton {
+/* New inkling invited groups list */
+#newInklingInvitedGroupsList .selectionButton {
 	float: left;
 	margin: -4px 5px 0px -10px;
 }
 
-#newInklingInvitedBlotsList .blotName {
+#newInklingInvitedGroupsList .groupName {
 	float: left;
 	font-weight: bold;
 }
 
 /******************/
-/*  Friends view  */
+/*  FRIENDS VIEW  */
 /******************/
 
+/* Friends list */
+#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #friendsViewGroupsList .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
+	height: 60px;
+	padding: 5px;
+}
+
+#friendsViewFriendsList .image, #addFriendsSuggestions .image, #groupMembersList .image {
+	float: left;
+	height: 50px;
+	width: 50px;
+}
+
+#friendsViewFriendsList .memberInfo, #addFriendsSuggestions .memberInfo, #groupMembersList .groupInfo {
+	float: left;
+	padding: 3px 0px 0px 10px;
+}
+
+#friendsViewFriendsList .name, #addFriendsSuggestions .name, #groupMembersList .name {
+	font-size: 20px;
+}
+
+#friendsViewFriendsList .lastName, #addFriendsSuggestions .lastName, #groupMembersList .name {
+	font-weight: bold;
+}
+
+#friendsViewFriendsList .mutualFriends, #addFriendsSuggestions .mutualFriends, #groupMembersList .mutualFriends {
+	font-size: 16px;
+	color: #777;
+	float: left;
+}
+
+/* Groups list */
+#friendsViewGroupsList .groupNameHidden, #friendsViewGroupsList .groupNameInputHidden {
+	display: none;
+}
+
+#friendsViewGroupsList .groupNameInput {
+	font-size: 20px;
+	font-weight: bold;
+	border-width: 0px;
+	width: 220px;
+}
+
+/* Friend requests list */
 #friendsViewRequestsList .x-list-item-label {
 	height: 60px;
 	padding: 5px;
@@ -620,7 +648,7 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 /*****************/
-/*  New inkling  */
+/*  NEW INKLING  */
 /*****************/
 
 #newInklingViewInvitees {
@@ -641,7 +669,7 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 /****************/
-/* Profile view */
+/* PROFILE VIEW */
 /****************/
 
 #profileViewList {

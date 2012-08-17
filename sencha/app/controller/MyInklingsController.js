@@ -7,18 +7,16 @@ Ext.define("inkle.controller.MyInklingsController", {
         	mainTabView: "mainTabView",
             myInklingsView: "myInklingsView",
             newInklingView: "newInklingView",
-            newInklingInvitedBlotsPanel: "#newInklingInvitedBlotsPanel",
+            newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
             
             myInklingsViewToolbar: "#myInklingsViewToolbar",
             
-            blotInviteesList: "#blotInviteesList",
-        	allFriendsInviteesList: "#allFriendsInviteesList",
         	newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
 
         	shareWithSelect: "#shareWithSelect",
 
-        	newInklingInvitedBlotsPanel: "#newInklingInvitedBlotsPanel",
-        	newInklingInvitedBlotsList: "#newInklingInvitedBlotsList",
+        	newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
+        	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",
         
             // Toolbar buttons
             inklingInvitesButton: "#inklingInvitesButton",
@@ -30,7 +28,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             saveInklingButton: "#saveInklingButton",
             newInklingCancelButton: "#newInklingCancelButton",
             newInklingInvitedFriendsBackButton: "#newInklingInvitedFriendsBackButton",
-            newInklingInvitedBlotsButton: "#newInklingInvitedBlotsButton",
+            newInklingInvitedGroupsButton: "#newInklingInvitedGroupsButton",
             newInklingDoneButton: "#newInklingDoneButton",
             inklingInviteesDoneButton: "#inklingInviteesDoneButton",
             allFriendsInviteesDoneButton: "#allFriendsInviteesDoneButton"
@@ -46,8 +44,8 @@ Ext.define("inkle.controller.MyInklingsController", {
             	inklingInviteesDoneButtonTapped: "activateNewInklingViewPop",
             	allFriendsInviteesDoneButtonTapped: "activateInklingInviteesViewPop",
             	newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
-            	newInklingInvitedBlotsButtonTapped: "toggleNewInklingInvitedBlotsPanel",
-            	deactivate: "hideNewInklingInivtedBlotsPanel"
+            	newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
+            	deactivate: "hideNewInklingInivtedGroupsPanel"
             },
             
             newInklingView: {
@@ -56,20 +54,12 @@ Ext.define("inkle.controller.MyInklingsController", {
             	isPrivateCheckboxUnchecked: "toggleShareWithSelect"
             },
             
-            inklingInviteesView: {
-            	allFriendsInviteesItemTapped: "activateAllFriendsInviteesView",
-            },
-            
             newInklingInvitedFriendsView: {
             	memberSelectionButtonTapped: "toggleSelectionButton"
             },
             
-            /*allFriendsInviteesView: {
-            	memberSelectionItemTapped: "toggleMemberSelectionItem"
-            },*/
-            
-            newInklingInvitedBlotsPanel: {
-            	blotSelectionButtonTapped: "toggleSelectionButton"
+            newInklingInvitedGroupsPanel: {
+            	groupSelectionButtonTapped: "toggleSelectionButton"
             }
         }
     },
@@ -92,7 +82,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     	// Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("My Inklings");
 		
-        //this.getBlotsList().getStore().load();
+        //this.getGroupsList().getStore().load();
     },
 	
 	// Activates the inkling view
@@ -165,9 +155,8 @@ Ext.define("inkle.controller.MyInklingsController", {
     // Activates the new inkling view
 	activateNewInklingViewPop: function() {
 		// Show appropriate buttons
-		//this.getInklingInviteesDoneButton().hide();
 		this.getNewInklingInvitedFriendsBackButton().hide();
-		this.getNewInklingInvitedBlotsButton().hide()
+		this.getNewInklingInvitedGroupsButton().hide()
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
 		
@@ -175,27 +164,28 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getMyInklingsViewToolbar().setTitle("New Inkling");
 		
 		// Update the number of invitees
-        var numInvitees;
         Ext.Ajax.request({
-        	async: false,
-			url: "http://127.0.0.1:8000/sencha/numInvitees/",
+			url: "http://127.0.0.1:8000/sencha/numInvitedFriends/",
 			params: {
 				inklingId: this.getNewInklingView().getData()["inklingId"]
 			},
 			success: function(response) {
-				numInvitees = response.responseText;
+				numInvitedFriends = response.responseText;
+				if (numInvitedFriends == 1) {
+					Ext.fly("numInvitedFriends").setText("1 friend invited");	
+				}
+				else {
+					Ext.fly("numInvitedFriends").setText(numInvitedFriends + " friends invited");
+				}
 			},
 			failure: function(response) {
 				console.log(response.responseText);
 				Ext.Msg.alert("Error", response.responseText);
-			}
+			},
+			scope: this
 		});
-		if (numInvitees == 1) {
-			Ext.fly("numInvitees").setText("1 friend invited");	
-		}
-		else {
-			Ext.fly("numInvitees").setText(numInvitees + " friends invited");
-		}
+		
+		this.getNewInklingInvitedGroupsPanel().destroy();
 		
     	this.getMyInklingsView().pop();
     },
@@ -205,9 +195,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 		// Show appropriate buttons
 		this.getNewInklingCancelButton().hide();
 		this.getNewInklingDoneButton().hide();
-		//this.getInklingInviteesDoneButton().show();
 		this.getNewInklingInvitedFriendsBackButton().show();
-		this.getNewInklingInvitedBlotsButton().show();
+		this.getNewInklingInvitedGroupsButton().show();
 		
 		// Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("Invite Friends");
@@ -227,60 +216,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 			}
 		});
 		newInklingInvitedFriendsStore.load();
-		
-    	/*
-    	this.getMyInklingsView().push({
-        	xtype: "inklingInviteesView",
-        	data: {
-        		inklingId: this.getNewInklingView().getData()["inklingId"]
-        	}
-        });
-        
-        var blotInviteesStore = this.getBlotInviteesList().getStore();
-			
-		blotInviteesStore.setProxy({
-			extraParams: {
-				inklingId: this.getNewInklingView().getData()["inklingId"]
-			}
-		});
-		blotInviteesStore.load();
-		*/
     },
-    
-    // Activates the all friends inkling invitees view
-	activateAllFriendsInviteesView: function() {
-		// Show appropriate buttons
-		this.getInklingInviteesDoneButton().hide();
-		this.getAllFriendsInviteesDoneButton().show();
-	
-		this.getMyInklingsView().push({
-        	xtype: "allFriendsInviteesView",
-        	data: {
-        		inklingId: this.getNewInklingView().getData()["inklingId"]
-        	}
-        });
-	
-		var allFriendsInviteesStore = this.getAllFriendsInviteesList().getStore();
-			
-		allFriendsInviteesStore.setProxy({
-			extraParams: {
-				inklingId: this.getNewInklingView().getData()["inklingId"]
-			}
-		});
-		allFriendsInviteesStore.load();
-    },
-    
-    // Activates the inkling invitees view
-	activateInklingInviteesViewPop: function() {
-		// Show appropriate buttons
-		this.getAllFriendsInviteesDoneButton().hide();
-		this.getInklingInviteesDoneButton().show();
-		
-    	this.getBlotInviteesList().getStore().load();
-		
-    	this.getMyInklingsView().pop();
-    },
-    
     
     /************/
     // Commands //
@@ -308,10 +244,10 @@ Ext.define("inkle.controller.MyInklingsController", {
     // Toggles the state of the inputted selection button and (un)invites the appropriate friend(s)
     toggleSelectionButton: function(itemId, itemType) {
 		// Get the selection button
-		var selectionButton = Ext.fly(itemType + itemId + "SelectionButton");
+		var selectionButton = Ext.fly("invite" + itemType + itemId + "SelectionButton");
 		
-		// Create a variable to hold a comma-separated string of selected blots
-		var selectedBlotIds = "";
+		// Create a variable to hold a comma-separated string of selected groups
+		var selectedGroupIds = "";
 		
 		// If the inputted selection button is selected, deselect it
 		if (selectionButton.getAttribute("src") == "resources/images/selected.png") {
@@ -319,19 +255,19 @@ Ext.define("inkle.controller.MyInklingsController", {
 				"src": "resources/images/deselected.png"
 			});
 
-			if (itemType == "blot") {
-				var url = "http://127.0.0.1:8000/sencha/uninviteBlot/";
+			if (itemType == "Group") {
+				var url = "http://127.0.0.1:8000/sencha/uninviteGroup/";
 			
-				// Create the comma-separated string of selected blots
-				var blotSelectionButtons = Ext.query(".blot .selectionButton");
-				for (var i = 0; i < blotSelectionButtons.length; i++) {
-					var blotSelectionButton = Ext.fly(blotSelectionButtons[i].getAttribute("id"));
-					if (blotSelectionButton.getAttribute("src") == "resources/images/selected.png") {
-						selectedBlotIds = selectedBlotIds + blotSelectionButton.getAttribute("blotId") + ",";
+				// Create the comma-separated string of selected groups
+				var groupSelectionButtons = Ext.query(".group .selectionButton");
+				for (var i = 0; i < groupSelectionButtons.length; i++) {
+					var groupSelectionButton = Ext.fly(groupSelectionButtons[i].getAttribute("id"));
+					if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+						selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
 					}
 				}
 			}
-			else if (itemType == "member") {
+			else if (itemType == "Member") {
 				var url = "http://127.0.0.1:8000/sencha/uninviteMember/";
 			}
 		}
@@ -342,17 +278,17 @@ Ext.define("inkle.controller.MyInklingsController", {
 				"src": "resources/images/selected.png"
 			});
 			
-			if (itemType == "blot") {
-				var url = "http://127.0.0.1:8000/sencha/inviteBlot/";
+			if (itemType == "Group") {
+				var url = "http://127.0.0.1:8000/sencha/inviteGroup/";
 			}
-			else if (itemType == "member") {
+			else if (itemType == "Member") {
 				var url = "http://127.0.0.1:8000/sencha/inviteMember/";
 			}
 		}
 		
-		var invitedBlotsPanel = this.getNewInklingInvitedBlotsPanel();
-		if ((itemType == "member") && (!invitedBlotsPanel.getHidden())) {
-			invitedBlotsPanel.hide();
+		var invitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
+		if ((itemType == "Member") && (!invitedGroupsPanel.getHidden())) {
+			invitedGroupsPanel.hide();
 		}
 		
 		// (Un)invite the appropriate friend(s)
@@ -362,10 +298,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 			params: {
 				itemId: itemId,
 				inklingId: this.getNewInklingView().getData()["inklingId"],
-				selectedBlotIds: selectedBlotIds
+				selectedGroupIds: selectedGroupIds
 			},
 			success: function(response) {
-				if (itemType == "blot") {
+				if (itemType == "Group") {
 					newInklingInvitedFriendsList.getStore().load();
 				}
 			},
@@ -375,39 +311,39 @@ Ext.define("inkle.controller.MyInklingsController", {
 		});
 	},
 	
-	// Toggles the visibility of the new inkling invited blots panel
-	toggleNewInklingInvitedBlotsPanel: function() {
-		// Get the new inkling invited blots panel
-		var newInklingInvitedBlotsPanel = this.getNewInklingInvitedBlotsPanel();
+	// Toggles the visibility of the new inkling invited groups panel
+	toggleNewInklingInvitedGroupsPanel: function() {
+		// Get the new inkling invited groups panel
+		var newInklingInvitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
 		
-		// If the invited blots panel is hidden, re-load and show it
-		if (newInklingInvitedBlotsPanel.getHidden()) {
-			var newInklingInvitedBlotsStore = this.getNewInklingInvitedBlotsList().getStore();
-			newInklingInvitedBlotsStore.setProxy({
+		// If the invited groups panel is hidden, re-load and show it
+		if (newInklingInvitedGroupsPanel.getHidden()) {
+			var newInklingInvitedGroupsStore = this.getNewInklingInvitedGroupsList().getStore();
+			newInklingInvitedGroupsStore.setProxy({
 				extraParams: {
 					inklingId: this.getNewInklingView().getData()["inklingId"]
 				}
 			});
 			
-			var newInklingInvitedBlotsButton = this.getNewInklingInvitedBlotsButton();
-			newInklingInvitedBlotsStore.load(
+			var newInklingInvitedGroupsButton = this.getNewInklingInvitedGroupsButton();
+			newInklingInvitedGroupsStore.load(
 				function(records, operation, success) {
-    				newInklingInvitedBlotsPanel.showBy(newInklingInvitedBlotsButton);
+    				newInklingInvitedGroupsPanel.showBy(newInklingInvitedGroupsButton);
 				}
 			);
 		}
 		
-		// Otherwise, hide the invited blots panel
+		// Otherwise, hide the invited groups panel
 		else {
-			newInklingInvitedBlotsPanel.hide();
+			newInklingInvitedGroupsPanel.hide();
 		}
 	},
 	
-	// Hides the new inkling invited blots panel
-	hideNewInklingInivtedBlotsPanel: function() {
-		var newInklingInvitedBlotsPanel = this.getNewInklingInvitedBlotsPanel();
-		if (newInklingInvitedBlotsPanel) {
-			newInklingInvitedBlotsPanel.hide();
+	// Hides the new inkling invited groups panel
+	hideNewInklingInivtedGroupsPanel: function() {
+		var newInklingInvitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
+		if (newInklingInvitedGroupsPanel) {
+			newInklingInvitedGroupsPanel.hide();
 		}
 	},
 	

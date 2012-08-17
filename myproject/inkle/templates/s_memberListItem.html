@@ -4,7 +4,7 @@
         <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
     {% else %}
         {% if include_selection_item %}
-            {% if m in blot.members.all %}
+            {% if m in group.members.all %}
                 <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/selected.png">
             {% else %}
                 <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/deselected.png">

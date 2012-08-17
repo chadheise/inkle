@@ -1,9 +1,9 @@
 <div class="member">
     <!-- Selection button -->
     {% if m.selected %}
-        <img id="member{{ m.id }}SelectionButton" class="selectionButton" memberId="{{ m.id }}" src="resources/images/selected.png">
+        <img id="{{ idPrefix }}Member{{ m.id }}SelectionButton" class="selectionButton" memberId="{{ m.id }}" src="resources/images/selected.png">
     {% else %}
-        <img id="member{{ m.id }}SelectionButton" class="selectionButton" memberId="{{ m.id }}" src="resources/images/deselected.png">
+        <img id="{{ idPrefix }}Member{{ m.id }}SelectionButton" class="selectionButton" memberId="{{ m.id }}" src="resources/images/deselected.png">
     {% endif %}
 
     <!-- Member image -->
