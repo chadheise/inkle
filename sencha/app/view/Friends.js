@@ -32,7 +32,7 @@ Ext.define("inkle.view.Friends", {
                 	},
                 	{
                 		xtype: "button",
-                		itemId: "friendsViewEditBlotsButton",
+                		itemId: "friendsViewEditGroupsButton",
                 		ui: "action",
                 		text: "Edit",
                 		hidden: true
@@ -52,8 +52,8 @@ Ext.define("inkle.view.Friends", {
 								pressed: true
 							},
 							{
-								text: "Blots",
-								id: "friendsViewBlotsButton",
+								text: "Groups",
+								id: "friendsViewGroupsButton",
 								width: 80
 							},
 							{
@@ -73,7 +73,7 @@ Ext.define("inkle.view.Friends", {
                 	},
                 	{
                 		xtype: "button",
-                		itemId: "friendsViewCreateBlotButton",
+                		itemId: "friendsViewCreateGroupButton",
                 		ui: "action",
                 		text: "+",
                 		hidden: true
@@ -129,12 +129,12 @@ Ext.define("inkle.view.Friends", {
         				}
 					},
 					
-					// Blots list
+					// Groups list
 					{
 						xtype: "list",
-						id: "friendsViewBlotsList",
-						loadingText: "Loading blots...",
-						emptyText: "<div class='emptyListText'>No blots</div>",
+						id: "friendsViewGroupsList",
+						loadingText: "Loading groups...",
+						emptyText: "<div class='emptyListText'>No groups</div>",
 						disableSelection: true,
 						itemTpl: [
 							"{ html }"
@@ -150,15 +150,15 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/blots/",
+        						url: "http://127.0.0.1:8000/sencha/groups/",
         						extraParams: {
-                    				includeAllBlotsBlot: "false",
+                    				includeAllGroupsGroup: "false",
                     				inviteesMode: "false"
 								},
         	
         						reader: {
         							type: "json",
-        							rootProperty: "blots"
+        							rootProperty: "groups"
         						}
         					},
         					autoLoad: true
@@ -217,14 +217,14 @@ Ext.define("inkle.view.Friends", {
             	fn: "onFriendsViewAddFriendsButtonTap"
         	},
         	{
-            	delegate: "#friendsViewEditBlotsButton",
+            	delegate: "#friendsViewEditGroupsButton",
             	event: "tap",
-            	fn: "onFriendsViewEditBlotsButtonTap"
+            	fn: "onFriendsViewEditGroupsButtonTap"
         	},
         	{
-            	delegate: "#friendsViewCreateBlotButton",
+            	delegate: "#friendsViewCreateGroupButton",
             	event: "tap",
-            	fn: "onFriendsViewCreateBlotButtonTap"
+            	fn: "onFriendsViewCreateGroupButtonTap"
         	},
         	{
 				event: "tap",
@@ -241,13 +241,13 @@ Ext.define("inkle.view.Friends", {
         	{
 				event: "blur",
 				element: "element",
-				delegate: ".blotNameInput",
-				fn: "onBlotNameInputBlurred"
+				delegate: ".groupNameInput",
+				fn: "onGroupNameInputBlurred"
         	},
         	{
-            	delegate: "#friendsViewBlotsList",
+            	delegate: "#friendsViewGroupsList",
             	event: "itemtap",
-            	fn: "onFriendsViewBlotsListItemTap"
+            	fn: "onFriendsViewGroupsListItemTap"
         	},
         	{
 				event: "tap",
@@ -278,18 +278,18 @@ Ext.define("inkle.view.Friends", {
 		this.fireEvent("friendsViewAddFriendsButtonTapped");
     },
     
-    onFriendsViewEditBlotsButtonTap: function() {
-		this.fireEvent("friendsViewEditBlotsButtonTapped", "friendsViewBlotsList", "Edit");
+    onFriendsViewEditGroupsButtonTap: function() {
+		this.fireEvent("friendsViewEditGroupsButtonTapped", "friendsViewGroupsList", "Edit");
     },
     
-    onFriendsViewCreateBlotButtonTap: function() {
-		this.fireEvent("friendsViewCreateBlotButtonTapped");
+    onFriendsViewCreateGroupButtonTap: function() {
+		this.fireEvent("friendsViewCreateGroupButtonTapped");
     },
     
     onDeleteLockTap: function(event) {
-		var tappedId = event.getTarget(".deleteLock").getAttribute("blotId");
+		var tappedId = event.getTarget(".deleteLock").getAttribute("groupId");
         if (tappedId) {
-        	tappedId = "blot" + tappedId;
+        	tappedId = "group" + tappedId;
         }
         else {
         	tappedId = event.getTarget(".deleteLock").getAttribute("memberId");
@@ -299,8 +299,8 @@ Ext.define("inkle.view.Friends", {
     },
     
     onDeleteButtonTap: function(event) {
-		var tappedId = event.getTarget(".deleteButton").getAttribute("blotId");
-		var idType = "blot";
+		var tappedId = event.getTarget(".deleteButton").getAttribute("groupId");
+		var idType = "group";
 		if (tappedId == null) {
         	tappedId = event.getTarget(".deleteButton").getAttribute("memberId");
         	idType = "member"
@@ -308,16 +308,16 @@ Ext.define("inkle.view.Friends", {
         this.fireEvent("deleteButtonTapped", tappedId, idType);
     },
     
-    onFriendsViewBlotsListItemTap: function(blotsList, index, target, record, event, options) {
+    onFriendsViewGroupsListItemTap: function(groupsList, index, target, record, event, options) {
     	if ((!event.getTarget(".deleteLock")) && (!event.getTarget(".deleteButton"))) {
-    		var blotId = record.internalId;
-    		this.fireEvent("friendsViewBlotsListItemTapped", blotId);
+    		var groupId = record.internalId;
+    		this.fireEvent("friendsViewGroupsListItemTapped", groupId);
     	}
     },
     
-    onBlotNameInputBlurred: function(event) {
-    	var blotId = event.getTarget(".blotNameInput").getAttribute("blotId");
-    	this.fireEvent("blotNameInputBlurred", blotId);
+    onGroupNameInputBlurred: function(event) {
+    	var groupId = event.getTarget(".groupNameInput").getAttribute("groupId");
+    	this.fireEvent("groupNameInputBlurred", groupId);
     },
     
     onAcceptRequestButtonTap: function(event) {

@@ -26,11 +26,11 @@ Ext.define("inkle.view.AllInklings", {
     			{
                     xtype: "button",
                     ui: "action",
-                    text: "All Blots",
+                    text: "All Groups",
                     align: "right",
-                    itemId: "allInklingsBlotsButton",
+                    itemId: "allInklingsGroupsButton",
                     data: {
-                       	"blotId": -1
+                       	"groupId": -1
                 	}
                 },
     		]
@@ -72,18 +72,15 @@ Ext.define("inkle.view.AllInklings", {
                     { xtype: "spacer" },
                     {
                     	xtype: "container",
-                    	html: "<img style='padding-top:2px; height: 35px;' src='resources/images/calendar.png' />",
+                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/mainInkleIcon.png' />",
                     	centered: true
                     },
                     { xtype: "spacer" },
                     {
                         xtype: "button",
                         ui: "action",
-                        text: "All Blots",
-                        itemId: "allInklingsBlotsButton",
-                        data: {
-                        	"blotId": -1
-                        }
+                        text: "Groups",
+                        itemId: "allInklingsGroupsButton"
                     },
                     {
                         xtype: "button",
@@ -110,83 +107,155 @@ Ext.define("inkle.view.AllInklings", {
     		},
     		
     		// Main content
-    		{
+    		/*{
     			xtype: "htmlcontainer",
     			itemId: "allInklingsHtmlContainer",
     			title: "<img style='height: 40px; padding-top: 5px;' src='resources/images/calendar.png' />",
     			scrollable: true,
 				url: "http://127.0.0.1:8000/sencha/allInklings/"
+    		},*/
+    		
+    		// All inklings list
+    		{
+    			xtype: "list",
+				id: "allInklingsList",
+				loadingText: "Loading inklings...",
+				emptyText: "<div class='emptyListText'>No inklings</div>",
+				disableSelection: true,
+				itemTpl: [
+					"{ html }"
+				],
+				store: {
+					fields: [
+						"id",
+						"html"
+					],
+					proxy: {
+						type: "ajax",
+						actionMethods: {
+							read: "POST"
+						},
+						url: "http://127.0.0.1:8000/sencha/allInklings/"
+					},
+					autoLoad: true
+				}
     		},
         	
         	// Date picker
-        	{
+        	/*{
         		xtype: "datepicker",
         		itemId: "allInklingsDatePicker",
         		hidden: true,
-        		enter: "top",
-        		exit: "top",
-        		top: 0,
+        		//enter: "top",
+        		//exit: "top",
+        		//top: 0,
+        		showAnimation: "fadeIn",
+        		hideAnimation: "fadeOut",
         		yearFrom: 2012,
-        		yearTo: 2012
-        	},
+        		yearTo: 2012,
+        		toolbar: false,
+        		doneButton: false,
+        		cancelButton: false
+        	},*/
         	
-        	// Blots picker
         	{
-        		xtype: "picker",
-        		itemId: "allInklingsBlotsPicker",
+        		xtype: "panel",
+        		id: "allInklingsDatePickerPanel",
         		hidden: true,
-        		enter: "top",
-        		exit: "top",
         		top: 0,
-        		slots: [
+        		width: "100%",
+        		height: 220,
+        		layout: "fit",
+        		items: [
         			{
-        				name: "blot",
-        				store: {
-        					fields: ["text", "value"],
-        					proxy: {
-        						type: "ajax",
-        						//url: "http://127.0.0.1:8000/sencha/blotNames/",
-        						actionMethods: {
-        							read: "POST"
-        						},
-        						url: "http://127.0.0.1:8000/sencha/blots/",
-        						extraParams: {
-                    				includeAllBlotsBlot: "true",
-                    				inviteesMode: "true"
+						xtype: "datepicker",
+						itemId: "allInklingsDatePicker",
+						showAnimation: "fadeIn",
+						hideAnimation: "fadeOut",
+						yearFrom: 2012,
+						yearTo: 2012,
+						toolbar: false,
+						doneButton: false,
+						cancelButton: false
+					}
+				]
+			},
+        	
+        	// Groups list
+        	{
+        		xtype: "panel",
+        		id: "allInklingsGroupsListPanel",
+        		hidden: true,
+        		top: 0,
+        		width: 250,
+        		height: 300,
+        		layout: "fit",
+        		items: [
+        			{
+						xtype: "list",
+						id: "allInklingsGroupsList",
+						loadingText: "Loading groups...",
+						emptyText: "<div class='emptyListText'>No groups to invite</div>",
+						disableSelection: true,
+						itemTpl: "{ html }",
+						store: {
+							fields: [
+								"id",
+								"html"
+							],
+							proxy: {
+								type: "ajax",
+								actionMethods: {
+									read: "POST"
 								},
-        						reader: {
-        							type: "json",
-        							rootProperty: "blots"
-        						}
-        					},
-        					autoLoad: true
-        				}
-        			}
-        		]
-        	}
+								url: "http://127.0.0.1:8000/sencha/allInklingsGroups/",
+								reader: {
+									type: "json",
+									rootProperty: "groups"
+								}
+							},
+							autoLoad: true
+						}
+					}
+				],
+				
+				listeners: [
+					{
+						event: "tap",
+						element: "element",
+						delegate: ".group .selectionButton",
+						fn: "onGroupSelectionButtonTap"
+					},
+				],
+				
+				// Event firings
+				onGroupSelectionButtonTap: function(event) {
+					var groupId = event.getTarget(".selectionButton").getAttribute("groupId");
+					this.fireEvent("groupSelectionButtonTapped", groupId);
+				}
+			}
     	],
     	
     	listeners: [
+    		/* All inklings view */
 			{
             	delegate: "#allInklingsDateButton",
             	event: "tap",
             	fn: "onAllInklingsDateButtonTap"
         	},
 			{
-            	delegate: "#allInklingsBlotsButton",
+            	delegate: "#allInklingsGroupsButton",
             	event: "tap",
-            	fn: "onAllInklingsBlotsButtonTap"
+            	fn: "onAllInklingsGroupsButtonTap"
         	},
         	{
-            	delegate: "#allInklingsDatePicker",
-            	event: "change",
-            	fn: "onAllInklingsDatePickerChange"
+				event: "tap",
+				element: "element",
+				delegate: ".inkling",
+				fn: "onInklingTap"
         	},
-        	{
-            	delegate: "#allInklingsBlotsPicker",
-            	event: "change",
-            	fn: "onAllInklingsBlotsPickerChange"
-        	},
+        	
+        	/* Not all inklings view */
         	{
             	delegate: "#allInklingsInklingBackButton",
             	event: "tap",
@@ -216,12 +285,6 @@ Ext.define("inkle.view.AllInklings", {
             	delegate: "#inklingFeedButton",
             	event: "tap",
             	fn: "onInklingFeedButtonTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".inkling",
-				fn: "onInklingTap"
         	}
         ]
 	},
@@ -231,17 +294,17 @@ Ext.define("inkle.view.AllInklings", {
         this.fireEvent("allInklingsDateButtonTapped");
     },
     
-    onAllInklingsBlotsButtonTap: function() {
-        this.fireEvent("allInklingsBlotsButtonTapped");
+    onAllInklingsGroupsButtonTap: function() {
+        this.fireEvent("allInklingsGroupsButtonTapped");
     },
     
-    onAllInklingsDatePickerChange: function(picker, value, options) {
-        this.fireEvent("allInklingsDatePickerChanged", picker, value);
+    onInklingTap: function(event) {
+        var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
+        this.fireEvent("inklingTapped", tappedInklingId);
     },
     
-    onAllInklingsBlotsPickerChange: function(picker, value, options) {
-        this.fireEvent("allInklingsBlotsPickerChanged", picker, value["blot"]);
-    },
+    
+    
     
     onAllInklingsInklingBackButtonTap: function() {
         this.fireEvent("allInklingsInklingBackButtonTapped");
@@ -265,10 +328,5 @@ Ext.define("inkle.view.AllInklings", {
     
     onCancelEditInklingButtonTap: function() {
         this.fireEvent("cancelEditInklingButtonTapped");
-    },
-    
-    onInklingTap: function(event) {
-        var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
-        this.fireEvent("inklingTapped", tappedInklingId);
     }
 });

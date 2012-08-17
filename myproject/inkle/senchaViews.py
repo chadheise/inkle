@@ -112,10 +112,26 @@ def s_logout_view(request):
 
 @csrf_exempt
 def s_all_inklings_view(request):
-    """Returns all the inklings."""
+    """Returns a list of inklings which the logged in member's friends are attending."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the selected groups
+    try:
+        selected_group_ids = []
+        if (request.POST["selectedGroupIds"]):
+            selected_group_ids = request.POST["selectedGroupIds"].split(",")[:-1]
+    except:
+        selected_group_ids = [b.id for b in member.friend_groups.all()]
+
+    # Get a list of all members who are in the selected groups
+    members = []
+    for group_id in selected_group_ids:
+        group = Group.objects.get(pk = group_id)
+        for m in group.members.all():
+            if m not in members:
+                members.append(m)
 
     # Get the date, or set it to today if no date is specified
     if ("day" in request.POST):
@@ -126,12 +142,55 @@ def s_all_inklings_view(request):
     else:
         date = datetime.date.today()
 
-    # Get the blot, or set it to all blots if no blot is specified
-    if ("blotId" in request.POST):
-        blot_id = int(request.POST["blotId"])
-        if (blot_id != -1):
-            blot = member.blots.get(pk = blot_id)
-            members = blot.members.all()
+    inklings = []
+    for m in members:
+        for i in m.inklings.filter(date = date):
+            if i not in inklings:
+                html = render_to_string( "s_inklingListItem.html", {
+                    "i" : i
+                })
+                inklings.append({
+                    "numAttendees" : i.get_num_attendees(),
+                    "id" : i.id,
+                    "html" : html
+                })
+
+    inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
+
+    # Create and return a JSON object
+    return HttpResponse(simplejson.dumps(inklings), mimetype = "application/json")
+
+
+@csrf_exempt
+def s_all_inklings_view_old(request):
+    """Returns all the inklings."""
+
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Get the selected groups
+    try:
+        selected_group_ids = []
+        if (request.POST["selectedGroupIds"]):
+            selected_group_ids = request.POST["selectedGroupIds"].split(",")[:-1]
+    except:
+        selected_group_ids = [b.id for b in member.friend_groups.all()]
+
+    # Get the date, or set it to today if no date is specified
+    if ("day" in request.POST):
+        day = int(request.POST["day"])
+        month = int(request.POST["month"])
+        year = int(request.POST["year"])
+        date = datetime.date(year, month, day)
+    else:
+        date = datetime.date.today()
+
+    # Get the group, or set it to all groups if no group is specified
+    if ("groupId" in request.POST):
+        group_id = int(request.POST["groupId"])
+        if (group_id != -1):
+            group = member.friend_groups.get(pk = group_id)
+            members = group.members.all()
         else:
             members = member.friends.all()
     else:
@@ -146,6 +205,41 @@ def s_all_inklings_view(request):
     return render_to_response( "s_allInklings.html",
         { "inklings" : inklings  },
         context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_all_inklings_groups_view(request):
+    """."""
+    # Get the logged in member
+    member = Member.active.get(pk = request.session["member_id"])
+
+    # Create a dictionary for the data
+    data = {}
+
+    # Get the name and number of member for each of the logged in member's groups
+    groups = []
+
+    # Sort the member's group alphabetically
+    member_groups = list(member.friend_groups.all())
+    member_groups.sort(key = lambda b : b.name)
+
+    for b in member_groups:
+        b.selected = True
+        html = render_to_string( "s_groupInviteeListItem.html", {
+            "b" : b,
+            "idPrefix" : "allInklings"
+        })
+        groups.append({
+            "id" : b.id,
+            "html" : html
+        })
+
+    data["groups"] = groups
+
+    # Create and return a JSON object
+    response = simplejson.dumps(data)
+
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
@@ -336,7 +430,7 @@ def s_num_inkling_invites_view(request):
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
     
-    return HttpResponse(member.invitees_related.count())
+    return HttpResponse(member.invited_friends_related.count())
 
 
 @csrf_exempt
@@ -349,7 +443,7 @@ def s_inkling_invites_view(request):
     # Create a dictionary for the data
     data = {}
 
-    member_inkling_invites = member.invitees_related.all()
+    member_inkling_invites = member.invited_friends_related.all()
 
     inkling_invites = []
     for i in member_inkling_invites:
@@ -443,156 +537,16 @@ def s_update_inkling_view(request):
 
 
 @csrf_exempt
-def s_inkling_blots_invitees_view(request):
-    """Returns."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+def s_num_invited_friends_view(request):
+    """Returns the number of friends who have been invited to the inputted inkling."""
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
-
-    # Get the name and number of member for each of the logged in member's blots
-    blots = []
-
-    html = render_to_string( "s_blotInviteeListItem.html", {
-        "allFriendsItem" : True
-    })
-    blots.append({
-        "id" : -1,
-        "html" : html
-    })
-
-
-    # Sort the member's blot alphabetically
-    member_blots = list(member.blots.all())
-    member_blots.sort(key = lambda b : b.name)
+    num_invited_friends = inkling.invited_friends.count()
     
-    for b in member_blots:
-        html = render_to_string( "s_blotInviteeListItem.html", {
-            "b" : b,
-            "allFriendsItem" : False,
-            "inkling" : inkling
-        })
-        blots.append({
-            "id" : b.id,
-            "html" : html
-        })
-
-    data["blots"] = blots
-
-    # Create and return a JSON object
-    response = simplejson.dumps(data)
-    return HttpResponse(response, mimetype = "application/json")
-
-
-@csrf_exempt
-def s_inkling_friend_invitees_view(request):
-    """Returns"""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    # Create a dictionary for the data
-    data = {}
-
-    member_friends = list(member.friends.all())
-    member_friends.sort(key = lambda m : m.last_name)
-
-    # Get the name and number of mutual friends for each of the logged in member's friends
-    friends = []
-    for m in member_friends:
-        m.num_mutual_friends = member.get_num_mutual_friends(m)
-        html = render_to_string( "s_inklingFriendInvitees.html", {
-            "m" : m,
-            "inkling" : inkling
-        })
-        
-        friends.append({
-            "id" : m.id,
-            "lastName" : m.last_name,
-            "html": html
-        })
-    
-    # Sort and add the friends list to the data dictionary
-    data["friends"] = friends
-
-    # Create and return a JSON object
-    response = simplejson.dumps(data)
-    return HttpResponse(response, mimetype = "application/json")
-
-
-@csrf_exempt
-def s_num_invitees_view(request):
-    """Returns the number of invitees for the inputted inkling."""
-    try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    num_invitees = inkling.invitees.count()
-    
-    return HttpResponse(num_invitees)
-
-
-@csrf_exempt
-def s_blot_invitees_view(request):
-    """."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    # Create a dictionary for the data
-    data = {}
-
-    # Get the name and number of member for each of the logged in member's blots
-    blots = []
-
-    html = render_to_string( "s_blotInviteeListItem.html", {
-        "allFriendsItem" : True
-    })
-    blots.append({
-        "id" : -1,
-        "html" : html
-    })
-
-    # Sort the member's blot alphabetically
-    member_blots = list(member.blots.all())
-    member_blots.sort(key = lambda b : b.name)
-    
-    for b in member_blots:
-        b.selected = True
-        for m in b.members.all():
-            if (m not in inkling.invitees.all()):
-                b.selected = False
-                break
-        html = render_to_string( "s_blotInviteeListItem.html", {
-            "b" : b,
-            "allFriendsItem" : False
-        })
-        blots.append({
-            "id" : b.id,
-            "html" : html
-        })
-
-    data["blots"] = blots
-
-    # Create and return a JSON object
-    response = simplejson.dumps(data)
-    return HttpResponse(response, mimetype = "application/json")
+    return HttpResponse(num_invited_friends)
 
 
 @csrf_exempt
@@ -616,9 +570,10 @@ def s_inkling_invited_friends_view(request):
     # Get the name and number of mutual friends for each of the logged in member's friends
     friends = []
     for m in member_friends:
-        m.selected = m in inkling.invitees.all()
+        m.selected = m in inkling.invited_friends.all()
         html = render_to_string( "s_friendInviteeListItem.html", {
-            "m" : m
+            "m" : m,
+            "idPrefix" : "invite"
         })
         
         friends.append({
@@ -636,7 +591,7 @@ def s_inkling_invited_friends_view(request):
 
 
 @csrf_exempt
-def s_inkling_invited_blots_view(request):
+def s_inkling_invited_groups_view(request):
     """."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
@@ -649,28 +604,29 @@ def s_inkling_invited_blots_view(request):
     # Create a dictionary for the data
     data = {}
 
-    # Get the name and number of member for each of the logged in member's blots
-    blots = []
+    # Get the name and number of member for each of the logged in member's groups
+    groups = []
 
-    # Sort the member's blot alphabetically
-    member_blots = list(member.blots.all())
-    member_blots.sort(key = lambda b : b.name)
+    # Sort the member's group alphabetically
+    member_groups = list(member.friend_groups.all())
+    member_groups.sort(key = lambda b : b.name)
 
-    for b in member_blots:
+    for b in member_groups:
         b.selected = True
         for m in b.members.all():
-            if (m not in inkling.invitees.all()):
+            if (m not in inkling.invited_friends.all()):
                 b.selected = False
                 break
-        html = render_to_string( "s_blotInviteeListItem.html", {
-            "b" : b
+        html = render_to_string( "s_groupInviteeListItem.html", {
+            "b" : b,
+            "idPrefix" : "invite"
         })
-        blots.append({
+        groups.append({
             "id" : b.id,
             "html" : html
         })
 
-    data["blots"] = blots
+    data["groups"] = groups
 
     # Create and return a JSON object
     response = simplejson.dumps(data)
@@ -679,60 +635,20 @@ def s_inkling_invited_blots_view(request):
 
 
 @csrf_exempt
-def s_friend_invitees_view(request):
-    """Returns the."""
-
+def s_invite_group_view(request):
+    """Invites everyone in a group to a certain inkling."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
+        group = Group.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
-
-    member_friends = list(member.friends.all())
-    member_friends.sort(key = lambda m : m.last_name)
-
-    # Get the name and number of mutual friends for each of the logged in member's friends
-    friends = []
-    for m in member_friends:
-        m.selected = m in inkling.invitees.all()
-        html = render_to_string( "s_friendInviteeListItem.html", {
-            "m" : m
-        })
-        
-        friends.append({
-            "id" : m.id,
-            "lastName" : m.last_name,
-            "html": html
-        })
-    
-    # Sort and add the friends list to the data dictionary
-    data["friends"] = friends
-
-    # Create and return a JSON object
-    response = simplejson.dumps(data)
-    return HttpResponse(response, mimetype = "application/json")
-
-
-@csrf_exempt
-def s_invite_blot_view(request):
-    """Invites everyone in a blot to a certain inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    try:
-        blot = Blot.objects.get(pk = request.POST["itemId"])
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    for m in blot.members.all():
-        if m not in inkling.invitees.all():
-            inkling.invitees.add(m)
+    for m in group.members.all():
+        if m not in inkling.invited_friends.all():
+            inkling.invited_friends.add(m)
 
     inkling.save()
 
@@ -740,36 +656,36 @@ def s_invite_blot_view(request):
 
 
 @csrf_exempt
-def s_uninvite_blot_view(request):
-    """Uninvites everyone in a blot to a certain inkling."""
+def s_uninvite_group_view(request):
+    """Uninvites everyone in a group to a certain inkling."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["itemId"])
+        group = Group.objects.get(pk = request.POST["itemId"])
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-        selected_blot_ids = request.POST["selectedBlotIds"]
+        selected_group_ids = request.POST["selectedGroupIds"]
     except:
         raise Http404()
 
-    # Get a list of blots which are currently fully selected
-    selected_blots = []
-    if (selected_blot_ids):
-        for blot_id in selected_blot_ids.split(",")[:-1]:
-            b = Blot.objects.get(pk = int(blot_id))
-            selected_blots.append(b)
+    # Get a list of groups which are currently fully selected
+    selected_groups = []
+    if (selected_group_ids):
+        for group_id in selected_group_ids.split(",")[:-1]:
+            b = Group.objects.get(pk = int(group_id))
+            selected_groups.append(b)
 
-    # Loop through each member in the current blot and remove them if they are invited to the current inkling and they are not part of another selected blot
-    for m in blot.members.all():
-        if (m in inkling.invitees.all()):
+    # Loop through each member in the current group and remove them if they are invited to the current inkling and they are not part of another selected group
+    for m in group.members.all():
+        if (m in inkling.invited_friends.all()):
             remove = True
-            for b in selected_blots:
+            for b in selected_groups:
                 if (m in b.members.all()):
                     remove = False
                     break
 
             if (remove):
-                inkling.invitees.remove(m)
+                inkling.invited_friends.remove(m)
 
     # Save the inkling
     inkling.save()
@@ -789,8 +705,8 @@ def s_invite_member_view(request):
     except:
         raise Http404()
 
-    if m not in inkling.invitees.all():
-        inkling.invitees.add(m)
+    if m not in inkling.invited_friends.all():
+        inkling.invited_friends.add(m)
         inkling.save()
 
     return HttpResponse()
@@ -808,8 +724,8 @@ def s_uninvite_member_view(request):
     except:
         raise Http404()
 
-    if m in inkling.invitees.all():
-        inkling.invitees.remove(m)
+    if m in inkling.invited_friends.all():
+        inkling.invited_friends.remove(m)
         inkling.save()
 
     return HttpResponse()
@@ -858,13 +774,13 @@ def s_friends_view(request):
 
 
 @csrf_exempt
-def s_blots_view(request):
-    """Returns the HTML for the friends view blots content."""
+def s_groups_view(request):
+    """Returns the HTML for the friends view groups content."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        include_all_blots_blot = request.POST["includeAllBlotsBlot"]
+        include_all_groups_group = request.POST["includeAllGroupsGroup"]
         invitees_mode = request.POST["inviteesMode"]
     except:
         raise Http404()
@@ -872,53 +788,55 @@ def s_blots_view(request):
     # Create a dictionary for the data
     data = {}
 
-    # Get the name and number of member for each of the logged in member's blots
-    blots = []
+    # Get the name and number of member for each of the logged in member's groups
+    groups = []
 
-    if (include_all_blots_blot == "true"):
-        blots.append({
-            "text" : "All Blots",
+    if (include_all_groups_group == "true"):
+        groups.append({
+            "text" : "All Groups",
             "value" : -1,
         })
     elif (invitees_mode == "true"):
-        html = render_to_string( "s_blotInviteeListItem.html", {
-            "allFriendsItem" : True
+        html = render_to_string( "s_groupInviteeListItem.html", {
+            "allFriendsItem" : True,
+            "idPrefix" : "groups"
         })
-        blots.append({
+        groups.append({
             "id" : -1,
             "html" : html
         })
 
 
-    # Sort the member's blot alphabetically
-    member_blots = list(member.blots.all())
-    member_blots.sort(key = lambda b : b.name)
+    # Sort the member's group alphabetically
+    member_groups = list(member.friend_groups.all())
+    member_groups.sort(key = lambda b : b.name)
     
-    for b in member_blots:
-        if (include_all_blots_blot == "true"):
-            blots.append({
+    for b in member_groups:
+        if (include_all_groups_group == "true"):
+            groups.append({
                 "text" : b.name,
                 "value" : b.id
             })
         elif (invitees_mode == "true"):
-            html = render_to_string( "s_blotInviteeListItem.html", {
+            html = render_to_string( "s_groupInviteeListItem.html", {
                 "b" : b,
-                "allFriendsItem" : False
+                "allFriendsItem" : False,
+                "idPrefix" : "groups"
             })
-            blots.append({
+            groups.append({
                 "id" : b.id,
                 "html" : html
             })
         else:
-            html = render_to_string( "s_blotListItem.html", {
+            html = render_to_string( "s_groupListItem.html", {
                 "b" : b,
             })
-            blots.append({
+            groups.append({
                 "id" : b.id,
                 "html" : html
             })
 
-    data["blots"] = blots
+    data["groups"] = groups
 
     # Create and return a JSON object
     response = simplejson.dumps(data)
@@ -1101,9 +1019,9 @@ def s_remove_friend_view(request):
     except:
         raise Http404()
 
-    for blot in member.blots.all():
-        if m in blot.members.all():
-            blot.members.remove(m)
+    for group in member.friend_groups.all():
+        if m in group.members.all():
+            group.members.remove(m)
 
     try:
         member.friends.remove(m)
@@ -1114,40 +1032,40 @@ def s_remove_friend_view(request):
 
 
 @csrf_exempt
-def s_delete_blot_view(request):
-    """Deletes a blot."""
+def s_delete_group_view(request):
+    """Deletes a group."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        group = Group.objects.get(pk = request.POST["groupId"])
     except:
         raise Http404()
 
     try:
-        member.blots.remove(blot)
+        member.friend_groups.remove(group)
     except:
         raise Http404()
 
-    blot.delete()
+    group.delete()
     
     return HttpResponse()
 
 
 @csrf_exempt
-def s_blot_members_view(request):
+def s_group_members_view(request):
     """Returns the."""
 
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    # Get the blot
+    # Get the group
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        group = Group.objects.get(pk = request.POST["groupId"])
     except:
         raise Http404()
 
-    if (blot not in member.blots.all()):
+    if (group not in member.friend_groups.all()):
         raise Http404()
 
     # Create a dictionary for the data
@@ -1164,7 +1082,7 @@ def s_blot_members_view(request):
             "m" : m,
             "include_delete_items" : False,
             "include_selection_item" : True,
-            "blot" : blot
+            "group" : group
         })
         
         friends.append({
@@ -1182,42 +1100,42 @@ def s_blot_members_view(request):
 
 
 @csrf_exempt
-def s_add_to_blot_view(request):
-    """Adds a member to a blot."""
+def s_add_to_group_view(request):
+    """Adds a member to a group."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        group = Group.objects.get(pk = request.POST["groupId"])
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    if (blot not in member.blots.all()):
+    if (group not in member.friend_groups.all()):
         raise Http404()
 
-    blot.members.add(m)
+    group.members.add(m)
     
     return HttpResponse()
 
 
 @csrf_exempt
-def s_remove_from_blot_view(request):
-    """Removes a member from a blot."""
+def s_remove_from_group_view(request):
+    """Removes a member from a group."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        group = Group.objects.get(pk = request.POST["groupId"])
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    if (blot not in member.blots.all()):
+    if (group not in member.friend_groups.all()):
         raise Http404()
 
     try:
-        blot.members.remove(m)
+        group.members.remove(m)
     except:
         raise Http404()
     
@@ -1225,32 +1143,32 @@ def s_remove_from_blot_view(request):
 
 
 @csrf_exempt
-def s_create_blot_view(request):
-    """Creates a new blot and adds it to the logged in member's blots."""
+def s_create_group_view(request):
+    """Creates a new group and adds it to the logged in member's groups."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    blot = Blot(name = "")
-    blot.save()
+    group = Group(name = "")
+    group.save()
 
-    member.blots.add(blot)
+    member.friend_groups.add(group)
     
-    return HttpResponse(blot.id)
+    return HttpResponse(group.id)
 
 
 @csrf_exempt
-def s_rename_blot_view(request):
-    """Renames a blot."""
+def s_rename_group_view(request):
+    """Renames a group."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
     try:
-        blot = Blot.objects.get(pk = request.POST["blotId"])
+        group = Group.objects.get(pk = request.POST["groupId"])
         name = request.POST["name"]
     except:
         raise Http404()
 
-    blot.name = name
-    blot.save()
+    group.name = name
+    group.save()
     
-    return HttpResponse(blot.id)
+    return HttpResponse(group.id)

@@ -13,13 +13,11 @@ Ext.application({
     	"InviteResponse",
     	"NewInkling",
     	"NewInklingInvitedFriends",
-    	"InklingInvitees",
-    	"AllFriendsInvitees",
     	"Inkling",
     	"InklingFeed",
     	"Friends",
     	"AddFriends",
-    	"BlotMembers",
+    	"GroupMembers",
     	"Profile"
     ],
     controllers: [

@@ -8,7 +8,6 @@ Ext.define("inkle.controller.LoginController", {
             loginEmail: "#loginEmail",
             loginPassword: "#loginPassword",
             datePicker: "#allInklingsDatePicker",
-            blotsPicker: "#allInklingsBlotsPicker",
             allInklingsDateButton: "#allInklingsDateButton"
         },
         control: {
@@ -58,12 +57,6 @@ Ext.define("inkle.controller.LoginController", {
 	    var date = today.getDate();
 	    var month = this.getMonthString(today.getMonth());
 	    allInklingsDateButton.setText(day + ", " + month + " " + date);
-    
-    	// Set the blots picker to "All Blots"
-        var blotsPicker = this.getBlotsPicker();
-        blotsPicker.setValue({
-        	blot: -1
-        });
         
         // Animate the main tab view
         Ext.Viewport.animateActiveItem(mainTabView, { type: "slide", direction: "up" });

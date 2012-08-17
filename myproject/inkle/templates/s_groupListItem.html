@@ -1,0 +1,17 @@
+<div id="group{{ b.id }}" class="group">
+    <!-- Delete lock -->
+    <img id="group{{ b.id }}DeleteLock" class="deleteLock deleteLockHidden" groupId="{{ b.id }}" src="resources/images/delete.png">
+
+    <!-- Group info -->
+    <div class="numMembers">{{ b.members.count }}</div>
+    <div class="groupInfo">
+        <div id="group{{ b.id }}Name" class="name groupName">{{ b.name }}</div>
+        <input id="group{{ b.id }}NameInput" class="groupNameInput groupNameInputHidden" groupId="{{ b.id }}" value="{{ b.name }}" />
+    </div>
+
+    <!-- Delete button -->
+    <input id="group{{ b.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" groupId="{{ b.id }}" />
+
+    <!-- Disclosure arrow -->
+    <img id="group{{ b.id }}DisclosureArrow" class="disclosureArrow" groupId="{{ b.id }}" src="resources/images/disclosureArrow.png" />
+</div>

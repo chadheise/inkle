@@ -11,7 +11,7 @@ Ext.define("inkle.controller.InklingController", {
             
             // Elements
             allInklingsDateButton: "#allInklingsDateButton",
-            allInklingsBlotsButton: "#allInklingsBlotsButton",
+            allInklingsGroupsButton: "#allInklingsGroupsButton",
             allInklingsInklingBackButton: "#allInklingsInklingBackButton",
             myInklingsInklingBackButton: "#myInklingsInklingBackButton",
             inklingFeedBackButton: "#inklingFeedBackButton",
@@ -62,7 +62,7 @@ Ext.define("inkle.controller.InklingController", {
     activateInklingFeedView: function () {
 		// Display the appropriate top toolbar buttons
 		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsBlotsButton().hide();
+		this.getAllInklingsGroupsButton().hide();
 		this.getAllInklingsInklingBackButton().hide();
 		this.getInklingFeedBackButton().show();
 		this.getInklingFeedButton().hide();
@@ -80,7 +80,7 @@ Ext.define("inkle.controller.InklingController", {
 	activateAllInklingsView: function (record) {
 		// Display the appropriate top toolbar buttons
     	this.getAllInklingsDateButton().show();
-		this.getAllInklingsBlotsButton().show();
+		this.getAllInklingsGroupsButton().show();
 		this.getAllInklingsInklingBackButton().hide();
 		this.getInklingFeedButton().hide();
 		this.getJoinInklingButton().hide();
@@ -106,7 +106,7 @@ Ext.define("inkle.controller.InklingController", {
 	backToInklingView: function (record) {
 		// Display the appropriate top toolbar buttons
     	this.getAllInklingsDateButton().hide();
-		this.getAllInklingsBlotsButton().hide();
+		this.getAllInklingsGroupsButton().hide();
 		this.getAllInklingsInklingBackButton().show();
 		this.getInklingFeedBackButton().hide();
 		this.getInklingFeedButton().show();

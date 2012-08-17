@@ -7,7 +7,7 @@ Ext.define("inkle.controller.FriendsController", {
         	mainTabView: "mainTabView",
             friendsView: "friendsView",
             addFriendsView: "addFriendsView",
-            blotMembersView: "blotMembersView",
+            groupMembersView: "groupMembersView",
             
             // Toolbars
             friendsViewToolbar: "#friendsViewToolbar",
@@ -16,13 +16,13 @@ Ext.define("inkle.controller.FriendsController", {
             // Toolbar buttons
             removeFriendsButton: "#friendsViewRemoveFriendsButton",
             addFriendButton: "#friendsViewAddFriendsButton",
-            editBlotsButton: "#friendsViewEditBlotsButton",
-            createBlotButton: "#friendsViewCreateBlotButton",
+            editGroupsButton: "#friendsViewEditGroupsButton",
+            createGroupButton: "#friendsViewCreateGroupButton",
             
             // Lists
             friendsList: "#friendsViewFriendsList",
-            blotsList: "#friendsViewBlotsList",
-            blotMembersList: "#blotMembersList",
+            groupsList: "#friendsViewGroupsList",
+            groupMembersList: "#groupMembersList",
             requestsList: "#friendsViewRequestsList",
             
             // Segmented buttons
@@ -38,18 +38,18 @@ Ext.define("inkle.controller.FriendsController", {
             	// Commands
             	friendsViewSegmentedButtonToggled: "updateFriendsViewActiveItem",
             	
-           		friendsViewEditBlotsButtonTapped: "toggleDeleteLocksVisibility",
-           		friendsViewCreateBlotButtonTapped: "createBlot",
+           		friendsViewEditGroupsButtonTapped: "toggleDeleteLocksVisibility",
+           		friendsViewCreateGroupButtonTapped: "createGroup",
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
-           		deleteLockTapped: "toggleBlotsListDeleteLockRotation",
+           		deleteLockTapped: "toggleGroupsListDeleteLockRotation",
            		deleteButtonTapped: "deleteListItem",
-           		blotNameInputBlurred: "renameBlot",
+           		groupNameInputBlurred: "renameGroup",
            		
            		acceptRequestButtonTapped: "respondToRequest",
            		ignoreRequestButtonTapped: "respondToRequest",
            		
-           		friendsViewBlotsListItemTapped: "activateBlotMembersView"
+           		friendsViewGroupsListItemTapped: "activateGroupMembersView"
            	},
            	
            	addFriendsView: {
@@ -58,8 +58,8 @@ Ext.define("inkle.controller.FriendsController", {
            		addFriendButtonTapped: "addFriend"
            	},
            	
-           	blotMembersView: {
-           		blotMembersDoneButtonTapped: "activateFriendsView",
+           	groupMembersView: {
+           		groupMembersDoneButtonTapped: "activateFriendsView",
            		selectionItemTapped: "toggleSelectionItem"
            	}
         }
@@ -77,7 +77,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Show the friends view toolbar
         this.getFriendsViewToolbar().show();
         
-        this.getBlotsList().getStore().load();
+        this.getGroupsList().getStore().load();
     },
 	
 	/* Activates the add friends view from the friends view friends list */
@@ -115,25 +115,25 @@ Ext.define("inkle.controller.FriendsController", {
 		removeFriendsButton.setText("");
     },
 	
-	/* Activates the blot members view from the friends view blots list */
-	activateBlotMembersView: function(blotId) {
-		if (this.getEditBlotsButton().getText() == "Edit") {
-			// Push the blot members view onto the friends view
+	/* Activates the group members view from the friends view groups list */
+	activateGroupMembersView: function(groupId) {
+		if (this.getEditGroupsButton().getText() == "Edit") {
+			// Push the group members view onto the friends view
 			this.getFriendsView().push({
-				xtype: "blotMembersView",
+				xtype: "groupMembersView",
 				data: {
-					blotId: blotId
+					groupId: groupId
 				}
 			});
 	
-			var blotMembersStore = this.getBlotMembersList().getStore();
+			var groupMembersStore = this.getGroupMembersList().getStore();
 			
-			blotMembersStore.setProxy({
+			groupMembersStore.setProxy({
 				extraParams: {
-					blotId: blotId
+					groupId: groupId
 				}
 			});
-			blotMembersStore.load();
+			groupMembersStore.load();
 	
 			// Hide the friends view toolbar        
 			this.getFriendsViewToolbar().hide();
@@ -156,8 +156,8 @@ Ext.define("inkle.controller.FriendsController", {
 				deleteButton.addCls("deleteButtonHidden");
 			}
 			
-			// Reset the text for the edit blots button
-			this.getEditBlotsButton().setText("Edit");
+			// Reset the text for the edit groups button
+			this.getEditGroupsButton().setText("Edit");
 		}
     },
 
@@ -174,8 +174,8 @@ Ext.define("inkle.controller.FriendsController", {
 		if (index == 0) {
 			this.getRemoveFriendsButton().show();
 			this.getAddFriendButton().show();
-			this.getEditBlotsButton().hide();
-			this.getCreateBlotButton().hide();
+			this.getEditGroupsButton().hide();
+			this.getCreateGroupButton().hide();
 			
 			// Reset the remove friends button
 			var removeFriendsButton = this.getRemoveFriendsButton();
@@ -186,16 +186,16 @@ Ext.define("inkle.controller.FriendsController", {
 		else if (index == 1) {
 			this.getRemoveFriendsButton().hide();
 			this.getAddFriendButton().hide();
-			this.getEditBlotsButton().show();
-			this.getCreateBlotButton().show();
+			this.getEditGroupsButton().show();
+			this.getCreateGroupButton().show();
 			
-			this.getEditBlotsButton().setText("Edit");
+			this.getEditGroupsButton().setText("Edit");
 		}
 		else {
 			this.getRemoveFriendsButton().hide();
 			this.getAddFriendButton().hide();
-			this.getEditBlotsButton().hide();
-			this.getCreateBlotButton().hide();
+			this.getEditGroupsButton().hide();
+			this.getCreateGroupButton().hide();
 		}
 		
 		// Hide the delete locks
@@ -253,7 +253,7 @@ Ext.define("inkle.controller.FriendsController", {
 			button = this.getRemoveFriendsButton();
 		}
 		else {
-			button = this.getEditBlotsButton();
+			button = this.getEditGroupsButton();
 		}
 		
 		if ((button.getText() == buttonText) || (button.getIconMask())) {
@@ -263,7 +263,7 @@ Ext.define("inkle.controller.FriendsController", {
 				this.getAddFriendButton().hide();
 			}
 			else {
-				this.getCreateBlotButton().hide();
+				this.getCreateGroupButton().hide();
 			}
 			
 			button.setText("Done");			
@@ -277,16 +277,16 @@ Ext.define("inkle.controller.FriendsController", {
 				disclosureArrow.addCls("disclosureArrowHidden");
 			}
 			
-			var blotNameInputs = Ext.query("#" + listId + " .blotNameInput");
-			for (var i = 0; i < blotNameInputs.length; i++) {
-				var blotNameInput = Ext.fly(blotNameInputs[i].getAttribute("id"));
-				blotNameInput.removeCls("blotNameInputHidden");
+			var groupNameInputs = Ext.query("#" + listId + " .groupNameInput");
+			for (var i = 0; i < groupNameInputs.length; i++) {
+				var groupNameInput = Ext.fly(groupNameInputs[i].getAttribute("id"));
+				groupNameInput.removeCls("groupNameInputHidden");
 			}
 			
-			var blotNames = Ext.query("#" + listId + " .blotName");
-			for (var i = 0; i < blotNames.length; i++) {
-				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
-				blotName.addCls("blotNameHidden");
+			var groupNames = Ext.query("#" + listId + " .groupName");
+			for (var i = 0; i < groupNames.length; i++) {
+				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
+				groupName.addCls("groupNameHidden");
 			}
 		}
 		else {
@@ -298,7 +298,7 @@ Ext.define("inkle.controller.FriendsController", {
 			}
 			else {			
 				button.setText(buttonText);
-				this.getCreateBlotButton().show();
+				this.getCreateGroupButton().show();
 			}
 			
 			var deleteButtons = Ext.query("#" + listId + " .deleteButton");
@@ -321,22 +321,22 @@ Ext.define("inkle.controller.FriendsController", {
 				disclosureArrow.addCls("disclosureArrowSlideLeft");
 			}
 			
-			var blotNameInputs = Ext.query("#" + listId + " .blotNameInput");
-			for (var i = 0; i < blotNameInputs.length; i++) {
-				var blotNameInput = Ext.fly(blotNameInputs[i].getAttribute("id"));
-				blotNameInput.addCls("blotNameInputHidden");
+			var groupNameInputs = Ext.query("#" + listId + " .groupNameInput");
+			for (var i = 0; i < groupNameInputs.length; i++) {
+				var groupNameInput = Ext.fly(groupNameInputs[i].getAttribute("id"));
+				groupNameInput.addCls("groupNameInputHidden");
 			}
 			
-			var blotNames = Ext.query("#" + listId + " .blotName");
-			for (var i = 0; i < blotNames.length; i++) {
-				var blotName = Ext.fly(blotNames[i].getAttribute("id"));
-				blotName.removeCls("blotNameHidden");
+			var groupNames = Ext.query("#" + listId + " .groupName");
+			for (var i = 0; i < groupNames.length; i++) {
+				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
+				groupName.removeCls("groupNameHidden");
 			}
 		}
 	},
 	
-	/* Toggles the rotation of the inputted blots list delete lock */
-	toggleBlotsListDeleteLockRotation: function(tappedId) {
+	/* Toggles the rotation of the inputted groups list delete lock */
+	toggleGroupsListDeleteLockRotation: function(tappedId) {
 		var deleteLock = Ext.fly(tappedId + "DeleteLock");
 		if (deleteLock.hasCls("deleteLockRotateLeft")) {
 			deleteLock.removeCls("deleteLockRotateLeft");
@@ -359,16 +359,16 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	deleteListItem: function(tappedId, idType) {
-		if (idType == "blot") {
-			var blotsList = this.getBlotsList();
-			var blotsStore = blotsList.getStore();
-			var record = blotsStore.findRecord("id", tappedId);
-			blotsStore.remove(record);
+		if (idType == "group") {
+			var groupsList = this.getGroupsList();
+			var groupsStore = groupsList.getStore();
+			var record = groupsStore.findRecord("id", tappedId);
+			groupsStore.remove(record);
 						
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/deleteBlot/",
+				url: "http://127.0.0.1:8000/sencha/deleteGroup/",
 				params: {
-					blotId: tappedId
+					groupId: tappedId
 				},
 				failure: function(response) {
 					Ext.Msg.alert("Error", response.responseText);
@@ -393,46 +393,46 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
-	/* Creates a new blot, puts the blots list in edit mode, and sets the focus on the new blot */
-	createBlot: function() {
+	/* Creates a new group, puts the groups list in edit mode, and sets the focus on the new group */
+	createGroup: function() {
 		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/createBlot/",
+    		url: "http://127.0.0.1:8000/sencha/createGroup/",
 		    success: function(response) {
-        		blotId = response.responseText;
+        		groupId = response.responseText;
         		
-				// Re-load the blots list, put it in edit mode, and set the focus on the new blot's input field
-				this.getBlotsList().getStore().load({
+				// Re-load the groups list, put it in edit mode, and set the focus on the new group's input field
+				this.getGroupsList().getStore().load({
 					callback: function(records, operation, success) {
-						this.toggleDeleteLocksVisibility("friendsViewBlotsList", "Edit");
-						Ext.fly("blot" + blotId + "NameInput").dom.focus();
+						this.toggleDeleteLocksVisibility("friendsViewGroupsList", "Edit");
+						Ext.fly("group" + groupId + "NameInput").dom.focus();
 					},
 					scope: this
 				});
         	},
         	failure: function(response) {
-        		Ext.Msg.alert("Error", "Blot not created");
+        		Ext.Msg.alert("Error", "Group not created");
         		console.log(response.responseText);
         	},
         	scope: this
 		});
 	},
 	
-	renameBlot: function(blotId) {
-		var blotName = Ext.fly("blot" + blotId + "Name");
-		blotName = blotName.getHtml();
+	renameGroup: function(groupId) {
+		var groupName = Ext.fly("group" + groupId + "Name");
+		groupName = groupName.getHtml();
 		
-		var blotNameInput = Ext.fly("blot" + blotId + "NameInput");
-		blotNameInputValue = blotNameInput.getValue();
+		var groupNameInput = Ext.fly("group" + groupId + "NameInput");
+		groupNameInputValue = groupNameInput.getValue();
 		
-		if (blotName != blotNameInputValue) {
-			var blotName = Ext.fly("blot" + blotId + "Name");
-			blotName.setHtml(blotNameInputValue);
+		if (groupName != groupNameInputValue) {
+			var groupName = Ext.fly("group" + groupId + "Name");
+			groupName.setHtml(groupNameInputValue);
 			
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/renameBlot/",
+				url: "http://127.0.0.1:8000/sencha/renameGroup/",
 				params: {
-					blotId: blotId,
-					name: blotNameInputValue
+					groupId: groupId,
+					name: groupNameInputValue
 				},
 				failure: function(response) {
 					Ext.Msg.alert("Errors", response.errors);
@@ -481,10 +481,10 @@ Ext.define("inkle.controller.FriendsController", {
 			});
 			
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/removeFromBlot/",
+				url: "http://127.0.0.1:8000/sencha/removeFromGroup/",
 				params: {
 					memberId: memberId,
-					blotId: this.getBlotMembersView().getData()["blotId"]
+					groupId: this.getGroupMembersView().getData()["groupId"]
 				},
 				failure: function(response) {
 					console.log(response.responseText);
@@ -498,10 +498,10 @@ Ext.define("inkle.controller.FriendsController", {
 			});
 			
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/addToBlot/",
+				url: "http://127.0.0.1:8000/sencha/addToGroup/",
 				params: {
 					memberId: memberId,
-					blotId: this.getBlotMembersView().getData()["blotId"]
+					groupId: this.getGroupMembersView().getData()["groupId"]
 				},
 				failure: function(response) {
 					console.log(response.responseText);

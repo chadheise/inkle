@@ -1,0 +1,17 @@
+<div class="inkling" inklingId="{{ i.id }}">
+    <div class="numAttendees">{{ i.get_num_attendees }}</div>
+    <div class="inklingInfo">
+        <div class="location">{{ i.location|default:"Location TBD" }}</div>
+        <div>
+            {% if i.time %}
+                <div class="time">{{ i.time }}</div>
+                {% if i.category %}
+                    <div class="dot">&middot</div>
+                {% endif %}
+            {% endif %}
+            {% if i.category %}
+                <div class="category">{{ i.category }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>

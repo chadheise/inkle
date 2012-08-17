@@ -1,0 +1,11 @@
+<div class="group">
+    <!-- Selection button -->
+    {% if b.selected %}
+        <img id="{{ idPrefix }}Group{{ b.id }}SelectionButton" class="selectionButton" groupId="{{ b.id }}" src="resources/images/selected.png">
+    {% else %}
+        <img id="{{ idPrefix }}Group{{ b.id }}SelectionButton" class="selectionButton" groupId="{{ b.id }}" src="resources/images/deselected.png">
+    {% endif %}
+
+    <!-- Group name -->
+    <p class="groupName">{{ b.name }}</p>
+</div>
