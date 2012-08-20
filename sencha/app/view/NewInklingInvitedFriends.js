@@ -91,9 +91,13 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 				],
 				
 				// Event firings
-				onGroupSelectionButtonTap: function(event) {
+				onGroupSelectionButtonTap: function(event, target) {
 					var groupId = event.getTarget(".selectionButton").getAttribute("groupId");
-					this.fireEvent("groupSelectionButtonTapped", groupId, "Group");
+					var groupSelectionButton = Ext.fly(target);
+					console.log(groupSelectionButton);
+					this.fireEvent("groupSelectionButtonTapped", groupSelectionButton, groupId, "Group");
+				
+					//this.fireEvent("groupSelectionButtonTapped", groupId, "Group");
 				}
         	}
     	],
@@ -109,8 +113,11 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
     },
     
     // Event firings
-    onMemberSelectionItemTap: function(event) {
+    onMemberSelectionItemTap: function(event, target) {
     	var memberId = event.getTarget(".selectionButton").getAttribute("memberId");
-    	this.fireEvent("memberSelectionButtonTapped", memberId, "Member");
+    	var memberSelectionButton = Ext.fly(target);
+		console.log(memberSelectionButton);
+		this.fireEvent("memberSelectionButtonTapped", memberSelectionButton, memberId, "Member");
+    	//this.fireEvent("memberSelectionButtonTapped", memberId, "Member");
     }
 });

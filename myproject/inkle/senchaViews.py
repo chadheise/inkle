@@ -158,65 +158,17 @@ def s_all_inklings_view(request):
     inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
 
     # Create and return a JSON object
-    return HttpResponse(simplejson.dumps(inklings), mimetype = "application/json")
-
-
-@csrf_exempt
-def s_all_inklings_view_old(request):
-    """Returns all the inklings."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get the selected groups
-    try:
-        selected_group_ids = []
-        if (request.POST["selectedGroupIds"]):
-            selected_group_ids = request.POST["selectedGroupIds"].split(",")[:-1]
-    except:
-        selected_group_ids = [b.id for b in member.friend_groups.all()]
-
-    # Get the date, or set it to today if no date is specified
-    if ("day" in request.POST):
-        day = int(request.POST["day"])
-        month = int(request.POST["month"])
-        year = int(request.POST["year"])
-        date = datetime.date(year, month, day)
-    else:
-        date = datetime.date.today()
-
-    # Get the group, or set it to all groups if no group is specified
-    if ("groupId" in request.POST):
-        group_id = int(request.POST["groupId"])
-        if (group_id != -1):
-            group = member.friend_groups.get(pk = group_id)
-            members = group.members.all()
-        else:
-            members = member.friends.all()
-    else:
-        members = member.friends.all()
-
-    inklings = []
-    for m in members:
-        for i in m.inklings.filter(date = date):
-            if i not in inklings:
-                inklings.append(i)
-
-    return render_to_response( "s_allInklings.html",
-        { "inklings" : inklings  },
-        context_instance = RequestContext(request) )
+    response = simplejson.dumps(inklings)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_all_inklings_groups_view(request):
-    """."""
+    """Returns a list of all the logged in member's groups, each of which has a selected selection button."""
     # Get the logged in member
     member = Member.active.get(pk = request.session["member_id"])
 
-    # Create a dictionary for the data
-    data = {}
-
-    # Get the name and number of member for each of the logged in member's groups
+    # Create a group to hold all the groups
     groups = []
 
     # Sort the member's group alphabetically
@@ -234,11 +186,8 @@ def s_all_inklings_groups_view(request):
             "html" : html
         })
 
-    data["groups"] = groups
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
-
+    response = simplejson.dumps(groups)
     return HttpResponse(response, mimetype = "application/json")
 
 

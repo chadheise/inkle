@@ -242,10 +242,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     },
     
     // Toggles the state of the inputted selection button and (un)invites the appropriate friend(s)
-    toggleSelectionButton: function(itemId, itemType) {
-		// Get the selection button
-		var selectionButton = Ext.fly("invite" + itemType + itemId + "SelectionButton");
-		
+	    toggleSelectionButton: function(selectionButton, itemId, itemType) {	
 		// Create a variable to hold a comma-separated string of selected groups
 		var selectedGroupIds = "";
 		
@@ -259,9 +256,9 @@ Ext.define("inkle.controller.MyInklingsController", {
 				var url = "http://127.0.0.1:8000/sencha/uninviteGroup/";
 			
 				// Create the comma-separated string of selected groups
-				var groupSelectionButtons = Ext.query(".group .selectionButton");
+				var groupSelectionButtons = Ext.query("#newInklingInvitedGroupsList .selectionButton");
 				for (var i = 0; i < groupSelectionButtons.length; i++) {
-					var groupSelectionButton = Ext.fly(groupSelectionButtons[i].getAttribute("id"));
+					var groupSelectionButton = Ext.fly(groupSelectionButtons[i]);
 					if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
 						selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
 					}
