@@ -67,14 +67,30 @@
     <style type="text/css">
     	.home{text-align:center}.home h1{font-weight:bold;font-size:1.2em}.home p{color:#666;font-size:0.8em;line-height:1.6em;margin:10px 20px 20px 20px}.home img{margin-top:-10px}.home h2{color:#999;font-size:0.7em}.blog p{color:#555;padding:20px 20px 0 20px;font-size:1em;line-height:1.4em}
     </style>
-    <script id="microloader" type="text/javascript" src="sdk/microloader/development.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 	<!-- cordova -->
 	<script src="cordova-2.0.0-iOS.js"></script> <!-- THIS MUST BE CHANGED TO MATCH THE OS TYPE -->
     <!-- cordova facebook plugin -->
 	<script src="cdv-plugin-fb-connect.js"></script>
     <!-- facebook js sdk -->
 	<script src="facebook_js_sdk.js"></script>
+	
+	<script>
+	  if ((typeof Cordova == 'undefined') || (typeof cordova == 'undefined')) alert('Cordova variable does not exist. Check that you have included cordova.js correctly');
+	  if (typeof CDV == 'undefined') alert('CDV variable does not exist. Check that you have included pg-plugin-fb-connect.js correctly');
+	  if (typeof FB == 'undefined') alert('FB variable does not exist. Check that you have included the Facebook JS SDK file.');
+
+	  document.addEventListener('deviceready', function() {
+	                            try {
+	                            alert('Device is ready! Make sure you set your app_id below this alert.');
+	                            FB.init({ appId: "355653434520396", nativeInterface: CDV.FB, useCachedDialogs: false });
+	                            } catch (e) {
+	                            alert(e);
+	                            }
+	                            }, false);
+	  </script>
+	
+    <script id="microloader" type="text/javascript" src="sdk/microloader/development.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 </head>
 <body>
     <div id="appLoadingIndicator">

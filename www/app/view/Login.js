@@ -54,21 +54,17 @@ Ext.define("inkle.view.Login", {
 			    html: "<center style='padding-top: 20px;'>OR</center>"
 			},
 			
-			/*{
+			{
 				xtype: "button",
-				itemId: "facebookLoginButton",
+				itemId: "facebookLoginSubmitButton",
 				text: "Login with Facebook",
 				ui: "confirm"
-			},*/
+			}
+		
 			/*{
-				xtype: "panel",
-				html: "<button onclick="login()">Login</button>"
-			}*/
-			
-			{
 			    xtype: "panel",
 			    html: "<center style='padding-top: 20px; color: blue;'>Login with Facebook</center>"
-			}
+			}*/
 		],
 
 		listeners: [
@@ -76,7 +72,12 @@ Ext.define("inkle.view.Login", {
             	delegate: "#loginSubmitButton",
             	event: "tap",
             	fn: "onLoginSubmitButtonTap"
-        	}
+        	},
+			{
+				delegate: "#facebookLoginSubmitButton",
+            	event: "tap",
+            	fn: "onFacebookLoginSubmitButtonTap"
+			}
         ]
 	},
 	
@@ -84,5 +85,10 @@ Ext.define("inkle.view.Login", {
 	onLoginSubmitButtonTap: function () {
         console.log("loginSubmitButtonTapped");
         this.fireEvent("loginSubmitButtonTapped");
+    },
+	onFacebookLoginSubmitButtonTap: function () {
+        console.log("facebookLoginSubmitButtonTapped");
+        this.fireEvent("facebookLoginSubmitButtonTapped");
     }
+
 });
