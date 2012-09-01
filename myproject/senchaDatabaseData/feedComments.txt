@@ -1,0 +1,15 @@
+# INKLING ID | CREATOR'S MEMBER ID | TEXT
+1 | 1 | I'm so pumped for some karaoke!
+1 | 2 | I call "It's Raining Men!"
+1 | 4 | "Sexy Bitch" for me.
+1 | 5 | Coldplay all the way.
+2 | 1 | Why are we having a double date?
+2 | 2 | Are you kidding me, both the girls are with me?
+2 | 26 | OILLLLLL! RAWR!
+2 | 3 | Hahahaha Zaza will be there too :)
+5 | 5 | When do you guys wanna meet up?
+5 | 6 | I'm thinking the earlier the better.
+5 | 1 | I won't be out of class until 5:45.
+5 | 5 | Ugghh stupid engineers!
+5 | 29 | I like the social(ism) aspect of this whole thing.
+5 | 30 | Shut up Barack!
