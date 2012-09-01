@@ -2,7 +2,7 @@
 
 <div class="view" id="inklingFeedView">
     <div class="feedEvent">
-        <img class="feedEventLogo" src="resources/images/plus.png" />
+        <img class="feedEventLogo" src="resources/images/mainInkleIcon.png" />
         <p class="feedEventText">{{ inkling.creator.get_full_name }} created this inkling.</p>
         <p class="feedEventTime">{{ inkling.date_created|naturaltime }}</p>
     </div>
@@ -12,7 +12,7 @@
             {% include "s_inklingFeedComment.html" with comment=item %}
         {% else %}
             <div class="feedEvent">
-                <img class="feedEventLogo" src="resources/images/{{ item.get_logo }}" />
+                <img class="feedEventLogo" src="resources/images/{{ item.get_icon_name }}" />
                 <p class="feedEventText">{{ item.text }}.</p>
                 <p class="feedEventTime">{{ item.date_created|naturaltime }}</p>
             </div>

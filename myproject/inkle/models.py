@@ -1,49 +1,59 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from hashlib import md5
-from random import randint
-#from PIL import Image
-
-import datetime
-
-from myproject.settings import MEDIA_ROOT
+from datetime import date
 
 class Group(models.Model):
     """Group class definition."""
     # General information
+    creator = models.ForeignKey("Member")
     name = models.CharField(max_length = 50)
-    members = models.ManyToManyField("Member")
+    members = models.ManyToManyField("Member", related_name = "groups_member_of")
 
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
-    date_last_modified = models.DateTimeField(auto_now = True)
-    num_modifications = models.IntegerField(max_length = 4, default = 0)
+    date_name_last_modified = models.DateTimeField(blank = True, null = True)
+    date_members_last_modified = models.DateTimeField(blank = True, null = True)
     
     # Class methods
     def __unicode__(self):
         """String representation for the current group."""
-        return "%s" % (self.name)
+        return "%d: %s (%s)" % (self.id, self.name, self.creator.get_full_name())
 
 
-class PastInklingManager(models.Manager):
-    """Manager which returns past inkling objects."""
-    def get_query_set(self):
-        return Inkling.objects.filter(date__lt = datetime.date.today())
-
-
-class CurrentInklingManager(models.Manager):
-    """Manager which returns current inkling objects."""
-    def get_query_set(self):
-        return Inkling.objects.filter(date__gte = datetime.date.today())
-
-
-class Event(models.Model):
-    """Event class definition."""
+class FeedUpdate(models.Model):
+    """FeedUpdate class definition."""
     # General information
-    member = models.ForeignKey("Member")
+    creator = models.ForeignKey("Member")
     inkling = models.ForeignKey("Inkling")
-    category = models.CharField(max_length = 100)
+    update_type = models.CharField(max_length = 10)
+    updated_to = models.CharField(max_length = 200)
+    
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current feed update."""
+        return "%d: %d - %s (%s)" % (self.id, self.inkling.id, self.update_type, self.creator.get_full_name())
+
+    def get_icon_name(self):
+        """Returns the icon name for the current feed update."""
+        if (self.update_type == "location"):
+            return "icons/Date-1.png"
+        elif (self.update_type == "date"):
+            return "icons/Date-2.png"
+        elif (self.update_type == "time"):
+            return "icons/Date-5.png"
+        elif (self.update_type == "notes"):
+            return "icons/Tilted-Calendar.png"
+
+
+class FeedComment(models.Model):
+    """FeedComment class definition."""
+    # General information
+    creator = models.ForeignKey("Member")
+    inkling = models.ForeignKey("Inkling")
     text = models.CharField(max_length = 150)
     
     # Metadata
@@ -51,68 +61,93 @@ class Event(models.Model):
 
     # Class methods
     def __unicode__(self):
-        """String representation for the current inkling event."""
-        return "%s - %d (%s)" % (self.member.get_full_name(), self.inkling.id, self.category)
+        """String representation for the current comment."""
+        return "%d: %d - %s (%s)" % (self.id, self.inkling.id, self.text[:20], self.creator.get_full_name())
 
-    def get_logo(self):
-        """Returns the logo for the current inkling event according to its category."""
-        if (self.category == "creation"):
-            return "plus.png"
-        elif (self.category == "time"):
-            return "clock.png"
-        elif (self.category == "location"):
-            return "location.png"
-        elif (self.category == "category"):
-            return "notes.png"
-        elif (self.category == "notes"):
-            return "notes.png"
+
+class InklingInvitation(models.Model):
+    """InklingInvitation class definition."""
+    # General information
+    sender = models.ForeignKey("Member", related_name = "inkling_invitations_sent")
+    receiver = models.ForeignKey("Member", related_name = "inkling_invitations_received")
+    inkling = models.ForeignKey("Inkling")
+    status = models.CharField(max_length = 10, default = "pending")
+    
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add = True)
+    date_responded = models.DateTimeField(blank = True, null = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current inkling invitation."""
+        return "%d: %d - %s (%s to %s)" % (self.id, self.inkling.id, self.status, self.sender.get_full_name(), self.receiver.get_full_name())
+
+
+class SharingPermission(models.Model):
+    """SharingPermission class definition."""
+    # General information
+    creator = models.ForeignKey("Member", related_name = "sharing_permissions_created")
+    members = models.ManyToManyField("Member", related_name = "sharing_permissions_allowed")
+    inkling = models.ForeignKey("Inkling")
+    
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current sharing permission."""
+        return "%d: %d (%s to %d)" % (self.id, self.inkling.id, self.creator.get_full_name(), self.members.count())
+
+
+class PastInklingManager(models.Manager):
+    """Manager which returns past Inkling objects."""
+    def get_query_set(self):
+        return Inkling.objects.filter(date__lt = date.today())
+
+
+class CurrentInklingManager(models.Manager):
+    """Manager which returns current Inkling objects."""
+    def get_query_set(self):
+        return Inkling.objects.filter(date__gte = date.today())
 
 
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
-    creator = models.ForeignKey("Member", related_name = "creator_related")
+    creator = models.ForeignKey("Member", related_name = "inklings_created")
     location = models.CharField(max_length = 50, blank = True)
-    date = models.DateField(null = True, blank = True)
-    time = models.CharField(max_length = 50, blank = True)
-    category = models.CharField(max_length = 50, blank = True)
-    notes = models.CharField(max_length = 150, blank = True)
-    is_private = models.BooleanField(default = False)
+    date = models.DateField(blank = True, null = True)
+    time = models.CharField(max_length = 30, blank = True)
+    notes = models.CharField(max_length = 200, blank = True)
 
-    # Invitees
-    invited_friends = models.ManyToManyField("Member", related_name = "invited_friends_related")
-
+    # Sharing
+    allow_sharing = models.BooleanField()
+    shared_with = models.ManyToManyField("Member", related_name = "inklings_shared_with")
+    
     # Managers
     objects = models.Manager()
     past = PastInklingManager()
     current = CurrentInklingManager()
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
     date_last_modified = models.DateTimeField(auto_now = True)
-    num_location_changes = models.IntegerField(max_length = 4, default = 0)
-    num_date_changes = models.IntegerField(max_length = 4, default = 0)
-    num_time_changes = models.IntegerField(max_length = 4, default = 0)
-    num_category_changes = models.IntegerField(max_length = 4, default = 0)
-    num_notes_changes = models.IntegerField(max_length = 4, default = 0)
-    num_is_private_changes = models.IntegerField(max_length = 4, default = 1)
 
     # Class methods
     def __unicode__(self):
         """String representation for the current inkling."""
-        location = self.location
-        if (not location):
-            location = "Location TBD"
-        return "%s (%s)" % (location, self.get_formatted_date())
+        return "%d: %s, %s (%s)" % (self.id, self.get_location(), self.get_formatted_date(), self.creator.get_full_name())
 
-    def get_attendees(self):
-        return self.member_set.all()
-
-    def get_num_attendees(self):
-        return self.member_set.count()
+    def get_location(self):
+        """Returns the current inkling's location or "Location TBD" if no location is specified."""
+        if (self.location):
+            return self.location
+        else:
+            return "Location TBD"
 
     def get_formatted_date(self, year = True, weekday = False):
-        """Returns the current inkling's formatted date."""
+        """Returns the current inkling's formatted date or "Date Unknown" if no date is specified."""
+        # Return the formatted date if it is specified
         if (self.date):
             months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
             if (weekday):
@@ -126,98 +161,71 @@ class Inkling(models.Model):
                     return "%s %d, %d" % (months[self.date.month - 1], self.date.day, self.date.year)
                 else:
                     return "%s %d" % (months[self.date.month - 1], self.date.day)
-        else:
-            return "No date"
 
-class Comment(models.Model):
-    """Comment class definition."""
+        # Otherwise, simply return "Date Unknown"
+        else:
+            return "Date Unknown"
+
+    def get_attendees(self):
+        """Returns a list of all the members attending the current inkling."""
+        return self.member_set.all()
+
+    def get_num_attendees(self):
+        """Returns the number of members attending the current inkling."""
+        return self.member_set.count()
+
+    def member_has_pending_invitation(self, m):
+        """Returns True if the inputted member has a pending invitation to the current inkling or False otherwise."""
+        return(bool(m.inkling_invitations_received.filter(inkling = self, status = "pending")))
+
+
+class FriendRequest(models.Model):
+    """FriendRequest class definition."""
     # General information
-    inkling = models.ForeignKey(Inkling)
-    creator = models.ForeignKey("Member")
-    date_created = models.DateTimeField(auto_now_add = True)
-    text = models.CharField(max_length = 150, blank = True)
+    sender = models.ForeignKey("Member", related_name = "friend_requests_sent")
+    receiver = models.ForeignKey("Member", related_name = "friend_requests_received")
+    status = models.CharField(max_length = 10, default = "pending")
     
+    # Metadata
+    date_created = models.DateTimeField(auto_now_add = True)
+    date_responded = models.DateTimeField(blank = True, null = True)
+
+    # Class methods
+    def __unicode__(self):
+        """String representation for the current friend request."""
+        return "%d: %s (%s to %s)" % (self.id, self.status, self.sender.get_full_name(), self.receiver.get_full_name())
+
+
+class ActiveMemberManager(models.Manager):
+    """Manager which returns active Member objects."""
+    def get_query_set(self):
+        return Member.objects.filter(is_active = True)
+
+
+class Member(User):
+    """Member class definition. Inherits the following from the built-in Django User class:
+       id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined"""
+    # General information
+    gender = models.CharField(max_length = 1)
+    birthday = models.DateField()
+    
+    # Friends
+    friends = models.ManyToManyField("self")
+    
+    # Inklings
+    inklings = models.ManyToManyField(Inkling)
+
+    # Managers
+    objects = models.Manager()
+    active = ActiveMemberManager()
+
     # Metadata
     date_last_modified = models.DateTimeField(auto_now = True)
 
     # Class methods
     def __unicode__(self):
-        """String representation for the current comment."""
-        return "%s (%s)" % (self.creator.get_full_name(), self.text)
-
-
-class ActiveMemberManager(models.Manager):
-    """Manager which returns active member objects."""
-    def get_query_set(self):
-        return Member.objects.filter(is_active = True, verified = True)
-
-
-class Member(User):
-    """Member class definition. Inherits from built-in Django User class."""
-    # Note: inherits from built-in Django User class which contains:
-    #       id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined
-   
-    # General information
-    gender = models.CharField(max_length = 6)
-    birthday = models.DateField()
-    phone = models.CharField(max_length = 10, default = "")
-    street = models.CharField(max_length = 100, default = "")
-    city = models.CharField(max_length = 50, default = "")
-    state = models.CharField(max_length = 2, default = "")
-    zip_code = models.CharField(max_length = 5, default = "")
-    
-    # Lists
-    friend_requests = models.ManyToManyField("self", symmetrical = False, related_name = "friend_requests_related")
-    friend_groups = models.ManyToManyField(Group)
-    inklings = models.ManyToManyField(Inkling)
-
-    # Member lists
-    #pending = models.ManyToManyField("self", symmetrical = False, related_name = "pending_related")
-    #accepted = models.ManyToManyField("self", symmetrical = False, related_name = "accepted_related")
-    #requested = models.ManyToManyField("self", symmetrical = False, related_name = "requested_related")
-    #followers = models.ManyToManyField("self", symmetrical = False, related_name = "followers_related")
-    #following = models.ManyToManyField("self", symmetrical = False, related_name = "following_related")
-    friends = models.ManyToManyField("self")
-
-    # Email verification
-    verification_hash = models.CharField(max_length = 32)
-    verified = models.BooleanField(default = False)
-
-    # Privacy settings
-    name_privacy = models.IntegerField(max_length = 1, default = 0)
-    image_privacy = models.IntegerField(max_length = 1, default = 0)
-    email_privacy = models.IntegerField(max_length = 1, default = 1)
-    phone_privacy = models.IntegerField(max_length = 1, default = 1)
-    birthday_privacy = models.IntegerField(max_length = 1, default = 1)
-    gender_privacy = models.IntegerField(max_length = 1, default = 0)
-    location_privacy = models.IntegerField(max_length = 1, default = 1)
-    followers_privacy = models.IntegerField(max_length = 1, default = 1)
-    following_privacy = models.IntegerField(max_length = 1, default = 1)
-    networks_privacy = models.IntegerField(max_length = 1, default = 1)
-    inklings_privacy = models.IntegerField(max_length = 1, default = 1)
-    place_privacy = models.IntegerField(max_length = 1, default = 1)
-    invitations_privacy = models.IntegerField(max_length = 1, default = 1)
-    
-    # Email preferences
-    requested_email_preference = models.BooleanField(default = True)
-    accepted_email_preference = models.BooleanField(default = True)
-    invited_email_preference = models.BooleanField(default = True)
-    response_email_preference = models.BooleanField(default = True)
-    general_email_preference = models.BooleanField(default = True)
-    email_format_html = models.BooleanField(default = False)
-
-    # Managers
-    objects = models.Manager()
-    active = ActiveMemberManager()
-    
-    # Metadata
-    changed_image = models.IntegerField(max_length = 4, default = 0)
-    changed_email_address = models.IntegerField(max_length = 4, default = 0)
-
-    # Class methods
-    def __unicode__(self):
         """String representation for the current member."""
-        return "%s (%s %s)" % (self.email, self.first_name, self.last_name)
+        return "%d: %s" % (self.id, self.get_full_name())
 
     def get_full_name(self):
         """Returns the current member's full name."""
@@ -227,47 +235,6 @@ class Member(User):
         """Returns the number of mutual friends the current member has with the inputted member."""
         return len(self.friends.filter(is_active = True) & m.friends.filter(is_active = True))
 
-    def get_formatted_phone(self):
-        """Returns the current member's formatted phone number."""
-        return "(%s) %s-%s" % (self.phone[0:3], self.phone[3:6], self.phone[6:10])
-
-    def get_formatted_birthday(self):
-        """Returns the current member's formatted birthday."""
-        months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-        return "%s %s, %s" % (months[self.birthday.month - 1], self.birthday.day, self.birthday.year)
-
-    def update_verification_hash(self):
-        """Updates the current member's verification hash."""
-        self.verification_hash = md5(str(randint(1000, 9999))).hexdigest()
-
-    def update_profile_information(self, first_name, last_name, phone, street, city, state, zip_code, birthday, gender):
-        """Updates the current member's privacy settings."""
-        self.first_name = first_name
-        self.last_name = last_name
-        self.phone = phone
-        self.street = street
-        self.city = city
-        self.state = state
-        self.zip_code = zip_code
-        self.birthday = birthday
-        self.gender = gender
-
-    def update_privacy_settings(self, location, email, phone, birthday, followers, following, networks, place, inklings):
-        """Updates the current member's privacy settings."""
-        self.location_privacy = location
-        self.email_privacy = email
-        self.phone_privacy = phone
-        self.birthday_privacy = birthday
-        self.followers_privacy = followers
-        self.following_privacy = following
-        self.networks_privacy = networks
-        self.place_privacy = place
-        self.inklings_privacy = inklings
-
-    def update_email_preferences(self, requested, accepted, invited, response, general):
-        """Updates the current member's email preferences."""
-        self.requested_email_preference = requested
-        self.accepted_email_preference = accepted
-        self.invited_email_preference = invited
-        self.response_email_preference = response
-        self.general_email_preference = general
+    def has_pending_friend_request_to(self, m):
+        """Returns True if the current memeber has a pending friend request to the inputted member."""
+        return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))

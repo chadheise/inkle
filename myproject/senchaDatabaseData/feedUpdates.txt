@@ -1,0 +1,5 @@
+# INKLING ID | CREATOR MEMBER ID | UPDATE TYPE | UPDATED_TO
+1 | 1 | time | 5:30 PM
+1 | 2 | location | Brother's Bar & Grill
+1 | 3 | notes | Bud Light pitchers half off
+1 | 2 | date | Friday, August 31

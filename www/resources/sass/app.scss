@@ -62,11 +62,11 @@ $tabs-bottom-active-gradient: 'recessed';
 /*  CUSTOM TAB ICONS  */
 /**********************/
 .allInklings {
-	-webkit-mask-box-image: url("../images/allInklingsTabIcon.png");
+	-webkit-mask-box-image: url("../images/icons/All-Inklings2.png");
 }
 
 .myInklings {
-	-webkit-mask-box-image: url("../images/myInklingsTabIcon.png");
+	-webkit-mask-box-image: url("../images/icons/My-Inklings2.png");
 }
 
 .friends {
@@ -83,6 +83,10 @@ $tabs-bottom-active-gradient: 'recessed';
 
 .addFriend {
 	-webkit-mask-box-image: url("../images/addFriend.png");
+}
+
+.feed {
+	-webkit-mask-box-image: url("../images/icons/Feed-3.png");
 }
 
 /***********************/

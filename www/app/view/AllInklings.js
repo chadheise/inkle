@@ -99,7 +99,7 @@ Ext.define("inkle.view.AllInklings", {
                     { xtype: "spacer" },
                     {
                     	xtype: "container",
-                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/mainInkleIcon.png' />",
+                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/icons/Feed-3.png' />",
                     	centered: true
                     },
                     { xtype: "spacer" },
@@ -137,7 +137,9 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        text: "Feed",
+                        iconMask: true,
+                		iconCls: "feed",
+                        //text: "Feed",
                         itemId: "inklingFeedButton",
                         hidden: true,
                         showAnimation: {
