@@ -1,12 +1,12 @@
-# LOCATION | NUMBER OF DAYS FROM TODAY | TIME | CATEGORY | NOTES | IS_PRIVATE | MEMBER IDS OF MEMBERS ATTENDING INKLING | MEMBER ID OF INKLING CREATOR
-Brother's Bar & Grill | 0| Late | Karaoke | Half off bud light pitchers | False | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 | 1
-Papa Vino's | 0 |6:30 PM | Dinner |  | False | 1, 2, 5 | 1
-Finny's | 0 | Late | | Wet t-shirt contest :O | False | 2, 5, 6, 7, 8, 9, 10  | 9
-Morrissey | 0 | 11:00 PM | Stripper pole party |  | False | 3, 5, 7, 11, 12, 16 | 12
-Chipotle | 0 |5:30 PM | Dinner | I've got a $25 gift card | False | 11, 12, 13 | 11
-Strikes & Spares | 0 | After dinner | Bowling | Rock and Bowl | False | 4, 6, 8, 11 | 4
-SDH | 0 |  |  |  | False | 1, 2, 5, 6, 12 | 2
-Jane & Chrissy's | 1 | 8:00 PM | Family Dinner | Pulled pork | False | 1, 2, 3, 6, 8, 9 | 8
-Subway | 1 |  | Lunch |  | False | 7, 8 | 7
-Notre Dame Stadium | 1 | 3:30 PM | Football Game | ND vs. USC | False | 1, 5, 6, 14, 15, 16 | 14
-Compton | 10 | 9:00 PM | Broomball | We need to win tonight! Viva Espana! | False | 1, 2, 10, 12, 13, 15 | 1
+# LOCATION | NUMBER OF DAYS FROM TODAY | TIME | NOTES | MEMBER IDS OF MEMBERS ATTENDING INKLING | MEMBER ID OF INKLING CREATOR
+Brother's Bar & Grill | 0 | 11:00 PM | Half off bud light pitchers | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 22, 28 | 1
+Papa Vino's | 0 | 6:30 PM |  | 1, 2, 3, 26 | 1
+Finny's | 0 | Late | Wet t-shirt contest :O | 2, 5, 6, 7, 8, 9, 10, 11, 12, 26, 27, 28  | 9
+Morrissey | 0 | 11:00 PM | Stripper pole party | 3, 5, 7, 11, 12, 16 | 12
+Chipotle | 0 |5:30 PM | I've got a $25 gift card | 1, 5, 6, 11, 12, 13, 29, 30 | 11
+SDH | 0 |  | Let's grab some lunch | 1, 2, 5, 6, 12 | 2
+Strikes & Spares | 1 | After dinner | Rock and Bowl | 4, 6, 8, 11 | 4
+Jane & Chrissy's | 1 | 8:00 PM | Family Dinner! Pulled pork! | 1, 2, 3, 6, 8, 9 | 8
+Subway | 1 |  |  | 7, 8 | 7
+Notre Dame Stadium | 2 | 3:30 PM | ND vs. USC | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 26, 27, 28 | 14
+Compton | 8 | 9:00 PM | Broomball game - we need to win tonight! Viva Espana! | 1, 2, 10, 12, 13, 15 | 1

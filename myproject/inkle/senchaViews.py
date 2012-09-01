@@ -1,3 +1,4 @@
+# TODO: remove unnecessary imports
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
@@ -15,14 +16,9 @@ from myproject.inkle.emails import *
 from django.db.models import Q
 
 import datetime
-import shutil
-#from PIL import Image
-
-from databaseViews import *
-
-from myproject.settings import MEDIA_ROOT
 
 #Modules needed specifically for mobile views
+# TODO: possible get rid of these since these were used by chad and julie and may not be applicable any more
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from xml.dom.minidom import parse, parseString
@@ -30,15 +26,14 @@ import os
 import sys
 from views import *
 
+# TODO: remove csrf_exempt?
 @csrf_exempt
 def s_is_logged_in(request):
-    """Returns True if the user is logged in; returns false otherwise."""
-    if ("member_id" in request.session):
-        return HttpResponse("True")
-    else:
-        return HttpResponse("False")
+    """Returns True if a user is logged in or false otherwise."""
+    return HttpResponse("member_id" in request.session)
 
 
+# TODO: clean up?
 @csrf_exempt
 def s_login_view(request):
     """Either logs in a member or returns the login errors."""
@@ -78,7 +73,7 @@ def s_login_view(request):
                 member = []
 
             # Confirm the username and password combination
-            if (member and (member.verified) and (member.is_active) and (member.check_password(data["password"]))):
+            if (member and member.is_active and (member.check_password(data["password"]))):
                 request.session["member_id"] = member.id
                 member.last_login = datetime.datetime.now()
                 member.save()
@@ -99,9 +94,10 @@ def s_login_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
+# TODO: remove csrf_exempt?
 @csrf_exempt
 def s_logout_view(request):
-    """Logs out the logged in member."""
+    """Logs out the logged-in member."""
     try:
         del request.session["member_id"]
     except KeyError:
@@ -112,28 +108,29 @@ def s_logout_view(request):
 
 @csrf_exempt
 def s_all_inklings_view(request):
-    """Returns a list of inklings which the logged in member's friends are attending."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get the selected groups
+    """Returns a list of inklings which the logged-in member's friends are attending."""
+    # Get the logged-in member
     try:
-        selected_group_ids = []
-        if (request.POST["selectedGroupIds"]):
-            selected_group_ids = request.POST["selectedGroupIds"].split(",")[:-1]
-    except:
-        selected_group_ids = [b.id for b in member.friend_groups.all()]
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get a list of all members who are in the selected groups
-    members = []
-    for group_id in selected_group_ids:
-        group = Group.objects.get(pk = group_id)
-        for m in group.members.all():
-            if m not in members:
-                members.append(m)
+    # Get a list of the members who are in the groups selected by the logged-in member
+    if ("selectedGroupIds" in request.POST):
+        members = []
+        for group_id in request.POST["selectedGroupIds"].split(",")[:-1]:
+            group = Group.objects.get(pk = group_id)
+            if (group.creator == member):
+                for m in group.members.all():
+                    if (m not in members):
+                        members.append(m)
+
+    # Otherwise, if no groups are selected, get all of the logged-in members's friends
+    else:
+        members = member.friends.all()    # TODO: filter for active members?
 
     # Get the date, or set it to today if no date is specified
+    # TODO: catch errors for "month" and "year"
     if ("day" in request.POST):
         day = int(request.POST["day"])
         month = int(request.POST["month"])
@@ -142,6 +139,8 @@ def s_all_inklings_view(request):
     else:
         date = datetime.date.today()
 
+    # Get a list of all the inklings the members are attending on the specified date
+    response_inklings = []
     inklings = []
     for m in members:
         for i in m.inklings.filter(date = date):
@@ -149,88 +148,113 @@ def s_all_inklings_view(request):
                 html = render_to_string( "s_inklingListItem.html", {
                     "i" : i
                 })
-                inklings.append({
-                    "numAttendees" : i.get_num_attendees(),
+                response_inklings.append({
                     "id" : i.id,
-                    "html" : html
+                    "html" : html,
+                    "numAttendees" : i.get_num_attendees()
                 })
+                inklings.append(i)
 
-    inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
+    # Sort the inklings according to their number of attendees
+    response_inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
 
     # Create and return a JSON object
-    response = simplejson.dumps(inklings)
+    response = simplejson.dumps(response_inklings)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_all_inklings_groups_view(request):
-    """Returns a list of all the logged in member's groups, each of which has a selected selection button."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns a list of the logged-in member's groups (with selected selection buttons)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
 
-    # Create a group to hold all the groups
-    groups = []
-
-    # Sort the member's group alphabetically
-    member_groups = list(member.friend_groups.all())
-    member_groups.sort(key = lambda b : b.name)
-
-    for b in member_groups:
-        b.selected = True
+    # Get the HTML for the logged-in member's group list items
+    response_groups = []
+    for g in groups:
+        g.selected = True
         html = render_to_string( "s_groupInviteeListItem.html", {
-            "b" : b,
+            "b" : g,   # TODO: switch from b to g in template
             "idPrefix" : "allInklings"
         })
-        groups.append({
-            "id" : b.id,
+        response_groups.append({
+            "id" : g.id,
             "html" : html
         })
 
     # Create and return a JSON object
-    response = simplejson.dumps(groups)
+    response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_is_member_inkling_view(request):
-    """Returns True if the inkling is one of the logged in member's inklings."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns True if the logged-in memeber is attending the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the current inkling id
-    inkling_id = request.POST["inklingId"]
+    # Get the inputted inkling
+    try:
+        inkling_id = request.POST["inklingId"]
+    except:
+        raise Http404()
 
+    # Return True if the logged-in member is attending the inkling or False otherwise
     if (member.inklings.filter(pk = inkling_id)):
         return HttpResponse("True")
     else:
         return HttpResponse("False")
 
 
+# TODO: either delete this if it is not being used or update the function comment for it
 @csrf_exempt
 def s_inkling_view(request):
-    """Returns a single inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns the HTML for a single inkling"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
 
+    # Return the HTML for the current inkling
     return render_to_response( "s_inkling.html",
         { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
 
 
+# TODO: possible get rid of this
 @csrf_exempt
 def s_edit_inkling_view(request):
     """Returns the HTML for editing an inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
 
+    # Return the HTML for editing the current inkling
     return render_to_response( "s_editInkling.html",
         { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
@@ -239,39 +263,45 @@ def s_edit_inkling_view(request):
 @csrf_exempt
 def s_save_inkling_view(request):
     """Saves any changes to an inkling and returns the HTML for that inkling's page."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    # Get the current inkling's new information
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        # TODO: date = request.POST["date"]
+        location = request.POST["location"]
+        time = request.POST["time"]
+        category = request.POST["category"]   # TODO: get rid of category
+        notes = request.POST["notes"]
+    except:
+        raise Http404()
 
-    # Get the inkling info
-    location = request.POST["location"]
-    time = request.POST["time"]
-    category = request.POST["category"]
-    notes = request.POST["notes"]
+    # TODO: create date object
 
-    # Create an event for everything that changed
+    # Create a feed update for everything that changed and update the inkling
+    # TODO: uncomment
     if (location != inkling.location):
-        event = Event(inkling = inkling, member = member, category = "location", text = member.get_full_name() + " updated the location for this inkling to " + location)
-        event.save()
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "location", updated_to = inkling.location)
         inkling.location = location
+    #if (date != inkling.date):
+    #    feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "date", update_to = inkling.date) # TODO: convert to string Day of Week, Month Day
+    #    inkling.date = date
+    #    inkling.save()
     if (time != inkling.time):
-        event = Event(inkling = inkling, member = member, category = "time", text = member.get_full_name() + " updated the time for this inkling to " + time)
-        event.save()
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "time", updated_to = inkling.time)
         inkling.time = time
-    if (category != inkling.category):
-        event = Event(inkling = inkling, member = member, category = "category", text = member.get_full_name() + " updated the category for this inkling to " + category)
-        event.save()
-        inkling.category = category
     if (notes != inkling.notes):
-        event = Event(inkling = inkling, member = member, category = "notes", text = member.get_full_name() + " updated the notes for this inkling to " + notes)
-        event.save()
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "notes", updated_to = inkling.notes)
         inkling.notes = notes
 
+    # Save the inkling
     inkling.save()
 
+    # Return the updated HTML for the inputted inkling
     return render_to_response( "s_inkling.html",
         { "member" : member, "inkling" : inkling },
         context_instance = RequestContext(request) )
@@ -280,14 +310,19 @@ def s_save_inkling_view(request):
 @csrf_exempt
 def s_join_inkling_view(request):
     """Adds the logged in member to an inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
 
-    # Add the inkling to the logged in member's inklings
+    # Add the inkling to the logged-in member's inklings
     member.inklings.add(inkling)
     
     return HttpResponse()
@@ -295,68 +330,90 @@ def s_join_inkling_view(request):
 
 @csrf_exempt
 def s_inkling_feed_view(request):
-    """Returns the feed for a single inkling."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns the feed for an inkling."""  # TODO: update comment
+    # Get the logged-in member
+    # TODO: get rid of 'member' retrieval if possible?
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
 
+    # Get a list of all the feed items (comments and updates)
     feed_items = []
-    for comment in inkling.comment_set.all():
+    for comment in inkling.feedcomment_set.all():
         feed_items.append((comment, "comment"))
-    for event in inkling.event_set.all():
-        feed_items.append((event, "event"))
+    for update in inkling.feedupdate_set.all():
+        feed_items.append((update, "event"))
 
+    # Sort the feed items chronologically
     feed_items.sort(key = lambda i : i[0].date_created)
 
+    # Return the HTML for the current inkling's feed
     return render_to_response( "s_inklingFeed.html",
         { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
         context_instance = RequestContext(request) )
 
 
+# TODO: rename to add_comment_view
 @csrf_exempt
 def s_post_new_comment_view(request):
-    """Posts a new comment to an inkling."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Adds a new comment to the inputted inkling's feed."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the current inkling
-    inkling_id = request.POST["inklingId"]
-    inkling = Inkling.objects.get(pk = inkling_id)
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
 
-    # Get the comment text
-    text = request.POST["text"]
+    # Get the new comment's text
+    try:
+        text = request.POST["text"]
+    except:
+        raise Http404()
 
     # Create the new comment
-    comment = Comment(inkling = inkling, creator = member, text = text)
-    comment.save()
+    FeedComment.objects.create(creator = member, inkling = inkling, text = text)
 
-    # Get the feed items
+    # TODO: get rid of the rest of this function
+
+    # Get a list of all the feed items (comments and updates)
     feed_items = []
-    for comment in inkling.comment_set.all():
+    for comment in inkling.feedcomment_set.all():
         feed_items.append((comment, "comment"))
-    for event in inkling.event_set.all():
-        feed_items.append((event, "event"))
+    for update in inkling.feedupdate_set.all():
+        feed_items.append((update, "event"))
 
+    # Sort the feed items chronologically
     feed_items.sort(key = lambda i : i[0].date_created)
 
+    # Return the HTML for the current inkling's feed
     return render_to_response( "s_inklingFeed.html",
         { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
         context_instance = RequestContext(request) )
 
 
+# TODO: remove csrf_exempt?
 @csrf_exempt
 def s_my_inklings_view(request):
-    """Returns the HTML for the logged in user's inklings."""
+    """Returns the HTML for the logged-in member's inklings."""  # TODO: update comment
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get date objects
+    # Create several date objects
     today = datetime.date.today()
     tomorrow = today + datetime.timedelta(days = 1)
     this_week = today + datetime.timedelta(days = 6)
@@ -373,56 +430,59 @@ def s_my_inklings_view(request):
         context_instance = RequestContext(request) )
 
 
+# TODO: remove csrf_exempt?
 @csrf_exempt
 def s_num_inkling_invites_view(request):
-    """Returns the number of inklings to which the logged in member has been invited."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns the number of inklings to which the logged-in member has pending invitations."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
     
-    return HttpResponse(member.invited_friends_related.count())
+    # Return the number of inklings to which the logged-in member has pending invitations
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
 
 
+# TODO: remove csrf_exempt?
 @csrf_exempt
 def s_inkling_invites_view(request):
-    """Returns a list of the inklings to which the logged in member has been invited."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Create a dictionary for the data
-    data = {}
-
-    member_inkling_invites = member.invited_friends_related.all()
-
-    inkling_invites = []
-    for i in member_inkling_invites:
+    """Returns a list of the inklings to which the logged-in member has pending invitations."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get a list of the inklings to which the logged-in member has pending invitations
+    response_invites = []
+    for i in member.inkling_invitations_received.filter(status = "pending"):
         html = render_to_string( "s_inklingInviteListItem.html", {
             "inkling" : i
         })
         
-        inkling_invites.append({
+        response_invites.append({
             "id" : i.id,
             "html": html
         })
     
-    # Add the inkling invites list to the data dictionary
-    data["inklingInvites"] = inkling_invites
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_invites)
     return HttpResponse(response, mimetype = "application/json")
 
 
+# TODO: I think this can now be removed since invitations have been modeled differently
 @csrf_exempt
 def s_create_inkling_view(request):
     """Creates an empty inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Create and save the new inkling
-    inkling = Inkling(creator = member)
-    inkling.save()
+    # Create a new inkling
+    inkling = Inkling.objects.create(creator = member)
 
     # Return the new inkling's ID
     return HttpResponse(inkling.id)
@@ -430,64 +490,54 @@ def s_create_inkling_view(request):
 
 @csrf_exempt
 def s_update_inkling_view(request):
-    """Updates and inkling's information."""
-
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get the POST data
+    """Updates the inputted inklings details."""
+    # Get the logged-in member
     try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling and its details
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         location = request.POST["location"]
         date = request.POST["date"]
         time = request.POST["time"]
-        category = request.POST["category"]
+        # TODO: remove this from ever being sent
+        #category = request.POST["category"]
         notes = request.POST["notes"]
-        is_private = request.POST["isPrivate"]
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        # TODO: remove this from ever being sent
+        #is_private = request.POST["isPrivate"]
+        # TODO: add shared_with permissions
     except:
         raise Http404()
         
-    # Set the is_private boolean
-    if (is_private == "true"):
-        is_private = True
-    else:
-        is_private = False
-
-    # Add any provided data to the inkling
+    # Update the inkling
     if (location):
         inkling.location = location
-        inkling.num_location_changes += 1
     if (date):
-        # Create a Python date object
         date_split = date.split("T")[0].split("-")
         date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
         inkling.date = date
-        inkling.num_date_changes += 1
     if (time):
         inkling.time = time
-        inkling.num_time_changes += 1
-    if (category):
-        inkling.category = category
-        inkling.num_category_changes += 1
     if (notes):
         inkling.notes = notes
-        inkling.num_notes_changes += 1
 
     # Save the inkling
     inkling.save()
 
-    # Add the inkling to the logged in member's inkling
+    # Add the inkling to the logged-in member's inklings
     member.inklings.add(inkling)
 
-    # Create and return the JSON object
-    data = { "success" : True }
-    response = simplejson.dumps(data)
-    return HttpResponse(response, mimetype = "application/json")
+    return HttpResponse()
 
 
+# TODO: fix this; invites should not occur until the inkling is actually created; therefore, this should no longer work...
 @csrf_exempt
 def s_num_invited_friends_view(request):
     """Returns the number of friends who have been invited to the inputted inkling."""
+    # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
@@ -500,133 +550,147 @@ def s_num_invited_friends_view(request):
 
 @csrf_exempt
 def s_inkling_invited_friends_view(request):
-    """Returns the logged in member's friends list with information about whether or not they are invited to theprovided inkling."""
-    
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
+    # Get the logged-in member's friends
+    friends = list(member.friends.all())
+    friends.sort(key = lambda m : m.last_name)  # TODO: I don't think I need to sort this as the sencha sorter will handle it
 
-    member_friends = list(member.friends.all())
-    member_friends.sort(key = lambda m : m.last_name)
+    # Get a list of the logged-in member's friends
+    response_friends = []
+    for m in friends:
+        m.selected = inkling.member_has_pending_invitation(m)
 
-    # Get the name and number of mutual friends for each of the logged in member's friends
-    friends = []
-    for m in member_friends:
-        m.selected = m in inkling.invited_friends.all()
         html = render_to_string( "s_friendInviteeListItem.html", {
             "m" : m,
             "idPrefix" : "invite"
         })
         
-        friends.append({
+        response_friends.append({
             "id" : m.id,
             "lastName" : m.last_name,
             "html": html
         })
     
-    # Sort and add the friends list to the data dictionary
-    data["friends"] = friends
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_friends)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_inkling_invited_groups_view(request):
-    """."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
 
-    # Get the name and number of member for each of the logged in member's groups
-    groups = []
-
-    # Sort the member's group alphabetically
-    member_groups = list(member.friend_groups.all())
-    member_groups.sort(key = lambda b : b.name)
-
-    for b in member_groups:
-        b.selected = True
-        for m in b.members.all():
-            if (m not in inkling.invited_friends.all()):
-                b.selected = False
+    # Get a list of the logged-in member's groups
+    response_groups = []
+    for g in groups:
+        g.selected = True
+        for m in g.members.all():
+            if (not inkling.member_has_pending_invitation(m)):
+                g.selected = False
                 break
+
         html = render_to_string( "s_groupInviteeListItem.html", {
-            "b" : b,
+            "b" : g,  # TODO: change b to g in template
             "idPrefix" : "invite"
         })
-        groups.append({
-            "id" : b.id,
+
+        response_groups.append({
+            "id" : g.id,
             "html" : html
         })
 
-    data["groups"] = groups
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
-
+    response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_invite_group_view(request):
-    """Invites everyone in a group to a certain inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+    """Invites everyone in the inputted group to the inputted inkling."""
+    # Get the logged-in member
     try:
-        group = Group.objects.get(pk = request.POST["itemId"])
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and group
+    try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        group = Group.objects.get(pk = request.POST["itemId"])
     except:
         raise Http404()
 
-    for m in group.members.all():
-        if m not in inkling.invited_friends.all():
-            inkling.invited_friends.add(m)
+    # Make sure the group belongs to the logged-in member
+    if (group.creator != member):
+        raise Http404()
 
-    inkling.save()
+    # Invite everyone in the inputted group to the inputted inkling if they have not yet been invited
+    for m in group.members.all():
+        if (not inkling.member_has_pending_invitation(m)):
+            InklingInvitation.objects.create(sender = member, receiver = m, inkling = inkling)
 
     return HttpResponse()
 
 
 @csrf_exempt
 def s_uninvite_group_view(request):
-    """Uninvites everyone in a group to a certain inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+    """Uninvites everyone in the inputted group from the inputted inkling."""
+    # Get the logged-in member
     try:
-        group = Group.objects.get(pk = request.POST["itemId"])
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and group and the groups which are currently selected by the logged-in member
+    try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        group = Group.objects.get(pk = request.POST["itemId"])
         selected_group_ids = request.POST["selectedGroupIds"]
     except:
         raise Http404()
 
-    # Get a list of groups which are currently fully selected
+    # Get a list of the groups which are currently selected by the logged-in member
     selected_groups = []
     if (selected_group_ids):
         for group_id in selected_group_ids.split(",")[:-1]:
-            b = Group.objects.get(pk = int(group_id))
-            selected_groups.append(b)
+            try:
+                g = Group.objects.get(pk = int(group_id))
+            except:
+                raise Http404()
+            if (g.creator != member):
+                raise Http404()
+            selected_groups.append(g)
 
-    # Loop through each member in the current group and remove them if they are invited to the current inkling and they are not part of another selected group
+    # Loop through each member in the inputted group and remove their invitation if they are not part of any selected group
     for m in group.members.all():
-        if (m in inkling.invited_friends.all()):
+        if (inkling.member_has_pending_invitation(m)):
             remove = True
             for b in selected_groups:
                 if (m in b.members.all()):
@@ -634,114 +698,137 @@ def s_uninvite_group_view(request):
                     break
 
             if (remove):
-                inkling.invited_friends.remove(m)
-
-    # Save the inkling
-    inkling.save()
+                try:
+                    invitation = InklingInvitation.objects.get(sender = member, receiver = m, inkling = inkling)
+                    invitation.delete()
+                except:
+                    raise Http404()
 
     return HttpResponse()
 
 
 @csrf_exempt
 def s_invite_member_view(request):
-    """Invites one of the logged in member's friends to a certain inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+    """Invites the inputted member to the inputted inkling."""
+    # Get the logged-in member
     try:
-        m = Member.objects.get(pk = request.POST["itemId"])
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and member
+    try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
     except:
         raise Http404()
 
-    if m not in inkling.invited_friends.all():
-        inkling.invited_friends.add(m)
-        inkling.save()
+    # Make sure the inputted member is a friend of the logged-in member
+    if (m not in member.friends.all()):
+        raise Http404()
+    
+    # Invite the inputted member to the inputted inkling if they have not already been invited
+    if (not inkling.member_has_pending_invitation(m)):
+        InklingInvitation.objects.create(sender = member, receiver = m, inkling = inkling)
 
     return HttpResponse()
 
 
 @csrf_exempt
 def s_uninvite_member_view(request):
-    """Uninvites one of the logged in member's friends to a certain inkling."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+    """Uninvites the inputted member from the inputted inkling."""
+    # Get the logged-in member
     try:
-        m = Member.objects.get(pk = request.POST["itemId"])
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and member
+    try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
     except:
         raise Http404()
 
-    if m in inkling.invited_friends.all():
-        inkling.invited_friends.remove(m)
-        inkling.save()
+    # Make sure the inputted member is a friend of the logged-in member
+    if (m not in member.friends.all()):
+        raise Http404()
+    
+    # Uninvite the inputted member from the inputted inkling
+    try:
+        invitation = InklingInvitation.objects.get(sender = member, receiver = m, inkling = inkling)
+        invitation.delete()
+    except:
+        raise Http404()
 
     return HttpResponse()
 
 
+# TODO: combine this with the other functions which do nearly the same thing...
 @csrf_exempt
 def s_friends_view(request):
-    """Returns the."""
+    """Returns a list of the logged-in member's friends."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
+    # Get the mode
     try:
         mode = request.POST["mode"]
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
+    # Get the list of the logged-in member's friends
+    friends = list(member.friends.all())
+    friends.sort(key = lambda m : m.last_name) # TODO: I don't think I need this
 
-    member_friends = list(member.friends.all())
-    member_friends.sort(key = lambda m : m.last_name)
-
-    # Get the name and number of mutual friends for each of the logged in member's friends
-    friends = []
-    for m in member_friends:
+    # Get the HTML for each of the logged-in member's friends
+    response_friends = []
+    for m in friends:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : mode == "friends",
-            "include_selection_item" : mode == "invite"
+            "include_delete_items" : mode == "friends", # TODO: get rid of this
+            "include_selection_item" : mode == "invite" # TODO: get rid of this
         })
         
-        friends.append({
+        response_friends.append({
             "id" : m.id,
             "lastName" : m.last_name,
             "html": html
         })
     
-    # Sort and add the friends list to the data dictionary
-    data["friends"] = friends
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_friends)
     return HttpResponse(response, mimetype = "application/json")
 
 
+# TODO: get rid of this possibly?
+# TODO: update all of this function's comments
 @csrf_exempt
 def s_groups_view(request):
-    """Returns the HTML for the friends view groups content."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns a list of the logged-in member's groups."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the POST data
     try:
         include_all_groups_group = request.POST["includeAllGroupsGroup"]
         invitees_mode = request.POST["inviteesMode"]
     except:
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
-
     # Get the name and number of member for each of the logged in member's groups
-    groups = []
+    response_groups = []
 
     if (include_all_groups_group == "true"):
-        groups.append({
+        response_groups.append({
             "text" : "All Groups",
             "value" : -1,
         })
@@ -750,19 +837,18 @@ def s_groups_view(request):
             "allFriendsItem" : True,
             "idPrefix" : "groups"
         })
-        groups.append({
+        response_groups.append({
             "id" : -1,
             "html" : html
         })
 
-
     # Sort the member's group alphabetically
-    member_groups = list(member.friend_groups.all())
-    member_groups.sort(key = lambda b : b.name)
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda b : b.name)
     
-    for b in member_groups:
+    for b in groups:
         if (include_all_groups_group == "true"):
-            groups.append({
+            response_groups.append({
                 "text" : b.name,
                 "value" : b.id
             })
@@ -772,7 +858,7 @@ def s_groups_view(request):
                 "allFriendsItem" : False,
                 "idPrefix" : "groups"
             })
-            groups.append({
+            response_groups.append({
                 "id" : b.id,
                 "html" : html
             })
@@ -780,72 +866,73 @@ def s_groups_view(request):
             html = render_to_string( "s_groupListItem.html", {
                 "b" : b,
             })
-            groups.append({
+            response_groups.append({
                 "id" : b.id,
                 "html" : html
             })
 
-    data["groups"] = groups
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_friend_requests_view(request):
-    """Returns the HTML for the friend requests."""
+    """Returns a list of the logged-in member's friend requests."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    # Get an alphabetical list of the logged-in member's friend requests
+    friend_requests = list(member.friend_requests_received.filter(status = "pending"))
+    friend_requests.sort(key = lambda r : r.sender.last_name)
 
-    # Create a dictionary for the data
-    data = {}
-
-    member_friend_requests = list(member.friend_requests.all())
-    member_friend_requests.sort(key = lambda m : m.last_name)
-
-    # Get the name and number of mutual friends for each of the logged in member's friend requests
-    friend_requests = []
-    for m in member_friend_requests:
-        m.num_mutual_friends = member.get_num_mutual_friends(m)
+    # Get the HTML for the logged-in member's friends requests list items
+    response_friend_requests = []
+    for request in friend_requests:
+        m = request.sender
+        m.num_mutual_friends = m.get_num_mutual_friends(m)
+        
         html = render_to_string( "s_friendRequestListItem.html", {
             "m" : m
         })
         
-        friend_requests.append({
+        response_friend_requests.append({
             "id" : m.id,
             "html": html
         })
     
-    # Sort and add the friends list to the data dictionary
-    data["friendRequests"] = friend_requests
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_friend_requests)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_num_friend_requests_view(request):
-    """Returns the number of members who have requested to be friends with the logged in member."""
+    """Returns the number of pending friend requests the logged-in member has."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    return HttpResponse(member.friend_requests.count())
+    # Return the number of pending friend requests the logged-in member has
+    return HttpResponse(member.friend_requests_received.filter(status = "pending").count())
 
 
+# TODO: definitely delete this
 @csrf_exempt
 def s_profile_view(request):
-    """Returns the HTML for the logged in user's profile."""
+    """Returns the HTML for the profile page."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-    t =  render_to_response( "s_profile.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
+    # Return the HTML for the profile page
     return render_to_response( "s_profile.html",
         { "member" : member },
         context_instance = RequestContext(request) )
@@ -853,18 +940,18 @@ def s_profile_view(request):
 
 @csrf_exempt
 def s_people_search_view(request):
-    """Returns the people who match the search question."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Returns a list of member's who match the inputted query."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
     # Get the search query
     try:
         query = request.POST["query"]
     except:
         raise Http404()
-
-    # Create a dictionary for the data
-    data = {}
 
     # Split the query into words
     query_split = query.split()
@@ -877,22 +964,21 @@ def s_people_search_view(request):
     elif (len(query_split) == 2):
         members = Member.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
 
-    # if the query is more than two words long, return no results
+    # If the query is more than two words long, return no results
     else:
         members = []
-    
 
     # Sort the members by last name
     members = list(members)
     members.sort(key = lambda m : m.last_name)
 
     # Get the HTML for each member's list item
-    people = []
+    response_members = []
     for m in members:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
-        m.is_friend = False
-        if m in member.friends.all():
-            m.is_friend = True
+        
+        m.is_friend = m in member.friends.all()
+        
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
             "member" : member,
@@ -901,101 +987,129 @@ def s_people_search_view(request):
             "include_selection_item" : False
         })
         
-        people.append({
+        response_members.append({
             "id" : m.id,
             "html": html
         })
 
-    # Add the people list to the data dictionary
-    data["people"] = people
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
 
 
+# TODO: rename as send_friend_request_view
 @csrf_exempt
 def s_add_friend_view(request):
-    """Adds a new friend."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Sends a friend request from the logged-in member to the inputted member."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the member to whom the logged-in member is sending the friend request
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    m.friend_requests.add(member)
+    # Make sure the two members are not already friends and no friend request already exists
+    if ((m in member.friends.all()) or (member.has_pending_friend_request_to(m))):
+        raise Http404()
+
+    # Send a friend request from the logged-in member
+    FriendRequest.objects.create(sender = member, receiver = m)
 
     return HttpResponse()
 
 
 @csrf_exempt
 def s_respond_to_request_view(request):
-    """Adds a new friend."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Implements the logged-in member's response to a friend request from the inputted memeber."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the POST data
+    # Get the member who sent the request and the logged-in member's response to it
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
         response = request.POST["response"]
     except:
         raise Http404()
 
-    # Raise and error if no request exists or the two members are already friends
-    if ((m not in member.friend_requests.all()) or (m in member.friends.all())):
+    # Make sure the two members are not already friends and that the friend request actually exists
+    if ((m in member.friends.all()) or (member.has_pending_friend_request_to(m))):
         raise Http404()
+
+    # Get the friend request
+    friend_request = FriendRequest.objects.get(sender = m, receiver = member)
 
     # Add the friendship if the logged in member accepted the request
     if (response == "accept"):
         member.friends.add(m)
+        friend_request.status = "accepted"
+    else:
+        friend_request.status = "declined"
+    
+    # Save the updated friend request
+    friend_request.save()
 
-    # Remove the friend request
-    member.friend_requests.remove(m)
-
-    return HttpResponse(member.friend_requests.count())
+    # TODO: get rid of this return value if possible
+    return HttpResponse(FriendRequest.objects.filter(receiver = member, status = "pending").count())
 
 
 @csrf_exempt
 def s_remove_friend_view(request):
-    """Removes a friend."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Removes a friend from the logged-in member's friends list."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the member who is to be removed from the logged-in member's friends list
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    for group in member.friend_groups.all():
-        if m in group.members.all():
+    # Make sure the two members are actually friends
+    if (m not in member.friends.all()):
+        raise Http404()
+
+    # Remove the inputted member from the logged-in member's groups
+    for group in member.group_set.all():
+        if (m in group.members.all()):
             group.members.remove(m)
 
-    try:
-        member.friends.remove(m)
-    except:
-        raise Http404()
+    # Remove the inputted member from the logged-in member's friends list
+    member.friends.remove(m)
 
     return HttpResponse()
 
 
 @csrf_exempt
 def s_delete_group_view(request):
-    """Deletes a group."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Deletes one of the logged-in member's groups."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the inputted group
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
     except:
         raise Http404()
 
-    try:
-        member.friend_groups.remove(group)
-    except:
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
         raise Http404()
 
+    # Delete the inputted group
     group.delete()
     
     return HttpResponse()
@@ -1003,66 +1117,71 @@ def s_delete_group_view(request):
 
 @csrf_exempt
 def s_group_members_view(request):
-    """Returns the."""
+    """Returns a list of the logged-in member's friends and if they are in the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get the group
+    # Get the inputted group
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
     except:
         raise Http404()
 
-    if (group not in member.friend_groups.all()):
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
         raise Http404()
 
-    # Create a dictionary for the data
-    data = {}
+    # Get a list of the logged-in members friends
+    friends = list(member.friends.all())
+    friends.sort(key = lambda m : m.last_name) # TODO: try to remove this and just use a sencha sorter
 
-    member_friends = list(member.friends.all())
-    member_friends.sort(key = lambda m : m.last_name)
-
-    # Get the name and number of mutual friends for each of the logged in member's friends
-    friends = []
-    for m in member_friends:
+    # Get the HTML for each of the logged-in member's friends' list item (and whether or not they are in the inputted group)
+    response_friends = []
+    for m in friends:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : False,
-            "include_selection_item" : True,
+            "include_delete_items" : False, # TODO: remove this?
+            "include_selection_item" : True, # TODO: remove this?
             "group" : group
         })
         
-        friends.append({
+        response_friends.append({
             "id" : m.id,
             "lastName" : m.last_name,
             "html": html
         })
     
-    # Sort and add the friends list to the data dictionary
-    data["friends"] = friends
-
     # Create and return a JSON object
-    response = simplejson.dumps(data)
+    response = simplejson.dumps(response_friends)
     return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
 def s_add_to_group_view(request):
-    """Adds a member to a group."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Adds the inputted member to the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the inputted group and the member to add to it
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    if (group not in member.friend_groups.all()):
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
         raise Http404()
 
+    # Add the inputted member to the inputted group
     group.members.add(m)
     
     return HttpResponse()
@@ -1070,54 +1189,71 @@ def s_add_to_group_view(request):
 
 @csrf_exempt
 def s_remove_from_group_view(request):
-    """Removes a member from a group."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Removes the inputted member from the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the inputted group and the member to remove from it
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
         m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
-    if (group not in member.friend_groups.all()):
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
         raise Http404()
 
-    try:
-        group.members.remove(m)
-    except:
-        raise Http404()
+    # Remove the inputted member from the inputted group
+    group.members.remove(m)
     
     return HttpResponse()
 
 
+# TODO: Remove csrf_exempt
 @csrf_exempt
 def s_create_group_view(request):
-    """Creates a new group and adds it to the logged in member's groups."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Creates a new group and adds it to the logged-in member's groups."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    group = Group(name = "")
-    group.save()
-
-    member.friend_groups.add(group)
+    # Create a new group with no name
+    group = Group.objects.create(creator = member, name = "")
     
+    # Return the new group's ID
     return HttpResponse(group.id)
 
 
 @csrf_exempt
 def s_rename_group_view(request):
-    """Renames a group."""
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
+    """Renames the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
 
+    # Get the inputted group and the name to change it to
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
         name = request.POST["name"]
     except:
         raise Http404()
 
+    # Make sure the group belongs to the logged-in member
+    if (group.creator != member):
+        raise Http404()
+
+    # Update and save the inputted group's name
     group.name = name
     group.save()
     
+    # Return the new group's ID
+    # TODO: get rid of this?
     return HttpResponse(group.id)

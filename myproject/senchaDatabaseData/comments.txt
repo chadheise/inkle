@@ -1,8 +1,0 @@
-# INKLING ID | CREATOR MEMBER ID | TEXT
-1 | 1 | I'm so pumped for some karaoke!
-1 | 2 | I call "It's Raining Men!"
-1 | 4 | "Sexy Bitch" for me.
-1 | 5 | Coldplay all the way
-2 | 1 | This is gonna be so lame.
-5 | 5 | When do you guys wanna meet up?
-5 | 6 | I'm thinking the earlier the better.

@@ -1,100 +1,95 @@
 from inkle.models import *
+
 import shutil
+import datetime
 
 def load_members():
-    for line in open("senchaDatabaseData/members.txt", "r"):
+    for line in open("senchaDatabaseData/members.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        m = Member(first_name = data[0], last_name = data[1], username = data[2], email = data[3], birthday = datetime.date(day = int(data[4]), month = int(data[5]), year = int(data[6])), gender = data[7], verified = data[8], is_staff = data[9])
-        m.set_password("password")
-        m.update_verification_hash()
-        m.save()
-        if (data[7] == "Male"):
-            shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(m.id) + ".jpg")
+
+        member = Member(first_name = data[0], last_name = data[1], username = data[2], email = data[2], birthday = datetime.date(day = int(data[3]), month = int(data[4]), year = int(data[5])), gender = data[6], is_staff = data[7])
+        member.set_password("password")
+        member.save()
+        
+        if (data[6] == "Male"):
+            shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(member.id) + ".jpg")
         else:
-            shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(m.id) + ".jpg")
+            shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(member.id) + ".jpg")
+
 
 def load_friendships():
-    for line in open("senchaDatabaseData/friendships.txt", "r"):
+    for line in open("senchaDatabaseData/friendships.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
+        
         m0 = Member.objects.get(pk = data[0])
         m1 = Member.objects.get(pk = data[1])
+
         if ((m0 != m1) and (m1 not in m0.friends.all())):
             m0.friends.add(m1)
 
-def load_groups():
-    first = True
-    for line in open("senchaDatabaseData/groups.txt", "r"):
-        if first:
-            first = False
-            continue
+
+def load_friend_requests():
+    for line in open("senchaDatabaseData/friendRequests.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        b = Group(name = data[0])
-        b.save()
+        
+        m0 = Member.objects.get(pk = data[0])
+        m1 = Member.objects.get(pk = data[1])
+        
+        if ((m0 != m1) and (m1 not in m0.friends.all()) and (not m0.has_pending_friend_request_to(m1)) and (not m1.has_pending_friend_request_to(m0))):
+            FriendRequest.objects.create(sender = m0, receiver = m1)
 
-        m = Member.objects.get(pk = data[1])
-        m.friend_groups.add(b)
 
-        group_members = [x.strip() for x in data[2].split(",")]
-        for m_id in group_members:
-            m = Member.objects.get(pk = m_id)
-            b.members.add(m)
+def load_groups():
+    for line in open("senchaDatabaseData/groups.txt", "r").readlines()[1:]:
+        data = [x.strip() for x in line.split("|")]
+
+        creator = Member.objects.get(pk = data[1])
+        group = Group.objects.create(creator = creator, name = data[0])
+
+        for member_id in [x.strip() for x in data[2].split(",")]:
+            member = Member.objects.get(pk = member_id)
+            if (member in creator.friends.all()):
+                group.members.add(member)
 
 
 def load_inklings():
-    first = True
-    for line in open("senchaDatabaseData/inklings.txt", "r"):
+    for line in open("senchaDatabaseData/inklings.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        if first:
-            first = False
-            continue
 
-        creator = Member.objects.get(pk = data[7])
+        creator = Member.objects.get(pk = data[5])
+        inkling = Inkling.objects.create(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], notes = data[3])
 
-        is_private = True
-        if (data[5] == "False"):
-            is_private = False
-
-        i = Inkling(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], category = data[3], notes = data[4], is_private = is_private)
-        i.save()
-
-        inkling_members = [x.strip() for x in data[6].split(",")]
-        for m_id in inkling_members:
-            m = Member.objects.get(pk = m_id)
-            m.inklings.add(i)
+        for member_id in [x.strip() for x in data[4].split(",")]:
+            member = Member.objects.get(pk = member_id)
+            member.inklings.add(inkling)
 
 
-def load_comments():
-    first = True
-    for line in open("senchaDatabaseData/comments.txt", "r"):
+def load_feed_comments():
+    for line in open("senchaDatabaseData/feedComments.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        if first:
-            first = False
-            continue
-        i = Inkling.objects.get(pk = data[0])
-        m = Member.objects.get(pk = data[1])
+        
+        inkling = Inkling.objects.get(pk = data[0])
+        creator = Member.objects.get(pk = data[1])
 
-        c = Comment(inkling = i, creator = m, text = data[2])
-        c.save()
+        FeedComment.objects.create(creator = creator, inkling = inkling, text = data[2])
 
 
-def load_events():
-    first = True
-    for line in open("senchaDatabaseData/events.txt", "r"):
+def load_feed_updates():
+    for line in open("senchaDatabaseData/feedUpdates.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        if first:
-            first = False
-            continue
-        i = Inkling.objects.get(pk = data[0])
-        m = Member.objects.get(pk = data[1])
 
-        e = Event(inkling = i, member = m, category = data[2], text = data[3])
-        e.save()
+        inkling = Inkling.objects.get(pk = data[0])
+        creator = Member.objects.get(pk = data[1])
+
+        if (inkling in creator.inklings.all()):
+            FeedUpdate.objects.create(creator = creator, inkling = inkling, update_type = data[2], updated_to = data[3])
 
 
-def populate_dev_database():
+def populate_database():
     load_members()
     load_friendships()
+    load_friend_requests()
     load_groups()
     load_inklings()
-    load_comments()
-    load_events()
+    load_feed_comments()
+    load_feed_updates()
