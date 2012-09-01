@@ -1,0 +1,402 @@
+!SESSION 2012-08-26 13:59:29.755 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2012-08-26 14:00:35.065
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2012-08-26 14:06:02.451
+!MESSAGE Failed to load properties file for project 'inkle'
+
+!ENTRY org.eclipse.ui 2 2 2012-08-26 14:07:06.268
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY org.eclipse.ui 4 0 2012-08-26 14:07:15.609
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.IllegalArgumentException: Path must include project and resource name: /inkle
+	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:63)
+	at org.eclipse.core.internal.resources.Workspace.newResource(Workspace.java:2163)
+	at org.eclipse.core.internal.resources.Container.getFolder(Container.java:222)
+	at org.eclipse.ui.dialogs.WizardNewFolderMainPage.createFolderHandle(WizardNewFolderMainPage.java:358)
+	at org.eclipse.ui.dialogs.WizardNewFolderMainPage.isFilteredByParent(WizardNewFolderMainPage.java:818)
+	at org.eclipse.ui.dialogs.WizardNewFolderMainPage.validatePage(WizardNewFolderMainPage.java:795)
+	at org.eclipse.ui.dialogs.WizardNewFolderMainPage.handleEvent(WizardNewFolderMainPage.java:684)
+	at org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup.handleEvent(ResourceAndContainerGroup.java:364)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4134)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1458)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1466)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:1271)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3980)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3619)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:825)
+	at org.eclipse.jface.window.Window.open(Window.java:801)
+	at org.eclipse.ui.internal.actions.NewWizardShortcutAction.run(NewWizardShortcutAction.java:135)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:498)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:584)
+	at org.eclipse.jface.action.ActionContributionItem.access$2(ActionContributionItem.java:501)
+	at org.eclipse.jface.action.ActionContributionItem$5.handleEvent(ActionContributionItem.java:411)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4134)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1458)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1481)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1466)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:1271)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3980)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3619)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.run(PartRenderingEngine.java:1022)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:916)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:86)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:585)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:540)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:124)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+!SESSION 2012-08-26 15:22:14.092 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2012-08-26 15:57:26.050
+!MESSAGE Unknown error: org.eclipse.core.runtime.OperationCanceledException
+!STACK 0
+org.eclipse.core.runtime.OperationCanceledException
+	at org.eclipse.core.internal.utils.Policy.checkCanceled(Policy.java:106)
+	at org.eclipse.core.internal.localstore.RefreshLocalVisitor.visit(RefreshLocalVisitor.java:265)
+	at org.eclipse.core.internal.localstore.UnifiedTree.accept(UnifiedTree.java:110)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.refreshResource(FileSystemResourceManager.java:920)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.refresh(FileSystemResourceManager.java:904)
+	at org.eclipse.core.internal.resources.Resource.refreshLocal(Resource.java:1700)
+	at com.android.ide.eclipse.adt.internal.build.builders.PostCompilerBuilder.build(PostCompilerBuilder.java:671)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:728)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:199)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:321)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:396)
+	at org.eclipse.core.internal.resources.Project$1.run(Project.java:618)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2344)
+	at org.eclipse.core.internal.resources.Project.internalBuild(Project.java:597)
+	at org.eclipse.core.internal.resources.Project.build(Project.java:124)
+	at com.android.ide.eclipse.adt.internal.project.ProjectHelper.doFullIncrementalDebugBuild(ProjectHelper.java:1000)
+	at com.android.ide.eclipse.adt.internal.launch.LaunchConfigDelegate.launch(LaunchConfigDelegate.java:147)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:855)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:704)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1047)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1251)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.ui 2 2 2012-08-26 16:08:04.452
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-26 16:08:04.647
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Document is closed
+	at org.eclipse.ui.internal.console.IOConsolePartitioner.streamAppended(IOConsolePartitioner.java:453)
+	at org.eclipse.ui.console.IOConsoleOutputStream.notifyParitioner(IOConsoleOutputStream.java:245)
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:240)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:765)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-26 16:08:04.647
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Output Stream is closed
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:230)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:767)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-26 16:08:04.647
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Output Stream is closed
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:230)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at org.eclipse.ui.console.MessageConsoleStream.println(MessageConsoleStream.java:81)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:769)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+!SESSION 2012-08-26 21:24:29.422 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2012-08-26 21:24:37.594
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.ui 2 2 2012-08-26 21:28:32.552
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2012-08-27 19:01:13.898
+!MESSAGE Failed to load properties file for project 'Support13Demos'
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-27 19:41:03.187
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Document is closed
+	at org.eclipse.ui.internal.console.IOConsolePartitioner.streamAppended(IOConsolePartitioner.java:453)
+	at org.eclipse.ui.console.IOConsoleOutputStream.notifyParitioner(IOConsoleOutputStream.java:245)
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:240)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:765)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-27 19:41:03.190
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Output Stream is closed
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:230)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:767)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+
+!ENTRY org.eclipse.ui.console 4 120 2012-08-27 19:41:03.190
+!MESSAGE Error logged from Console plug-in: 
+!STACK 0
+java.io.IOException: Output Stream is closed
+	at org.eclipse.ui.console.IOConsoleOutputStream.encodedWrite(IOConsoleOutputStream.java:230)
+	at org.eclipse.ui.console.IOConsoleOutputStream.write(IOConsoleOutputStream.java:225)
+	at org.eclipse.ui.console.MessageConsoleStream.print(MessageConsoleStream.java:56)
+	at org.eclipse.ui.console.MessageConsoleStream.println(MessageConsoleStream.java:81)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.printToStream(DdmsPlugin.java:769)
+	at com.android.ide.eclipse.ddms.DdmsPlugin.access$1(DdmsPlugin.java:761)
+	at com.android.ide.eclipse.ddms.DdmsPlugin$2.printLog(DdmsPlugin.java:174)
+	at com.android.ddmlib.Log.println(Log.java:328)
+	at com.android.ddmlib.Log.e(Log.java:230)
+	at com.android.ddmuilib.logcat.LogCatReceiver$1.run(LogCatReceiver.java:117)
+	at java.lang.Thread.run(Thread.java:680)
+!SESSION 2012-08-27 19:44:31.543 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.resources 4 567 2012-08-27 19:44:36.115
+!MESSAGE Workspace restored, but some problems occurred.
+!SUBENTRY 1 org.eclipse.core.resources 4 567 2012-08-27 19:44:36.115
+!MESSAGE Could not read metadata for 'Support13Demos'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: The project description file (.project) for 'Support13Demos' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.read(FileSystemResourceManager.java:851)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:874)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:854)
+	at org.eclipse.core.internal.resources.SaveManager.restore(SaveManager.java:703)
+	at org.eclipse.core.internal.resources.SaveManager.startup(SaveManager.java:1528)
+	at org.eclipse.core.internal.resources.Workspace.startup(Workspace.java:2502)
+	at org.eclipse.core.internal.resources.Workspace.open(Workspace.java:2251)
+	at org.eclipse.core.resources.ResourcesPlugin.start(ResourcesPlugin.java:439)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:711)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:702)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:683)
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:381)
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.start(AbstractBundle.java:300)
+	at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:440)
+	at org.eclipse.osgi.internal.loader.BundleLoader.setLazyTrigger(BundleLoader.java:263)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:107)
+	at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findLocalClass(ClasspathManager.java:469)
+	at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.findLocalClass(DefaultClassLoader.java:216)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:395)
+	at org.eclipse.osgi.internal.loader.SingleSourcePackage.loadClass(SingleSourcePackage.java:35)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(BundleLoader.java:461)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:421)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:412)
+	at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadClass(DefaultClassLoader.java:107)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:125)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+!SUBENTRY 2 org.eclipse.core.resources 4 567 2012-08-27 19:44:36.116
+!MESSAGE The project description file (.project) for 'Support13Demos' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+!SUBENTRY 1 org.eclipse.core.resources 4 567 2012-08-27 19:44:36.116
+!MESSAGE Could not read metadata for 'inkle'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: The project description file (.project) for 'inkle' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.read(FileSystemResourceManager.java:851)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:874)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:854)
+	at org.eclipse.core.internal.resources.SaveManager.restore(SaveManager.java:703)
+	at org.eclipse.core.internal.resources.SaveManager.startup(SaveManager.java:1528)
+	at org.eclipse.core.internal.resources.Workspace.startup(Workspace.java:2502)
+	at org.eclipse.core.internal.resources.Workspace.open(Workspace.java:2251)
+	at org.eclipse.core.resources.ResourcesPlugin.start(ResourcesPlugin.java:439)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:711)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:702)
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:683)
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:381)
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.start(AbstractBundle.java:300)
+	at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:440)
+	at org.eclipse.osgi.internal.loader.BundleLoader.setLazyTrigger(BundleLoader.java:263)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:107)
+	at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findLocalClass(ClasspathManager.java:469)
+	at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.findLocalClass(DefaultClassLoader.java:216)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:395)
+	at org.eclipse.osgi.internal.loader.SingleSourcePackage.loadClass(SingleSourcePackage.java:35)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(BundleLoader.java:461)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:421)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:412)
+	at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadClass(DefaultClassLoader.java:107)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:125)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+!SUBENTRY 2 org.eclipse.core.resources 4 567 2012-08-27 19:44:36.116
+!MESSAGE The project description file (.project) for 'inkle' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+
+!ENTRY org.eclipse.core.net 1 0 2012-08-27 19:44:37.421
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.ui 2 2 2012-08-27 19:47:30.794
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2012-08-27 19:54:21.500
+!MESSAGE Failed to load properties file for project 'inkle'
+
+!ENTRY org.eclipse.ui 4 0 2012-08-27 20:14:12.748
+!MESSAGE Unhandled event loop exception
+!STACK 0
+org.eclipse.swt.SWTException: Failed to execute runnable (org.eclipse.swt.SWTException: Widget is disposed)
+	at org.eclipse.swt.SWT.error(SWT.java:4361)
+	at org.eclipse.swt.SWT.error(SWT.java:4276)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:138)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3621)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.run(PartRenderingEngine.java:1022)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:916)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:86)
+	at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:585)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:540)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:124)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+Caused by: org.eclipse.swt.SWTException: Widget is disposed
+	at org.eclipse.swt.SWT.error(SWT.java:4361)
+	at org.eclipse.swt.SWT.error(SWT.java:4276)
+	at org.eclipse.swt.SWT.error(SWT.java:4247)
+	at org.eclipse.swt.widgets.Widget.error(Widget.java:775)
+	at org.eclipse.swt.widgets.Widget.checkWidget(Widget.java:569)
+	at org.eclipse.swt.custom.StyledText.getCharCount(StyledText.java:3849)
+	at com.android.sdkuilib.internal.repository.sdkman2.LogWindow.appendLine(LogWindow.java:318)
+	at com.android.sdkuilib.internal.repository.sdkman2.LogWindow.access$300(LogWindow.java:51)
+	at com.android.sdkuilib.internal.repository.sdkman2.LogWindow$6.run(LogWindow.java:269)
+	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)
+	... 23 more
+!SESSION 2012-08-28 20:51:42.756 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2012-08-28 20:51:50.002
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.ui 2 2 2012-08-28 20:52:16.520
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+!SESSION 2012-08-28 20:53:02.233 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.6.0_33
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/chadheise/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/chadheise/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2012-08-28 20:53:07.814
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.ui 2 2 2012-08-28 20:55:38.759
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
