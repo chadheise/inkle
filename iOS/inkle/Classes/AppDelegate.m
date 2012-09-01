@@ -74,7 +74,7 @@
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
-    self.viewController.invokeString = invokeString;
+    //self.viewController.invokeString = invokeString;
     self.viewController.view.frame = viewBounds;
     
     // check whether the current orientation is supported: if it is, keep it, rather than forcing a rotation

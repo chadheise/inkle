@@ -54,6 +54,17 @@ Ext.define("inkle.view.Login", {
 			    html: "<center style='padding-top: 20px;'>OR</center>"
 			},
 			
+			/*{
+				xtype: "button",
+				itemId: "facebookLoginButton",
+				text: "Login with Facebook",
+				ui: "confirm"
+			},*/
+			/*{
+				xtype: "panel",
+				html: "<button onclick="login()">Login</button>"
+			}*/
+			
 			{
 			    xtype: "panel",
 			    html: "<center style='padding-top: 20px; color: blue;'>Login with Facebook</center>"
