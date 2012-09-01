@@ -24,6 +24,9 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array>
+		<string>*.inkleit.com</string>
+		<string>127.0.0.1</string>
+		<string>*.googleapis.com</string>
 		<string>m.facebook.com</string>
 		<string>graph.facebook.com</string>
 		<string>api.facebook.com</string>
