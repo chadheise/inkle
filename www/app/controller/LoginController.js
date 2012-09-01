@@ -12,7 +12,8 @@ Ext.define("inkle.controller.LoginController", {
         },
         control: {
             loginView: {
-                loginSubmitButtonTapped: "loginSubmit"
+                loginSubmitButtonTapped: "loginSubmit",
+				facebookLoginSubmitButtonTapped: "facebookLoginSubmit"
             }
         }
     },
@@ -89,5 +90,41 @@ Ext.define("inkle.controller.LoginController", {
         	    Ext.Msg.alert("Error", response.errors);
          	}
         });
+    },
+	facebookLoginSubmit: function() {
+        console.log("facebookLoginSubmit");
+		FB.login(
+                 function(response) {
+                 if (response.session) {
+                 alert('logged in');
+                 } else {
+                 alert('not logged in');
+                 }
+                 },
+                 { scope: "email" }
+                 );
+		//var loginView = this.getLoginView();
+
+		/*loginView.submit({
+			method: "POST",
+						
+         	waitMsg: {
+         		xtype: "loadmask",
+            	message: "Processing",
+            	cls : "demos-loading"
+         	},
+         				
+         	scope: this,
+         				
+         	success: function(form, response) {
+            	console.log("Login successful");
+            	this.activateMainTabView();
+         	},
+         				
+         	failure: function(form, response) {
+         		console.log("Login failed");
+        	    Ext.Msg.alert("Error", response.errors);
+         	}
+        });*/
     }
 });
