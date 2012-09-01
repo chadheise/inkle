@@ -1,5 +1,0 @@
-# INKLING ID | MEMBER ID | EVENT CATEGORY | TEXT
-1 | 1 | time | Jacob Wenger updated the time for this inkling to 5:30 PM
-1 | 2 | location | Chad Heise updated the location for this inkling to Brother's Bar & Grill
-1 | 3 | notes | David Ulery updated the notes for this inkling
-1 | 2 | category | Chad Heise updated the category for this inkling

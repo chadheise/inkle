@@ -113,12 +113,7 @@ Ext.define("inkle.view.Friends", {
         						},
 								extraParams: {
 									mode: "friends"
-								},
-        						
-        						reader: {
-        							type: "json",
-        							rootProperty: "friends"
-        						}
+								}
         					},
         					grouper: {
 								groupFn: function(record) {
@@ -154,12 +149,7 @@ Ext.define("inkle.view.Friends", {
         						extraParams: {
                     				includeAllGroupsGroup: "false",
                     				inviteesMode: "false"
-								},
-        	
-        						reader: {
-        							type: "json",
-        							rootProperty: "groups"
-        						}
+								}
         					},
         					autoLoad: true
         				}
