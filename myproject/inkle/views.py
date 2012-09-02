@@ -1740,7 +1740,7 @@ def get_member_inklings_view(request):
 
 
 def login_view(request):
-    """Either logs in a member or returns the login errors."""
+    """Either logs in a member or returns the login error."""
     # If a member is already logged in, redirect them to the home page
     if ("member_id" in request.session):
         return HttpResponseRedirect("/")

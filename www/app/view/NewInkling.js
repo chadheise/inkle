@@ -98,8 +98,7 @@ Ext.define("inkle.view.NewInkling", {
 								},
 								url: "http://127.0.0.1:8000/sencha/groups/",
 								extraParams: {
-									includeAllGroupsGroup: "true",
-									inviteesMode: "false"
+									view: "allInklings"
 								},
 								reader: {
 									type: "json",

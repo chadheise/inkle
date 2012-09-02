@@ -99,7 +99,7 @@ Ext.define("inkle.view.AllInklings", {
                     { xtype: "spacer" },
                     {
                     	xtype: "container",
-                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/icons/Feed-3.png' />",
+                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/mainInkleIcon.png' />",
                     	centered: true
                     },
                     { xtype: "spacer" },
@@ -236,7 +236,13 @@ Ext.define("inkle.view.AllInklings", {
 							],
 							proxy: {
 								type: "ajax",
-								url: "http://127.0.0.1:8000/sencha/allInklingsGroups/"
+								actionMethods: {
+									read: "POST"
+								},
+								url: "http://127.0.0.1:8000/sencha/groups/",
+								extraParams: {
+									view: "allInklings"
+								}
 							},
 							autoLoad: true
 						}

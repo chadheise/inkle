@@ -48,6 +48,18 @@ class FeedUpdate(models.Model):
         elif (self.update_type == "notes"):
             return "icons/Tilted-Calendar.png"
 
+    def get_text(self):
+        """Returns the text for the current feed update."""
+        if (self.update_type == "location"):
+            return "%s updated the location to %s." % (self.creator.get_full_name(), self.updated_to)
+        elif (self.update_type == "date"):
+            return "%s updated the date to %s." % (self.creator.get_full_name(), self.updated_to)
+        elif (self.update_type == "time"):
+            return "%s updated the time to %s." % (self.creator.get_full_name(), self.updated_to)
+        elif (self.update_type == "notes"):
+            return "%s updated the notes." % (self.creator.get_full_name())
+
+
 
 class FeedComment(models.Model):
     """FeedComment class definition."""
@@ -62,7 +74,10 @@ class FeedComment(models.Model):
     # Class methods
     def __unicode__(self):
         """String representation for the current comment."""
-        return "%d: %d - %s (%s)" % (self.id, self.inkling.id, self.text[:20], self.creator.get_full_name())
+        if (len(self.text) <= 20):
+            return "%d: %d - %s (%s)" % (self.id, self.inkling.id, self.text[:20], self.creator.get_full_name())
+        else:
+            return "%d: %d - %s... (%s)" % (self.id, self.inkling.id, self.text[:17].strip(), self.creator.get_full_name())
 
 
 class InklingInvitation(models.Model):
