@@ -208,6 +208,7 @@ class Member(User):
     # General information
     gender = models.CharField(max_length = 1)
     birthday = models.DateField()
+    facebookId = models.BigIntegerField(blank=True, null=True, unique=True)
     
     # Friends
     friends = models.ManyToManyField("self")
