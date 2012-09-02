@@ -89,38 +89,44 @@ Ext.define("inkle.controller.LoginController", {
     },
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
+        var facebookId;
+   		var email;
         FB.login(function(response) {
             if (response.authResponse) {
-                 alert('Welcome!  Fetching your information.... ');
                  FB.api('/me', function(response) {
-                   alert('Good to see you, ' + response.name + '.');
+                   facebookId = response.id;
+           		   email = response.email;
                  });
                } else {
                  alert('User cancelled login or did not fully authorize.');
                }
             }, {scope: 'email,user_birthday'});
-		//var loginView = this.getLoginView();
-
-		/*loginView.submit({
-			method: "POST",
-						
-         	waitMsg: {
-         		xtype: "loadmask",
-            	message: "Processing",
-            	cls : "demos-loading"
-         	},
-         				
-         	scope: this,
-         				
-         	success: function(form, response) {
-            	console.log("Login successful");
+		
+		alert(facebookId);
+        alert(email);
+		
+		//Log the user in to inkle
+		Ext.Ajax.request({
+    		url: "http://127.0.0.1:8000/login/",
+    		params: {
+    			facebookId: facebookId,
+    			email: email
+    		},
+		    success: function(response) {
+				/*if (response.responseText === "True") {
+					this.getInklingFeedButton().show();
+				}
+				else {
+					this.getJoinInklingButton().show();
+				}*/
+				console.log("Login successful");
             	this.activateMainTabView();
-         	},
-         				
-         	failure: function(form, response) {
-         		console.log("Login failed");
-        	    Ext.Msg.alert("Error", response.errors);
-         	}
-        });*/
+        	},
+        	failure: function(response) {
+        		console.log(response.responseText);
+        		Ext.Msg.alert("Error", "Something went wrong.");
+        	},
+        	scope: this
+		});
     }
 });
