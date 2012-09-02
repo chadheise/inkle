@@ -65,8 +65,6 @@ Ext.define("inkle.controller.LoginController", {
 	
     /* Commands */
     loginSubmit: function() {
-        console.log("loginSubmit");
-		
 		var loginView = this.getLoginView();
 
 		loginView.submit({
@@ -78,17 +76,15 @@ Ext.define("inkle.controller.LoginController", {
             	cls : "demos-loading"
          	},
          				
-         	scope: this,
-         				
          	success: function(form, response) {
-            	console.log("Login successful");
             	this.activateMainTabView();
          	},
          				
          	failure: function(form, response) {
-         		console.log("Login failed");
-        	    Ext.Msg.alert("Error", response.errors);
-         	}
+        	    Ext.Msg.alert("Error", response.error);
+         	},
+         	
+         	scope: this
         });
     },
 	facebookLoginSubmit: function() {

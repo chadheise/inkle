@@ -141,11 +141,10 @@ Ext.define("inkle.view.Friends", {
         					],
         					proxy: {
         						type: "ajax",
-        						method: "POST",
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/groups/",
+        						url: "http://127.0.0.1:8000/sencha/friendsViewGroups/",
         						extraParams: {
                     				includeAllGroupsGroup: "false",
                     				inviteesMode: "false"
@@ -172,7 +171,6 @@ Ext.define("inkle.view.Friends", {
         					],
         					proxy: {
         						type: "ajax",
-        						method: "POST",
         						actionMethods: {
         							read: "POST"
         						},

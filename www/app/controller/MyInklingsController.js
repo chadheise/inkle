@@ -318,6 +318,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 			var newInklingInvitedGroupsStore = this.getNewInklingInvitedGroupsList().getStore();
 			newInklingInvitedGroupsStore.setProxy({
 				extraParams: {
+					view: "invites",
 					inklingId: this.getNewInklingView().getData()["inklingId"]
 				}
 			});
