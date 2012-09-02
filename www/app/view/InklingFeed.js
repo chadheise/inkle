@@ -1,16 +1,39 @@
 Ext.define("inkle.view.InklingFeed", {
-	extend: "Ext.HTMLContainer",
+	extend: "Ext.Container",
 	
 	xtype: "inklingFeedView",
 	
 	config: {
-		scrollable: true,
+		layout: "card",
 		
-    	url: "http://127.0.0.1:8000/sencha/inklingFeed/",
-    	
     	items: [
-			// Bottom toolbar
-    		{
+    		// Inkling feed list
+			{
+				xtype: "list",
+				id: "inklingFeedList",
+				loadingText: "Loading inkling feed...",
+				emptyText: "<div class='emptyListText'>No feed items</div>",
+				disableSelection: true,
+				itemTpl: [
+					"{ html }"
+				],
+				store: {
+					fields: [
+						"html"
+					],
+					proxy: {
+						type: "ajax",
+						url: "http://127.0.0.1:8000/sencha/inklingFeed/",
+						actionMethods: {
+							read: "POST"
+						}
+					},
+					autoLoad: false
+				}
+			},
+			
+			// New comment toolbar
+    		/*{
     			xtype: "toolbar",
                 docked: "bottom",
                 items: [
@@ -29,7 +52,7 @@ Ext.define("inkle.view.InklingFeed", {
                 		flex: 1
                 	}
                 ]
-            }
+            }*/
         ],
         
         listeners: [

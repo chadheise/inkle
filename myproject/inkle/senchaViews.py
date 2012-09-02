@@ -1,101 +1,83 @@
-# TODO: remove unnecessary imports
+# HTTP response modules
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 
-from django.contrib.auth.models import User
-from django.contrib import auth
+# TODO: get rid of the whole csrf_exempt thing
+# CSRF exemple views module
+from django.views.decorators.csrf import csrf_exempt
 
+# JSON module
 from django.utils import simplejson
 
+# Inkle database models
 from myproject.inkle.models import *
-from myproject.inkle.emails import *
 
+# Regular expression database querying module
 from django.db.models import Q
 
+# Date/time module
 import datetime
 
-#Modules needed specifically for mobile views
-# TODO: possible get rid of these since these were used by chad and julie and may not be applicable any more
-from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
-from xml.dom.minidom import parse, parseString
-import os
-import sys
-from views import *
-
-# TODO: remove csrf_exempt?
-@csrf_exempt
 def s_is_logged_in(request):
-    """Returns True if a user is logged in or false otherwise."""
+    """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
 
 
-# TODO: clean up?
 @csrf_exempt
 def s_login_view(request):
-    """Either logs in a member or returns the login errors."""
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "email" : "", "password" : "", "month" : 0, "year" : 0 }
-    invalid = { "errors" : [] }
-    valid = False #Assume invalid data by default
+    """Logs a member in or returns the login error."""
+    # Get the inputted email and password
+    try:
+        email = request.POST["email"]
+        password = request.POST["password"]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
 
-    # If the request type is POST, validate the username and password combination
-    if request.method == 'POST':
+    # Create a string to hold the login error
+    response_error = ""
+
+    # Validate the email and password
+    if ((not email) and (not password)):
+        response_error = "Email and password not specified"
+    elif (not email):
+        response_error = "Email not specified"
+    elif (not password):
+        response_error = "Password not specified"
+
+    # Log in the member if their email and password are correct
+    if (not response_error):
+        # Get the member according to the provided email
         try:
-            data["email"] = request.POST["email"]
-            data["password"] = request.POST["password"]
-        except Exception as e:
-            return HttpResponse("Error accessing request POST data: " + e.message)
-    
-        # Validate the email
-        if (not data["email"]):
-            invalid["email"] = True
-            invalid["errors"].append("Email not specified")
+            member = Member.active.get(email = email)
+        except:
+            member = []
 
-        elif (not is_email(data["email"])):
-            invalid["email"] = True
-            invalid["errors"].append("Invalid email format")
+        # Confirm the username and password combination and log the member in
+        if (member and member.is_active and (member.check_password(password))):
+            request.session["member_id"] = member.id
+            member.last_login = datetime.datetime.now()
+            member.save()
 
-        # Validate the password
-        if (not data["password"]):
-            invalid["password"] = True
-            invalid["errors"].append("Password not specified")
+        # Otherwise, add to the errors list
+        else:
+            response_error = "Invalid login combination"
 
-        # If an email and password are provided, the member is verified and active, and their password is correct, log them in (or set the login as invalid)
-        if (not invalid["errors"]):
-            # Get the member according to the provided email
-            try:
-                member = Member.active.get(email = data["email"])
-            except:
-                member = []
-
-            # Confirm the username and password combination
-            if (member and member.is_active and (member.check_password(data["password"]))):
-                request.session["member_id"] = member.id
-                member.last_login = datetime.datetime.now()
-                member.save()
-            # Otherwise, set the invalid dictionary
-            else:
-                invalid["email"] = True
-                invalid["password"] = True
-                invalid["errors"].append("Invalid login combination")
-
-    # Set success attribute
-    if invalid["errors"] == []:
-        invalid["success"] = True
+    # Determine if the login was successful
+    if (response_error):
+        success = False
     else:
-        invalid["success"] = False
+        success = True
 
-    # Create JSON object
-    response = simplejson.dumps(invalid)
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
     return HttpResponse(response, mimetype = "application/json")
 
 
-# TODO: remove csrf_exempt?
-@csrf_exempt
 def s_logout_view(request):
     """Logs out the logged-in member."""
     try:
@@ -125,18 +107,17 @@ def s_all_inklings_view(request):
                     if (m not in members):
                         members.append(m)
 
-    # Otherwise, if no groups are selected, get all of the logged-in members's friends
+    # Otherwise, if no groups are selected, get all of the logged-in members's active friends
     else:
-        members = member.friends.all()    # TODO: filter for active members?
+        members = member.friends.filter(is_active = True)
 
     # Get the date, or set it to today if no date is specified
-    # TODO: catch errors for "month" and "year"
-    if ("day" in request.POST):
+    try:
         day = int(request.POST["day"])
         month = int(request.POST["month"])
         year = int(request.POST["year"])
         date = datetime.date(year, month, day)
-    else:
+    except KeyError:
         date = datetime.date.today()
 
     # Get a list of all the inklings the members are attending on the specified date
@@ -164,13 +145,26 @@ def s_all_inklings_view(request):
 
 
 @csrf_exempt
-def s_all_inklings_groups_view(request):
+def s_groups_view(request):
     """Returns a list of the logged-in member's groups (with selected selection buttons)."""
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
+
+    # Get the view that is requesting the current groups list
+    try:
+        view = request.POST["view"]
+    except:
+        raise Http404()
+
+    # Get the current inkling if we are in the invites view
+    if (view == "invites"):
+        try:
+            inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        except:
+            raise Http404()
     
     # Get an alphabetical list of the logged-in member's groups
     groups = list(member.group_set.all())
@@ -179,11 +173,19 @@ def s_all_inklings_groups_view(request):
     # Get the HTML for the logged-in member's group list items
     response_groups = []
     for g in groups:
-        g.selected = True
+        if (view == "allInklings"):
+            g.selected = True
+        elif (view == "invites"):
+            g.selected = True
+            for m in g.members.all():
+                if (not inkling.member_has_pending_invitation(m)):
+                    g.selected = False
+                    break
+
         html = render_to_string( "s_groupInviteeListItem.html", {
-            "b" : g,   # TODO: switch from b to g in template
-            "idPrefix" : "allInklings"
+            "g" : g
         })
+
         response_groups.append({
             "id" : g.id,
             "html" : html
@@ -275,7 +277,6 @@ def s_save_inkling_view(request):
         # TODO: date = request.POST["date"]
         location = request.POST["location"]
         time = request.POST["time"]
-        category = request.POST["category"]   # TODO: get rid of category
         notes = request.POST["notes"]
     except:
         raise Http404()
@@ -330,9 +331,8 @@ def s_join_inkling_view(request):
 
 @csrf_exempt
 def s_inkling_feed_view(request):
-    """Returns the feed for an inkling."""  # TODO: update comment
+    """Returns a list of the feed updates and comments for the inputted inkling."""
     # Get the logged-in member
-    # TODO: get rid of 'member' retrieval if possible?
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
@@ -345,19 +345,38 @@ def s_inkling_feed_view(request):
         raise Http404()
 
     # Get a list of all the feed items (comments and updates)
-    feed_items = []
-    for comment in inkling.feedcomment_set.all():
-        feed_items.append((comment, "comment"))
-    for update in inkling.feedupdate_set.all():
-        feed_items.append((update, "event"))
+    response_feed_items = []
+    for feed_comment in inkling.feedcomment_set.all():
+        html = render_to_string( "s_inklingFeedCommentListItem.html", {
+            "feed_comment" : feed_comment,
+            "member" : member
+        })
+
+        response_feed_items.append({
+            "html" : html,
+            "date" : feed_comment.date_created
+        })
+
+    for feed_update in inkling.feedupdate_set.all():
+        html = render_to_string( "s_inklingFeedUpdateListItem.html", {
+            "feed_update" : feed_update,
+            "member" : member
+        })
+
+        response_feed_items.append({
+            "html" : html,
+            "date" : feed_update.date_created
+        })
+
 
     # Sort the feed items chronologically
-    feed_items.sort(key = lambda i : i[0].date_created)
+    response_feed_items.sort(key = lambda feed_item : feed_item["date"])
+    for feed_item in response_feed_items:
+        del feed_item["date"]
 
-    # Return the HTML for the current inkling's feed
-    return render_to_response( "s_inklingFeed.html",
-        { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
-        context_instance = RequestContext(request) )
+    # Create and return a JSON object
+    response = simplejson.dumps(response_feed_items)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 # TODO: rename to add_comment_view
@@ -430,8 +449,6 @@ def s_my_inklings_view(request):
         context_instance = RequestContext(request) )
 
 
-# TODO: remove csrf_exempt?
-@csrf_exempt
 def s_num_inkling_invites_view(request):
     """Returns the number of inklings to which the logged-in member has pending invitations."""
     # Get the logged-in member
@@ -444,8 +461,6 @@ def s_num_inkling_invites_view(request):
     return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
 
 
-# TODO: remove csrf_exempt?
-@csrf_exempt
 def s_inkling_invites_view(request):
     """Returns a list of the inklings to which the logged-in member has pending invitations."""
     # Get the logged-in member
@@ -537,13 +552,20 @@ def s_update_inkling_view(request):
 @csrf_exempt
 def s_num_invited_friends_view(request):
     """Returns the number of friends who have been invited to the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
     # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
 
-    num_invited_friends = inkling.invited_friends.count()
+    # Get the number of friends who have been invited to this inkling by the logged-in member
+    num_invited_friends = InklingInvitation.objects.filter(sender = member, inkling = inkling).count()
     
     return HttpResponse(num_invited_friends)
 
@@ -565,7 +587,6 @@ def s_inkling_invited_friends_view(request):
 
     # Get the logged-in member's friends
     friends = list(member.friends.all())
-    friends.sort(key = lambda m : m.last_name)  # TODO: I don't think I need to sort this as the sencha sorter will handle it
 
     # Get a list of the logged-in member's friends
     response_friends = []
@@ -600,7 +621,7 @@ def s_inkling_invited_groups_view(request):
     # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
+    except (Inkling.DoesNotExist, KeyError) as e:
         raise Http404()
 
     # Get an alphabetical list of the logged-in member's groups
@@ -617,8 +638,7 @@ def s_inkling_invited_groups_view(request):
                 break
 
         html = render_to_string( "s_groupInviteeListItem.html", {
-            "b" : g,  # TODO: change b to g in template
-            "idPrefix" : "invite"
+            "g" : g
         })
 
         response_groups.append({
@@ -782,7 +802,6 @@ def s_friends_view(request):
 
     # Get the list of the logged-in member's friends
     friends = list(member.friends.all())
-    friends.sort(key = lambda m : m.last_name) # TODO: I don't think I need this
 
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
@@ -809,7 +828,7 @@ def s_friends_view(request):
 # TODO: get rid of this possibly?
 # TODO: update all of this function's comments
 @csrf_exempt
-def s_groups_view(request):
+def s_friends_view_groups_view(request):
     """Returns a list of the logged-in member's groups."""
     # Get the logged-in member
     try:
@@ -827,49 +846,18 @@ def s_groups_view(request):
     # Get the name and number of member for each of the logged in member's groups
     response_groups = []
 
-    if (include_all_groups_group == "true"):
-        response_groups.append({
-            "text" : "All Groups",
-            "value" : -1,
-        })
-    elif (invitees_mode == "true"):
-        html = render_to_string( "s_groupInviteeListItem.html", {
-            "allFriendsItem" : True,
-            "idPrefix" : "groups"
-        })
-        response_groups.append({
-            "id" : -1,
-            "html" : html
-        })
-
     # Sort the member's group alphabetically
     groups = list(member.group_set.all())
     groups.sort(key = lambda b : b.name)
     
     for b in groups:
-        if (include_all_groups_group == "true"):
-            response_groups.append({
-                "text" : b.name,
-                "value" : b.id
-            })
-        elif (invitees_mode == "true"):
-            html = render_to_string( "s_groupInviteeListItem.html", {
-                "b" : b,
-                "allFriendsItem" : False,
-                "idPrefix" : "groups"
-            })
-            response_groups.append({
-                "id" : b.id,
-                "html" : html
-            })
-        else:
-            html = render_to_string( "s_groupListItem.html", {
-                "b" : b,
-            })
-            response_groups.append({
-                "id" : b.id,
-                "html" : html
-            })
+        html = render_to_string( "s_groupListItem.html", {
+            "b" : b,
+        })
+        response_groups.append({
+            "id" : b.id,
+            "html" : html
+        })
 
     # Create and return a JSON object
     response = simplejson.dumps(response_groups)

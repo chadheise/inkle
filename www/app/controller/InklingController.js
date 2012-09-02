@@ -9,6 +9,8 @@ Ext.define("inkle.controller.InklingController", {
             inklingView: "inklingView",
             inklingFeedView: "inklingFeedView",
             
+            inklingFeedList: "#inklingFeedList",
+            
             // Elements
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
@@ -74,7 +76,17 @@ Ext.define("inkle.controller.InklingController", {
         		inklingId: this.getInklingView().getData()["inklingId"]
         	}
         });
-    },
+        
+        // Update the inkling feed
+        var inklingFeedStore = this.getInklingFeedList().getStore();
+			
+		inklingFeedStore.setProxy({
+			extraParams: {
+				inklingId: this.getInklingView().getData()["inklingId"]
+			}
+		});
+		inklingFeedStore.load();
+	},
     
     /* Activates the all inklings view from the inkling view */
 	activateAllInklingsView: function (record) {
@@ -91,7 +103,6 @@ Ext.define("inkle.controller.InklingController", {
     
     /* Activates the my inklings view from the inkling view */
 	activateMyInklingsView: function (record) {
-		console.log("in");
 		// Display the appropriate top toolbar buttons
 		this.getNewInklingButton().show();
     	this.getMyInklingsInklingBackButton().hide();
@@ -182,7 +193,6 @@ Ext.define("inkle.controller.InklingController", {
     			inklingId: this.getInklingView().getData()["inklingId"],
     			location: Ext.get("location").getValue(),
     			time: Ext.get("time").getValue(),
-    			category: Ext.get("category").getValue(),
     			notes: Ext.get("notes").getValue()
     		},
 		    success: function(response) {
