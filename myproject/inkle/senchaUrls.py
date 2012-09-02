@@ -8,12 +8,17 @@ from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns(
     "myproject.inkle.senchaViews",
+
+    # Login/logout
     (r"^isLoggedIn/$", "s_is_logged_in"),
     (r"^login/$", "s_login_view"),
     (r"^logout/$", "s_logout_view"),
+
+    # Common
+    (r"^groups/$", "s_groups_view"),
     
+    # All Inklings
     (r"^allInklings/$", "s_all_inklings_view"),
-    (r"^allInklingsGroups/$", "s_all_inklings_groups_view"),
     (r"^isMemberInkling/$", "s_is_member_inkling_view"),
     (r"^inkling/$", "s_inkling_view"),
     (r"^editInkling/$", "s_edit_inkling_view"),
@@ -27,7 +32,6 @@ urlpatterns = patterns(
     (r"^updateInkling/$", "s_update_inkling_view"),
     (r"^numInvitedFriends/$", "s_num_invited_friends_view"),
     (r"^inklingInvitedFriends/$", "s_inkling_invited_friends_view"),
-    (r"^inklingInvitedGroups/$", "s_inkling_invited_groups_view"),
     (r"^inviteMember/$", "s_invite_member_view"),
     (r"^uninviteMember/$", "s_uninvite_member_view"),
     (r"^inviteGroup/$", "s_invite_group_view"),
@@ -35,8 +39,9 @@ urlpatterns = patterns(
     (r"^numInklingInvites/$", "s_num_inkling_invites_view"),
     (r"^inklingInvites/$", "s_inkling_invites_view"),
 
+    (r"^friendsViewGroups/$", "s_friends_view_groups_view"),
+
     (r"^friends/$", "s_friends_view"),
-    (r"^groups/$", "s_groups_view"),
     (r"^friendRequests/$", "s_friend_requests_view"),
     (r"^numFriendRequests/$", "s_num_friend_requests_view"),
     (r"^peopleSearch/$", "s_people_search_view"),

@@ -70,11 +70,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/inklingInvitedGroups/",
-								reader: {
-									type: "json",
-									rootProperty: "groups"
-								}
+								url: "http://127.0.0.1:8000/sencha/groups/"
 							},
 							autoLoad: false
 						}

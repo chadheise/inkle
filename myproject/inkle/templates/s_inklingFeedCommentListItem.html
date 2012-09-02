@@ -1,0 +1,16 @@
+{% load humanize %}
+
+<div class="feedComment">
+    {% if member == feed_comment.creator %}
+        <img class="loggedInCommentMemberPicture" src="{{ STATIC_URL }}/media/images/members/{{ feed_comment.creator.id }}.jpg" />
+        <div class="loggedInFeedCommentInfo">
+    {% else %}
+        <img src="{{ STATIC_URL }}/media/images/members/{{ feed_comment.creator.id }}.jpg" />
+        <div class="feedCommentInfo">
+    {% endif %}
+
+        <p class="creatorName">{{ feed_comment.creator.get_full_name }}</p>
+        <p class="text">{{ feed_comment.text }}</p>
+        <p class="timestamp">{{ feed_comment.date_created|naturaltime }}</p>
+    </div>
+</div>
