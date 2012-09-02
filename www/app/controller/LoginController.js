@@ -93,16 +93,16 @@ Ext.define("inkle.controller.LoginController", {
     },
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
-		FB.login(
-                 function(response) {
-                 if (response.session) {
-                 alert('logged in');
-                 } else {
-                 alert('not logged in');
-                 }
-                 },
-                 { scope: "email" }
-                 );
+        FB.login(function(response) {
+            if (response.authResponse) {
+                 alert('Welcome!  Fetching your information.... ');
+                 FB.api('/me', function(response) {
+                   alert('Good to see you, ' + response.name + '.');
+                 });
+               } else {
+                 alert('User cancelled login or did not fully authorize.');
+               }
+            }, {scope: 'email,user_birthday'});
 		//var loginView = this.getLoginView();
 
 		/*loginView.submit({
