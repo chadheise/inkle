@@ -48,9 +48,10 @@ def s_login_view(request):
         else:
             email = request.POST["email"]
             password = request.POST["password"]
+            facebookId = False
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
-
+    
     # Create a string to hold the login error
     response_error = ""
 
@@ -82,14 +83,7 @@ def s_login_view(request):
                 member = Member.active.get(email = email)
                 member.facebookId = facebookId
                 member.save()
-                print "updated fb id for member"
             except:
-                print facebookId
-                print first_name + last_name
-                print email
-                print birthday
-                print gender
-                print password
                 # Create the new member
                 member = Member(
                     facebookId = facebookId,
@@ -102,23 +96,16 @@ def s_login_view(request):
                 )
                 # Set the new member's password
                 member.set_password(password)
-                print "before save"
                 member.save() # Save the new member
-                print "after save"
 
         if (facebookId):
             # Confirm the user is active and log them in
-            print "inside facebookId"
-            print member
-            print member.is_active
             if (member and member.is_active):
-                print "member is active"
                 request.session["member_id"] = member.id
                 member.last_login = datetime.datetime.now()
                 member.save()
             # Otherwise, add to the errors list
             else:
-                print "Could not login using Facebook"
                 response_error = "Could not login using Facebook"
         else:
             # Confirm the username and password combination and log the member in
@@ -135,7 +122,6 @@ def s_login_view(request):
         success = False
     else:
         success = True
-        print "success"
 
     # Create and return a JSON object
     response = simplejson.dumps({
