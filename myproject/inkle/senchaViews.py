@@ -20,6 +20,9 @@ from django.db.models import Q
 # Date/time module
 import datetime
 
+import string
+import random
+
 def s_is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
@@ -30,8 +33,21 @@ def s_login_view(request):
     """Logs a member in or returns the login error."""
     # Get the inputted email and password
     try:
-        email = request.POST["email"]
-        password = request.POST["password"]
+        if ("facebookId" in request.POST):
+            facebookId = request.POST["facebookId"]
+            # Create random password 32 chars long
+            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            day = int(request.POST["birthday"].split('/')[1])
+            month = int(request.POST["birthday"].split('/')[0])
+            year = int(request.POST["birthday"].split('/')[2])
+            birthday = datetime.date(day = day, month = month, year = year)
+            gender = request.POST["gender"][0]
+        else:
+            email = request.POST["email"]
+            password = request.POST["password"]
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
 
@@ -39,36 +55,87 @@ def s_login_view(request):
     response_error = ""
 
     # Validate the email and password
-    if ((not email) and (not password)):
-        response_error = "Email and password not specified"
-    elif (not email):
-        response_error = "Email not specified"
-    elif (not password):
-        response_error = "Password not specified"
+    if (not facebookId):
+        if ((not email) and (not password)):
+            response_error = "Email and password not specified"
+        elif (not email):
+            response_error = "Email not specified"
+        elif (not password):
+            response_error = "Password not specified"
 
     # Log in the member if their email and password are correct
     if (not response_error):
-        # Get the member according to the provided email
         try:
-            member = Member.active.get(email = email)
+            # Get the member by facebookId
+            if (facebookId):
+                member = Member.active.get(facebookId = facebookId)
+                #Should allow user to update their email if their facebook email doesn't match the one in inkle
+            # Get the member according to the provided email
+            else:
+                member = Member.active.get(email = email)
         except:
             member = []
+            
+        if (facebookId and not member):
+            try:
+                #If the user has not logged in with facebook before but they registered with their email
+                member = Member.active.get(email = email)
+                member.facebookId = facebookId
+                member.save()
+                print "updated fb id for member"
+            except:
+                print facebookId
+                print first_name + last_name
+                print email
+                print birthday
+                print gender
+                print password
+                # Create the new member
+                member = Member(
+                    facebookId = facebookId,
+                    first_name = first_name,
+                    last_name = last_name,
+                    username = email,
+                    email = email,
+                    birthday = birthday,
+                    gender = gender
+                )
+                # Set the new member's password
+                member.set_password(password)
+                print "before save"
+                member.save() # Save the new member
+                print "after save"
 
-        # Confirm the username and password combination and log the member in
-        if (member and member.is_active and (member.check_password(password))):
-            request.session["member_id"] = member.id
-            member.last_login = datetime.datetime.now()
-            member.save()
-
-        # Otherwise, add to the errors list
+        if (facebookId):
+            # Confirm the user is active and log them in
+            print "inside facebookId"
+            print member
+            print member.is_active
+            if (member and member.is_active):
+                print "member is active"
+                request.session["member_id"] = member.id
+                member.last_login = datetime.datetime.now()
+                member.save()
+            # Otherwise, add to the errors list
+            else:
+                print "Could not login using Facebook"
+                response_error = "Could not login using Facebook"
         else:
-            response_error = "Invalid login combination"
+            # Confirm the username and password combination and log the member in
+            if (member and member.is_active and member.check_password(password)):
+                request.session["member_id"] = member.id
+                member.last_login = datetime.datetime.now()
+                member.save()
+            # Otherwise, add to the errors list
+            else:
+                response_error = "Invalid login combination"
 
     # Determine if the login was successful
     if (response_error):
         success = False
     else:
         success = True
+        print "success"
 
     # Create and return a JSON object
     response = simplejson.dumps({

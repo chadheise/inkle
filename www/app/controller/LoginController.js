@@ -89,44 +89,34 @@ Ext.define("inkle.controller.LoginController", {
     },
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
-        var facebookId;
-   		var email;
+        var object = this;
         FB.login(function(response) {
             if (response.authResponse) {
                  FB.api('/me', function(response) {
-                   facebookId = response.id;
-           		   email = response.email;
+           		   
+           		   //Log the user in to inkle
+               	   Ext.Ajax.request({
+                       url: "http://127.0.0.1:8000/sencha/login/",
+                       params: {
+                           facebookId: response.id,
+                   		   email: response.email,
+                   		   first_name: response.first_name,
+                   		   last_name: response.last_name,
+                   		   gender: response.gender,
+                   		   birthday: response.birthday
+                   	   },
+               		   success: function(response) {
+                           this.activateMainTabView();
+                       },
+                       failure: function(response) {
+                           Ext.Msg.alert(response.error);
+                        },
+                       	scope: object
+               		});
                  });
                } else {
                  alert('User cancelled login or did not fully authorize.');
                }
             }, {scope: 'email,user_birthday'});
-		
-		alert(facebookId);
-        alert(email);
-		
-		//Log the user in to inkle
-		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/login/",
-    		params: {
-    			facebookId: facebookId,
-    			email: email
-    		},
-		    success: function(response) {
-				/*if (response.responseText === "True") {
-					this.getInklingFeedButton().show();
-				}
-				else {
-					this.getJoinInklingButton().show();
-				}*/
-				console.log("Login successful");
-            	this.activateMainTabView();
-        	},
-        	failure: function(response) {
-        		console.log(response.responseText);
-        		Ext.Msg.alert("Error", "Something went wrong.");
-        	},
-        	scope: this
-		});
     }
 });
