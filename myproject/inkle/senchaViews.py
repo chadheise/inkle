@@ -101,11 +101,23 @@ def s_all_inklings_view(request):
     if ("selectedGroupIds" in request.POST):
         members = []
         for group_id in request.POST["selectedGroupIds"].split(",")[:-1]:
-            group = Group.objects.get(pk = group_id)
-            if (group.creator == member):
-                for m in group.members.all():
-                    if (m not in members):
-                        members.append(m)
+            # If the group ID is -1, add all the members who are in none of the logged-in member's groups
+            if (group_id == "-1"):
+                not_grouped_members = list(member.friends.all())
+                for g in member.group_set.all():
+                    for m in g.members.all():
+                        if (m in not_grouped_members):
+                            not_grouped_members.remove(m)
+
+                members.extend(not_grouped_members)
+
+            # Otherwise, add each member from the group corresponding to the current group ID
+            else:
+                group = Group.objects.get(pk = group_id)
+                if (group.creator == member):
+                    for m in group.members.all():
+                        if (m not in members):
+                            members.append(m)
 
     # Otherwise, if no groups are selected, get all of the logged-in members's active friends
     else:
@@ -165,13 +177,22 @@ def s_groups_view(request):
             inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         except:
             raise Http404()
-    
+   
+    # Get a list of the logged-in member's friends who are not in one of the logged-in member's groups
+    not_grouped_members = list(member.friends.all())
+    for g in member.group_set.all():
+        for m in g.members.all():
+            if (m in not_grouped_members):
+                not_grouped_members.remove(m)
+
     # Get an alphabetical list of the logged-in member's groups
     groups = list(member.group_set.all())
     groups.sort(key = lambda g : g.name)
 
-    # Get the HTML for the logged-in member's group list items
+    # Create a list to hold the response data
     response_groups = []
+
+    # Get the HTML for the logged-in member's group list items
     for g in groups:
         if (view == "allInklings"):
             g.selected = True
@@ -182,7 +203,7 @@ def s_groups_view(request):
                     g.selected = False
                     break
 
-        html = render_to_string( "s_groupInviteeListItem.html", {
+        html = render_to_string( "s_groupListItem.html", {
             "g" : g
         })
 
@@ -190,6 +211,22 @@ def s_groups_view(request):
             "id" : g.id,
             "html" : html
         })
+
+    # Add a "Not Grouped" group to the response list
+    g = { "id" : -1, "name" : "Not Grouped" }
+    g["selected"] = True
+    if (view == "invites"):
+        for m in not_grouped_members:
+            if (not inkling.member_has_pending_invitation(m)):
+                g["selected"] = False
+                break
+    html = render_to_string( "s_groupListItem.html", {
+        "g" : g
+    })
+    response_groups.append({
+        "id" : g["id"],
+        "html" : html
+    })
 
     # Create and return a JSON object
     response = simplejson.dumps(response_groups)
@@ -344,8 +381,21 @@ def s_inkling_feed_view(request):
     except:
         raise Http404()
 
-    # Get a list of all the feed items (comments and updates)
+    # Create a list to hold all the feed items (comments and updates)
     response_feed_items = []
+
+    # Add the inkling creation feed update to the response list
+    html = render_to_string( "s_inklingFeedUpdateListItem.html", {
+        "inkling" : inkling,
+        "member" : member
+    })
+
+    response_feed_items.append({
+        "html" : html,
+        "date" : inkling.date_created
+    })
+
+    # Add the feed comments to the response list
     for feed_comment in inkling.feedcomment_set.all():
         html = render_to_string( "s_inklingFeedCommentListItem.html", {
             "feed_comment" : feed_comment,
@@ -357,6 +407,7 @@ def s_inkling_feed_view(request):
             "date" : feed_comment.date_created
         })
 
+    # Add the feed updates to the response list
     for feed_update in inkling.feedupdate_set.all():
         html = render_to_string( "s_inklingFeedUpdateListItem.html", {
             "feed_update" : feed_update,
@@ -379,9 +430,8 @@ def s_inkling_feed_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-# TODO: rename to add_comment_view
 @csrf_exempt
-def s_post_new_comment_view(request):
+def s_add_feed_comment_view(request):
     """Adds a new comment to the inputted inkling's feed."""
     # Get the logged-in member
     try:
@@ -389,14 +439,9 @@ def s_post_new_comment_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    # Get the current inkling
+    # Get the current inkling and the new comment's text
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    # Get the new comment's text
-    try:
         text = request.POST["text"]
     except:
         raise Http404()
@@ -404,22 +449,7 @@ def s_post_new_comment_view(request):
     # Create the new comment
     FeedComment.objects.create(creator = member, inkling = inkling, text = text)
 
-    # TODO: get rid of the rest of this function
-
-    # Get a list of all the feed items (comments and updates)
-    feed_items = []
-    for comment in inkling.feedcomment_set.all():
-        feed_items.append((comment, "comment"))
-    for update in inkling.feedupdate_set.all():
-        feed_items.append((update, "event"))
-
-    # Sort the feed items chronologically
-    feed_items.sort(key = lambda i : i[0].date_created)
-
-    # Return the HTML for the current inkling's feed
-    return render_to_response( "s_inklingFeed.html",
-        { "member" : member, "inkling" : inkling, "feedItems" : feed_items },
-        context_instance = RequestContext(request) )
+    return HttpResponse()
 
 
 # TODO: remove csrf_exempt?
@@ -637,7 +667,7 @@ def s_inkling_invited_groups_view(request):
                 g.selected = False
                 break
 
-        html = render_to_string( "s_groupInviteeListItem.html", {
+        html = render_to_string( "s_groupListItem.html", {
             "g" : g
         })
 
@@ -851,7 +881,7 @@ def s_friends_view_groups_view(request):
     groups.sort(key = lambda b : b.name)
     
     for b in groups:
-        html = render_to_string( "s_groupListItem.html", {
+        html = render_to_string( "s_friendsViewGroupListItem.html", {
             "b" : b,
         })
         response_groups.append({

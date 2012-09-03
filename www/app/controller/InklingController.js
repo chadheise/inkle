@@ -50,7 +50,7 @@ Ext.define("inkle.controller.InklingController", {
             inklingFeedView: {
             	// Commands
             	newCommentTextFieldKeyedUp: "toggleNewCommentSendButton",
-            	newCommentSendButtonTapped: "postNewComment"
+            	newCommentSendButtonTapped: "addComment"
             }
         }
     },
@@ -61,7 +61,7 @@ Ext.define("inkle.controller.InklingController", {
 	/**********************/
 	
     /* Activates the inkling feed view from the inkling view */
-    activateInklingFeedView: function () {
+    activateInklingFeedView: function() {
 		// Display the appropriate top toolbar buttons
 		this.getAllInklingsDateButton().hide();
 		this.getAllInklingsGroupsButton().hide();
@@ -77,19 +77,12 @@ Ext.define("inkle.controller.InklingController", {
         	}
         });
         
-        // Update the inkling feed
-        var inklingFeedStore = this.getInklingFeedList().getStore();
-			
-		inklingFeedStore.setProxy({
-			extraParams: {
-				inklingId: this.getInklingView().getData()["inklingId"]
-			}
-		});
-		inklingFeedStore.load();
+        // Update the inkling feed list
+        this.updateInklingFeedList();
 	},
     
     /* Activates the all inklings view from the inkling view */
-	activateAllInklingsView: function (record) {
+	activateAllInklingsView: function() {
 		// Display the appropriate top toolbar buttons
     	this.getAllInklingsDateButton().show();
 		this.getAllInklingsGroupsButton().show();
@@ -102,7 +95,7 @@ Ext.define("inkle.controller.InklingController", {
     },
     
     /* Activates the my inklings view from the inkling view */
-	activateMyInklingsView: function (record) {
+	activateMyInklingsView: function() {
 		// Display the appropriate top toolbar buttons
 		this.getNewInklingButton().show();
     	this.getMyInklingsInklingBackButton().hide();
@@ -114,7 +107,7 @@ Ext.define("inkle.controller.InklingController", {
     },
 	
 	/* Activates the inkling view from the inkling feed view */
-	backToInklingView: function (record) {
+	backToInklingView: function() {
 		// Display the appropriate top toolbar buttons
     	this.getAllInklingsDateButton().hide();
 		this.getAllInklingsGroupsButton().hide();
@@ -130,6 +123,22 @@ Ext.define("inkle.controller.InklingController", {
     /**************/
 	/*  COMMANDS  */
 	/**************/
+	
+	 /* Updates the inkling feed list */
+	 updateInklingFeedList: function() {
+        // Get the inkling feed list's store
+        var inklingFeedListStore = this.getInklingFeedList().getStore();
+		
+		// Update the inkling feed list's store
+		inklingFeedListStore.setProxy({
+			extraParams: {
+				inklingId: this.getInklingView().getData()["inklingId"]
+			}
+		});
+		
+		// Re-load the inkling feed list
+		inklingFeedListStore.load();
+	},
 	
 	/* Adds the current inkling to the current member's list of inklings */
     joinInkling: function() {
@@ -253,31 +262,28 @@ Ext.define("inkle.controller.InklingController", {
     	}
     },
     
-    /* Posts a new comment to the inkling feed */
-    postNewComment: function() {
-    	// Add the new comment to the database and get the new HTML for the inkling feed view
-    	var html;
+    /* Adds a new comment to the inkling feed */
+    addComment: function() {
+  		// Add the new comment to the inkling feed
     	Ext.Ajax.request({
-    		async: false,
-    		url: "http://127.0.0.1:8000/sencha/postNewComment/",
+    		url: "http://127.0.0.1:8000/sencha/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
     			text: this.getNewCommentTextField().getValue()
     		},
 		    success: function(response) {
-		    	console.log("Success");
-		    	html = response.responseText;
+		    	// Update the inkling feed list
+		    	this.updateInklingFeedList();
+		    	
+		    	// Reset the new comment text field and disable the new comment "Send" button
+				this.getNewCommentTextField().reset();
+				this.getNewCommentSendButton().disable();
         	},
         	failure: function(response) {
-        		Ext.Msg.alert("Error", response.responseText);
-        	}
+        		console.log(response.resposeText);
+        		Ext.Msg.alert("Error", "Unable to post comment.");
+        	},
+        	scope: this
 		});
-		
-		// Update the HTML for the inkling feed view
-		this.getInklingFeedView().setHtml(html);
-		
-		// Reset the new comment text field and disable the new comment "Send" button
-		this.getNewCommentTextField().reset();
-		this.getNewCommentSendButton().disable();
     }
 });

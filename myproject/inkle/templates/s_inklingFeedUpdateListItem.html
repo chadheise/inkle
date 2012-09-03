@@ -1,7 +1,27 @@
 {% load humanize %}
 
 <div class="feedUpdate">
-    <img src="resources/images/{{ feed_update.get_icon_name }}" />
-    <p class="text">{{ feed_update.get_text }}</p>
-    <p class="timestamp">{{ feed_update.date_created|naturaltime }}</p>
+    {% if feed_update %}
+        <!-- Icon -->
+        {% if feed_update.creator == member %}
+            <img class="floatRight" src="resources/images/{{ feed_update.get_icon_name }}" />
+        {% else %}
+            <img src="resources/images/{{ feed_update.get_icon_name }}" />
+        {% endif %}
+
+        <!-- Update information -->
+        <p class="text"><span class="creatorName">{{ feed_update.creator.get_full_name }}</span> {{ feed_update.get_text }}</p>
+        <p class="timestamp">{{ feed_update.date_created|naturaltime }}</p>
+    {% else %}
+        <!-- Icon -->
+        {% if inkling.creator == member %}
+            <img class="floatRight" src="resources/images/mainInkleIcon.png" />
+        {% else %}
+            <img src="resources/images/mainInkleIcon.png" />
+        {% endif %}
+
+        <!-- Update information -->
+        <p class="text"><span class="creatorName">{{ inkling.creator.get_full_name }}</span> created this inkling.</p>
+        <p class="timestamp">{{ inkling.date_created|naturaltime }}</p>
+    {% endif %}
 </div>

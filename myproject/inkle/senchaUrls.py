@@ -25,7 +25,7 @@ urlpatterns = patterns(
     (r"^saveInkling/$", "s_save_inkling_view"),
     (r"^joinInkling/$", "s_join_inkling_view"),
     (r"^inklingFeed/$", "s_inkling_feed_view"),
-    (r"^postNewComment/$", "s_post_new_comment_view"),
+    (r"^addFeedComment/$", "s_add_feed_comment_view"),
     
     (r"^myInklings/$", "s_my_inklings_view"),
     (r"^createInkling/$", "s_create_inkling_view"),
