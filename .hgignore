@@ -4,4 +4,4 @@ syntax: glob
 *.pyc
 *.DS_Store
 *.scssc
-android/.metadata/
+/android/.metadata/
