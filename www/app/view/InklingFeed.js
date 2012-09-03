@@ -14,6 +14,9 @@ Ext.define("inkle.view.InklingFeed", {
 				loadingText: "Loading inkling feed...",
 				emptyText: "<div class='emptyListText'>No feed items</div>",
 				disableSelection: true,
+				scrollable: {
+					initialOffset: { x: 0, y: 10000000 }
+				},
 				itemTpl: [
 					"{ html }"
 				],
@@ -33,7 +36,7 @@ Ext.define("inkle.view.InklingFeed", {
 			},
 			
 			// New comment toolbar
-    		/*{
+    		{
     			xtype: "toolbar",
                 docked: "bottom",
                 items: [
@@ -52,7 +55,7 @@ Ext.define("inkle.view.InklingFeed", {
                 		flex: 1
                 	}
                 ]
-            }*/
+            }
         ],
         
         listeners: [

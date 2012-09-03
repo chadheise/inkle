@@ -194,7 +194,7 @@ Ext.define("inkle.view.AllInklings", {
         		id: "allInklingsDatePickerPanel",
         		hidden: true,
         		top: 0,
-        		width: "100%",
+        		width: 300,
         		height: 220,
         		layout: "fit",
         		items: [
@@ -218,8 +218,8 @@ Ext.define("inkle.view.AllInklings", {
         		id: "allInklingsGroupsListPanel",
         		hidden: true,
         		top: 0,
-        		width: 250,
-        		height: 300,
+        		width: 300,
+        		height: 220,
         		layout: "fit",
         		items: [
         			{
