@@ -90,7 +90,7 @@ Ext.define("inkle.controller.LoginController", {
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
         var object = this;
-        /*FB.login(function(response) {
+        FB.login(function(response) {
             if (response.authResponse) {
                  FB.api('/me', function(response) {
            		   
@@ -117,6 +117,6 @@ Ext.define("inkle.controller.LoginController", {
                } else {
                  alert('User cancelled login or did not fully authorize.');
                }
-            }, {scope: 'email,user_birthday'});*/
+            }, {scope: 'email,user_birthday'});
     }
 });
