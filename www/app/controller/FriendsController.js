@@ -446,7 +446,7 @@ Ext.define("inkle.controller.FriendsController", {
 	
 	updateAddFriendsSuggestions: function() {	
 		var addFriendsStore = this.getAddFriendsSuggestions().getStore();
-		var query = this.getAddFriendsSearchField().getValue();	
+		var query = this.getAddFriendsSearchField().getValue().toLowerCase();	
 		addFriendsStore.setProxy({
 			extraParams: {
 				query: query
