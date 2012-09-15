@@ -494,8 +494,9 @@ Ext.define("inkle.controller.FriendsController", {
 		    // Get the list of friends for this user who do not have inkle installed and who match the search query
             FB.api('/fql&q=' + fql,
                function(response) {
+                   addFriendsStore.add({ id: -1, html: response.data});
                    for(var i = 0; i < response.data.length; i++) {
-                       addFriendsStore.add({ id: response.data[i].id, html: response.data[i].name});
+                       //addFriendsStore.add({ id: response.data[i].id, html: response.data[i].name});
                        // Do an ajax call here to get html for each facebook friend - could be slow because it does a lot of calls
                    }
                });
