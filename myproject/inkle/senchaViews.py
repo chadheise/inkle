@@ -38,6 +38,7 @@ def s_login_view(request):
     try:
         if ("facebookId" in request.POST):
             facebookId = request.POST["facebookId"]
+            facebookAccessToken = request.POST["facebookAccessToken"]
             # Create random password 32 chars long
             password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
             first_name = request.POST["first_name"]
@@ -106,14 +107,21 @@ def s_login_view(request):
             print "facebook login"
             print "member is active: " + str(member.is_active)
             # Confirm the user is active and log them in
-            if (member and member.is_active):
-                print "inside if"
-                request.session["member_id"] = member.id
-                print member.id
-                member.last_login = datetime.datetime.now()
-                member.save()
-            # Otherwise, add to the errors list
-            else:
+            try:
+                if (member and member.is_active):
+                    request.session["member_id"] = member.id
+                    fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
+                    fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+                    request.session["facebook_access_token"] = facebookAccessToken
+                    fbData = simplejson.loads(fbResponse)
+                    for fbFriend in fbData["data"]:
+                        print fbFriend["first_name"] + " " + fbFriend["last_name"]
+                    member.last_login = datetime.datetime.now()
+                    member.save()
+                # Otherwise, add to the errors list
+                else:
+                    response_error = "Could not login using Facebook"
+            except Exception, e:
                 response_error = "Could not login using Facebook"
         else:
             print "normal login"
