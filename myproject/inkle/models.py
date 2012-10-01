@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+#from django_facebook.models import FacebookProfileModel
+
 from datetime import date
 
 class Group(models.Model):
@@ -217,11 +219,14 @@ class ActiveMemberManager(models.Manager):
         return Member.objects.filter(is_active = True)
 
 
+#class Member(FacebookProfileModel):
 class Member(User):
-    """Member class definition. Inherits the following from the built-in Django User class:
+    """Member class definition. Uses the following from the built-in Django User class:
        id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined"""
+    #user = models.OneToOneField(User)
+    
     # General information
-    gender = models.CharField(max_length = 1)
+    gender = models.CharField(max_length=1, choices=(('m', 'Male'), ('f', 'Female')), blank=True, null=True)
     birthday = models.DateField()
     facebookId = models.BigIntegerField(blank=True, null=True, unique=True)
     

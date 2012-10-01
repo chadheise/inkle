@@ -447,12 +447,10 @@ Ext.define("inkle.controller.FriendsController", {
 	updateAddFriendsSuggestions: function() {	
 		var addFriendsStore = this.getAddFriendsSuggestions().getStore();
 		var query = this.getAddFriendsSearchField().getValue().toLowerCase();	
-		addFriendsStore.setProxy({
-			extraParams: {
-				query: query
-			}
-		});
+		var facebookFriends = "";
+		
 		var fbConnected = false;
+		var accessToken;
 		FB.getLoginStatus(function(response) {
           if (response.status === 'connected') {
             // the user is logged in and has authenticated your
@@ -462,7 +460,7 @@ Ext.define("inkle.controller.FriendsController", {
             // and signed request each expire
             fbConnected = true;
             var uid = response.authResponse.userID;
-            var accessToken = response.authResponse.accessToken;
+            accessToken = response.authResponse.accessToken;
           } else if (response.status === 'not_authorized') {
             // the user is logged in to Facebook, 
             // but has not authenticated your app
@@ -471,36 +469,12 @@ Ext.define("inkle.controller.FriendsController", {
           }
          });
 
-		if (fbConnected == true) {
-		    var query1 = query.split(" ")[0];
-    		var query2 = query.split(" ")[1];
-    		var fql =   "SELECT uid, name, first_name, last_name, is_app_user, pic_square \
-    		                FROM user WHERE uid IN \
-            		            (SELECT uid2 FROM friend WHERE uid1 = me()) \
-            	            AND is_app_user = 0";
-            if (query1 !== undefined) {
-                  if (query2 !== undefined) {
-                       fql += "AND (strpos(lower(first_name),'" + query1 + "') == 0 \
-                            OR strpos(lower(last_name), '" + query2 + "') == 0 \
-                            OR strpos(lower(first_name), '" + query2 + "') == 0 \
-                            OR strpos(lower(last_name), '" + query1 + "') == 0)";
-                   }
-                   else {
-                       fql += "AND (strpos(lower(first_name),'" + query1 + "') == 0 \
-                               OR strpos(lower(last_name), '" + query1 + "') == 0)";
-                   }
-              }
-		    
-		    // Get the list of friends for this user who do not have inkle installed and who match the search query
-            FB.api('/fql&q=' + fql,
-               function(response) {
-                   addFriendsStore.add({ id: -1, html: response.data});
-                   for(var i = 0; i < response.data.length; i++) {
-                       //addFriendsStore.add({ id: response.data[i].id, html: response.data[i].name});
-                       // Do an ajax call here to get html for each facebook friend - could be slow because it does a lot of calls
-                   }
-               });
- 		}
+ 		addFriendsStore.setProxy({
+   		    extraParams: {
+   			    query: query,
+   				fbAccessToken: accessToken
+   			}
+   		});
 		
 		addFriendsStore.load();
 	},
