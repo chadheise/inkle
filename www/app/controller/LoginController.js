@@ -90,15 +90,17 @@ Ext.define("inkle.controller.LoginController", {
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
         var object = this;
+        var facebookAccessToken;
         FB.login(function(response) {
             if (response.authResponse) {
+                facebookAccessToken = response.authResponse.accessToken;
                  FB.api('/me', function(response) {
-           		   
            		   //Log the user in to inkle
                	   Ext.Ajax.request({
                        url: "http://127.0.0.1:8000/sencha/login/",
                        params: {
                            facebookId: response.id,
+                           facebookAccessToken: facebookAccessToken,
                    		   email: response.email,
                    		   first_name: response.first_name,
                    		   last_name: response.last_name,
