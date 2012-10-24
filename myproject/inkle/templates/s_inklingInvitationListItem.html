@@ -1,0 +1,22 @@
+<div class="inkling" inklingId="{{ invitation.inkling.id }}">
+    <!-- Inkling information -->
+    <div class="numAttendees">{{ invitation.inkling.get_num_attendees }}</div>
+    <div class="inklingInfo">
+        <div class="location">{{ invitation.inkling.location|default:"Location TBD" }}</div>
+        <div>
+            {% if invitation.inkling.time %}
+                <div class="time">{{ invitation.inkling.time }}</div>
+                {% if invitation.inkling.category %}
+                    <div class="dot">&middot</div>
+                {% endif %}
+            {% endif %}
+            {% if invitation.inkling.category %}
+                <div class="category">{{ invitation.inkling.category }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Accept/ignore buttons -->
+    <input id="inkling{{ invitation.inkling.id }}AcceptInviteButton" class="acceptInviteButton" type="button" value="Accept" inklingId="{{ invitation.inkling.id }}" />
+    <input id="member{{ invitation.inkling.id }}IgnoreInviteButton" class="ignoreInviteButton" type="button" value="Ignore" inklingId="{{ invitation.inkling.id }}" />
+</div>

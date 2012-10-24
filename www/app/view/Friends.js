@@ -144,10 +144,9 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/friendsViewGroups/",
+        						url: "http://127.0.0.1:8000/sencha/groups/",
         						extraParams: {
-                    				includeAllGroupsGroup: "false",
-                    				inviteesMode: "false"
+                    				view: "friends"
 								}
         					},
         					autoLoad: true

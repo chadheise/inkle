@@ -21,9 +21,13 @@ Ext.define("inkle.controller.InklingController", {
             joinInklingButton: "#joinInklingButton",
             saveInklingButton: "#saveInklingButton",
             cancelEditInklingButton: "#cancelEditInklingButton",
-            newCommentTextField: "#newCommentTextField",
-            newCommentSendButton: "#newCommentSendButton",
-            newInklingButton: "#newInklingButton"
+            addCommentTextField: "#addCommentTextField",
+            addCommentSendButton: "#addCommentSendButton",
+            newInklingButton: "#newInklingButton",
+            
+            addCommentButton: "#addCommentButton",
+            
+            addCommentPanel: "#addCommentPanel"
         },
         
         control: {
@@ -37,7 +41,8 @@ Ext.define("inkle.controller.InklingController", {
             	// Commands
             	joinInklingButtonTapped: "joinInkling",
             	saveInklingButtonTapped: "saveInkling",
-            	cancelEditInklingButtonTapped: "cancelEditInkling"
+            	cancelEditInklingButtonTapped: "cancelEditInkling",
+            	addCommentButtonTapped: "toggleAddCommentPanelVisibility"
             },
             myInklingsView: {
             	// View transitions
@@ -47,10 +52,10 @@ Ext.define("inkle.controller.InklingController", {
             	// Commands
             	editInklingButtonTapped: "editInkling"
             },
-            inklingFeedView: {
+            addCommentPanel: {
             	// Commands
-            	newCommentTextFieldKeyedUp: "toggleNewCommentSendButton",
-            	newCommentSendButtonTapped: "addComment"
+            	addCommentTextFieldKeyedUp: "toggleAddCommentSendButton",
+            	addCommentSendButtonTapped: "addComment"
             }
         }
     },
@@ -68,6 +73,7 @@ Ext.define("inkle.controller.InklingController", {
 		this.getAllInklingsInklingBackButton().hide();
 		this.getInklingFeedBackButton().show();
 		this.getInklingFeedButton().hide();
+		this.getAddCommentButton().show();
 		
 		// Push the inkling feed view onto the all inklings view
     	this.getAllInklingsView().push({
@@ -114,9 +120,12 @@ Ext.define("inkle.controller.InklingController", {
 		this.getAllInklingsInklingBackButton().show();
 		this.getInklingFeedBackButton().hide();
 		this.getInklingFeedButton().show();
+		this.getAddCommentButton().hide();
     	
     	// Pop the inkling feed view off of the all inklings view
         this.getAllInklingsView().pop();
+        
+        this.getAddCommentPanel().destroy();
     },
 	
 	
@@ -252,13 +261,23 @@ Ext.define("inkle.controller.InklingController", {
 		this.getCancelEditInklingButton().hide();
     },
     
+    toggleAddCommentPanelVisibility: function() {
+        var addCommentPanel = this.getAddCommentPanel();
+		if (addCommentPanel.isHidden()) {
+			addCommentPanel.showBy(this.getAddCommentButton());
+		}
+		else {
+		    addCommentPanel.hide();
+		}
+    },
+    
     /* Toggles whether the new comment "Send" button is enabled or disabled */
-    toggleNewCommentSendButton: function() {
-    	if (this.getNewCommentTextField().getValue() == "") {
-    		this.getNewCommentSendButton().disable();
+    toggleAddCommentSendButton: function() {
+    	if (this.getAddCommentTextField().getValue() == "") {
+    		this.getAddCommentSendButton().disable();
     	}
     	else {
-    		this.getNewCommentSendButton().enable();
+    		this.getAddCommentSendButton().enable();
     	}
     },
     
@@ -269,15 +288,16 @@ Ext.define("inkle.controller.InklingController", {
     		url: "http://127.0.0.1:8000/sencha/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
-    			text: this.getNewCommentTextField().getValue()
+    			text: this.getAddCommentTextField().getValue()
     		},
 		    success: function(response) {
 		    	// Update the inkling feed list
 		    	this.updateInklingFeedList();
 		    	
 		    	// Reset the new comment text field and disable the new comment "Send" button
-				this.getNewCommentTextField().reset();
-				this.getNewCommentSendButton().disable();
+				this.getAddCommentTextField().reset();
+				this.getAddCommentSendButton().disable();
+				this.getAddCommentPanel().hide();
         	},
         	failure: function(response) {
         		console.log(response.resposeText);

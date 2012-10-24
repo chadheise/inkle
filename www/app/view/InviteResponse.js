@@ -22,12 +22,11 @@ Ext.define("inkle.view.InviteResponse", {
 				store: {
 					fields: [
 						"id",
-						"lastName",
 						"html"
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/inklingInvites/",
+						url: "http://127.0.0.1:8000/sencha/inklingInvitations/",
 						actionMethods: {
 							read: "POST"
 						},

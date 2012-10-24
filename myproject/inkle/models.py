@@ -102,7 +102,7 @@ class SharingPermission(models.Model):
     """SharingPermission class definition."""
     # General information
     creator = models.ForeignKey("Member", related_name = "sharing_permissions_created")
-    members = models.ManyToManyField("Member", related_name = "sharing_permissions_allowed")
+    members = models.ManyToManyField("Member", related_name = "sharing_permissions_allowed", blank = True)
     inkling = models.ForeignKey("Inkling")
     
     # Metadata

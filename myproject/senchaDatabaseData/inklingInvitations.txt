@@ -1,0 +1,4 @@
+# INKLING ID | SENDER MEMBER ID | RECEIVER MEMBER ID | STATUS
+3 | 2 | 1 | pending
+4 | 3 | 1 | pending
+9 | 7 | 2 | pending

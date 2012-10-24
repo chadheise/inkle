@@ -49,7 +49,10 @@ Ext.define("inkle.controller.FriendsController", {
            		acceptRequestButtonTapped: "respondToRequest",
            		ignoreRequestButtonTapped: "respondToRequest",
            		
-           		friendsViewGroupsListItemTapped: "activateGroupMembersView"
+           		friendsViewGroupsListItemTapped: "activateGroupMembersView",
+           		
+           		activate: "hideFriendsTabBadge",
+           		deactivate: "showFriendsTabBadge",
            	},
            	
            	addFriendsView: {
@@ -59,7 +62,7 @@ Ext.define("inkle.controller.FriendsController", {
            	},
            	
            	groupMembersView: {
-           		groupMembersDoneButtonTapped: "activateFriendsView",
+           		groupMembersBackButtonTapped: "activateFriendsView",
            		selectionItemTapped: "toggleSelectionItem"
            	}
         }
@@ -164,6 +167,30 @@ Ext.define("inkle.controller.FriendsController", {
 	/**************/
 	/*  COMMANDS  */
 	/**************/
+	
+	hideFriendsTabBadge: function() {
+	    this.getMainTabView().getTabBar().getAt(2).setBadgeText("");
+	},
+	
+	showFriendsTabBadge: function() {
+        Ext.Ajax.request({
+			url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
+			
+			success: function(response) {
+				numFriendRequests = response.responseText;
+				if (numFriendRequests != 0) {
+				    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
+					this.getRequestsButton().setBadgeText(numFriendRequests);
+				}
+			},
+			
+			failure: function(response) {
+				console.log(response.responseText);
+	       	},
+	       	
+	       	scope: this
+		});
+	},
 	
 	/* Updates the active item for the friends view */
 	updateFriendsViewActiveItem: function(index) {
@@ -286,7 +313,9 @@ Ext.define("inkle.controller.FriendsController", {
 			var groupNames = Ext.query("#" + listId + " .groupName");
 			for (var i = 0; i < groupNames.length; i++) {
 				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
-				groupName.addCls("groupNameHidden");
+				if (groupName.getAttribute("groupId") != -1) {
+                    groupName.addCls("groupNameHidden");
+                }
 			}
 		}
 		else {
@@ -554,20 +583,22 @@ Ext.define("inkle.controller.FriendsController", {
         // If the main tab view is created, update the inkling invites button
         if (this.getMainTabView()) {
 			// Update the badge text if there are any friend requests
-			var mainTabView = this.getMainTabView();
-			var requestsButton = this.getRequestsButton();
 			Ext.Ajax.request({
 				url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
+				
 				success: function(response) {
 					numFriendRequests = response.responseText;
 					if (numFriendRequests != 0) {
-						mainTabView.getTabBar().getAt(2).setBadgeText(numFriendRequests);
-						requestsButton.setBadgeText(numFriendRequests);
+						this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
+						this.getRequestsButton().setBadgeText(numFriendRequests);
 					}
 				},
+				
 				failure: function(response) {
 					console.log(response.responseText);
-	        	}
+	        	},
+	        	
+	        	scope: this
 			});
 		}
     }

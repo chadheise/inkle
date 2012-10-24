@@ -1,17 +1,23 @@
-<div id="group{{ b.id }}" class="group">
+<div id="group{{ g.id }}" class="group">
     <!-- Delete lock -->
-    <img id="group{{ b.id }}DeleteLock" class="deleteLock deleteLockHidden" groupId="{{ b.id }}" src="resources/images/delete.png">
+    {% if g.id != -1 %}
+        <img id="group{{ g.id }}DeleteLock" class="deleteLock deleteLockHidden" groupId="{{ g.id }}" src="resources/images/delete.png">
+    {% endif %}
 
     <!-- Group info -->
-    <div class="numMembers">{{ b.members.count }}</div>
+    <div class="numMembers">{{ g.num_members }}</div>
     <div class="groupInfo">
-        <div id="group{{ b.id }}Name" class="name groupName">{{ b.name }}</div>
-        <input id="group{{ b.id }}NameInput" class="groupNameInput groupNameInputHidden" groupId="{{ b.id }}" value="{{ b.name }}" />
+        <div id="group{{ g.id }}Name" class="name groupName" groupId="{{ g.id }}">{{ g.name }}</div>
+        {% if g.id != -1 %}
+            <input id="group{{ g.id }}NameInput" class="groupNameInput groupNameInputHidden" groupId="{{ g.id }}" value="{{ g.name }}" />
+        {% endif %}
     </div>
 
     <!-- Delete button -->
-    <input id="group{{ b.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" groupId="{{ b.id }}" />
+    {% if g.id != -1 %}
+        <input id="group{{ g.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" groupId="{{ g.id }}" />
+    {% endif %}
 
     <!-- Disclosure arrow -->
-    <img id="group{{ b.id }}DisclosureArrow" class="disclosureArrow" groupId="{{ b.id }}" src="resources/images/disclosureArrow.png" />
+    <img id="group{{ g.id }}DisclosureArrow" class="disclosureArrow" groupId="{{ g.id }}" src="resources/images/disclosureArrow.png" />
 </div>

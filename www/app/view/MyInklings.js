@@ -19,10 +19,10 @@ Ext.define("inkle.view.MyInklings", {
                 items: [
                 	{
                         xtype: "button",
-                        ui: "action",
-                        text: "Invites",
                         itemId: "inklingInvitesButton",
-                        hidden: true,
+                        ui: "action",
+                		iconMask: true,
+                		iconCls: "inklingInvitesIcon"
                     },
                     {
                 		xtype: "button",

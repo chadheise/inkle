@@ -158,6 +158,14 @@ Ext.define("inkle.view.AllInklings", {
                         text: "Save",
                         itemId: "saveInklingButton",
                         hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        ui: "action",
+                        iconMask: true,
+                        iconCls: "plus",
+                        itemId: "addCommentButton",
+                        hidden: true
                     }
                 ]
     		},
@@ -207,7 +215,8 @@ Ext.define("inkle.view.AllInklings", {
 						yearTo: 2012,
 						toolbar: false,
 						doneButton: false,
-						cancelButton: false
+						cancelButton: false,
+						value: new Date()
 					}
 				]
 			},
@@ -314,7 +323,12 @@ Ext.define("inkle.view.AllInklings", {
             	delegate: "#inklingFeedButton",
             	event: "tap",
             	fn: "onInklingFeedButtonTap"
-        	}
+        	},
+        	{
+                delegate: "#addCommentButton",
+                event: "tap",
+                fn: "onAddCommentButtonTapped"
+            }
         ]
 	},
 	
@@ -331,9 +345,6 @@ Ext.define("inkle.view.AllInklings", {
         var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
         this.fireEvent("inklingTapped", tappedInklingId);
     },
-    
-    
-    
     
     onAllInklingsInklingBackButtonTap: function() {
         this.fireEvent("allInklingsInklingBackButtonTapped");
@@ -357,5 +368,9 @@ Ext.define("inkle.view.AllInklings", {
     
     onCancelEditInklingButtonTap: function() {
         this.fireEvent("cancelEditInklingButtonTapped");
-    }
+    },
+    
+    onAddCommentButtonTapped: function() {
+        this.fireEvent("addCommentButtonTapped");
+    } 
 });

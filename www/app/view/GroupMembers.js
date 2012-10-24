@@ -17,9 +17,9 @@ Ext.define("inkle.view.GroupMembers", {
                 items: [
                 	{
                 		xtype: "button",
-                		itemId: "groupMembersDoneButton",
-                		ui: "action",
-                		text: "Done"
+                		itemId: "groupMembersBackButton",
+                		ui: "back",
+                		text: "Groups"
                 	}
                 ]
     		},
@@ -67,9 +67,9 @@ Ext.define("inkle.view.GroupMembers", {
     	
     	listeners: [
     		{
-            	delegate: "#groupMembersDoneButton",
+            	delegate: "#groupMembersBackButton",
             	event: "tap",
-            	fn: "onGroupMembersDoneButtonTapped"
+            	fn: "onGroupMembersBackButtonTapped"
         	},
         	{
 				event: "tap",
@@ -81,8 +81,8 @@ Ext.define("inkle.view.GroupMembers", {
     },
     
     // Event firings
-	onGroupMembersDoneButtonTapped: function() {
-        this.fireEvent("groupMembersDoneButtonTapped");
+	onGroupMembersBackButtonTapped: function() {
+        this.fireEvent("groupMembersBackButtonTapped");
     },
     
     onSelectionItemTap: function(event) {
