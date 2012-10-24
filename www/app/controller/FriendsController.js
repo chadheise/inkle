@@ -116,6 +116,8 @@ Ext.define("inkle.controller.FriendsController", {
 		removeFriendsButton.setIconMask(true);
 		removeFriendsButton.setIconCls("removeFriend");
 		removeFriendsButton.setText("");
+		
+		//Get facebook friends here
     },
 	
 	/* Activates the group members view from the friends view groups list */
@@ -471,14 +473,38 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
-	updateAddFriendsSuggestions: function() {
+	updateAddFriendsSuggestions: function() {	
 		var addFriendsStore = this.getAddFriendsSuggestions().getStore();
+		var query = this.getAddFriendsSearchField().getValue().toLowerCase();	
+		var facebookFriends = "";
 		
-		addFriendsStore.setProxy({
-			extraParams: {
-				query: this.getAddFriendsSearchField().getValue()
-			}
-		});
+		var fbConnected = false;
+		var accessToken;
+		FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            // the user is logged in and has authenticated your
+            // app, and response.authResponse supplies
+            // the user's ID, a valid access token, a signed
+            // request, and the time the access token 
+            // and signed request each expire
+            fbConnected = true;
+            var uid = response.authResponse.userID;
+            accessToken = response.authResponse.accessToken;
+          } else if (response.status === 'not_authorized') {
+            // the user is logged in to Facebook, 
+            // but has not authenticated your app
+          } else {
+            // the user isn't logged in to Facebook.
+          }
+         });
+
+ 		addFriendsStore.setProxy({
+   		    extraParams: {
+   			    query: query,
+   				fbAccessToken: accessToken
+   			}
+   		});
+		
 		addFriendsStore.load();
 	},
 	

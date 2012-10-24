@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_FAv0we_BEeG_--99fWaWEg" elementId="org.eclipse.e4.legacy.ide.application" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_FAv0wu_BEeG_--99fWaWEg" bindingContexts="_FAv0y-_BEeG_--99fWaWEg">
   <tags>activeSchemeId:org.eclipse.ui.defaultAcceleratorConfiguration</tags>
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_FAv0wu_BEeG_--99fWaWEg" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_FN11ku_BEeG_--99fWaWEg" label="%trimmedwindow.label.eclipseSDK" x="18" y="70" width="1779" height="874">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_FAv0wu_BEeG_--99fWaWEg" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_FN11ku_BEeG_--99fWaWEg" label="%trimmedwindow.label.eclipseSDK" x="13" y="55" width="1396" height="799">
     <tags>topLevel</tags>
-    <tags>shellMaximized</tags>
     <children xsi:type="basic:PartSashContainer" xmi:id="_FN11ku_BEeG_--99fWaWEg" selectedElement="_FN2coO_BEeG_--99fWaWEg" horizontal="true">
       <children xsi:type="advanced:PerspectiveStack" xmi:id="_FN2coO_BEeG_--99fWaWEg" elementId="PerspectiveStack" containerData="7500" selectedElement="_FULHEe_BEeG_--99fWaWEg">
         <children xsi:type="advanced:Perspective" xmi:id="_FULHEe_BEeG_--99fWaWEg" elementId="org.eclipse.jdt.ui.JavaPerspective" selectedElement="_FULHEu_BEeG_--99fWaWEg" label="Java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/eview16/jperspective.gif">
@@ -77,7 +76,7 @@
               <children xsi:type="advanced:Placeholder" xmi:id="_FULuJe_BEeG_--99fWaWEg" elementId="org.eclipse.jdt.junit.ResultView" toBeRendered="false" ref="_FULHEO_BEeG_--99fWaWEg"/>
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_FULuJu_BEeG_--99fWaWEg" containerData="7500" selectedElement="_FULuJ-_BEeG_--99fWaWEg">
-              <children xsi:type="basic:PartSashContainer" xmi:id="_FULuJ-_BEeG_--99fWaWEg" containerData="5390" selectedElement="_FULuKO_BEeG_--99fWaWEg" horizontal="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_FULuJ-_BEeG_--99fWaWEg" containerData="5390" selectedElement="_FULuKe_BEeG_--99fWaWEg" horizontal="true">
                 <children xsi:type="advanced:Placeholder" xmi:id="_FULuKO_BEeG_--99fWaWEg" elementId="org.eclipse.ui.editorss" containerData="7500" ref="_FTyskO_BEeG_--99fWaWEg"/>
                 <children xsi:type="basic:PartStack" xmi:id="_FULuKe_BEeG_--99fWaWEg" elementId="right" containerData="2500" selectedElement="_FULuKu_BEeG_--99fWaWEg">
                   <tags>newtablook</tags>
@@ -87,7 +86,7 @@
                   <children xsi:type="advanced:Placeholder" xmi:id="_FULuLO_BEeG_--99fWaWEg" elementId="org.eclipse.ant.ui.views.AntView" toBeRendered="false" ref="_FUKgAO_BEeG_--99fWaWEg"/>
                 </children>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_FULuLe_BEeG_--99fWaWEg" elementId="bottom" containerData="4610" selectedElement="_FULuMu_BEeG_--99fWaWEg">
+              <children xsi:type="basic:PartStack" xmi:id="_FULuLe_BEeG_--99fWaWEg" elementId="bottom" containerData="4610" selectedElement="_4bYHUe_OEeGt06vL5wDQ1Q">
                 <tags>newtablook</tags>
                 <tags>org.eclipse.e4.secondaryDataStack</tags>
                 <children xsi:type="advanced:Placeholder" xmi:id="_FULuLu_BEeG_--99fWaWEg" elementId="org.eclipse.ui.views.ProblemView" ref="_FUAvAO_BEeG_--99fWaWEg"/>
@@ -171,7 +170,7 @@
       <tags>categoryTag:General</tags>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_FUAvAO_BEeG_--99fWaWEg" elementId="org.eclipse.ui.views.ProblemView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Problems" iconURI="platform:/plugin/org.eclipse.ui.ide//icons/full/eview16/problems_view.gif" tooltip="0 errors, 13 warnings, 0 others" closeable="true">
-      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;90&quot; org.eclipse.ui.ide.markerType=&quot;90&quot; org.eclipse.ui.ide.pathField=&quot;120&quot; org.eclipse.ui.ide.resourceField=&quot;90&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;300&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xA;&lt;/view>"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xA;&lt;expanded>&#xA;&lt;category IMemento.internal.id=&quot;Warnings (13 items)&quot;/>&#xA;&lt;/expanded>&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;90&quot; org.eclipse.ui.ide.markerType=&quot;90&quot; org.eclipse.ui.ide.pathField=&quot;120&quot; org.eclipse.ui.ide.resourceField=&quot;90&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;300&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xA;&lt;/view>"/>
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <menus xmi:id="_FcFF4O_BEeG_--99fWaWEg" elementId="org.eclipse.ui.views.ProblemView">
