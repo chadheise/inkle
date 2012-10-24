@@ -60,7 +60,8 @@ Ext.define("inkle.view.AddFriends", {
 							read: "POST"
 						},
 						extraParams: {
-							query: ""
+							query: "",
+							fbAccessToken: ""
 						},
 						
 						reader: {

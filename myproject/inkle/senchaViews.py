@@ -10,6 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 # JSON module
 from django.utils import simplejson
+# URL module
+import urllib2
 
 # Inkle database models
 from myproject.inkle.models import *
@@ -31,10 +33,12 @@ def s_is_logged_in(request):
 @csrf_exempt
 def s_login_view(request):
     """Logs a member in or returns the login error."""
+    print "logging in"
     # Get the inputted email and password
     try:
         if ("facebookId" in request.POST):
             facebookId = request.POST["facebookId"]
+            facebookAccessToken = request.POST["facebookAccessToken"]
             # Create random password 32 chars long
             password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
             first_name = request.POST["first_name"]
@@ -71,6 +75,7 @@ def s_login_view(request):
             if (facebookId):
                 member = Member.active.get(facebookId = facebookId)
                 #Should allow user to update their email if their facebook email doesn't match the one in inkle
+                # Need to validate facebook authentication
             # Get the member according to the provided email
             else:
                 member = Member.active.get(email = email)
@@ -99,18 +104,32 @@ def s_login_view(request):
                 member.save() # Save the new member
 
         if (facebookId):
+            print "facebook login"
+            print "member is active: " + str(member.is_active)
             # Confirm the user is active and log them in
-            if (member and member.is_active):
-                request.session["member_id"] = member.id
-                member.last_login = datetime.datetime.now()
-                member.save()
-            # Otherwise, add to the errors list
-            else:
+            try:
+                if (member and member.is_active):
+                    request.session["member_id"] = member.id
+                    fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
+                    fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+                    request.session["facebook_access_token"] = facebookAccessToken
+                    fbData = simplejson.loads(fbResponse)
+                    for fbFriend in fbData["data"]:
+                        print fbFriend["first_name"] + " " + fbFriend["last_name"]
+                    member.last_login = datetime.datetime.now()
+                    member.save()
+                # Otherwise, add to the errors list
+                else:
+                    response_error = "Could not login using Facebook"
+            except Exception, e:
                 response_error = "Could not login using Facebook"
         else:
+            print "normal login"
+            print "member is active: " + str(member.is_active) 
             # Confirm the username and password combination and log the member in
             if (member and member.is_active and member.check_password(password)):
                 request.session["member_id"] = member.id
+                print "request.session: " + str(request.session["member_id"])
                 member.last_login = datetime.datetime.now()
                 member.save()
             # Otherwise, add to the errors list
@@ -1022,14 +1041,20 @@ def s_people_search_view(request):
     """Returns a list of member's who match the inputted query."""
     # Get the logged-in member
     try:
+        print 'before member'
         member = Member.active.get(pk = request.session["member_id"])
+        print "after member"
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-
     # Get the search query
     try:
+        print 'before query'
         query = request.POST["query"]
+        print "people search"
+        fbAccessToken = request.POST["fbAccessToken"]
+        print "accessToken: " + fbAccessToken
     except:
+        print "except1: " + str(e)
         raise Http404()
 
     # Split the query into words
@@ -1046,7 +1071,35 @@ def s_people_search_view(request):
     # If the query is more than two words long, return no results
     else:
         members = []
+    
+    #fbUrl = "https://api.facebook.com/method/fql.query?query="
+    #fbUrl = "https://graph.facebook.com/fql.query?query="
+    fbUrl = "https://graph.facebook.com/fql?q="
+    fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
+    fbQuery += "FROM user WHERE uid IN "
+    fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
+    fbQuery += "AND is_app_user=0"
+    if (len(query_split) == 1):
+        fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+        fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+    elif (len(query_split) == 2):
+        fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+        fbQuery += str("OR strpos(lower(last_name), '" + query_split[1] + "') == 0 ")
+        fbQuery += str("OR strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
+        fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+    else:
+        fbQuery = ""
 
+    fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
+
+    try:
+        fbResponse = urllib2.urlopen(fbRequest).read()
+    except Exception, e:
+        print "except2: " + str(e)
+    fbData = simplejson.loads(fbResponse)
+    for fbFriend in fbData["data"]:
+        print fbFriend["first_name"] + " " + fbFriend["last_name"]
+        
     # Sort the members by last name
     members = list(members)
     members.sort(key = lambda m : m.last_name)
@@ -1073,6 +1126,7 @@ def s_people_search_view(request):
 
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
+    print "returning"
     return HttpResponse(response, mimetype = "application/json")
 
 

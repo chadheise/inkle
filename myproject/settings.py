@@ -123,7 +123,8 @@ INSTALLED_APPS = (
     #'django.contrib.admindocs',
     'inkle',
     #'south',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    #'django_facebook',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -148,3 +149,26 @@ LOGGING = {
         },
     }
 }
+
+#AUTH_PROFILE_MODULE = 'inkle.Member'
+
+#Added for Django_facebook integration
+"""
+FACEBOOK_APP_ID = 355653434520396
+FACEBOOK_APP_SECRET = "	e6df96d1801e704fecd7cb3fea71b944"
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django_facebook.context_processors.facebook',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django_facebook.auth_backends.FacebookBackend',
+    'django.contrib.auth.backends.ModelBackend',
+) """
