@@ -20,6 +20,9 @@ from django.db.models import Q
 # Date/time module
 import datetime
 
+import string
+import random
+
 def s_is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
@@ -30,39 +33,89 @@ def s_login_view(request):
     """Logs a member in or returns the login error."""
     # Get the inputted email and password
     try:
-        email = request.POST["email"]
-        password = request.POST["password"]
+        if ("facebookId" in request.POST):
+            facebookId = request.POST["facebookId"]
+            # Create random password 32 chars long
+            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            day = int(request.POST["birthday"].split('/')[1])
+            month = int(request.POST["birthday"].split('/')[0])
+            year = int(request.POST["birthday"].split('/')[2])
+            birthday = datetime.date(day = day, month = month, year = year)
+            gender = request.POST["gender"][0]
+        else:
+            email = request.POST["email"]
+            password = request.POST["password"]
+            facebookId = False
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
-
+    
     # Create a string to hold the login error
     response_error = ""
 
     # Validate the email and password
-    if ((not email) and (not password)):
-        response_error = "Email and password not specified"
-    elif (not email):
-        response_error = "Email not specified"
-    elif (not password):
-        response_error = "Password not specified"
+    if (not facebookId):
+        if ((not email) and (not password)):
+            response_error = "Email and password not specified"
+        elif (not email):
+            response_error = "Email not specified"
+        elif (not password):
+            response_error = "Password not specified"
 
     # Log in the member if their email and password are correct
     if (not response_error):
-        # Get the member according to the provided email
         try:
-            member = Member.active.get(email = email)
+            # Get the member by facebookId
+            if (facebookId):
+                member = Member.active.get(facebookId = facebookId)
+                #Should allow user to update their email if their facebook email doesn't match the one in inkle
+            # Get the member according to the provided email
+            else:
+                member = Member.active.get(email = email)
         except:
             member = []
+            
+        if (facebookId and not member):
+            try:
+                #If the user has not logged in with facebook before but they registered with their email
+                member = Member.active.get(email = email)
+                member.facebookId = facebookId
+                member.save()
+            except:
+                # Create the new member
+                member = Member(
+                    facebookId = facebookId,
+                    first_name = first_name,
+                    last_name = last_name,
+                    username = email,
+                    email = email,
+                    birthday = birthday,
+                    gender = gender
+                )
+                # Set the new member's password
+                member.set_password(password)
+                member.save() # Save the new member
 
-        # Confirm the username and password combination and log the member in
-        if (member and member.is_active and (member.check_password(password))):
-            request.session["member_id"] = member.id
-            member.last_login = datetime.datetime.now()
-            member.save()
-
-        # Otherwise, add to the errors list
+        if (facebookId):
+            # Confirm the user is active and log them in
+            if (member and member.is_active):
+                request.session["member_id"] = member.id
+                member.last_login = datetime.datetime.now()
+                member.save()
+            # Otherwise, add to the errors list
+            else:
+                response_error = "Could not login using Facebook"
         else:
-            response_error = "Invalid login combination"
+            # Confirm the username and password combination and log the member in
+            if (member and member.is_active and member.check_password(password)):
+                request.session["member_id"] = member.id
+                member.last_login = datetime.datetime.now()
+                member.save()
+            # Otherwise, add to the errors list
+            else:
+                response_error = "Invalid login combination"
 
     # Determine if the login was successful
     if (response_error):
@@ -75,6 +128,7 @@ def s_login_view(request):
         "success" : success,
         "error" : response_error
     })
+    request.session.modified = True
     return HttpResponse(response, mimetype = "application/json")
 
 
@@ -138,15 +192,20 @@ def s_all_inklings_view(request):
     for m in members:
         for i in m.inklings.filter(date = date):
             if i not in inklings:
-                html = render_to_string( "s_inklingListItem.html", {
-                    "i" : i
-                })
-                response_inklings.append({
-                    "id" : i.id,
-                    "html" : html,
-                    "numAttendees" : i.get_num_attendees()
-                })
-                inklings.append(i)
+                try:
+                    sp = SharingPermission.objects.get(creator = m, inkling = i)
+                except:
+                    raise Http404()
+                if (member in list(sp.members.all())):
+                    html = render_to_string( "s_inklingListItem.html", {
+                        "i" : i
+                    })
+                    response_inklings.append({
+                        "id" : i.id,
+                        "html" : html,
+                        "numAttendees" : i.get_num_attendees()
+                    })
+                    inklings.append(i)
 
     # Sort the inklings according to their number of attendees
     response_inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
@@ -158,7 +217,7 @@ def s_all_inklings_view(request):
 
 @csrf_exempt
 def s_groups_view(request):
-    """Returns a list of the logged-in member's groups (with selected selection buttons)."""
+    """Returns a list of the logged-in member's groups."""
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -203,28 +262,54 @@ def s_groups_view(request):
                     g.selected = False
                     break
 
-        html = render_to_string( "s_groupListItem.html", {
-            "g" : g
-        })
+        if (view == "friends"):
+            g.num_members = g.members.count()
+            html = render_to_string( "s_friendsViewGroupListItem.html", {
+                "g" : g,
+            })
+        else:
+            html = render_to_string( "s_groupListItem.html", {
+                "g" : g
+            })
 
         response_groups.append({
             "id" : g.id,
             "html" : html
         })
 
-    # Add a "Not Grouped" group to the response list
-    g = { "id" : -1, "name" : "Not Grouped" }
-    g["selected"] = True
+    # Create a "Not Grouped" group
+    not_grouped_group = { "id" : -1, "name" : "Not Grouped" }
+    
+    # Determine if the "Not Grouped" group should be selected
+    not_grouped_group["selected"] = True
     if (view == "invites"):
         for m in not_grouped_members:
             if (not inkling.member_has_pending_invitation(m)):
-                g["selected"] = False
+                not_grouped_group["selected"] = False
                 break
-    html = render_to_string( "s_groupListItem.html", {
-        "g" : g
-    })
+
+    # If the current view is the friends view, determine the number of friends who are not grouped and genearte the HTML
+    if (view == "friends"):
+        not_grouped_members = list(member.friends.all())
+        for g in member.group_set.all():
+            for m in g.members.all():
+                if (m in not_grouped_members):
+                    not_grouped_members.remove(m)
+        not_grouped_group["num_members"] = len(not_grouped_members)
+
+        html = render_to_string( "s_friendsViewGroupListItem.html", {
+            "g" : not_grouped_group,
+        })
+
+    # Otherwise, simply generate the HTML
+    else:
+        html = render_to_string( "s_groupListItem.html", {
+            "g" : not_grouped_group
+        })
+
+    # Add the "Not Grouped" group to the response list
     response_groups.append({
-        "id" : g["id"],
+        "id" : not_grouped_group["id"],
         "html" : html
     })
 
@@ -274,6 +359,20 @@ def s_inkling_view(request):
     # Return the HTML for the current inkling
     return render_to_response( "s_inkling.html",
         { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
+def s_new_inkling_privacy_form_view(request):
+    """Returns the HTML for a single inkling"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Return the HTML for the current inkling
+    return render_to_response( "s_newInklingPrivacyForm.html",
+        { "member" : member },
         context_instance = RequestContext(request) )
 
 
@@ -479,7 +578,7 @@ def s_my_inklings_view(request):
         context_instance = RequestContext(request) )
 
 
-def s_num_inkling_invites_view(request):
+def s_num_inkling_invitations_view(request):
     """Returns the number of inklings to which the logged-in member has pending invitations."""
     # Get the logged-in member
     try:
@@ -491,7 +590,8 @@ def s_num_inkling_invites_view(request):
     return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
 
 
-def s_inkling_invites_view(request):
+@csrf_exempt
+def s_inkling_invitations_view(request):
     """Returns a list of the inklings to which the logged-in member has pending invitations."""
     # Get the logged-in member
     try:
@@ -501,13 +601,13 @@ def s_inkling_invites_view(request):
     
     # Get a list of the inklings to which the logged-in member has pending invitations
     response_invites = []
-    for i in member.inkling_invitations_received.filter(status = "pending"):
-        html = render_to_string( "s_inklingInviteListItem.html", {
-            "inkling" : i
+    for invitation in member.inkling_invitations_received.filter(status = "pending"):
+        html = render_to_string( "s_inklingInvitationListItem.html", {
+            "invitation" : invitation
         })
         
         response_invites.append({
-            "id" : i.id,
+            "id" : invitation.id,
             "html": html
         })
     
@@ -855,45 +955,6 @@ def s_friends_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-# TODO: get rid of this possibly?
-# TODO: update all of this function's comments
-@csrf_exempt
-def s_friends_view_groups_view(request):
-    """Returns a list of the logged-in member's groups."""
-    # Get the logged-in member
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except (Member.DoesNotExist, KeyError) as e:
-        raise Http404()
-
-    # Get the POST data
-    try:
-        include_all_groups_group = request.POST["includeAllGroupsGroup"]
-        invitees_mode = request.POST["inviteesMode"]
-    except:
-        raise Http404()
-
-    # Get the name and number of member for each of the logged in member's groups
-    response_groups = []
-
-    # Sort the member's group alphabetically
-    groups = list(member.group_set.all())
-    groups.sort(key = lambda b : b.name)
-    
-    for b in groups:
-        html = render_to_string( "s_friendsViewGroupListItem.html", {
-            "b" : b,
-        })
-        response_groups.append({
-            "id" : b.id,
-            "html" : html
-        })
-
-    # Create and return a JSON object
-    response = simplejson.dumps(response_groups)
-    return HttpResponse(response, mimetype = "application/json")
-
-
 @csrf_exempt
 def s_friend_requests_view(request):
     """Returns a list of the logged-in member's friend requests."""
@@ -1142,19 +1203,26 @@ def s_group_members_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    # Get the inputted group
+    # Get the inputted group or set the group to None if we are getting the "Not Grouped" members
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
     except:
-        raise Http404()
+        group = None
 
     # Make sure the inputted group is one of the logged-in member's groups
-    if (group.creator != member):
+    if ((group) and (group.creator != member)):
         raise Http404()
 
     # Get a list of the logged-in members friends
     friends = list(member.friends.all())
     friends.sort(key = lambda m : m.last_name) # TODO: try to remove this and just use a sencha sorter
+
+    # Get only the "Not Grouped" members if necessary
+    if (not group):
+        for g in member.group_set.all():
+            for m in g.members.all():
+                if (m in friends):
+                    friends.remove(m)
 
     # Get the HTML for each of the logged-in member's friends' list item (and whether or not they are in the inputted group)
     response_friends = []

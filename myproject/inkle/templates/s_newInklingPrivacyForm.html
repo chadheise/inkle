@@ -1,0 +1,27 @@
+<div id="newInklingPrivacyForm">
+    <p id="newInklingPrivacyFormHeader">Who else is this shared with?</p>
+
+    <!-- Selected groups -->
+    <div id="selectedGroupsHeader">
+        <img id="selectedGroupsSelectionItem" class="selectionItem" src="resources/images/selected.png">
+        <p>Selected groups</p>
+    </div>
+    {% for g in member.group_set.all %}
+        <div class="selectedGroupsGroup">
+            <img id="group{{ g.id }}SelectionItem" class="selectedGroupSelectionItem selectionItem" groupId="{{ g.id }}" src="resources/images/selected.png">
+            <p>{{ g.name }}</p>
+        </div>
+    {% endfor %}
+
+    <!-- No one -->
+    <div id="noOne">
+        <img id="noOneSelectionItem" class="selectionItem" src="resources/images/deselected.png">
+        <p>No one</p>
+    </div>
+
+    <!-- Forwarding -->
+    <div id="forwarding">
+        <img id="forwardingSelectionItem" class="selectionItem" src="resources/images/selected.png">
+        <p>Allow people attending to share with others</p>
+    </div>
+</div>

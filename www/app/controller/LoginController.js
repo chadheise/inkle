@@ -47,6 +47,9 @@ Ext.define("inkle.controller.LoginController", {
         // Create the main tab view
         var mainTabView = Ext.create("inkle.view.Main");
         
+        // Animate the main tab view
+        Ext.Viewport.animateActiveItem(mainTabView, { type: "slide", direction: "up" });
+        
         // Set the value of the date picker
         var datePicker = this.getDatePicker();
         today = new Date();
@@ -58,9 +61,6 @@ Ext.define("inkle.controller.LoginController", {
 	    var date = today.getDate();
 	    var month = this.getMonthString(today.getMonth());
 	    allInklingsDateButton.setText(day + ", " + month + " " + date);
-        
-        // Animate the main tab view
-        Ext.Viewport.animateActiveItem(mainTabView, { type: "slide", direction: "up" });
     },
 	
     /* Commands */
@@ -87,40 +87,37 @@ Ext.define("inkle.controller.LoginController", {
          	scope: this
         });
     },
+    
 	facebookLoginSubmit: function() {
         console.log("facebookLoginSubmit");
+        var object = this;
         FB.login(function(response) {
             if (response.authResponse) {
-                 alert('Welcome!  Fetching your information.... ');
                  FB.api('/me', function(response) {
-                   alert('Good to see you, ' + response.name + '.');
+           		   
+           		   //Log the user in to inkle
+               	   Ext.Ajax.request({
+                       url: "http://127.0.0.1:8000/sencha/login/",
+                       params: {
+                           facebookId: response.id,
+                   		   email: response.email,
+                   		   first_name: response.first_name,
+                   		   last_name: response.last_name,
+                   		   gender: response.gender,
+                   		   birthday: response.birthday
+                   	   },
+               		   success: function(response) {
+                           this.activateMainTabView();
+                       },
+                       failure: function(response) {
+                           Ext.Msg.alert(response.error);
+                        },
+                       	scope: object
+               		});
                  });
                } else {
                  alert('User cancelled login or did not fully authorize.');
                }
             }, {scope: 'email,user_birthday'});
-		//var loginView = this.getLoginView();
-
-		/*loginView.submit({
-			method: "POST",
-						
-         	waitMsg: {
-         		xtype: "loadmask",
-            	message: "Processing",
-            	cls : "demos-loading"
-         	},
-         				
-         	scope: this,
-         				
-         	success: function(form, response) {
-            	console.log("Login successful");
-            	this.activateMainTabView();
-         	},
-         				
-         	failure: function(form, response) {
-         		console.log("Login failed");
-        	    Ext.Msg.alert("Error", response.errors);
-         	}
-        });*/
     }
 });

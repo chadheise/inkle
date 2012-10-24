@@ -16,8 +16,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         	shareWithSelect: "#shareWithSelect",
 
         	newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
-        	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",
-        
+        	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",        
+        	
             // Toolbar buttons
             inklingInvitesButton: "#inklingInvitesButton",
             newInklingButton: "#newInklingButton",
@@ -45,13 +45,18 @@ Ext.define("inkle.controller.MyInklingsController", {
             	allFriendsInviteesDoneButtonTapped: "activateInklingInviteesViewPop",
             	newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
             	newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
+            	activate: "hideMyInklingsTabBadge",
             	deactivate: "hideNewInklingInivtedGroupsPanel"
             },
             
             newInklingView: {
             	newInklingInviteesTapped: "activateInklingInviteesView",
             	isPrivateCheckboxChecked: "toggleShareWithSelect",
-            	isPrivateCheckboxUnchecked: "toggleShareWithSelect"
+            	isPrivateCheckboxUnchecked: "toggleShareWithSelect",
+            	forwardingSelectionItemTapped: "toggleForwardingSelectionItem",
+            	selectedGroupsSelectionItemTapped: "selectSelectedGroupsSelectionItem",
+            	noOneSelectionItemTapped: "selectNoOneSelectionItem",
+            	selectedGroupsGroupSelectionItemTapped: "toggleSelectedGroupsGroupSelectionItem"
             },
             
             newInklingInvitedFriendsView: {
@@ -110,10 +115,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getNewInklingButton().hide();
 		this.getInklingInvitesButton().hide();
 		this.getInviteResponseBackButton().show();
-		
+
 		// Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("Inkling Invites");
-		
+
     	this.getMyInklingsView().push({
         	xtype: "inviteResponseView"
         });
@@ -242,7 +247,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     },
     
     // Toggles the state of the inputted selection button and (un)invites the appropriate friend(s)
-	    toggleSelectionButton: function(selectionButton, itemId, itemType) {	
+	toggleSelectionButton: function(selectionButton, itemId, itemType) {	
 		// Create a variable to hold a comma-separated string of selected groups
 		var selectedGroupIds = "";
 		
@@ -343,6 +348,27 @@ Ext.define("inkle.controller.MyInklingsController", {
 		if (newInklingInvitedGroupsPanel) {
 			newInklingInvitedGroupsPanel.hide();
 		}
+		
+		// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
+        Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
+            success: function(response) {
+                numInklingInvites = response.responseText;
+                if (numInklingInvites != 0) {
+                    this.getInklingInvitesButton().show();
+                    this.getInklingInvitesButton().setBadgeText(numInklingInvites);
+                    this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+                }
+            },
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            scope: this
+        });
+	},
+	
+	hideMyInklingsTabBadge: function() {
+	    this.getMainTabView().getTabBar().getAt(1).setBadgeText("");
 	},
 	
 	// Toggles the new inkling's "Share with" field
@@ -356,6 +382,64 @@ Ext.define("inkle.controller.MyInklingsController", {
 		}
 	},
 	
+	toggleForwardingSelectionItem: function(forwardingSelectionItem) {
+	    if (forwardingSelectionItem.getAttribute("src") == "resources/images/selected.png") {
+			forwardingSelectionItem.set({
+				"src": "resources/images/deselected.png"
+			});
+	    }
+	    else {
+	        forwardingSelectionItem.set({
+				"src": "resources/images/selected.png"
+			});
+	    }
+	},
+	
+	selectSelectedGroupsSelectionItem: function(selectedGroupsSelectionItem) {
+	    if (selectedGroupsSelectionItem.getAttribute("src") == "resources/images/deselected.png") {
+			selectedGroupsSelectionItem.set({
+				"src": "resources/images/selected.png"
+			});
+	    
+	        var noOneSelectionItem = Ext.fly("noOneSelectionItem");
+	        noOneSelectionItem.set({
+				"src": "resources/images/deselected.png"
+			});
+	    }
+	        	console.log("gg");
+	},
+	
+	selectNoOneSelectionItem: function(noOneSelectionItem) {
+	    if (noOneSelectionItem.getAttribute("src") == "resources/images/deselected.png") {
+			noOneSelectionItem.set({
+				"src": "resources/images/selected.png"
+			});
+			
+			var selectedGroupsSelectionItem = Ext.fly("selectedGroupsSelectionItem");
+	        selectedGroupsSelectionItem.set({
+				"src": "resources/images/deselected.png"
+			});
+	    }
+	},
+	
+	toggleSelectedGroupsGroupSelectionItem: function(groupSelectionItem) {
+    	console.log(groupSelectionItem);
+        var selectedGroupsSelectionItem = Ext.fly("selectedGroupsSelectionItem");
+	    //if (selectedGroupsSelectionItem.getAttribute("src") == "resources/images/selected.png") {
+    	    console.log("a");
+    	    if (groupSelectionItem.getAttribute("src") == "resources/images/selected.png") {
+	    		groupSelectionItem.set({
+		    		"src": "resources/images/deselected.png"
+			    });
+    	    }
+	        else {
+	            groupSelectionItem.set({
+    				"src": "resources/images/selected.png"
+	    		});
+	        }
+	    //}
+	},
+	
 	/**************************/
 	/*  BASE CLASS FUNCTIONS  */
 	/**************************/
@@ -365,21 +449,20 @@ Ext.define("inkle.controller.MyInklingsController", {
         // If the main tab view is created, update the inkling invites button
         if (this.getMainTabView()) {
 			// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
-			var mainTabView = this.getMainTabView();
-			var inklingInvitesButton = this.getInklingInvitesButton();
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/numInklingInvites/",
+				url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
 				success: function(response) {
 					numInklingInvites = response.responseText;
 					if (numInklingInvites != 0) {
-						inklingInvitesButton.show();
-						inklingInvitesButton.setBadgeText(numInklingInvites);
-						mainTabView.getTabBar().getAt(1).setBadgeText(numInklingInvites);
-					}
+						this.getInklingInvitesButton().show();
+                        this.getInklingInvitesButton().setBadgeText(numInklingInvites);
+                        this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+                    }
 				},
 				failure: function(response) {
 					console.log(response.responseText);
-	        	}
+	        	},
+	        	scope: this
 			});
 		}
     }

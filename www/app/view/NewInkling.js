@@ -15,8 +15,8 @@ Ext.define("inkle.view.NewInkling", {
 			// Basic info form field
 			{
 				xtype: "fieldset",
-				margin: "-10px -10px 10px -10px",
-				//title: "Basic Info",
+				margin: "-30px -10px 10px -10px",
+				title: "What are the details?",
 				
 				items: [
 					{
@@ -41,13 +41,6 @@ Ext.define("inkle.view.NewInkling", {
 						maxLength: 50
 					},
 					{
-						xtype: "textfield",
-						name: "category",
-						label: "Category",
-						placeHolder: "Optional",
-						maxLength: 50
-					},
-					{
 						xtype: "textareafield",
 						name: "notes",
 						label: "Notes",
@@ -60,37 +53,45 @@ Ext.define("inkle.view.NewInkling", {
 			// Invited friends
 			{
 				xtype: "container",
-				id: "newInklingViewInvitees",
+				title: "Who is invited?",
 				margin: "0px -10px 10px -10px",
 				html: [
-					"<p id='numInvitedFriends'>0 friends invited</p>",
-					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
+				    "<p>Who is invited?</p>",
+				    "<div id='newInklingViewInvitees'>",
+                        "<p id='numInvitedFriends'>0 friends invited</p>",
+                        "<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />",
+				    "</div>"
 				].join("")
 			},
 			
-			// Privacy form fields
 			{
-				xtype: "fieldset",
-				margin: "0px -10px 10px -10px",
-				//title: "Privacy",
+			    xtype: "htmlcontainer",
+			    url: "http://127.0.0.1:8000/sencha/newInklingPrivacyForm/"
+			},
+			
+			// Privacy form fields
+			/*{
+				xtype: "container",
+				margin: "-20px -10px 10px -10px",
+				title: "Who else is this shared with?",
+				layout: "vbox",
+				height: 500,
 				
-				// Form fields
 				items: [
 					{
-						xtype: "checkboxfield",
-						id: "isPrivateCheckbox",
-						name: "isPrivate",
-						label: "Private?",
-						checked: false
-					},
-					{
-						xtype: "selectfield",
-						id: "shareWithSelect",
-						name: "shareWith",
-						label: "Share with",
-						usePicker: true,
+					    flex: 1,
+					    xtype: "list",
+						//id: "shareWithSelect",
+						loadingText: "Loading groups...",
+						emptyText: "<div class='emptyListText'>No groups.</div>",
+						disableSelection: true,
+						itemTpl: "{ html }",
+						scrollable: false,
 						store: {
-							fields: ["text", "value"],
+							fields: [
+								"id",
+								"html"
+							],
 							proxy: {
 								type: "ajax",
 								actionMethods: {
@@ -99,17 +100,13 @@ Ext.define("inkle.view.NewInkling", {
 								url: "http://127.0.0.1:8000/sencha/groups/",
 								extraParams: {
 									view: "allInklings"
-								},
-								reader: {
-									type: "json",
-									rootProperty: "groups"
 								}
 							},
 							autoLoad: true
 						}
 					}
 				]
-			}
+			}*/
 		],
     	
     	// Listeners
@@ -129,6 +126,30 @@ Ext.define("inkle.view.NewInkling", {
         		event: "uncheck",
         		delegate: "#isPrivateCheckbox",
         		fn: "onIsPrivateCheckboxUncheck"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#forwardingSelectionItem",
+            	fn: "onForwardingSelectionItemTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#selectedGroupsSelectionItem",
+            	fn: "onSelectedGroupsSelectionItemTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#noOneSelectionItem",
+            	fn: "onNoOneSelectionItemTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: ".selectedGroupSelectionItem",
+            	fn: "onSelectedGroupsGroupSelectionItemTap"
         	}
         ]
     },
@@ -144,5 +165,26 @@ Ext.define("inkle.view.NewInkling", {
     
     onIsPrivateCheckboxUncheck: function() {
     	this.fireEvent("isPrivateCheckboxUnchecked");
+    },
+    
+    onForwardingSelectionItemTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("forwardingSelectionItemTapped", selectionButton);
+    },
+    
+    onSelectedGroupsSelectionItemTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("selectedGroupsSelectionItemTapped", selectionButton);
+    },
+    
+    onNoOneSelectionItemTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("noOneSelectionItemTapped", selectionButton);
+    },
+    
+    onSelectedGroupsGroupSelectionItemTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	console.log(selectionButton);
+    	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
     }
 });

@@ -34,50 +34,59 @@ Ext.define("inkle.view.InklingFeed", {
 					autoLoad: false
 				}
 			},
-			
-			// New comment toolbar
-    		{
-    			xtype: "toolbar",
-                docked: "bottom",
-                items: [
-                	{
-                		xtype: "textfield",
-                		itemId: "newCommentTextField",
-                		placeHolder: "Add a comment...",
-                		maxLength: 150,
-                		flex: 6
-                	},	
-                	{
-                		xtype: "button",
-                		itemId: "newCommentSendButton",
-                		disabled: true,
-                		text: "Send",
-                		flex: 1
-                	}
-                ]
-            }
-        ],
-        
-        listeners: [
+            
+            // Groups list the
         	{
-        		delegate: "#newCommentTextField",
-        		event: "keyup",
-        		fn: "onNewCommentTextFieldKeyup"
-        	},
-        	{
-            	delegate: "#newCommentSendButton",
-            	event: "tap",
-            	fn: "onNewCommentSendButtonTap"
-        	}
+        		xtype: "panel",
+        		id: "addCommentPanel",
+        		hidden: true,
+        		top: 0,
+        		width: 300,
+        		height: 220,
+        		layout: "vbox",
+        		items: [
+        			{
+                        xtype: "textareafield",
+                        itemId: "addCommentTextField",
+                        placeHolder: "Add a comment...",
+                        width: "100%",
+                        height: 175,
+                        maxLength: 150
+                    },	
+                    {
+                        xtype: "button",
+                        itemId: "addCommentSendButton",
+                        disabled: true,
+                        text: "Post",
+                        width: 100,
+                        align: "center"
+                    }
+				],
+				
+				listeners: [
+                    {
+                        delegate: "#addCommentTextField",
+                        event: "keyup",
+                        fn: "onAddCommentTextFieldKeyup"
+                    },
+                    {
+                        delegate: "#addCommentSendButton",
+                        event: "tap",
+                        fn: "onAddCommentSendButtonTap"
+                    }
+                ],
+    
+                // Event firings
+                onAddCommentTextFieldKeyup: function() {
+                    console.log("b");
+                    this.fireEvent("addCommentTextFieldKeyedUp");
+                },
+                
+                onAddCommentSendButtonTap: function() {
+                    console.log("b2");
+                    this.fireEvent("addCommentSendButtonTapped");
+                }
+			}
         ]
-    },
-    
-    // Event firings
-    onNewCommentTextFieldKeyup: function() {
-        this.fireEvent("newCommentTextFieldKeyedUp");
-    },
-    
-    onNewCommentSendButtonTap: function() {
-        this.fireEvent("newCommentSendButtonTapped");
     }
 });

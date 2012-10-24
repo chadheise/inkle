@@ -77,11 +77,19 @@ $tabs-bottom-active-gradient: 'recessed';
 	-webkit-mask-box-image: url("../images/settingsTabIcon.png");
 }
 
+.inklingInvitesIcon {
+	-webkit-mask-box-image: url("../images/inklingInvites.png");
+}
+
 .removeFriend {
 	-webkit-mask-box-image: url("../images/icons/New-Minus-1.png");
 }
 
 .addFriend {
+	-webkit-mask-box-image: url("../images/icons/New-Plus-1.png");
+}
+
+.plus {
 	-webkit-mask-box-image: url("../images/icons/New-Plus-1.png");
 }
 
@@ -542,6 +550,30 @@ $tabs-bottom-active-gradient: 'recessed';
 #groupInviteesList .name {
 	font-size: 20px;
 	font-weight: bold;
+}
+
+/**********************/
+/*  NEW INKLING VIEW  */
+/**********************/
+#newInklingPrivacyForm #selectedGroupsHeader, #newInklingPrivacyForm #noOne,  #newInklingPrivacyForm #forwarding {
+    clear: both;
+}
+
+#newInklingPrivacyForm #forwarding {
+    margin-top: 25px;
+}
+
+#newInklingPrivacyForm .selectedGroupsGroup {
+    clear: both;
+}
+
+#newInklingPrivacyForm .selectionItem {
+	float: left;
+	padding: 0px;
+}
+
+#newInklingPrivacyForm .selectedGroupsGroup .selectionItem {
+	margin-left: 25px;
 }
 
 /**************************************/
