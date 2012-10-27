@@ -46,9 +46,11 @@ Ext.define("inkle.controller.AllInklingsController", {
                 
                 deactivate: "hideAllInklingsPanels",
                 activeitemchange: "hideAllInklingsPanels",
-                
-                onNoDatedInklingsCheckboxChecked: "toggleDatePickerEnabled",
-                onNoDatedInklingsCheckboxUnchecked: "toggleDatePickerEnabled"
+            },
+            
+            allInklingsDatePickerPanel: {
+                noDatedInklingsCheckboxChecked: "toggleDatePickerEnabled",
+                noDatedInklingsCheckboxUnchecked: "toggleDatePickerEnabled"
             },
             
             allInklingsGroupsListPanel: {
@@ -188,13 +190,12 @@ Ext.define("inkle.controller.AllInklingsController", {
     
     /* Toggles whether the date picker is enabled or disabled */
     toggleDatePickerEnabled: function() {
-        console.log("b");
         var allInklingsDatePicker = this.getAllInklingsDatePicker();
-        if (allInklingsDatePicker.isDisabled()) {
-            allInklingsDatePicker.enable();
+        if (allInklingsDatePicker.getMasked()) {
+            allInklingsDatePicker.setMasked(false);
         }
         else {
-            allInklingsDatePicker.disable();
+            allInklingsDatePicker.setMasked(true);
         }
     },
     
