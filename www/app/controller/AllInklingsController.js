@@ -105,13 +105,13 @@ Ext.define("inkle.controller.AllInklingsController", {
 	
 	/* Returns the day string associated with the inputted index */
 	getDayString: function(index) {
-		var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 		return days[index];
 	},
 	
 	/* Returns the month string associated with the inputted index */
 	getMonthString: function(index) {
-		months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+		months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 		return months[index];
 	},
 	

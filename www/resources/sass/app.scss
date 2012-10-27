@@ -62,39 +62,39 @@ $tabs-bottom-active-gradient: 'recessed';
 /*  CUSTOM TAB ICONS  */
 /**********************/
 .allInklings {
-	-webkit-mask-box-image: url("../images/icons/All-Inklings2.png");
+	-webkit-mask-box-image: url("../images/icons/allInklings.png");
 }
 
 .myInklings {
-	-webkit-mask-box-image: url("../images/icons/My-Inklings2.png");
+	-webkit-mask-box-image: url("../images/icons/myInklings.png");
 }
 
 .friends {
-	-webkit-mask-box-image: url("../images/friendsTabIcon.png");
+	-webkit-mask-box-image: url("../images/icons/friends.png");
 }
 
 .settingsTab {
-	-webkit-mask-box-image: url("../images/settingsTabIcon.png");
+	-webkit-mask-box-image: url("../images/icons/gears.png");
 }
 
 .inklingInvitesIcon {
-	-webkit-mask-box-image: url("../images/inklingInvites.png");
+	-webkit-mask-box-image: url("../images/icons/envelope.png");
 }
 
-.removeFriend {
-	-webkit-mask-box-image: url("../images/icons/New-Minus-1.png");
-}
-
-.addFriend {
-	-webkit-mask-box-image: url("../images/icons/New-Plus-1.png");
+.minus {
+	-webkit-mask-box-image: url("../images/icons/minus.png");
 }
 
 .plus {
-	-webkit-mask-box-image: url("../images/icons/New-Plus-1.png");
+	-webkit-mask-box-image: url("../images/icons/plus.png");
 }
 
 .feed {
-	-webkit-mask-box-image: url("../images/icons/Feed-3.png");
+	-webkit-mask-box-image: url("../images/icons/feed.png");
+}
+
+.edit {
+	-webkit-mask-box-image: url("../images/icons/gear.png");
 }
 
 /***********************/
