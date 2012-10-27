@@ -10,7 +10,7 @@ Ext.define("inkle.view.AllInklings", {
 	config: {
 		// Tab title and icon
 		title: "All Inklings",
-		iconCls: "allInklings",
+		iconCls: "allInklingsIcon",
     	
     	// Hide the navigation bar
     	navigationBar: false,
@@ -99,7 +99,7 @@ Ext.define("inkle.view.AllInklings", {
                     { xtype: "spacer" },
                     {
                     	xtype: "container",
-                    	html: "<img style='padding-top:2px; height: 45px;' src='resources/images/mainInkleIcon.png' />",
+                    	html: "<img style='padding-top:2px; height: 46px;' src='resources/images/icons/inkleIcon.png' />",
                     	centered: true
                     },
                     { xtype: "spacer" },
@@ -138,7 +138,7 @@ Ext.define("inkle.view.AllInklings", {
                         xtype: "button",
                         ui: "action",
                         iconMask: true,
-                		iconCls: "feed",
+                		iconCls: "feedIcon",
                         //text: "Feed",
                         itemId: "inklingFeedButton",
                         hidden: true,
@@ -163,7 +163,7 @@ Ext.define("inkle.view.AllInklings", {
                         xtype: "button",
                         ui: "action",
                         iconMask: true,
-                        iconCls: "plus",
+                        iconCls: "plusIcon",
                         itemId: "addCommentButton",
                         hidden: true
                     }
