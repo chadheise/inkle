@@ -28,7 +28,7 @@ Ext.define("inkle.view.Friends", {
                 		itemId: "friendsViewRemoveFriendsButton",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "minusIcon",
+                		iconCls: "minusFriendIcon",
                 		padding: 5
                 	},
                 	{
@@ -74,7 +74,7 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "plusIcon",
+                		iconCls: "plusFriendIcon",
                 		itemId: "friendsViewAddFriendsButton",
                 		padding: 5
                 	},
