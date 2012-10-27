@@ -42,13 +42,13 @@ class FeedUpdate(models.Model):
     def get_icon_name(self):
         """Returns the icon name for the current feed update."""
         if (self.update_type == "location"):
-            return "inklingFeedLocationIcon.png"
+            return "/feed/location.jpg"
         elif (self.update_type == "date"):
-            return "inklingFeedDateIcon.png"
+            return "/feed/white_blue.jpg"
         elif (self.update_type == "time"):
-            return "inklingFeedTimeIcon.png"
+            return "/feed/clock.jpg"
         elif (self.update_type == "notes"):
-            return "inklingFeedNotesIcon.png"
+            return "/feed/notes.jpg"
 
     def get_text(self):
         """Returns the text for the current feed update."""
