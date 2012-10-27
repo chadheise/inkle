@@ -11,7 +11,7 @@ Ext.define("inkle.view.Friends", {
 	config: {
 	    // Tab information
 		title: "Friends",
-		iconCls: "friends",
+		iconCls: "friendsIcon",
     	
     	// Layout information
     	navigationBar: false,
@@ -28,7 +28,7 @@ Ext.define("inkle.view.Friends", {
                 		itemId: "friendsViewRemoveFriendsButton",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "minus",
+                		iconCls: "minusFriendIcon",
                 		padding: 5
                 	},
                 	{
@@ -36,7 +36,7 @@ Ext.define("inkle.view.Friends", {
                 		itemId: "friendsViewEditGroupsButton",
                 		ui: "action",
                         iconMask: true,
-                        iconCls: "edit",
+                        iconCls: "editIcon",
                 		hidden: true,
                 		padding: 5
                 	},
@@ -74,7 +74,7 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "plus",
+                		iconCls: "plusFriendIcon",
                 		itemId: "friendsViewAddFriendsButton",
                 		padding: 5
                 	},
@@ -83,7 +83,7 @@ Ext.define("inkle.view.Friends", {
                 		itemId: "friendsViewCreateGroupButton",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "plus",
+                		iconCls: "plusIcon",
                 		hidden: true,
                 		padding: 5
                 	}
