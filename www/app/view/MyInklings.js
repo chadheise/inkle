@@ -5,7 +5,7 @@ Ext.define("inkle.view.MyInklings", {
 	
 	config: {        
 		title: "My Inklings",
-		iconCls: "myInklings",
+		iconCls: "myInklingsIcon",
     	
     	navigationBar: false,
     	
@@ -65,7 +65,7 @@ Ext.define("inkle.view.MyInklings", {
                         ui: "action",
                         itemId: "newInklingButton",
                         iconMask: true,
-                		iconCls: "plus",
+                		iconCls: "plusIcon",
                 		padding: 5
                     },
                     {

@@ -10,7 +10,7 @@ Ext.define("inkle.view.Profile", {
 	config: {
 		// Tab information    
 		title: "Settings",
-		iconCls: "settingsTab",
+		iconCls: "settingsIcon",
     	
     	// Layout information
     	scrollable: true,
