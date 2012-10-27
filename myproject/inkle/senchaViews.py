@@ -196,6 +196,9 @@ def s_all_inklings_view(request):
     else:
         members = member.friends.filter(is_active = True)
 
+    # Append the logged-in member to the members list
+    members.append(member)
+
     # Get the date, or set it to today if no date is specified
     try:
         day = int(request.POST["day"])
