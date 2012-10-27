@@ -203,7 +203,7 @@ Ext.define("inkle.view.AllInklings", {
         		hidden: true,
         		top: 0,
         		width: 300,
-        		height: 220,
+        		height: 275,
         		layout: "fit",
         		items: [
         			{
@@ -216,9 +216,43 @@ Ext.define("inkle.view.AllInklings", {
 						toolbar: false,
 						doneButton: false,
 						cancelButton: false,
-						value: new Date()
+						value: new Date(),
+						top: 0,
+						height: 220
+					},
+					{
+					    xtype: "checkboxfield",
+					    id: "noDatedInklingsCheckbox",
+                        label: "Include inklings with no date",
+                        top: 221,
+                        width: 300,
+                        labelWidth: 290,
+                        checked: false
 					}
-				]
+				],
+				
+				listeners: [
+                    {
+                        delegate: "#noDatedInklingsCheckbox",
+                        event: "check",
+                        fn: "onNoDatedInklingsCheckboxChecked"
+                    },
+                    {
+                        delegate: "#noDatedInklingsCheckbox",
+                        event: "uncheck",
+                        fn: "onNoDatedInklingsCheckboxUnchecked"
+                    }
+				],
+    
+                onNoDatedInklingsCheckboxChecked: function() {
+                    console.log("a1");
+                    this.fireEvent("noDatedInklingsCheckboxChecked");
+                },
+                
+                onNoDatedInklingsCheckboxUnchecked: function() {
+                    console.log("a2");
+                    this.fireEvent("noDatedInklingsCheckboxUnchecked");
+                }
 			},
         	
         	// Groups list
@@ -372,5 +406,5 @@ Ext.define("inkle.view.AllInklings", {
     
     onAddCommentButtonTapped: function() {
         this.fireEvent("addCommentButtonTapped");
-    } 
+    }
 });
