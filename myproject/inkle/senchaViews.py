@@ -190,8 +190,6 @@ def s_all_inklings_view(request):
     else:
         date = None
 
-    print date
-
     # Get a list of the members who are in the groups selected by the logged-in member
     if ("selectedGroupIds" in request.POST):
         members = []
@@ -225,7 +223,6 @@ def s_all_inklings_view(request):
     response_inklings = []
     inklings = []
     for m in members:
-        print "Date: " + str(date)
         for i in m.inklings.filter(date = date):
             if i not in inklings:
                 try:

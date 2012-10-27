@@ -190,6 +190,9 @@ Ext.define("inkle.view.AllInklings", {
 						actionMethods: {
 							read: "POST"
 						},
+						extraParams: {
+                            onlyIncludeNoDatedInklings: "false"
+                        },
 						url: "http://127.0.0.1:8000/sencha/allInklings/"
 					},
 					autoLoad: true
@@ -226,7 +229,7 @@ Ext.define("inkle.view.AllInklings", {
                         label: "Include inklings with no date",
                         top: 221,
                         width: 300,
-                        labelWidth: 290,
+                        labelWidth: 250,
                         checked: false
 					}
 				],
@@ -235,22 +238,20 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         delegate: "#noDatedInklingsCheckbox",
                         event: "check",
-                        fn: "onNoDatedInklingsCheckboxChecked"
+                        fn: "onNoDatedInklingsCheckboxCheck"
                     },
                     {
                         delegate: "#noDatedInklingsCheckbox",
                         event: "uncheck",
-                        fn: "onNoDatedInklingsCheckboxUnchecked"
+                        fn: "onNoDatedInklingsCheckboxUncheck"
                     }
 				],
     
-                onNoDatedInklingsCheckboxChecked: function() {
-                    console.log("a1");
+                onNoDatedInklingsCheckboxCheck: function() {
                     this.fireEvent("noDatedInklingsCheckboxChecked");
                 },
                 
-                onNoDatedInklingsCheckboxUnchecked: function() {
-                    console.log("a2");
+                onNoDatedInklingsCheckboxUncheck: function() {
                     this.fireEvent("noDatedInklingsCheckboxUnchecked");
                 }
 			},
