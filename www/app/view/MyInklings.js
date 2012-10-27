@@ -63,8 +63,10 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        text: "New Inkling",
-                        itemId: "newInklingButton"
+                        itemId: "newInklingButton",
+                        iconMask: true,
+                		iconCls: "plus",
+                		padding: 5
                     },
                     {
                         xtype: "button",
