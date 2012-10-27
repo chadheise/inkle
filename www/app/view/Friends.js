@@ -28,14 +28,17 @@ Ext.define("inkle.view.Friends", {
                 		itemId: "friendsViewRemoveFriendsButton",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "removeFriend"
+                		iconCls: "minus",
+                		padding: 5
                 	},
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewEditGroupsButton",
                 		ui: "action",
-                		text: "Edit",
-                		hidden: true
+                        iconMask: true,
+                        iconCls: "edit",
+                		hidden: true,
+                		padding: 5
                 	},
                 	{ xtype: "spacer" },
                     {
@@ -48,18 +51,21 @@ Ext.define("inkle.view.Friends", {
                     		{
 								text: "Friends",
 								id: "friendsViewFriendsButton",
-								width: 80,
-								pressed: true
+								width: 70,
+								pressed: true,
+								padding: 0
 							},
 							{
 								text: "Groups",
 								id: "friendsViewGroupsButton",
-								width: 80
+								width: 70,
+								padding: 0
 							},
 							{
 								text: "Requests",
 								id: "friendsViewRequestsButton",
-								width: 80
+								width: 70,
+								padding: 0
 							}
 						]
                     },
@@ -68,15 +74,18 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "addFriend",
-                		itemId: "friendsViewAddFriendsButton"
+                		iconCls: "plus",
+                		itemId: "friendsViewAddFriendsButton",
+                		padding: 5
                 	},
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewCreateGroupButton",
                 		ui: "action",
-                		text: "+",
-                		hidden: true
+                		iconMask: true,
+                		iconCls: "plus",
+                		hidden: true,
+                		padding: 5
                 	}
                 ]
     		},
