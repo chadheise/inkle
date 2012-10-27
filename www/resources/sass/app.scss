@@ -61,19 +61,19 @@ $tabs-bottom-active-gradient: 'recessed';
 /**********************/
 /*  CUSTOM TAB ICONS  */
 /**********************/
-.allInklings {
+.allInklingsIcon {
 	-webkit-mask-box-image: url("../images/icons/allInklings.png");
 }
 
-.myInklings {
+.myInklingsIcon {
 	-webkit-mask-box-image: url("../images/icons/myInklings.png");
 }
 
-.friends {
+.friendsIcon {
 	-webkit-mask-box-image: url("../images/icons/friends.png");
 }
 
-.settingsTab {
+.settingsIcon {
 	-webkit-mask-box-image: url("../images/icons/gears.png");
 }
 
@@ -81,19 +81,27 @@ $tabs-bottom-active-gradient: 'recessed';
 	-webkit-mask-box-image: url("../images/icons/envelope.png");
 }
 
-.minus {
+.minusIcon {
 	-webkit-mask-box-image: url("../images/icons/minus.png");
 }
 
-.plus {
+.plusIcon {
 	-webkit-mask-box-image: url("../images/icons/plus.png");
 }
 
-.feed {
+.plusFriendIcon {
+	-webkit-mask-box-image: url("../images/icons/plusFriend.png");
+}
+
+.minusFriendIcon {
+	-webkit-mask-box-image: url("../images/icons/minusFriend.png");
+}
+
+.feedIcon {
 	-webkit-mask-box-image: url("../images/icons/feed.png");
 }
 
-.edit {
+.editIcon {
 	-webkit-mask-box-image: url("../images/icons/gear.png");
 }
 
