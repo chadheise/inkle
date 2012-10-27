@@ -170,6 +170,26 @@ def s_all_inklings_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
+    # Determine if we should return dated or no-dated inklings
+    try:
+        onlyIncludeNoDatedInklings = request.POST["onlyIncludeNoDatedInklings"]
+    except:
+        onlyIncludeNoDatedInklings = "false"
+
+    print onlyIncludeNoDatedInklings
+
+    # If necessary, get the date, or set it to today if no date is specified
+    if (onlyIncludeNoDatedInklings == "false"):
+        try:
+            day = int(request.POST["day"])
+            month = int(request.POST["month"])
+            year = int(request.POST["year"])
+            date = datetime.date(year, month, day)
+        except KeyError:
+            date = datetime.date.today()
+    else:
+        date = None
+
     # Get a list of the members who are in the groups selected by the logged-in member
     if ("selectedGroupIds" in request.POST):
         members = []
@@ -196,14 +216,8 @@ def s_all_inklings_view(request):
     else:
         members = member.friends.filter(is_active = True)
 
-    # Get the date, or set it to today if no date is specified
-    try:
-        day = int(request.POST["day"])
-        month = int(request.POST["month"])
-        year = int(request.POST["year"])
-        date = datetime.date(year, month, day)
-    except KeyError:
-        date = datetime.date.today()
+    # Append the logged-in member to the members list
+    members.append(member)
 
     # Get a list of all the inklings the members are attending on the specified date
     response_inklings = []

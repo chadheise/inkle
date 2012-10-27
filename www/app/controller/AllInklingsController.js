@@ -18,7 +18,7 @@ Ext.define("inkle.controller.AllInklingsController", {
             // Elements
             allInklingsList: "#allInklingsList",
             allInklingsDatePicker: "#allInklingsDatePicker",
-            
+            noDatedInklingsCheckbox: "#noDatedInklingsCheckbox",
             
             allInklingsTopToolbar: "#allInklingsTopToolbar",
             inklingTopToolbar: "#inklingTopToolbar",
@@ -45,7 +45,12 @@ Ext.define("inkle.controller.AllInklingsController", {
                 allInklingsGroupsPickerChanged: "changeGroup",
                 
                 deactivate: "hideAllInklingsPanels",
-                activeitemchange: "hideAllInklingsPanels"
+                activeitemchange: "hideAllInklingsPanels",
+            },
+            
+            allInklingsDatePickerPanel: {
+                noDatedInklingsCheckboxChecked: "toggleDatePickerEnabled",
+                noDatedInklingsCheckboxUnchecked: "toggleDatePickerEnabled"
             },
             
             allInklingsGroupsListPanel: {
@@ -133,7 +138,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 				selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
 			}
 		}
-    
+        
     	// Update the all inklings list
 		var allInklingsListStore = this.getAllInklingsList().getStore();
 		allInklingsListStore.setProxy({
@@ -141,7 +146,8 @@ Ext.define("inkle.controller.AllInklingsController", {
 				selectedGroupIds: selectedGroupIds,
 				day: day,
     			month: month + 1,
-    			year: year
+    			year: year,
+    			onlyIncludeNoDatedInklings: this.getNoDatedInklingsCheckbox().isChecked()
 			}
 		});
 		allInklingsListStore.load();
@@ -180,6 +186,17 @@ Ext.define("inkle.controller.AllInklingsController", {
     		// Update the all inklings list
     		this.updateAllInklingsList();
     	}
+    },
+    
+    /* Toggles whether the date picker is enabled or disabled */
+    toggleDatePickerEnabled: function() {
+        var allInklingsDatePicker = this.getAllInklingsDatePicker();
+        if (allInklingsDatePicker.getMasked()) {
+            allInklingsDatePicker.setMasked(false);
+        }
+        else {
+            allInklingsDatePicker.setMasked(true);
+        }
     },
     
     /* Toggles the visibility of the groups list */
