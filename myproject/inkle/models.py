@@ -44,7 +44,8 @@ class FeedUpdate(models.Model):
         if (self.update_type == "location"):
             return "/feed/location.jpg"
         elif (self.update_type == "date"):
-            return "/feed/white_blue.jpg"
+            dateNum = self.updated_to.split()[-1] #Get the last part of the update which contains the date number
+            return "/feed/date" + dateNum + ".jpg"
         elif (self.update_type == "time"):
             return "/feed/clock.jpg"
         elif (self.update_type == "notes"):
