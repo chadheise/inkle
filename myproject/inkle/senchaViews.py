@@ -33,7 +33,6 @@ def s_is_logged_in(request):
 @csrf_exempt
 def s_login_view(request):
     """Logs a member in or returns the login error."""
-    print "logging in"
     # Get the inputted email and password
     try:
         if ("facebookId" in request.POST):
@@ -75,7 +74,6 @@ def s_login_view(request):
             if (facebookId):
                 member = Member.active.get(facebookId = facebookId)
                 #Should allow user to update their email if their facebook email doesn't match the one in inkle
-                # Need to validate facebook authentication
             # Get the member according to the provided email
             else:
                 member = Member.active.get(email = email)
@@ -86,7 +84,7 @@ def s_login_view(request):
             try:
                 #If the user has not logged in with facebook before but they registered with their email
                 member = Member.active.get(email = email)
-                member.facebookId = facebookId
+                member.facebookId = facebookId #Store their facebookId for future use
                 member.save()
             except:
                 # Create the new member
@@ -103,9 +101,8 @@ def s_login_view(request):
                 member.set_password(password)
                 member.save() # Save the new member
 
+        # If the user is logging in with facebook, validate their authentication token or log them out
         if (facebookId):
-            print "facebook login"
-            print "member is active: " + str(member.is_active)
             # Confirm the user is active and log them in
             try:
                 if (member and member.is_active):
@@ -114,8 +111,8 @@ def s_login_view(request):
                     fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
                     request.session["facebook_access_token"] = facebookAccessToken
                     fbData = simplejson.loads(fbResponse)
-                    for fbFriend in fbData["data"]:
-                        print fbFriend["first_name"] + " " + fbFriend["last_name"]
+                    #for fbFriend in fbData["data"]:
+                    #    print fbFriend["first_name"] + " " + fbFriend["last_name"]
                     member.last_login = datetime.datetime.now()
                     member.save()
                 # Otherwise, add to the errors list
@@ -124,12 +121,9 @@ def s_login_view(request):
             except Exception, e:
                 response_error = "Could not login using Facebook"
         else:
-            print "normal login"
-            print "member is active: " + str(member.is_active) 
             # Confirm the username and password combination and log the member in
             if (member and member.is_active and member.check_password(password)):
                 request.session["member_id"] = member.id
-                print "request.session: " + str(request.session["member_id"])
                 member.last_login = datetime.datetime.now()
                 member.save()
             # Otherwise, add to the errors list
@@ -150,16 +144,16 @@ def s_login_view(request):
     request.session.modified = True
     return HttpResponse(response, mimetype = "application/json")
 
-
 def s_logout_view(request):
     """Logs out the logged-in member."""
     try:
         del request.session["member_id"]
+        if ("facebook_access_token" in request.session):
+            del request.session["facebook_access_token"]
     except KeyError:
         pass
 
     return HttpResponse()
-
 
 @csrf_exempt
 def s_all_inklings_view(request):
