@@ -10,7 +10,6 @@ Ext.application({
     	"Login",
     	"AllInklings",
     	"MyInklings",
-    	"InviteResponse",
     	"NewInkling",
     	"NewInklingInvitedFriends",
     	"Inkling",

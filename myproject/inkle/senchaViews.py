@@ -176,8 +176,6 @@ def s_all_inklings_view(request):
     except:
         onlyIncludeNoDatedInklings = "false"
 
-    print onlyIncludeNoDatedInklings
-
     # If necessary, get the date, or set it to today if no date is specified
     if (onlyIncludeNoDatedInklings == "false"):
         try:
@@ -217,6 +215,7 @@ def s_all_inklings_view(request):
         members = member.friends.filter(is_active = True)
 
     # Append the logged-in member to the members list
+    members = list(members)
     members.append(member)
 
     # Get a list of all the inklings the members are attending on the specified date
@@ -407,6 +406,37 @@ def s_new_inkling_privacy_form_view(request):
     return render_to_response( "s_newInklingPrivacyForm.html",
         { "member" : member },
         context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def s_respond_to_inkling_invitation_view(request):
+    """Responds the logged-in member to the an inkling invitation."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get the inputted inkling and the response
+    try:
+        invitation = InklingInvitation.objects.get(pk = request.POST["invitationId"])
+        response = request.POST["response"]
+    except (InklingInvitation.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Make sure the the logged-in member is the one who received this invitation
+    if (member != invitation.receiver):
+        raise Http404()
+
+    # Update the invitation's status
+    invitation.status = response
+    invitation.save()
+
+    # Add the inkling corresponding to the current invitation to the logged-in member's inklings if they accepted it
+    if (response == "accepted"):
+        member.inklings.add(invitation.inkling)
+
+    return HttpResponse()
 
 
 # TODO: possible get rid of this
@@ -633,19 +663,19 @@ def s_inkling_invitations_view(request):
         raise Http404()
     
     # Get a list of the inklings to which the logged-in member has pending invitations
-    response_invites = []
+    response_invitations = []
     for invitation in member.inkling_invitations_received.filter(status = "pending"):
         html = render_to_string( "s_inklingInvitationListItem.html", {
             "invitation" : invitation
         })
         
-        response_invites.append({
+        response_invitations.append({
             "id" : invitation.id,
             "html": html
         })
     
     # Create and return a JSON object
-    response = simplejson.dumps(response_invites)
+    response = simplejson.dumps(response_invitations)
     return HttpResponse(response, mimetype = "application/json")
 
 
