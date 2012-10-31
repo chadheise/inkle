@@ -263,7 +263,7 @@ Ext.define("inkle.view.AllInklings", {
         		hidden: true,
         		top: 0,
         		width: 300,
-        		height: 220,
+        		height: 275,
         		layout: "fit",
         		items: [
         			{
