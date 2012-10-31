@@ -21,7 +21,7 @@ Ext.define("inkle.view.Main", {
             	xtype: "friendsView"
             },
             {
-            	xtype: "profileView"
+            	xtype: "settingsView"
             }
         ]
     }

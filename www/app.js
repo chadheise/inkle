@@ -18,7 +18,7 @@ Ext.application({
     	"Friends",
     	"AddFriends",
     	"GroupMembers",
-    	"Profile"
+    	"Settings"
     ],
     controllers: [
     	"LoginController",
@@ -26,7 +26,7 @@ Ext.application({
     	"InklingController",
     	"MyInklingsController",
     	"FriendsController",
-    	"ProfileController"
+    	"SettingsController"
 	],
 
     requires: [
