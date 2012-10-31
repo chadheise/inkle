@@ -19,10 +19,10 @@ Ext.define("inkle.view.MyInklings", {
                 items: [
                 	{
                         xtype: "button",
-                        itemId: "inklingInvitesButton",
+                        itemId: "inklingInvitationsButton",
                         ui: "action",
                 		iconMask: true,
-                		iconCls: "inklingInvitesIcon"
+                		iconCls: "inklingInvitationsIcon"
                     },
                     {
                 		xtype: "button",
@@ -118,14 +118,78 @@ Ext.define("inkle.view.MyInklings", {
     			xtype: "htmlcontainer",
     			scrollable: true,
 				url: "http://127.0.0.1:8000/sencha/myInklings/",
-    		}        	
+    		},
+    		
+    		// Inkling invitations
+        	{
+        		xtype: "panel",
+        		id: "inklingInvitationsPanel",
+        		hidden: true,
+        		top: 0,
+        		width: 300,
+        		height: 275,
+        		layout: "fit",
+        		items: [
+        			{
+						xtype: "list",
+						id: "inklingInvitationsList",
+						loadingText: "Loading invitations...",
+						emptyText: "<div class='emptyListText'>No invitations</div>",
+						disableSelection: true,
+						itemTpl: "{ html }",
+						store: {
+							fields: [
+								"id",
+								"html"
+							],
+							proxy: {
+                                type: "ajax",
+                                url: "http://127.0.0.1:8000/sencha/inklingInvitations/",
+                                actionMethods: {
+                                    read: "POST"
+                                },
+                                reader: {
+                                    type: "json",
+                                    rootProperty: "inklingInvitations"
+                                }
+                            },
+							autoLoad: true
+						}
+					}
+				],
+				
+				listeners: [
+					{
+						event: "tap",
+						element: "element",
+						delegate: ".acceptInvitationButton",
+						fn: "onAcceptInvitationButtonTap"
+					},
+					{
+						event: "tap",
+						element: "element",
+						delegate: ".ignoreInvitationButton",
+						fn: "onIgnoreInvitationButtonTap"
+					}
+				],
+				
+				onAcceptInvitationButtonTap: function(event, target) {
+					var tappedInvitationId = target.getAttribute("invitationId");
+					this.fireEvent("invitationButtonTapped", tappedInvitationId, "accepted");
+				},
+				
+				onIgnoreInvitationButtonTap: function(event, target) {
+					var tappedInvitationId = target.getAttribute("invitationId");
+					this.fireEvent("invitationButtonTapped", tappedInvitationId, "ignored");
+				}
+			}
     	],
     	
     	listeners: [
     		{
-    			delegate: "#inklingInvitesButton",
+    			delegate: "#inklingInvitationsButton",
             	event: "tap",
-            	fn: "onInklingInvitesButtonTap"
+            	fn: "onInklingInvitationsButtonTap"
     		},
 			{
             	delegate: "#newInklingButton",
@@ -182,8 +246,8 @@ Ext.define("inkle.view.MyInklings", {
 	},
 	
 	// Event firings
-	onInklingInvitesButtonTap: function() {
-		this.fireEvent("inklingInvitesButtonTapped");
+	onInklingInvitationsButtonTap: function() {
+		this.fireEvent("inklingInvitationsButtonTapped");
 	},
 	
     onNewInklingButtonTap: function() {

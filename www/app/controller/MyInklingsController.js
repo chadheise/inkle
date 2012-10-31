@@ -8,10 +8,13 @@ Ext.define("inkle.controller.MyInklingsController", {
             myInklingsView: "myInklingsView",
             newInklingView: "newInklingView",
             newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
+            inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
             
             myInklingsViewToolbar: "#myInklingsViewToolbar",
             
         	newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
+
+            inklingInvitationsList: "#inklingInvitationsList",
 
         	shareWithSelect: "#shareWithSelect",
 
@@ -19,7 +22,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",        
         	
             // Toolbar buttons
-            inklingInvitesButton: "#inklingInvitesButton",
+            inklingInvitationsButton: "#inklingInvitationsButton",
             newInklingButton: "#newInklingButton",
             inviteResponseBackButton: "#inviteResponseBackButton",
             myInklingsInklingBackButton: "#myInklingsInklingBackButton",
@@ -36,7 +39,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         control: {
             myInklingsView: {
             	inklingTapped: "activateInklingView",
-            	inklingInvitesButtonTapped: "activateInviteResponseView",
+            	inklingInvitationsButtonTapped: "toggleInklingInvitationsVisibility",
             	onInviteResponseBackButtonTapped: "activateMyInklingsView",
             	newInklingButtonTapped: "activateNewInklingView",
             	newInklingCancelButtonTapped: "activateMyInklingsView",
@@ -46,7 +49,8 @@ Ext.define("inkle.controller.MyInklingsController", {
             	newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
             	newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
             	activate: "hideMyInklingsTabBadge",
-            	deactivate: "hideNewInklingInivtedGroupsPanel"
+            	deactivate: "hideMyInklingsPanels",
+            	activeitemchange: "hideMyInklingsPanels",
             },
             
             newInklingView: {
@@ -61,6 +65,10 @@ Ext.define("inkle.controller.MyInklingsController", {
             
             newInklingInvitedFriendsView: {
             	memberSelectionButtonTapped: "toggleSelectionButton"
+            },
+            
+            inklingInvitationsPanel: {
+                invitationButtonTapped: "respondToInklingInvitation"
             },
             
             newInklingInvitedGroupsPanel: {
@@ -81,7 +89,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getNewInklingCancelButton().hide();
 		this.getNewInklingDoneButton().hide();
 		this.getInviteResponseBackButton().hide();
-		this.getInklingInvitesButton().show();
+		this.getInklingInvitationsButton().show();
 		this.getNewInklingButton().show();
     	
     	// Update the toolbar title
@@ -94,7 +102,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 	activateInklingView: function(inklingId) {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
-		this.getInklingInvitesButton().hide();
+		this.getInklingInvitationsButton().hide();
 		this.getMyInklingsInklingBackButton().show();
 		this.getInklingFeedButton().show();
 		
@@ -109,26 +117,11 @@ Ext.define("inkle.controller.MyInklingsController", {
         });
     },
     
-    // Activates the invite response view
-    activateInviteResponseView: function() {
-    	// Show appropriate buttons
-		this.getNewInklingButton().hide();
-		this.getInklingInvitesButton().hide();
-		this.getInviteResponseBackButton().show();
-
-		// Update the toolbar title
-		this.getMyInklingsViewToolbar().setTitle("Inkling Invites");
-
-    	this.getMyInklingsView().push({
-        	xtype: "inviteResponseView"
-        });
-    },
-    
     // Activates the new inkling view
 	activateNewInklingView: function() {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
-		this.getInklingInvitesButton().hide();
+		this.getInklingInvitationsButton().hide();
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
 		
@@ -226,6 +219,19 @@ Ext.define("inkle.controller.MyInklingsController", {
     /************/
     // Commands //
     /************/
+    /* Toggles the visibility of the inkling invitations panel */
+    toggleInklingInvitationsVisibility: function() {
+        // Toggle the visibility of the inkling invitations panel
+	    var inklingInvitationsPanel = this.getInklingInvitationsPanel();
+	    console.log(inklingInvitationsPanel);
+	    if (inklingInvitationsPanel.getHidden()) {
+	    	inklingInvitationsPanel.showBy(this.getInklingInvitationsButton());
+    	}
+    	else {
+    		inklingInvitationsPanel.hide();
+    	}
+    },
+    
     createInkling: function() {
     	var newInklingValues = this.getNewInklingView().getValues();
     	if ((newInklingValues["location"] == "") && (newInklingValues["date"] == null) && (newInklingValues["time"] == "") && (newInklingValues["category"] == "") && (newInklingValues["notes"] == "") && (Ext.fly("numInvitees").getHtml() == "0 invitees"))
@@ -343,7 +349,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	// Hides the new inkling invited groups panel
-	hideNewInklingInivtedGroupsPanel: function() {
+	hideMyInklingsPanels: function() {
 		var newInklingInvitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
 		if (newInklingInvitedGroupsPanel) {
 			newInklingInvitedGroupsPanel.hide();
@@ -355,8 +361,8 @@ Ext.define("inkle.controller.MyInklingsController", {
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
-                    this.getInklingInvitesButton().show();
-                    this.getInklingInvitesButton().setBadgeText(numInklingInvites);
+                    this.getInklingInvitationsButton().show();
+                    this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
                     this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
                 }
             },
@@ -365,6 +371,8 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             scope: this
         });
+        
+        this.getInklingInvitationsPanel().hide();
 	},
 	
 	hideMyInklingsTabBadge: function() {
@@ -406,7 +414,6 @@ Ext.define("inkle.controller.MyInklingsController", {
 				"src": "resources/images/deselected.png"
 			});
 	    }
-	        	console.log("gg");
 	},
 	
 	selectNoOneSelectionItem: function(noOneSelectionItem) {
@@ -426,7 +433,6 @@ Ext.define("inkle.controller.MyInklingsController", {
     	console.log(groupSelectionItem);
         var selectedGroupsSelectionItem = Ext.fly("selectedGroupsSelectionItem");
 	    //if (selectedGroupsSelectionItem.getAttribute("src") == "resources/images/selected.png") {
-    	    console.log("a");
     	    if (groupSelectionItem.getAttribute("src") == "resources/images/selected.png") {
 	    		groupSelectionItem.set({
 		    		"src": "resources/images/deselected.png"
@@ -438,6 +444,24 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    		});
 	        }
 	    //}
+	},
+	
+	respondToInklingInvitation: function(invitationId, response) {
+	    Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/sencha/respondToInklingInvitation/",
+            params: {
+				invitationId: invitationId,
+				response: response
+			},
+            success: function(response) {
+                this.getInklingInvitationsList().getStore().load();
+                //this.getMyInklingsList.getStore().load();
+            },
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            scope: this
+        });
 	},
 	
 	/**************************/
@@ -454,8 +478,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 				success: function(response) {
 					numInklingInvites = response.responseText;
 					if (numInklingInvites != 0) {
-						this.getInklingInvitesButton().show();
-                        this.getInklingInvitesButton().setBadgeText(numInklingInvites);
+						this.getInklingInvitationsButton().show();
+                        this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
                         this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
                     }
 				},
