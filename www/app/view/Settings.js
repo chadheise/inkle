@@ -1,7 +1,7 @@
-Ext.define("inkle.view.Profile", {
+Ext.define("inkle.view.Settings", {
 	extend: "Ext.Container",
 	
-	xtype: "profileView",
+	xtype: "settingsView",
 	
     requires: [
     	"Ext.dataview.List"
@@ -21,13 +21,13 @@ Ext.define("inkle.view.Profile", {
     		{
     			xtype: "toolbar",
                 docked: "top",
-                title: "Profile",
+                title: "Settings",
                 items: [
                 	{
                 		xtype: "button",
                 		ui: "action",
                 		text: "Logout",
-                		itemId: "profileLogoutButton"
+                		itemId: "settingsLogoutButton"
                 	}
                 ]
     		},
@@ -35,7 +35,7 @@ Ext.define("inkle.view.Profile", {
     		// Main content list
     		{
     			xtype: "list",
-    			id: "profileViewList",
+    			id: "settingsViewList",
 				disableSelection: true,
 				scrollable: false,
 				height: 236,
@@ -59,15 +59,15 @@ Ext.define("inkle.view.Profile", {
     	
     	listeners: [
 			{
-            	delegate: "#profileLogoutButton",
+            	delegate: "#settingsLogoutButton",
             	event: "tap",
-            	fn: "onProfileLogoutButtonTap"
+            	fn: "onSettingsLogoutButtonTap"
         	}
         ]
 	},
 	
 	// Event firings
-	onProfileLogoutButtonTap: function() {
-        this.fireEvent("profileLogoutButtonTapped");
+	onSettingsLogoutButtonTap: function() {
+        this.fireEvent("settingsLogoutButtonTapped");
     }
 });

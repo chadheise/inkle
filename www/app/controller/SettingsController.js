@@ -1,15 +1,15 @@
-Ext.define("inkle.controller.ProfileController", {
+Ext.define("inkle.controller.SettingsController", {
     extend: "Ext.app.Controller",
     
     config: {
         refs: {
-            profileView: "profileView",
+            settingsView: "settingsView",
             loginView: "loginView"
         },
         control: {
-            profileView: {
-                profileLogoutButtonTapped: "logout",
-                profileEditButtonTapped: "editProfile"
+            settingsView: {
+                settingsLogoutButtonTapped: "logout",
+                settingsEditButtonTapped: "editSettings"
             }
         }
     },
@@ -48,7 +48,7 @@ Ext.define("inkle.controller.ProfileController", {
 		this.activateLoginView();
     },
  
-    editProfile: function() {
-        console.log("editProfile");
+    editSettings: function() {
+        console.log("editSettings");
     }
 });
