@@ -127,6 +127,7 @@ $include-button-highlights: $include-highlights !default;
     line-height: 1.2em;
     display: block;
     overflow: hidden;
+	color: #1A492B; //Added by Chad
   }
 
   // Toolbar button styling
@@ -238,7 +239,7 @@ $include-button-highlights: $include-highlights !default;
       .x-button-icon.x-button-mask {
         @include background-gradient(#fff, 'recessed');
       }
-    }
+	}
   }
 
   // SegmentedButtons

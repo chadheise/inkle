@@ -21,20 +21,26 @@ $body-bg-color: #000;
 $active-color: $green3;
 $alert-color: $red5;
 $base-color: $green3;
-$base-gradient: 'matte';
-$bright-color: $green5;
-$button-gradient: 'matte';
+$base-gradient: 'flat';
+$bright-color: $green3;
+$button-gradient: 'flat';
 //$button-height
-$button-radius: .3em;
-//$button-stroke-weight
+$button-radius: .2em;
+//$button-stroke-weight: 0em;
+
+//$toolbar-base-color: $green3;
+//$toolbar-gradient: "flat";
  
-$tabs-dark: $green1;
-$tabs-light: $green4;
+$tabs-dark: $green3;
+$tabs-dark-active-color: #FFFFFF;
+$bar-color: $green2;
+//$toolbar-spacing: 1em;
  
-$tabs-bottom-radius: .3em;
-$tabs-bottom-gradient: 'matte';
-$tabs-bar-gradient: 'matte';
-$tabs-bottom-active-gradient: 'recessed';
+$tabs-bottom-radius: .2em;
+$tabs-bottom-gradient: 'flat';
+$tabs-bar-gradient: 'flat';
+$tabs-bottom-active-gradient: 'flat';
+//
 
 @import 'sencha-touch/default/all';
 
@@ -57,6 +63,17 @@ $tabs-bottom-active-gradient: 'recessed';
 @include sencha-msgbox;
 
 // Your custom code goes here...
+@include sencha-toolbar-ui('customToolbar', $green3, 'none');
+//@include sencha-tabbar-ui('customTabBar', $green3, 'none', #FFFFFF);
+.customButton {
+	background-color: $red3;
+}
+
+.customPressedCls {
+	@include background-gradient(#1A492B, recessed); //Added by Chad
+    @include bevel-by-background(#6ABB6A); //Added by Chad
+	color: #FFF;
+}
 
 /**********************/
 /*  CUSTOM TAB ICONS  */
