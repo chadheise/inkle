@@ -454,40 +454,22 @@ Ext.define("inkle.controller.MyInklingsController", {
 				response: response
 			},
             success: function(response) {
+                var numInklingInvitations = response.responseText;
+                if (numInklingInvitations != 0) {
+                    this.getInklingInvitationsButton().setBadgeText(numInklingInvitations);
+                }
+                else {
+                    this.getInklingInvitationsButton().setBadgeText("");
+                }
+                
                 this.getInklingInvitationsList().getStore().load();
                 //this.getMyInklingsList.getStore().load();
+                
             },
             failure: function(response) {
                 console.log(response.responseText);
             },
             scope: this
         });
-	},
-	
-	/**************************/
-	/*  BASE CLASS FUNCTIONS  */
-	/**************************/
-    launch: function () {
-        this.callParent(arguments);
-        
-        // If the main tab view is created, update the inkling invites button
-        if (this.getMainTabView()) {
-			// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
-			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
-				success: function(response) {
-					numInklingInvites = response.responseText;
-					if (numInklingInvites != 0) {
-						this.getInklingInvitationsButton().show();
-                        this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
-                        this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
-                    }
-				},
-				failure: function(response) {
-					console.log(response.responseText);
-	        	},
-	        	scope: this
-			});
-		}
-    }
+	}
 });

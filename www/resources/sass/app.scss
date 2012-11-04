@@ -36,6 +36,11 @@ $tabs-bottom-gradient: 'matte';
 $tabs-bar-gradient: 'matte';
 $tabs-bottom-active-gradient: 'recessed';
 
+$badge-size: 1em;
+$badge-radius: .2em;
+$badge-bg-color: $red3;
+$badge-bg-gradient: "matte";
+
 @import 'sencha-touch/default/all';
 
 @include pictos-iconmask("minus1");
@@ -244,8 +249,8 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 .x-button .x-badge {
-	border-radius: 20px;
-	margin-right: -10px;
+	margin-top: -3px;
+	margin-right: -8px;
 }
 
 .dot {
@@ -376,7 +381,9 @@ $tabs-bottom-active-gradient: 'recessed';
 }
 
 
-
+.hidden {
+    visibility: "hidden";
+}
 
 
 .deleteLock {

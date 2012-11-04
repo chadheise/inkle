@@ -413,13 +413,9 @@ def s_respond_to_inkling_invitation_view(request):
     
     # Get the inputted inkling and the response
     try:
-        invitation = InklingInvitation.objects.get(pk = request.POST["invitationId"])
+        invitation = member.inkling_invitations_received.get(pk = request.POST["invitationId"])
         response = request.POST["response"]
     except (InklingInvitation.DoesNotExist, KeyError) as e:
-        raise Http404()
-
-    # Make sure the the logged-in member is the one who received this invitation
-    if (member != invitation.receiver):
         raise Http404()
 
     # Update the invitation's status
@@ -430,7 +426,8 @@ def s_respond_to_inkling_invitation_view(request):
     if (response == "accepted"):
         member.inklings.add(invitation.inkling)
 
-    return HttpResponse()
+    # Return the number of pending inkling invitations for the logged-in member
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
 
 
 # TODO: possible get rid of this
@@ -1227,7 +1224,7 @@ def s_respond_to_request_view(request):
     # Save the updated friend request
     friend_request.save()
 
-    # TODO: get rid of this return value if possible
+    # Return the number of pending friend requests for the logged-in member
     return HttpResponse(FriendRequest.objects.filter(receiver = member, status = "pending").count())
 
 
