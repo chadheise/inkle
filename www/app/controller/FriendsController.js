@@ -476,10 +476,9 @@ Ext.define("inkle.controller.FriendsController", {
 	updateAddFriendsSuggestions: function() {	
 		var addFriendsStore = this.getAddFriendsSuggestions().getStore();
 		var query = this.getAddFriendsSearchField().getValue().toLowerCase();	
-		var facebookFriends = "";
 		
-		var fbConnected = false;
-		var accessToken;
+		//var fbConnected = false;
+		var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
           if (response.status === 'connected') {
             // the user is logged in and has authenticated your
@@ -487,9 +486,9 @@ Ext.define("inkle.controller.FriendsController", {
             // the user's ID, a valid access token, a signed
             // request, and the time the access token 
             // and signed request each expire
-            fbConnected = true;
-            var uid = response.authResponse.userID;
-            accessToken = response.authResponse.accessToken;
+                //fbConnected = true;
+                //var uid = response.authResponse.userID;
+            fbAccessToken = response.authResponse.accessToken;
           } else if (response.status === 'not_authorized') {
             // the user is logged in to Facebook, 
             // but has not authenticated your app
@@ -501,7 +500,7 @@ Ext.define("inkle.controller.FriendsController", {
  		addFriendsStore.setProxy({
    		    extraParams: {
    			    query: query,
-   				fbAccessToken: accessToken
+   				fbAccessToken: fbAccessToken
    			}
    		});
 		
