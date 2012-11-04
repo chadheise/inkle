@@ -52,7 +52,7 @@ Ext.define("inkle.controller.FriendsController", {
            		friendsViewGroupsListItemTapped: "activateGroupMembersView",
            		
            		activate: "hideFriendsTabBadge",
-           		deactivate: "showFriendsTabBadge",
+           		deactivate: "showFriendsTabBadge"
            	},
            	
            	addFriendsView: {
@@ -567,11 +567,6 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	respondToRequest: function(memberId, response) {
-		var mainTabView = this.getMainTabView();
-		var requestsButton = this.getRequestsButton();
-		var friendsList = this.getFriendsList();
-		var requestsList = this.getRequestsList();
-		
 		Ext.Ajax.request({
 			url: "http://127.0.0.1:8000/sencha/respondToRequest/",
     		params: {
@@ -579,53 +574,23 @@ Ext.define("inkle.controller.FriendsController", {
     			response: response
     		},
     		success: function(response) {
+    		    var requestsButton = this.getRequestsButton();
     			numFriendRequests = response.responseText;
 				if (numFriendRequests != 0) {
-					mainTabView.getTabBar().getAt(2).setBadgeText(numFriendRequests);
 					requestsButton.setBadgeText(numFriendRequests);
 				}
 				else {
-					mainTabView.getTabBar().getAt(2).setBadgeText("");
 					requestsButton.setBadgeText("");
 				}
 				
-				friendsList.getStore().load();
-				requestsList.getStore().load();
+				this.getFriendsList().getStore().load();
+				this.getRequestsList().getStore().load();
     		},
         	failure: function(response) {
         		console.log(response.responseText);
         		Ext.Msg.alert("Error", response.responseText);
-        	}
+        	},
+        	scope: this
 		});
-	},
-	
-	
-	/**************************/
-	/*  BASE CLASS FUNCTIONS  */
-	/**************************/
-    launch: function () {
-        this.callParent(arguments);
-        
-        // If the main tab view is created, update the inkling invites button
-        if (this.getMainTabView()) {
-			// Update the badge text if there are any friend requests
-			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
-				
-				success: function(response) {
-					numFriendRequests = response.responseText;
-					if (numFriendRequests != 0) {
-						this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
-						this.getRequestsButton().setBadgeText(numFriendRequests);
-					}
-				},
-				
-				failure: function(response) {
-					console.log(response.responseText);
-	        	},
-	        	
-	        	scope: this
-			});
-		}
-    }
+	}
 });

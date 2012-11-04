@@ -8,12 +8,18 @@ Ext.define("inkle.controller.LoginController", {
             loginEmail: "#loginEmail",
             loginPassword: "#loginPassword",
             datePicker: "#allInklingsDatePicker",
-            allInklingsDateButton: "#allInklingsDateButton"
+            allInklingsDateButton: "#allInklingsDateButton",
+            
+            inklingInvitationsButton: "#inklingInvitationsButton",
+            requestsButton: "#friendsViewRequestsButton",
         },
         control: {
             loginView: {
                 loginSubmitButtonTapped: "loginSubmit",
 				facebookLoginSubmitButtonTapped: "facebookLoginSubmit"
+            },
+            mainTabView: {
+                activate: "setBadges",
             }
         }
     },
@@ -121,5 +127,44 @@ Ext.define("inkle.controller.LoginController", {
                  alert('User cancelled login or did not fully authorize.');
                }
             }, {scope: 'email,user_birthday'});
+    },
+    
+    setBadges: function() {
+        console.log("Setting badges");
+        
+        // Set the "My Inklings" tab and inkling invites badges
+			Ext.Ajax.request({
+				url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
+				success: function(response) {
+					numInklingInvites = response.responseText;
+					if (numInklingInvites != 0) {
+						this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+						this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
+                    }
+				},
+				failure: function(response) {
+					console.log(response.responseText);
+	        	},
+	        	scope: this
+			});
+        
+        // Set the "Friends" tab and friends requests badges
+        Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
+            
+            success: function(response) {
+                numFriendRequests = response.responseText;
+                if (numFriendRequests != 0) {
+                    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
+                    this.getRequestsButton().setBadgeText(numFriendRequests);
+                }
+            },
+            
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            
+            scope: this
+        });
     }
 });
