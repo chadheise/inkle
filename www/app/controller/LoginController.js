@@ -3,8 +3,14 @@ Ext.define("inkle.controller.LoginController", {
     
     config: {
         refs: {
+            // Views
             loginView: "loginView",
             mainTabView: "mainTabView",
+            allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
+            allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
+            inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
+            
+            // Elements
             loginEmail: "#loginEmail",
             loginPassword: "#loginPassword",
             datePicker: "#allInklingsDatePicker",
@@ -45,10 +51,22 @@ Ext.define("inkle.controller.LoginController", {
         this.getLoginEmail().reset();
         this.getLoginPassword().reset();
         
-        // Destroy the old main tab view, if it exists
-        if (this.getMainTabView()) {
-        	this.getMainTabView().destroy();
-        }
+        // Destroy the main tab view
+		if (this.getMainTabView()) {
+		    this.getMainTabView().destroy();
+		}
+		
+		//Destroy all other components
+		if (this.getAllInklingsGroupsListPanel()) {
+		    this.getAllInklingsGroupsListPanel().destroy();
+		}
+		if (this.getAllInklingsDatePickerPanel()) {
+		    this.getAllInklingsDatePickerPanel().destroy();
+		}
+		if (this.getInklingInvitationsPanel()) {
+		    this.getInklingInvitationsPanel().destroy();
+		}
+        
         
         // Create the main tab view
         var mainTabView = Ext.create("inkle.view.Main");
@@ -131,6 +149,8 @@ Ext.define("inkle.controller.LoginController", {
     
     setBadges: function() {
         console.log("Setting badges");
+        
+        console.log(this.getMainTabView() == true);
         
         // Set the "My Inklings" tab and inkling invites badges
 			Ext.Ajax.request({
