@@ -45,6 +45,7 @@ Ext.define("inkle.controller.SettingsController", {
 			}
 		});
 		
+		// Active the login view
 		this.activateLoginView();
     },
  
