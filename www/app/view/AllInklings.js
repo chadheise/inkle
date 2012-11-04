@@ -50,6 +50,7 @@ Ext.define("inkle.view.AllInklings", {
     			xtype: "toolbar",
     			id: "allInklingsTopToolbar",
                 docked: "top",
+                ui: "customToolbar",
                 items: [
                 	{
                 		xtype: "button",
@@ -68,7 +69,8 @@ Ext.define("inkle.view.AllInklings", {
                 	},
                 	{
                 		xtype: "button",
-                		ui: "back",
+                		//ui: "back",
+                		ui: "customPressedCls",
                 		text: "All Inklings",
                 		itemId: "allInklingsInklingBackButton",
                 		hidden: true,
@@ -106,6 +108,7 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
+                        //pressedCls: 'customPressedCls',
                         text: "Groups",
                         itemId: "allInklingsGroupsButton",
                 		showAnimation: {

@@ -53,8 +53,9 @@
  */
 @mixin toolbar-button($bg-color, $type: $button-gradient){
   &, .x-toolbar & {
-    border: 1px solid darken($bg-color, 20%);
-    border-top-color: darken($bg-color, 15%);
+    /*border: 1px solid darken($bg-color, 20%);*/
+	border: 1px solid #1A492B; //Added by Chad
+    /*border-top-color: darken($bg-color, 15%);*/
     @include color-by-background($bg-color);
 
     &.x-button-back:before, &.x-button-forward:before {
@@ -70,8 +71,12 @@
     }
 
     &.x-button-pressing, &.x-button-pressed, &.x-button-active {
-      &, &:after {
-        @include background-gradient(darken($bg-color, 3%), 'recessed');
+      color: #FFFFFF; //Added by Chad
+	&, &:after {
+        /*@include background-gradient(darken($bg-color, 3%), 'recessed');*/
+		@include background-gradient(#1A492B, recessed); //Added by Chad
+        @include bevel-by-background(#6ABB6A); //Added by Chad
+		
       }
     }
   }
