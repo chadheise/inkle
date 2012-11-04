@@ -174,8 +174,14 @@ $tabs-top-height: $global-row-height - .8em;
         line-height: 12px;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
+		color: #1A492B;
       }
     }
+
+	.x-tab-active .x-button-label {
+		color: #FFFFFF;
+	}
+
   }
 
   @if $include-default-icons {
@@ -221,7 +227,7 @@ $tabs-top-height: $global-row-height - .8em;
     border-bottom-color: darken($bar-color, 15%);
 
     .x-tab {
-      @include color-by-background($bar-color, 40%);
+      	@include color-by-background($bar-color, 40%);
     }
 
     .x-tab-active {
@@ -238,14 +244,21 @@ $tabs-top-height: $global-row-height - .8em;
     .x-tabbar-#{$ui-label}.x-docked-bottom {
       .x-tab {
         @include bevel-by-background($bar-color);
+		padding-top: 5px;
+		padding-bottom: 5px;
+		width: 25%;
         .x-button-icon {
-          @include mask-by-background($bar-color, 20%, $tabs-bar-gradient);
+          /*@include mask-by-background($bar-color, 20%, $tabs-bar-gradient);*/
+		  background-color: #1A492B;
         }
       }
 
       .x-tab-active {
-        @include background-gradient(darken($bar-color, 5%), recessed);
-        @include bevel-by-background(lighten($bar-color, 10%));
+        /*@include background-gradient(darken($bar-color, 5%), recessed);
+        @include bevel-by-background(lighten($bar-color, 10%));*/
+		@include background-gradient(#1A492B, recessed); //Added by Chad
+        @include bevel-by-background(#6ABB6A); //Added by Chad
+		//background-color: #1A492B; //Added by Chad
 
         @if ($include-tab-highlights) {
           @include box-shadow(darken($bar-color, 10%) 0 0 .25em inset);
