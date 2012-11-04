@@ -25,7 +25,7 @@ Ext.define("inkle.view.Friends", {
                 items: [
                 	{
                 		xtype: "button",
-                		itemId: "friendsViewRemoveFriendsButton",
+                		id: "friendsViewRemoveFriendsButton",
                 		ui: "action",
                 		iconMask: true,
                 		iconCls: "minusFriendIcon",
@@ -267,7 +267,7 @@ Ext.define("inkle.view.Friends", {
 	},
     
     onFriendsViewRemoveFriendsButtonTap: function() {
-		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "removeFriend");
+		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "minusFriendIcon");
     },
     
     onFriendsViewAddFriendsButtonTap: function() {

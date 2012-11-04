@@ -113,16 +113,16 @@ Ext.define("inkle.controller.FriendsController", {
 		
 		// Reset the remove friends button
 		var removeFriendsButton = this.getRemoveFriendsButton();
-		removeFriendsButton.setIconMask(true);
-		removeFriendsButton.setIconCls("removeFriend");
 		removeFriendsButton.setText("");
+		removeFriendsButton.setIconMask(true);
+		removeFriendsButton.setIconCls("minusFriendIcon");
 		
 		//Get facebook friends here
     },
 	
 	/* Activates the group members view from the friends view groups list */
 	activateGroupMembersView: function(groupId) {
-		if (this.getEditGroupsButton().getText() == "Edit") {
+		if (this.getEditGroupsButton().getIconCls() == "editIcon") {
 			// Push the group members view onto the friends view
 			this.getFriendsView().push({
 				xtype: "groupMembersView",
@@ -162,7 +162,9 @@ Ext.define("inkle.controller.FriendsController", {
 			}
 			
 			// Reset the text for the edit groups button
-			this.getEditGroupsButton().setText("Edit");
+			this.getEditGroupsButton().setText("");
+			this.getEditGroupsButton().setIconMask(true);
+			this.getEditGroupsButton().setIconCls("editIcon");
 		}
     },
 
@@ -209,7 +211,7 @@ Ext.define("inkle.controller.FriendsController", {
 			// Reset the remove friends button
 			var removeFriendsButton = this.getRemoveFriendsButton();
 			removeFriendsButton.setIconMask(true);
-			removeFriendsButton.setIconCls("removeFriend");
+			removeFriendsButton.setIconCls("minusFriendIcon");
 			removeFriendsButton.setText("");
 		}
 		else if (index == 1) {
@@ -218,7 +220,11 @@ Ext.define("inkle.controller.FriendsController", {
 			this.getEditGroupsButton().show();
 			this.getCreateGroupButton().show();
 			
-			this.getEditGroupsButton().setText("Edit");
+			// Reset the edit groups button
+			var editGroupsButton = this.getEditGroupsButton();
+			editGroupsButton.setIconMask(true);
+			editGroupsButton.setIconCls("editIcon");
+			editGroupsButton.setText("");
 		}
 		else {
 			this.getRemoveFriendsButton().hide();
@@ -259,7 +265,7 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	/* Toggles the visibility of the delete locks */
-	toggleDeleteLocksVisibility: function(listId, buttonText) {
+	toggleDeleteLocksVisibility: function(listId, buttonIconCls) {
 		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
 		for (var i = 0; i < deleteLocks.length; i++) {
 			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
@@ -278,24 +284,27 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 		
 		var button;
-		if (buttonText == "removeFriend") {
+		if (buttonIconCls == "minusFriendIcon") {
 			button = this.getRemoveFriendsButton();
 		}
 		else {
 			button = this.getEditGroupsButton();
 		}
 		
-		if ((button.getText() == buttonText) || (button.getIconMask())) {
-			if (buttonText == "removeFriend") {
-				button.setIconMask(false);
-				button.setIconCls("");
+		// If the remove friends or edits groups button (aka not the "Done" button) was pressed 
+		if (button.getIconMask()) {
+			// Update the button into a "Done" button
+			button.setIconMask(false);
+			button.setIconCls("");
+			button.setText("Done");
+			
+			// Hide the other toolbar button
+			if (buttonIconCls == "minusFriendIcon") {
 				this.getAddFriendButton().hide();
 			}
 			else {
 				this.getCreateGroupButton().hide();
-			}
-			
-			button.setText("Done");			
+			}		
 			
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
@@ -320,15 +329,20 @@ Ext.define("inkle.controller.FriendsController", {
                 }
 			}
 		}
+		
+		// Otherwise, the "Done" button was pressed
 		else {
-			if (buttonText == "removeFriend") {
-				button.setIconMask(true);
-				button.setIconCls("removeFriend");
-				button.setText("");
+		    // Update the button from a "Done" button to an icon button
+			button.setText("");
+			button.setIconMask(true);
+		   	
+		   	// Unhide the other toolbar button
+			if (buttonIconCls == "minusFriendIcon") {
+				button.setIconCls("minusFriendIcon");
 				this.getAddFriendButton().show();
 			}
-			else {			
-				button.setText(buttonText);
+			else {
+			    button.setIconCls("editIcon");
 				this.getCreateGroupButton().show();
 			}
 			
