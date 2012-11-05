@@ -1076,18 +1076,13 @@ def s_people_search_view(request):
     """Returns a list of member's who match the inputted query."""
     # Get the logged-in member
     try:
-        print 'before member'
         member = Member.active.get(pk = request.session["member_id"])
-        print "after member"
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
     # Get the search query
     try:
-        print 'before query'
         query = request.POST["query"]
-        print "people search"
         fbAccessToken = request.POST["fbAccessToken"]
-        print "accessToken: " + fbAccessToken
     except:
         print "except1: " + str(e)
         raise Http404()
@@ -1098,70 +1093,115 @@ def s_people_search_view(request):
     # If the query is only one word long, match the members' first or last names alone
     if (len(query_split) == 1):
         members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
-
     # If the query is two words long, match the members' first and last names
     elif (len(query_split) == 2):
         members = Member.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
-
     # If the query is more than two words long, return no results
     else:
         members = []
-    
-    #fbUrl = "https://api.facebook.com/method/fql.query?query="
-    #fbUrl = "https://graph.facebook.com/fql.query?query="
-    fbUrl = "https://graph.facebook.com/fql?q="
-    fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
-    fbQuery += "FROM user WHERE uid IN "
-    fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
-    fbQuery += "AND is_app_user=0"
-    if (len(query_split) == 1):
-        fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
-        fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
-    elif (len(query_split) == 2):
-        fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
-        fbQuery += str("OR strpos(lower(last_name), '" + query_split[1] + "') == 0 ")
-        fbQuery += str("OR strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
-        fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
-    else:
-        fbQuery = ""
 
-    fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
-
-    try:
-        fbResponse = urllib2.urlopen(fbRequest).read()
-    except Exception, e:
-        print "except2: " + str(e)
-    fbData = simplejson.loads(fbResponse)
-    for fbFriend in fbData["data"]:
-        print fbFriend["first_name"] + " " + fbFriend["last_name"]
+    fbData = []
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        fbUrl = "https://graph.facebook.com/fql?q="
+        fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
+        fbQuery += "FROM user WHERE uid IN "
+        fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
+        #fbQuery += "AND is_app_user=0" #Use this to only return non-inkle users or set to 1 to return only inkle users
+        if (len(query_split) == 1):
+            fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+            fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+        elif (len(query_split) == 2):
+            fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+            fbQuery += str("OR strpos(lower(last_name), '" + query_split[1] + "') == 0 ")
+            fbQuery += str("OR strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
+            fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+        else:
+            fbQuery = ""
+        fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
         
-    # Sort the members by last name
-    members = list(members)
-    members.sort(key = lambda m : m.last_name)
-
-    # Get the HTML for each member's list item
-    response_members = []
+        try:
+            fbResponse = urllib2.urlopen(fbRequest).read()
+        except Exception, e:
+            print "except2: " + str(e)
+        fbData = simplejson.loads(fbResponse)
+    
+    # Create lists for storing member objects or dictionaries for each type
+    # of connection a member can have to the user
+    inkleFriends = [] #Members of inkle who are friends on inkle with the user
+    inklePending = [] #Members of inkle who have a pending request from the user
+    inkleOther = [] #Members of inkle who are are not friends with the user and do not have a pending request
+    facebookInkle = [] #Members of inkle who are facebook friends with the user
+    facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
+    
     for m in members:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
-        
-        m.is_friend = m in member.friends.all()
-        
-        html = render_to_string( "s_memberListItem.html", {
+        if m in member.friends.all(): #If the member is a friend of the user
+            m.is_friend = True
+            m.is_pending = False
+            inkleFriends.append(m)
+        elif member.has_pending_friend_request_to(m):
+            m.is_friend = False
+            m.is_pending = True
+            inklePending.append(m)
+        else: #If the member matches the search query but is not friends with the user and a request is not pending
+            m.is_friend = False
+            m.is_pending = False
+            inkleOther.append(m)
+    
+    for fbFriend in fbData["data"]:
+        if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
+            #Get inkle user from facebook user id
+            inkleFriend = Member.objects.get(facebookId = fbFriend["uid"])
+            if inkleFriend not in inkleFriends: #If the facebook friend is not an inkle friend
+                inkleFriend.num_mutual_friends = member.get_num_mutual_friends(inkleFriend)
+                inkleFriend.is_friend = False
+                inkleFriend.is_pending = member.has_pending_friend_request_to(inkleFriend)
+                facebookInkle.append(personData)
+        else: #If the facebook friend is not an inkle member
+            personData = {} #Create dictionary for facebook friend data
+            personData["first_name"] = fbFriend["first_name"]
+            personData["last_name"] = fbFriend["last_name"]
+            personData["facebookId"] = fbFriend["uid"]
+            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
+            personData["id"] = "fb" + str(fbFriend["uid"])
+            personData["num_mutual_friends"] = 0
+            personData["is_friend"] = False
+            personData["is_pending"] = False
+            facebookNotInkle.append(personData)
+    
+    searchResults = []
+    if inkleFriends:
+        searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
+    if inklePending:
+        searchResults += sorted(inklePending, key = lambda m : m.last_name)
+    if facebookInkle:
+        searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
+    if facebookNotInkle:
+        searchResults += sorted(facebookNotInkle, key = lambda m: m['last_name']) 
+    if inkleOther:
+        searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
+    
+    response_members = []
+    for m in searchResults:
+        try:
+            html = render_to_string( "s_addFriendItem.html", {
             "m" : m,
             "member" : member,
-            "include_add_friend_buttons" : True,
-            "include_delete_items" : False,
-            "include_selection_item" : False
-        })
-        
+            })
+        except:
+            raise Http404()
+
+        try:
+            memberId = m.id
+        except:
+            memberId = m["id"]
         response_members.append({
-            "id" : m.id,
+            "id" : memberId,
             "html": html
         })
-
+        
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
-    print "returning"
     return HttpResponse(response, mimetype = "application/json")
 
 

@@ -34,6 +34,11 @@ Ext.define("inkle.controller.SettingsController", {
     logout: function() {
         console.log("logout");
     
+        //Logout of facebook
+        FB.logout(function(response) {
+          // user is now logged out
+        });
+    
 		Ext.Ajax.request({
 			async: false,
 			url: "http://127.0.0.1:8000/sencha/logout/",
