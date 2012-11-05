@@ -137,9 +137,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 				inklingId = response.responseText;
 			},
 			failure: function(response) {
-			    console.log("*******************");
 			    console.log(response.responseText);
-				console.log("*******************");
 			}
 		});
 		
