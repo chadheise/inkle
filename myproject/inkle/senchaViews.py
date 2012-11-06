@@ -1089,7 +1089,7 @@ def s_people_search_view(request):
 
     # Split the query into words
     query_split = query.split()
-
+    
     # If the query is only one word long, match the members' first or last names alone
     if (len(query_split) == 1):
         members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
@@ -1100,8 +1100,9 @@ def s_people_search_view(request):
     else:
         members = []
 
-    fbData = []
+    fbData = {"data":[]}
     if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        print "inside"
         fbUrl = "https://graph.facebook.com/fql?q="
         fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
         fbQuery += "FROM user WHERE uid IN "
@@ -1124,7 +1125,7 @@ def s_people_search_view(request):
         except Exception, e:
             print "except2: " + str(e)
         fbData = simplejson.loads(fbResponse)
-    
+
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
     inkleFriends = [] #Members of inkle who are friends on inkle with the user
@@ -1132,7 +1133,7 @@ def s_people_search_view(request):
     inkleOther = [] #Members of inkle who are are not friends with the user and do not have a pending request
     facebookInkle = [] #Members of inkle who are facebook friends with the user
     facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
-    
+
     for m in members:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         if m in member.friends.all(): #If the member is a friend of the user
@@ -1147,7 +1148,7 @@ def s_people_search_view(request):
             m.is_friend = False
             m.is_pending = False
             inkleOther.append(m)
-    
+
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Get inkle user from facebook user id
