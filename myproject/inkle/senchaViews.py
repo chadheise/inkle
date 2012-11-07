@@ -1111,10 +1111,10 @@ def s_people_search_view(request):
             fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
             fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
         elif (len(query_split) == 2):
-            fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
-            fbQuery += str("OR strpos(lower(last_name), '" + query_split[1] + "') == 0 ")
-            fbQuery += str("OR strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
-            fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+            fbQuery += str("AND ( (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+            fbQuery += str("AND strpos(lower(last_name), '" + query_split[1] + "') == 0 )")
+            fbQuery += str("OR (strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
+            fbQuery += str("AND strpos(lower(last_name), '" + query_split[0] + "') == 0))")
         else:
             fbQuery = ""
         if fbQuery:
