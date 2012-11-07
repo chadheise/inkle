@@ -1,4 +1,4 @@
-<div class="inkling" inklingId="{{ invitation.inkling.id }}">
+<div class="inklingInvitation" inklingId="{{ invitation.inkling.id }}">
     <!-- Inkling information -->
     <div class="numAttendees">{{ invitation.inkling.get_num_attendees }}</div>
     <div class="inklingInfo">
@@ -17,6 +17,10 @@
     </div>
 
     <!-- Accept/ignore buttons -->
-    <input class="acceptInvitationButton" type="button" value="Accept" invitationId="{{ invitation.id }}" />
-    <input class="ignoreInvitationButton" type="button" value="Ignore" invitationId="{{ invitation.id }}" />
+    {% if invitation.status == "pending" %}
+        <input class="acceptInvitationButton" type="button" value="Accept" invitationId="{{ invitation.id }}" />
+        <input class="ignoreInvitationButton" type="button" value="Ignore" invitationId="{{ invitation.id }}" />
+    {% else %}
+        <input class="hideInvitationButton" type="button" value="Hide" invitationId="{{ invitation.id }}" />
+    {% endif %}
 </div>

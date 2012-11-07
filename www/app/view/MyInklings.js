@@ -171,7 +171,19 @@ Ext.define("inkle.view.MyInklings", {
 						element: "element",
 						delegate: ".ignoreInvitationButton",
 						fn: "onIgnoreInvitationButtonTap"
-					}
+					},
+					{
+						event: "tap",
+						element: "element",
+						delegate: ".hideInvitationButton",
+						fn: "onHideInvitationButtonTap"
+					},
+					{
+                        event: "tap",
+                        element: "element",
+                        delegate: ".inklingInvitation",
+                        fn: "onInklingInvitationTap"
+                    }
 				],
 				
 				onAcceptInvitationButtonTap: function(event, target) {
@@ -182,7 +194,19 @@ Ext.define("inkle.view.MyInklings", {
 				onIgnoreInvitationButtonTap: function(event, target) {
 					var tappedInvitationId = target.getAttribute("invitationId");
 					this.fireEvent("invitationButtonTapped", tappedInvitationId, "ignored");
-				}
+				},
+				
+				onHideInvitationButtonTap: function(event, target) {
+					var tappedInvitationId = target.getAttribute("invitationId");
+					this.fireEvent("invitationButtonTapped", tappedInvitationId, "hidden");
+				},
+				
+				onInklingInvitationTap: function(event, target) {
+                    if (!event.getTarget("input")) {
+                        var tappedInklingId = event.getTarget(".inklingInvitation").getAttribute("inklingId");
+                        this.fireEvent("inklingInvitationTapped", tappedInklingId, "invitations");
+                    }
+                },
 			}
     	],
     	
@@ -266,7 +290,7 @@ Ext.define("inkle.view.MyInklings", {
     onInklingTap: function(event, target) {
         var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
         
-        this.fireEvent("inklingTapped", tappedInklingId);
+        this.fireEvent("inklingTapped", tappedInklingId, "myInklings");
     },
     
     onNewInklingCancelButtonTap: function() {

@@ -8,6 +8,7 @@ Ext.define("inkle.controller.InklingController", {
         	myInklingsView: "myInklingsView",
             inklingView: "inklingView",
             inklingFeedView: "inklingFeedView",
+            inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
             
             inklingFeedList: "#inklingFeedList",
             
@@ -16,6 +17,7 @@ Ext.define("inkle.controller.InklingController", {
             allInklingsGroupsButton: "#allInklingsGroupsButton",
             allInklingsInklingBackButton: "#allInklingsInklingBackButton",
             myInklingsInklingBackButton: "#myInklingsInklingBackButton",
+            inklingInvitationsButton: "#inklingInvitationsButton",
             inklingFeedBackButton: "#inklingFeedBackButton",
             inklingFeedButton: "#inklingFeedButton",
             joinInklingButton: "#joinInklingButton",
@@ -104,12 +106,22 @@ Ext.define("inkle.controller.InklingController", {
 	activateMyInklingsView: function() {
 		// Display the appropriate top toolbar buttons
 		this.getNewInklingButton().show();
+		this.getInklingInvitationsButton().show();
     	this.getMyInklingsInklingBackButton().hide();
 		this.getInklingFeedButton().hide();
 		this.getJoinInklingButton().hide();
     	
     	// Pop the inkling view off of the all inklings view
-        this.getMyInklingsView().pop();
+    	var source = this.getMyInklingsView().getActiveItem().getData()["source"];
+    	this.getMyInklingsView().pop();
+        
+        // Show the panel if the source is invitations
+        if (source == "invitations") {
+            this.getInklingInvitationsPanel().showBy(this.getInklingInvitationsButton());
+        }
+        
+        // Update the toolbar title
+		this.getMyInklingsViewToolbar().setTitle("My Inklings");
     },
 	
 	/* Activates the inkling view from the inkling feed view */

@@ -68,7 +68,8 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             inklingInvitationsPanel: {
-                invitationButtonTapped: "respondToInklingInvitation"
+                invitationButtonTapped: "respondToInklingInvitation",
+                inklingInvitationTapped: "activateInklingView"
             },
             
             newInklingInvitedGroupsPanel: {
@@ -99,7 +100,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     },
 	
 	// Activates the inkling view
-	activateInklingView: function(inklingId) {
+	activateInklingView: function(inklingId, source) {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
 		this.getInklingInvitationsButton().hide();
@@ -109,10 +110,19 @@ Ext.define("inkle.controller.MyInklingsController", {
 		// Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("Inkling");
 		
+		// Update the back button text
+		if (source == "myInklings") {
+		    this.getMyInklingsInklingBackButton().setText("My Inklings");
+		}
+		else if (source == "invitations") {
+		    this.getMyInklingsInklingBackButton().setText("Invitations");
+		}
+		
     	this.getMyInklingsView().push({
         	xtype: "inklingView",
         	data: {
-        		inklingId: inklingId
+        		inklingId: inklingId,
+        		source: source
         	}
         });
     },
@@ -360,9 +370,10 @@ Ext.define("inkle.controller.MyInklingsController", {
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
-                    this.getInklingInvitationsButton().show();
                     this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
-                    this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+                    if (this.getMainTabView().getTabBar().getActiveTab() != this.getMainTabView().getTabBar().getAt(1)) {
+                        this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+                    }
                 }
             },
             failure: function(response) {
