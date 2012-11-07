@@ -146,7 +146,6 @@ Ext.define("inkle.controller.LoginController", {
                }
             }, {scope: 'email,user_birthday'});
     },
-    
     setBadges: function() {
         console.log("Setting badges");
         
