@@ -1100,9 +1100,8 @@ def s_people_search_view(request):
     else:
         members = []
 
-    fbData = {"data":[]}
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
     if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
-        print "inside"
         fbUrl = "https://graph.facebook.com/fql?q="
         fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
         fbQuery += "FROM user WHERE uid IN "
@@ -1118,13 +1117,13 @@ def s_people_search_view(request):
             fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
         else:
             fbQuery = ""
-        fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
-        
-        try:
-            fbResponse = urllib2.urlopen(fbRequest).read()
-        except Exception, e:
-            print "except2: " + str(e)
-        fbData = simplejson.loads(fbResponse)
+        if fbQuery:
+            fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
+            try:
+                fbResponse = urllib2.urlopen(fbRequest).read()
+            except Exception, e:
+                print "except2: " + str(e)
+            fbData = simplejson.loads(fbResponse)      
 
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
@@ -1168,6 +1167,8 @@ def s_people_search_view(request):
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
+            personData["get_picture_path"] = fbFriend["pic_square"]
+            print personData["get_picture_path"]
             facebookNotInkle.append(personData)
     
     searchResults = []
