@@ -90,6 +90,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 					xtype: "inklingView",
 					data: {
 						inklingId: inklingId,
+						source: "allInklings"
 					}
 				});
         	},

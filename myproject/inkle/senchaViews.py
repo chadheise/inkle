@@ -427,7 +427,7 @@ def s_respond_to_inkling_invitation_view(request):
         member.inklings.add(invitation.inkling)
 
     # Return the number of pending inkling invitations for the logged-in member
-    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count() + member.inkling_invitations_received.filter(status = "missed").count())
 
 
 # TODO: possible get rid of this
@@ -641,7 +641,7 @@ def s_num_inkling_invitations_view(request):
         raise Http404()
     
     # Return the number of inklings to which the logged-in member has pending invitations
-    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count())
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count() + member.inkling_invitations_received.filter(status = "missed").count())
 
 
 @csrf_exempt
@@ -656,6 +656,17 @@ def s_inkling_invitations_view(request):
     # Get a list of the inklings to which the logged-in member has pending invitations
     response_invitations = []
     for invitation in member.inkling_invitations_received.filter(status = "pending"):
+        html = render_to_string( "s_inklingInvitationListItem.html", {
+            "invitation" : invitation
+        })
+        
+        response_invitations.append({
+            "id" : invitation.id,
+            "html": html
+        })
+
+    # Add the inklings to which the logged-in members has passed invitations
+    for invitation in member.inkling_invitations_received.filter(status = "missed"):
         html = render_to_string( "s_inklingInvitationListItem.html", {
             "invitation" : invitation
         })
