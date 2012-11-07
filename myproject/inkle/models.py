@@ -260,3 +260,8 @@ class Member(User):
     def has_pending_friend_request_to(self, m):
         """Returns True if the current memeber has a pending friend request to the inputted member."""
         return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))
+
+    def get_picture_path(self, m):
+        """Returns the path to the member's picture"""
+        #"file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
+        return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"

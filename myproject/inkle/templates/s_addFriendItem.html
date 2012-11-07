@@ -1,0 +1,32 @@
+<div id="member{{ m.id }}" class="member">
+    <!-- Member info -->
+    <img class="image" src="{{ m.get_picture_path }}" />
+    <div class="memberInfo">
+        <div class="name">
+            <span class="firstName">{{ m.first_name }}</span> 
+            <span class="lastName">{{ m.last_name }}</span>
+        </div>
+        <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+    </div>
+
+   	<!-- Right-hand button -->
+	{% if m.is_friend %}
+		<input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
+		{% elif m.is_pending %}
+			<!-- Not styled yet -->
+			<input id="member{{ m.id }}IsPendingButton" class="isPendingButton" type="button" value="Pending" memberId="{{ m.id }}" />
+		{% elif m == member %}
+		    <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+		{% elif m.facebookId %}
+			<!-- Facebook friends not on inkle -->
+			{% if "fb" in m.id %}
+				<input id="member{{ m.id }}InviteFriendButton" class="addFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
+			<!-- Facebook friends on inkle -->
+			{% else %}
+				<input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+			{% endif %}
+	<!-- inkle user who is not on Facebook-->
+	{% else %}
+		<input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+	{% endif %}
+</div>
