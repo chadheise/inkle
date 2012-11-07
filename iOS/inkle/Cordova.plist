@@ -24,7 +24,7 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array>
-		<string>fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/173214_566533600_301975172_q.jpg</string>
+		<string>fbcdn-profile-a.akamaihd.net</string>
 		<string>*.inkleit.com</string>
 		<string>127.0.0.1</string>
 		<string>*.googleapis.com</string>
