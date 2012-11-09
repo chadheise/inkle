@@ -1089,7 +1089,7 @@ def s_people_search_view(request):
 
     # Split the query into words
     query_split = query.split()
-    
+
     # If the query is only one word long, match the members' first or last names alone
     if (len(query_split) == 1):
         members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
