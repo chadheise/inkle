@@ -24,6 +24,7 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array>
+		<string>profile-a.xx.fbcdn.net</string>
 		<string>fbcdn-profile-a.akamaihd.net</string>
 		<string>*.inkleit.com</string>
 		<string>127.0.0.1</string>

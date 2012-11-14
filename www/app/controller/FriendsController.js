@@ -58,7 +58,8 @@ Ext.define("inkle.controller.FriendsController", {
            	addFriendsView: {
            		addFriendsDoneButtonTapped: "activateFriendsView",
            		addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
-           		addFriendButtonTapped: "addFriend"
+           		addFriendButtonTapped: "addFriend",
+           		inviteFriendButtonTapped: "inviteFriend"
            	},
            	
            	groupMembersView: {
@@ -537,6 +538,78 @@ Ext.define("inkle.controller.FriendsController", {
         		Ext.Msg.alert("Error", response.responseText);
         	}
 		});
+	},
+	
+	inviteFriend: function(memberId) {
+		var inviteFriendButton = Ext.fly("member" + memberId + "InviteFriendButton");
+		
+		inviteFriendButton.set({
+			"value" : "Sent"
+		});
+		
+	    //var fbConnected = false;
+		var fbAccessToken = "";
+		FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            // the user is logged in and has authenticated your
+            // app, and response.authResponse supplies
+            // the user's ID, a valid access token, a signed
+            // request, and the time the access token 
+            // and signed request each expire
+                //fbConnected = true;
+                //var uid = response.authResponse.userID;
+            fbAccessToken = response.authResponse.accessToken;
+          } else if (response.status === 'not_authorized') {
+            // the user is logged in to Facebook, 
+            // but has not authenticated your app
+          } else {
+            // the user isn't logged in to Facebook.
+          }
+         });
+         
+		/*Ext.Ajax.request({
+    		url: "http://127.0.0.1:8000/sencha/facebookPost/",
+    		params: {
+    			fbId: memberId,
+    			fbAccessToken: fbAccessToken
+    		},
+        	failure: function(response) {
+        		Ext.Msg.alert("Error", response.responseText);
+        	}
+		});*/
+		
+		fbId = memberId.replace("fb","");
+		
+		var body = 'Test message';
+        FB.api('/' + fbId + '/feed', 'post', { message: body }, function(response) {
+          if (!response || response.error) {
+            alert(response.responseText);
+            console.log(response);
+          } else {
+            alert('Post ID: ' + response.id);
+          }
+        });
+		
+		/*Ext.Ajax.request({
+                    url: "https://graph.facebook.com/" + fbId + "/feed?",
+                    method: "POST",
+                    params: {
+                        link: "https://developers.facebook.com/docs/reference/dialogs/",
+                        picture: "http://fbrell.com/f8.jpg",
+                        name: "Facebook%20Dialogs",
+                        caption: "Reference%20Documentation",
+                        description: "Using%20Dialogs%20to%20interact%20with%20users.",
+                        access_token: fbAccessToken
+                    },
+                    success: function(response){
+                        alert("sucessful: " + response.responseText);
+
+                    },
+                    failure: function(response) {
+                		alert("Error: " + response.responseText);
+                	}
+
+                });*/
 	},
 	
 	toggleSelectionItem: function(memberId) {

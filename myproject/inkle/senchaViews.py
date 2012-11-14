@@ -1206,6 +1206,43 @@ def s_people_search_view(request):
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
 
+@csrf_exempt
+def s_facebook_post(request):
+    """Posts an invitation message on a users facebook feed"""
+
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the search query
+    try:
+        fbId = request.POST["fbId"]
+        fbId = fbId.strip('f').strip('b')
+        fbAccessToken = request.POST["fbAccessToken"]
+    except:
+        print "except1: " + str(e)
+        raise Http404()
+
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        postInfo = "https://graph.facebook.com/" + fbId + "/feed?"
+        postInfo += "link=https://developers.facebook.com/docs/reference/dialogs/&"
+        postInfo += "picture=http://fbrell.com/f8.jpg&"
+        postInfo += "name=Facebook%20Dialogs&"
+        postInfo += "caption=Reference%20Documentation&"
+        postInfo += "description=Using%20Dialogs%20to%20interact%20with%20users.&"
+        postInfo += "access_token=" + fbAccessToken
+        try:
+            #req = urllib2.Request(postInfo)
+            #return urllib2.urlopen(req)
+            fbResponse = urllib2.urlopen(postInfo).read()
+        except Exception, e:
+            print "except2: " + str(e)
+        fbData = simplejson.loads(fbResponse)
+        print fbData
+    return HttpResponse()
 
 # TODO: rename as send_friend_request_view
 @csrf_exempt
