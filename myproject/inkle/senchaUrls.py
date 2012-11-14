@@ -54,6 +54,8 @@ urlpatterns = patterns(
     (r"^removeFromGroup/$", "s_remove_from_group_view"),
     (r"^createGroup/$", "s_create_group_view"),
     (r"^renameGroup/$", "s_rename_group_view"),
+    
+    (r"^facebookPost/$", "s_facebook_post"),
 
     (r"^profile/$", "s_profile_view"),
 )
