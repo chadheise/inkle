@@ -91,6 +91,12 @@ Ext.define("inkle.view.AddFriends", {
 				element: "element",
 				delegate: ".addFriendButton",
 				fn: "onAddFriendButtonTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+				delegate: ".inviteFriendButton",
+				fn: "onInviteFriendButtonTap"
         	}
         ]
     },
@@ -107,5 +113,11 @@ Ext.define("inkle.view.AddFriends", {
     onAddFriendButtonTap: function(event) {
     	var tappedId = event.getTarget(".addFriendButton").getAttribute("memberId");
         this.fireEvent("addFriendButtonTapped", tappedId);
+    },
+    
+    onInviteFriendButtonTap: function(event) {
+    	var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
+        this.fireEvent("inviteFriendButtonTapped", tappedId);
     }
+    
 });
