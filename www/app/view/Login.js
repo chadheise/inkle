@@ -23,11 +23,11 @@ Ext.define("inkle.view.Login", {
 		    },
 		    { 
 		        xtype: "panel",
-		        html: "<center><img src='resources/images/fbLogin.jpeg' id='facebookLoginSubmitButton' style='width: 80%;'/></center>"
+		        html: "<center><img src='resources/images/fbLogin.png' id='facebookLoginSubmitButton' style='border-radius: 3px';/></center>"
 		    }, 
 		    
 		    // Login form
-			{
+			/*{
 				xtype: "fieldset",
 				
 				items: [
@@ -52,7 +52,7 @@ Ext.define("inkle.view.Login", {
 				itemId: "loginSubmitButton",
 				text: "Login",
 				ui: "confirm"
-			},
+			},*/
 			
 			{ 
 		        xtype: "panel",
@@ -61,7 +61,7 @@ Ext.define("inkle.view.Login", {
 		    
 		    { 
 		        xtype: "panel",
-		        html: "<center><img src='resources/images/fbLogin.jpeg' style='width: 80%;'/></center>"
+		        html: "<center><img src='resources/images/inkleLogin.png' style='border-radius: 3px';/></center>"
 		    },
 			{ 
 		        xtype: "panel",
