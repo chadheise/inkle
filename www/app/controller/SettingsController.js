@@ -16,8 +16,6 @@ Ext.define("inkle.controller.SettingsController", {
 	
 	/* Transitions */
     activateLoginView: function() {
-    	console.log("Activating login view");
-    	
     	// Destroy the old login view, if it exists
         if (this.getLoginView()) {
         	this.getLoginView().destroy();
@@ -32,8 +30,6 @@ Ext.define("inkle.controller.SettingsController", {
 	
     /* Commands */
     logout: function() {
-        console.log("logout");
-    
         //Logout of facebook
         FB.logout(function(response) {
           // user is now logged out

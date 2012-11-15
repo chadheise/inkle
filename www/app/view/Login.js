@@ -13,7 +13,7 @@ Ext.define("inkle.view.Login", {
 		scrollable: false,
 		padding: "10px",
 		url: "http://127.0.0.1:8000/sencha/login/",
-		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%);",
+		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 		
 		items: [
 			// Inkle logo
@@ -27,7 +27,7 @@ Ext.define("inkle.view.Login", {
 		    }, 
 		    
 		    // Login form
-			/*{
+			{
 				xtype: "fieldset",
 				
 				items: [
@@ -52,7 +52,7 @@ Ext.define("inkle.view.Login", {
 				itemId: "loginSubmitButton",
 				text: "Login",
 				ui: "confirm"
-			},*/
+			},
 			
 			{ 
 		        xtype: "panel",
@@ -69,7 +69,7 @@ Ext.define("inkle.view.Login", {
 		    },
 			/*{
 			    xtype: "panel",
-			    html: "<center style='padding-top: 20px;'>OR</center>"
+			    html: "<center style='padding-top: 20px;'>OR</center><div class='fb-login-button'></div>"
 			},*/
 			
 			/*{
@@ -102,11 +102,9 @@ Ext.define("inkle.view.Login", {
 	
 	// Event firings
 	onLoginSubmitButtonTap: function () {
-        console.log("loginSubmitButtonTapped");
         this.fireEvent("loginSubmitButtonTapped");
     },
 	onFacebookLoginSubmitButtonTap: function () {
-        console.log("facebookLoginSubmitButtonTapped");
         this.fireEvent("facebookLoginSubmitButtonTapped");
     }
 

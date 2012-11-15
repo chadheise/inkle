@@ -78,12 +78,10 @@ Ext.define("inkle.view.InklingFeed", {
     
                 // Event firings
                 onAddCommentTextFieldKeyup: function() {
-                    console.log("b");
                     this.fireEvent("addCommentTextFieldKeyedUp");
                 },
                 
                 onAddCommentSendButtonTap: function() {
-                    console.log("b2");
                     this.fireEvent("addCommentSendButtonTapped");
                 }
 			}
