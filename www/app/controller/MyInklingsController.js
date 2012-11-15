@@ -232,7 +232,6 @@ Ext.define("inkle.controller.MyInklingsController", {
     toggleInklingInvitationsVisibility: function() {
         // Toggle the visibility of the inkling invitations panel
 	    var inklingInvitationsPanel = this.getInklingInvitationsPanel();
-	    console.log(inklingInvitationsPanel);
 	    if (inklingInvitationsPanel.getHidden()) {
 	    	inklingInvitationsPanel.showBy(this.getInklingInvitationsButton());
     	}
@@ -440,8 +439,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	toggleSelectedGroupsGroupSelectionItem: function(groupSelectionItem) {
-    	console.log(groupSelectionItem);
-        var selectedGroupsSelectionItem = Ext.fly("selectedGroupsSelectionItem");
+    	var selectedGroupsSelectionItem = Ext.fly("selectedGroupsSelectionItem");
 	    //if (selectedGroupsSelectionItem.getAttribute("src") == "resources/images/selected.png") {
     	    if (groupSelectionItem.getAttribute("src") == "resources/images/selected.png") {
 	    		groupSelectionItem.set({

@@ -4,7 +4,8 @@ Ext.define("inkle.view.AllInklings", {
 	xtype: "allInklingsView",
 	
     requires: [
-    	"Ext.picker.Date"
+    	"Ext.picker.Date",
+    	"Ext.TouchCalendar"
     ],
 	
 	config: {
@@ -212,7 +213,7 @@ Ext.define("inkle.view.AllInklings", {
         		height: 275,
         		layout: "fit",
         		items: [
-        			{
+        			/*{
 						xtype: "datepicker",
 						itemId: "allInklingsDatePicker",
 						showAnimation: "fadeIn",
@@ -225,7 +226,17 @@ Ext.define("inkle.view.AllInklings", {
 						value: new Date(),
 						top: 0,
 						height: 220
-					},
+					},*/
+					{
+					    xtype: "calendar",
+					    itemId: "allInklingsDatePicker",
+                        height: 220,
+                        viewConfig: {
+                            viewMode: "month",
+                            weekStart: 0,
+                            value: new Date()
+                        } 
+                    },
 					{
 					    xtype: "checkboxfield",
 					    id: "noDatedInklingsCheckbox",
@@ -235,7 +246,7 @@ Ext.define("inkle.view.AllInklings", {
                         labelWidth: 250,
                         checked: false
 					}
-				],
+            	],
 				
 				listeners: [
                     {
@@ -247,6 +258,11 @@ Ext.define("inkle.view.AllInklings", {
                         delegate: "#noDatedInklingsCheckbox",
                         event: "uncheck",
                         fn: "onNoDatedInklingsCheckboxUncheck"
+                    },
+                    {
+                        delegate: "#allInklingsDatePicker",
+                        event: "selectionchange",
+                        fn: "onAllInklingsDatePickerSelectionChange"
                     }
 				],
     
@@ -256,6 +272,10 @@ Ext.define("inkle.view.AllInklings", {
                 
                 onNoDatedInklingsCheckboxUncheck: function() {
                     this.fireEvent("noDatedInklingsCheckboxUnchecked");
+                },
+                
+                onAllInklingsDatePickerSelectionChange: function(calendar, selectedDate, options) {
+                    this.fireEvent("allInklingsDatePickerSelectionChanged", selectedDate);
                 }
 			},
         	

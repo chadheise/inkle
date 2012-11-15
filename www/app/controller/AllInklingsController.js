@@ -49,6 +49,7 @@ Ext.define("inkle.controller.AllInklingsController", {
             },
             
             allInklingsDatePickerPanel: {
+                allInklingsDatePickerSelectionChanged: "updateDate",
                 noDatedInklingsCheckboxChecked: "toggleDatePickerEnabled",
                 noDatedInklingsCheckboxUnchecked: "toggleDatePickerEnabled"
             },
@@ -116,6 +117,10 @@ Ext.define("inkle.controller.AllInklingsController", {
 	getMonthString: function(index) {
 		months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 		return months[index];
+	},
+	
+	updateDate: function(date) {
+	    this.getAllInklingsDatePicker().setValue(date);
 	},
 	
 	/* Updates the all inklings list according to the selected date and groups */
@@ -240,19 +245,13 @@ Ext.define("inkle.controller.AllInklingsController", {
     launch: function() {    
         this.callParent(arguments);
         
-        // If the main tab view is created, set the date and groups picker
+        // If the main tab view is created, set the date of the date picker button
         if (this.getMainTabView()) {
-			// Set the value of the date picker
-			var allInklingsDatePicker = this.getAllInklingsDatePicker();
-			today = new Date();
-			allInklingsDatePicker.setValue(today);
-			
-			// Set the date of the date picker button
-			var allInklingsDateButton = this.getAllInklingsDateButton();
+			var today = new Date();
 			var day = this.getDayString(today.getDay());
 			var date = today.getDate();
 			var month = this.getMonthString(today.getMonth());
-			allInklingsDateButton.setText(day + ", " + month + " " + date);
+			this.getAllInklingsDateButton().setText(day + ", " + month + " " + date);
 		}
     }
 });

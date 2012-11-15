@@ -184,7 +184,6 @@ Ext.define("inkle.view.NewInkling", {
     
     onSelectedGroupsGroupSelectionItemTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
-    	console.log(selectionButton);
     	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
     }
 });

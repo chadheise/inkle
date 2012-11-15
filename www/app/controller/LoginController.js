@@ -45,9 +45,7 @@ Ext.define("inkle.controller.LoginController", {
     
     /* Transitions */
     activateMainTabView: function() {
-    	console.log("Activating main tab view");
-        
-        // Reset the login form
+    	// Reset the login form
         this.getLoginEmail().reset();
         this.getLoginPassword().reset();
         
@@ -67,24 +65,18 @@ Ext.define("inkle.controller.LoginController", {
 		    this.getInklingInvitationsPanel().destroy();
 		}
         
-        
         // Create the main tab view
         var mainTabView = Ext.create("inkle.view.Main");
         
         // Animate the main tab view
         Ext.Viewport.animateActiveItem(mainTabView, { type: "slide", direction: "up" });
         
-        // Set the value of the date picker
-        var datePicker = this.getDatePicker();
-        today = new Date();
-        datePicker.setValue(today);
-        
         // Set the date of the date picker button
-        var allInklingsDateButton = this.getAllInklingsDateButton();
+        today = new Date();
 	    var day = this.getDayString(today.getDay());
 	    var date = today.getDate();
 	    var month = this.getMonthString(today.getMonth());
-	    allInklingsDateButton.setText(day + ", " + month + " " + date);
+	    this.getAllInklingsDateButton().setText(day + ", " + month + " " + date);
     },
 	
     /* Commands */
@@ -113,7 +105,6 @@ Ext.define("inkle.controller.LoginController", {
     },
     
 	facebookLoginSubmit: function() {
-        console.log("facebookLoginSubmit");
         var object = this;
         var facebookAccessToken;
         FB.login(function(response) {
@@ -146,26 +137,23 @@ Ext.define("inkle.controller.LoginController", {
                }
             }, {scope: 'email,user_birthday'});
     },
+    
     setBadges: function() {
-        console.log("Setting badges");
-        
-        console.log(this.getMainTabView() == true);
-        
         // Set the "My Inklings" tab and inkling invites badges
-			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
-				success: function(response) {
-					numInklingInvites = response.responseText;
-					if (numInklingInvites != 0) {
-						this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
-						this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
-                    }
-				},
-				failure: function(response) {
-					console.log(response.responseText);
-	        	},
-	        	scope: this
-			});
+        Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/sencha/numInklingInvitations/",
+            success: function(response) {
+                numInklingInvites = response.responseText;
+                if (numInklingInvites != 0) {
+                    this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
+                    this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
+                }
+            },
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            scope: this
+        });
         
         // Set the "Friends" tab and friends requests badges
         Ext.Ajax.request({
