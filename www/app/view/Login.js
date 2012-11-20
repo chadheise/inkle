@@ -15,9 +15,8 @@ Ext.define("inkle.view.Login", {
 		        html: [
 		            "<center>",
 		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 90%;' />",
-		            "   <img id='facebookLoginButton' src='resources/images/fbLogin.png' style='border-radius: 3px;' />",
-		            "   <img src='resources/images/line.png' style='width: 100%;' />",
-		            "   <img id='inkleLoginButton' src='resources/images/inkleLogin.png' style='border-radius: 3px;' />",
+		            "   <img id='facebookLoginButton' src='resources/images/fbLogin.png' style='border-radius: 3px; padding-bottom: 10px;' />",
+		            "   <img id='inkleLoginButton' src='resources/images/emailLogin.png' style='border-radius: 3px; padding-top: 10px;' />",
 		            "   <div style='color:#fff; padding-top: 50px;'><div>Sign Up  |  Take a Tour</div></div>",
 		            "</center>"
 		        ].join("")
