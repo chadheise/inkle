@@ -21,7 +21,7 @@ Ext.define("inkle.controller.LoginController", {
         },
         control: {
             loginView: {
-                inkleLoginButtonTapped: "activateLoginFormView",
+                emailLoginButtonTapped: "activateLoginFormView",
 				facebookLoginButtonTapped: "loginWithFacebook"
             },
             

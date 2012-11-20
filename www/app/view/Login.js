@@ -15,20 +15,18 @@ Ext.define("inkle.view.Login", {
 		        html: [
 		            "<center>",
 		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 90%;' />",
-		            //"   <img id='facebookLoginButton' src='resources/images/fbLogin.png' style='border-radius: 3px; padding-bottom: 10px;' />",
-		            //"   <img id='inkleLoginButton' src='resources/images/emailLogin.png' style='border-radius: 3px; padding-top: 10px;' />",
 		            "</center>"
 		        ].join("")
 		    },
 		    {
                 xtype: 'button',
                 id: 'facebookLoginButton',
-                cls: 'fbLoginButton',
-                pressedCls: 'fbLoginDarkButton'
+                cls: 'facebookLoginButton',
+                pressedCls: 'facebookLoginDarkButton',
             },
             {
                 xtype: 'button',
-                id: 'inkleLoginButton',
+                id: 'emailLoginButton',
                 cls: 'emailLoginButton',
                 pressedCls: 'emailLoginDarkButton'
             },
@@ -51,9 +49,9 @@ Ext.define("inkle.view.Login", {
 			},
 			{
     			//element: "element",
-            	delegate: "#inkleLoginButton",
+            	delegate: "#emailLoginButton",
             	event: "tap",
-            	fn: "onInkleLoginButtonTap"
+            	fn: "onEmailLoginButtonTap"
         	}
         ]
 	},
@@ -62,11 +60,8 @@ Ext.define("inkle.view.Login", {
 	onFacebookLoginButtonTap: function () {
         this.fireEvent("facebookLoginButtonTapped");
     },
-    onInkleLoginButtonTap: function () {
-        this.fireEvent("inkleLoginButtonTapped");
-    },
-    onInkleLoginButtonPress: function () {
-        alert("pressed");
+    onEmailLoginButtonTap: function () {
+        this.fireEvent("emailLoginButtonTapped");
     }
 
 });

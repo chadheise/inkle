@@ -83,17 +83,16 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*   LOGIN BUTTONS 	  */
 /**********************/
-.fbLoginButton {
-	background: url('../images/fbLogin.png');
+.facebookLoginButton {
+	background: url('../images/facebookLogin.png');
 	border-radius: 3px;
 	padding-bottom: 10px;
 	height: 50px;
 	width: 230px;
-	vertical-align: center;
 }
 
-.fbLoginDarkButton {
-	background: url('../images/fbLoginDark.png');
+.facebookLoginDarkButton {
+	background: url('../images/facebookLoginDark.png');
 	border-radius: 3px;
 	padding-bottom: 10px;
 	height: 50px;
@@ -103,7 +102,7 @@ $badge-bg-gradient: "matte";
 .emailLoginButton {
 	background: url('../images/emailLogin.png');
 	border-radius: 3px;
-	padding-bottom: 10px;
+	padding-top: 10px;
 	height: 50px;
 	width: 230px;
 }
@@ -111,7 +110,7 @@ $badge-bg-gradient: "matte";
 .emailLoginDarkButton {
 	background: url('../images/emailLoginDark.png');
 	border-radius: 3px;
-	padding-bottom: 10px;
+	padding-top: 10px;
 	height: 50px;
 	width: 230px;
 }
