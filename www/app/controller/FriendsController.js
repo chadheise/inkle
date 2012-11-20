@@ -578,38 +578,36 @@ Ext.define("inkle.controller.FriendsController", {
         	}
 		});*/
 		
-		fbId = memberId.replace("fb","");
-		
-		var body = 'Test message';
-        FB.api('/' + fbId + '/feed', 'post', { message: body }, function(response) {
-          if (!response || response.error) {
-            alert(response.responseText);
-            console.log(response);
-          } else {
-            alert('Post ID: ' + response.id);
-          }
-        });
-		
-		/*Ext.Ajax.request({
-                    url: "https://graph.facebook.com/" + fbId + "/feed?",
-                    method: "POST",
-                    params: {
-                        link: "https://developers.facebook.com/docs/reference/dialogs/",
-                        picture: "http://fbrell.com/f8.jpg",
-                        name: "Facebook%20Dialogs",
-                        caption: "Reference%20Documentation",
-                        description: "Using%20Dialogs%20to%20interact%20with%20users.",
-                        access_token: fbAccessToken
-                    },
-                    success: function(response){
-                        alert("sucessful: " + response.responseText);
-
-                    },
-                    failure: function(response) {
-                		alert("Error: " + response.responseText);
-                	}
-
-                });*/
+		Ext.Ajax.request({
+    		url: "https://graph.facebook.com/oauth/access_token?client_id=355653434520396&client_secret=e6df96d1801e704fecd7cb3fea71b944&grant_type=client_credentials",
+        	success: function(response) {
+                alert("1 Success " + response.responseText);
+                appAccessToken = response.responseText.replace("access_token=", "");
+        	    fbId = memberId.replace("fb","");
+        	    console.log("appAccessToken: " + appAccessToken);
+        		console.log("friendID: " + fbId);
+        		var postData = {
+        		    access_token: fbAccessToken,
+        		    body: 'body',
+        		    message: "test message"
+        		}
+        		console.log(postData);
+                FB.api('/' + fbId + '/feed', 'post', postData, function(response) {
+                  if (!response || response.error) {
+                    alert("Failed");
+                    console.log(response);
+                  } else {
+                    alert("Success!");
+                    alert('Post ID: ' + response.id);
+                    alert(response.responseText);
+                  }
+                });
+        	
+        	},
+        	failure: function(response) {
+        		alert("Error", response.responseText);
+        	}
+		});
 	},
 	
 	toggleSelectionItem: function(memberId) {
