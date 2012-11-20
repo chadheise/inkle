@@ -8,6 +8,7 @@ Ext.application({
     views: [
     	"Main",
     	"Login",
+    	"LoginForm",
     	"AllInklings",
     	"MyInklings",
     	"NewInkling",

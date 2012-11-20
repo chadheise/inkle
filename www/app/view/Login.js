@@ -1,111 +1,52 @@
 Ext.define("inkle.view.Login", {
-	extend: "Ext.form.Panel",
+	extend: "Ext.Panel",
 	
 	xtype: "loginView",
-   
-    requires: [
-		"Ext.form.FieldSet",
-		"Ext.field.Email",
-		"Ext.field.Password"
-	],
    	
    	config: {
 		scrollable: false,
-		padding: "10px",
-		url: "http://127.0.0.1:8000/sencha/login/",
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 		
+		url: "http://127.0.0.1:8000/sencha/login/",
+		
 		items: [
-			// Inkle logo
 		    {
 		        xtype: "panel",
-		        html: "<center><img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 90%;'/></center>"
-		    },
-		    { 
-		        xtype: "panel",
-		        html: "<center><img src='resources/images/fbLogin.png' id='facebookLoginSubmitButton' style='border-radius: 3px';/></center>"
-		    }, 
-		    
-		    // Login form
-			{
-				xtype: "fieldset",
-				
-				items: [
-					{
-						xtype: "emailfield",
-						name: "email",
-						itemId: "loginEmail",
-						placeHolder: "Email"
-					},
-					{
-						xtype: "passwordfield",
-						name: "password",
-						itemId: "loginPassword",
-						placeHolder: "Password"
-					}
-				]
-			},
-			
-			// Submit button
-			{
-				xtype: "button",
-				itemId: "loginSubmitButton",
-				text: "Login",
-				ui: "confirm"
-			},
-			
-			{ 
-		        xtype: "panel",
-		        html: "<center><img src='resources/images/line.png' style='width: 100%;'/></center>"
-		    },
-		    
-		    { 
-		        xtype: "panel",
-		        html: "<center><img src='resources/images/inkleLogin.png' style='border-radius: 3px';/></center>"
-		    },
-			{ 
-		        xtype: "panel",
-		        html: "<center><div style='color:#fff; padding-top: 50px;'><div>Sign Up  |  Take a Tour</div></div></center>"
-		    },
-			/*{
-			    xtype: "panel",
-			    html: "<center style='padding-top: 20px;'>OR</center><div class='fb-login-button'></div>"
-			},*/
-			
-			/*{
-				xtype: "button",
-				itemId: "facebookLoginSubmitButton",
-				text: "Login with Facebook",
-				ui: "confirm"
-			}*/
-		
-			/*{
-			    xtype: "panel",
-			    html: "<center style='padding-top: 20px; color: blue;'>Login with Facebook</center>"
-			}*/
+		        html: [
+		            "<center>",
+		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 90%;' />",
+		            "   <img id='facebookLoginButton' src='resources/images/fbLogin.png' style='border-radius: 3px;' />",
+		            "   <img src='resources/images/line.png' style='width: 100%;' />",
+		            "   <img id='inkleLoginButton' src='resources/images/inkleLogin.png' style='border-radius: 3px;' />",
+		            "   <div style='color:#fff; padding-top: 50px;'><div>Sign Up  |  Take a Tour</div></div>",
+		            "</center>"
+		        ].join("")
+		    }
 		],
 
 		listeners: [
 			{
-            	delegate: "#loginSubmitButton",
+    			element: "element",
+            	delegate: "#inkleLoginButton",
             	event: "tap",
-            	fn: "onLoginSubmitButtonTap"
+            	fn: "onInkleLoginButtonTap"
         	},
 			{
-				delegate: "#facebookLoginSubmitButton",
+			    element: "element",
+				delegate: "#facebookLoginButton",
             	event: "tap",
-            	element: "element",
-            	fn: "onFacebookLoginSubmitButtonTap"
+            	fn: "onFacebookLoginButtonTap"
 			}
         ]
 	},
 	
 	// Event firings
-	onLoginSubmitButtonTap: function () {
-        this.fireEvent("loginSubmitButtonTapped");
+	onInkleLoginButtonTap: function () {
+        this.fireEvent("inkleLoginButtonTapped");
     },
-	onFacebookLoginSubmitButtonTap: function () {
-        this.fireEvent("facebookLoginSubmitButtonTapped");
+    
+	onFacebookLoginButtonTap: function () {
+        this.fireEvent("facebookLoginButtonTapped");
     }
 
 });

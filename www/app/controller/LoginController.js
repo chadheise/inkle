@@ -5,6 +5,7 @@ Ext.define("inkle.controller.LoginController", {
         refs: {
             // Views
             loginView: "loginView",
+            loginFormView: "loginFormView",
             mainTabView: "mainTabView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
@@ -15,22 +16,28 @@ Ext.define("inkle.controller.LoginController", {
             loginPassword: "#loginPassword",
             datePicker: "#allInklingsDatePicker",
             allInklingsDateButton: "#allInklingsDateButton",
-            
             inklingInvitationsButton: "#inklingInvitationsButton",
             requestsButton: "#friendsViewRequestsButton",
         },
         control: {
             loginView: {
-                loginSubmitButtonTapped: "loginSubmit",
-				facebookLoginSubmitButtonTapped: "facebookLoginSubmit"
+                inkleLoginButtonTapped: "activateLoginFormView",
+				facebookLoginButtonTapped: "loginWithFacebook"
             },
+            
+            loginFormView: {
+                inkleLoginSubmitButtonTapped: "loginWithInkleAccount"
+            },
+            
             mainTabView: {
                 activate: "setBadges",
             }
         }
     },
     
-    /* Helper functions */
+    /**********************/
+	/*  HELPER FUNCTIONS  */
+	/**********************/
 	/* Returns the day string associated with the inputted index */
 	getDayString: function(index) {
 		var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -43,7 +50,16 @@ Ext.define("inkle.controller.LoginController", {
 		return months[index];
 	},
     
-    /* Transitions */
+    /**********************/
+	/*  VIEW TRANSITIONS  */
+	/**********************/
+	/* Creates and activates the login form view */
+	activateLoginFormView: function() {
+        var loginFormView = Ext.create("inkle.view.LoginForm");
+        Ext.Viewport.animateActiveItem(loginFormView, { type: "flip" });
+	},
+	
+	/* Creates and activates the main tab view */
     activateMainTabView: function() {
     	// Reset the login form
         this.getLoginEmail().reset();
@@ -79,11 +95,12 @@ Ext.define("inkle.controller.LoginController", {
 	    this.getAllInklingsDateButton().setText(day + ", " + month + " " + date);
     },
 	
-    /* Commands */
-    loginSubmit: function() {
-		var loginView = this.getLoginView();
-
-		loginView.submit({
+    /**************/
+	/*  COMMANDS  */
+	/**************/
+	/* Submits the login form */
+    loginWithInkleAccount: function() {
+		this.getLoginFormView().submit({
 			method: "POST",
 						
          	waitMsg: {
@@ -104,7 +121,8 @@ Ext.define("inkle.controller.LoginController", {
         });
     },
     
-	facebookLoginSubmit: function() {
+    /* Logs the user in with Facebook */
+	loginWithFacebook: function() {
         var object = this;
         var facebookAccessToken;
         FB.login(function(response) {
@@ -138,6 +156,7 @@ Ext.define("inkle.controller.LoginController", {
             }, {scope: 'email,user_birthday'});
     },
     
+    /* Sets the badges in the "My Inklings" and "Friends" tabs */
     setBadges: function() {
         // Set the "My Inklings" tab and inkling invites badges
         Ext.Ajax.request({
