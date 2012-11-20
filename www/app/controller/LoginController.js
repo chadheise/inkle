@@ -12,8 +12,8 @@ Ext.define("inkle.controller.LoginController", {
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
             
             // Elements
-            loginEmail: "#loginEmail",
-            loginPassword: "#loginPassword",
+            loginEmail: "#loginFormEmail",
+            loginPassword: "#loginFormPassword",
             datePicker: "#allInklingsDatePicker",
             allInklingsDateButton: "#allInklingsDateButton",
             inklingInvitationsButton: "#inklingInvitationsButton",
@@ -26,7 +26,8 @@ Ext.define("inkle.controller.LoginController", {
             },
             
             loginFormView: {
-                inkleLoginSubmitButtonTapped: "loginWithInkleAccount"
+                loginFormCancelButtonTapped: "activateLoginView",
+                loginFormLoginButtonTapped: "loginWithEmail"
             },
             
             mainTabView: {
@@ -55,8 +56,25 @@ Ext.define("inkle.controller.LoginController", {
 	/**********************/
 	/* Creates and activates the login form view */
 	activateLoginFormView: function() {
-        var loginFormView = Ext.create("inkle.view.LoginForm");
-        Ext.Viewport.animateActiveItem(loginFormView, { type: "flip" });
+	    if (this.getLoginFormView())
+	    {
+	        Ext.Viewport.animateActiveItem(this.getLoginFormView(), { type: "flip" });
+	    }
+	    else
+	    {
+            var loginFormView = Ext.create("inkle.view.LoginForm");
+	        Ext.Viewport.animateActiveItem(loginFormView, { type: "flip" });
+	    }
+	    //console.log(Ext.fly("loginFormEmail"));
+	    //console.log(Ext.fly("loginFormEmail").dom);
+	    //console.log(this.getLoginEmail());
+	    //console.log(this.getLoginEmail().dom);
+	    //Ext.fly("loginFormEmail").dom.focus();
+	},
+	
+	/* Activates the login view */
+	activateLoginView: function() {
+        Ext.Viewport.animateActiveItem(this.getLoginView(), { type: "flip" });
 	},
 	
 	/* Creates and activates the main tab view */
@@ -99,7 +117,7 @@ Ext.define("inkle.controller.LoginController", {
 	/*  COMMANDS  */
 	/**************/
 	/* Submits the login form */
-    loginWithInkleAccount: function() {
+    loginWithEmail: function() {
 		this.getLoginFormView().submit({
 			method: "POST",
 						
