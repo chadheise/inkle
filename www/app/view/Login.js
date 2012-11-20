@@ -27,7 +27,7 @@ Ext.define("inkle.view.Login", {
 		    }, 
 		    
 		    // Login form
-			/*{
+			{
 				xtype: "fieldset",
 				
 				items: [
@@ -52,7 +52,7 @@ Ext.define("inkle.view.Login", {
 				itemId: "loginSubmitButton",
 				text: "Login",
 				ui: "confirm"
-			},*/
+			},
 			
 			{ 
 		        xtype: "panel",
