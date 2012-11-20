@@ -11,31 +11,44 @@ Ext.define("inkle.view.Login", {
 		
 		items: [
 		    {
-		        xtype: "panel",
+		        xtype: "container",
 		        html: [
 		            "<center>",
-		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 90%;' />",
+		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 80%;' />",
 		            "</center>"
 		        ].join("")
 		    },
 		    {
-                xtype: 'button',
-                id: 'facebookLoginButton',
-                cls: 'facebookLoginButton',
-                pressedCls: 'facebookLoginDarkButton',
+		        xtype: "container",
+		        centered: true,
+		        items: [
+		            {
+                        xtype: "button",
+                        id: "facebookLoginButton",
+                        cls: "facebookLoginButton",
+                        pressedCls: "facebookLoginDarkButton",
+                    	margin: 15,
+                    	height: 50,
+                    	width: 230,
+                    },
+                    {
+                        xtype: "button",
+                        id: "emailLoginButton",
+                        cls: "emailLoginButton",
+                        pressedCls: "emailLoginDarkButton",
+                        margin: 15,
+                    	height: 50,
+                    	width: 230,
+                    },
+                ]
             },
             {
-                xtype: 'button',
-                id: 'emailLoginButton',
-                cls: 'emailLoginButton',
-                pressedCls: 'emailLoginDarkButton'
-            },
-            {
-		        xtype: "panel",
+		        xtype: "container",
+		        //centered: true,
 		        html: [
-		            "<center>",
-		            "   <div style='color:#fff; padding-top: 50px;'><div>Sign Up  |  Take a Tour</div></div>",
-		            "</center>"
+		            //"<center>",
+		            "   <div style='position: absolute; top: 200px; left: 75px; color:#fff;'>Sign Up  |  Take a Tour</div>",
+		            //"</center>"
 		        ].join("")
 		    },
 		],
