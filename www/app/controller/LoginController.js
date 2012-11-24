@@ -6,6 +6,7 @@ Ext.define("inkle.controller.LoginController", {
             // Views
             loginView: "loginView",
             loginFormView: "loginFormView",
+            registrationView: "registrationView",
             mainTabView: "mainTabView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
@@ -14,6 +15,7 @@ Ext.define("inkle.controller.LoginController", {
             // Elements
             loginEmail: "#loginFormEmail",
             loginPassword: "#loginFormPassword",
+            registrationFirstName: "#registrationFormFirstName",
             datePicker: "#allInklingsDatePicker",
             allInklingsDateButton: "#allInklingsDateButton",
             inklingInvitationsButton: "#inklingInvitationsButton",
@@ -22,12 +24,18 @@ Ext.define("inkle.controller.LoginController", {
         control: {
             loginView: {
                 emailLoginButtonTapped: "activateLoginFormView",
-				facebookLoginButtonTapped: "loginWithFacebook"
+				facebookLoginButtonTapped: "loginWithFacebook",
+				registrationLinkTapped: "activateRegistrationView"
             },
             
             loginFormView: {
                 loginFormCancelButtonTapped: "activateLoginView",
                 loginFormLoginButtonTapped: "loginWithEmail"
+            },
+            
+            registrationView: {
+                registrationFormCancelButtonTapped: "activateLoginView",
+                registrationFormRegisterButtonTapped: "registerMember"
             },
             
             mainTabView: {
@@ -65,30 +73,40 @@ Ext.define("inkle.controller.LoginController", {
             var loginFormView = Ext.create("inkle.view.LoginForm");
 	        Ext.Viewport.animateActiveItem(loginFormView, { type: "flip" });
 	    }
-	    //console.log(Ext.fly("loginFormEmail"));
-	    //console.log(Ext.fly("loginFormEmail").dom);
-	    //console.log(this.getLoginEmail());
-	    //console.log(this.getLoginEmail().dom);
-	    //Ext.fly("loginFormEmail").dom.focus();
+
+	    // Set the focus on the email input
+	    this.getLoginEmail().focus();
+	},
+	
+	/* Creates and activates the registration view */
+	activateRegistrationView: function() {
+	    if (this.getRegistrationView())
+	    {
+	        Ext.Viewport.animateActiveItem(this.getRegistrationView(), { type: "flip" });
+	    }
+	    else
+	    {
+            var registrationView = Ext.create("inkle.view.Registration");
+	        Ext.Viewport.animateActiveItem(registrationView, { type: "flip" });
+	    }
+	    
+	    // Set the focus on the first name input
+	    this.getRegistrationFirstName().focus();
 	},
 	
 	/* Activates the login view */
 	activateLoginView: function() {
-        Ext.Viewport.animateActiveItem(this.getLoginView(), { type: "flip" });
+	    Ext.Viewport.animateActiveItem(this.getLoginView(), { type: "flip" });
 	},
 	
 	/* Creates and activates the main tab view */
     activateMainTabView: function() {
-    	// Reset the login form
-        this.getLoginEmail().reset();
-        this.getLoginPassword().reset();
-        
         // Destroy the main tab view
 		if (this.getMainTabView()) {
 		    this.getMainTabView().destroy();
 		}
 		
-		//Destroy all other components
+		// Destroy all other components
 		if (this.getAllInklingsGroupsListPanel()) {
 		    this.getAllInklingsGroupsListPanel().destroy();
 		}
@@ -146,7 +164,7 @@ Ext.define("inkle.controller.LoginController", {
         FB.login(function(response) {
             if (response.authResponse) {
                 facebookAccessToken = response.authResponse.accessToken;
-                 FB.api('/me', function(response) {
+                 FB.api("/me", function(response) {
            		   //Log the user in to inkle
                	   Ext.Ajax.request({
                        url: "http://127.0.0.1:8000/sencha/login/",
@@ -169,9 +187,32 @@ Ext.define("inkle.controller.LoginController", {
                		});
                  });
                } else {
-                 alert('User cancelled login or did not fully authorize.');
+                 alert("User cancelled login or did not fully authorize.");
                }
-            }, {scope: 'email,user_birthday'});
+            }, {scope: "email,user_birthday"});
+    },
+    
+    /* Registers a new member */
+    registerMember: function() {
+		this.getRegistrationView().submit({
+			method: "POST",
+						
+         	waitMsg: {
+         		xtype: "loadmask",
+            	message: "Processing",
+            	cls : "demos-loading"
+         	},
+         				
+         	success: function(form, response) {
+            	this.activateMainTabView();
+         	},
+         				
+         	failure: function(form, response) {
+        	    Ext.Msg.alert("Error", response.error);
+         	},
+         	
+         	scope: this
+        });
     },
     
     /* Sets the badges in the "My Inklings" and "Friends" tabs */

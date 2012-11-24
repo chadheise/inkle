@@ -7,8 +7,6 @@ Ext.define("inkle.view.Login", {
 		scrollable: false,
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 		
-		url: "http://127.0.0.1:8000/sencha/login/",
-		
 		items: [
 		    {
 		        xtype: "container",
@@ -44,27 +42,30 @@ Ext.define("inkle.view.Login", {
             },
             {
 		        xtype: "container",
-		        //centered: true,
 		        html: [
-		            //"<center>",
-		            "   <div style='position: absolute; top: 200px; left: 75px; color:#fff;'>Sign Up  |  Take a Tour</div>",
-		            //"</center>"
+		            "<div style='position: absolute; top: 200px; left: 75px; color:#fff;'>",
+		            "   <span id='registrationLink'>Sign Up</span>  |  Take a Tour",
+		            "</div>",
 		        ].join("")
 		    },
 		],
 
 		listeners: [
 			{
-			    //element: "element",
 				delegate: "#facebookLoginButton",
             	event: "tap",
             	fn: "onFacebookLoginButtonTap"
 			},
 			{
-    			//element: "element",
             	delegate: "#emailLoginButton",
             	event: "tap",
             	fn: "onEmailLoginButtonTap"
+        	},
+        	{
+    			element: "element",
+            	delegate: "#registrationLink",
+            	event: "tap",
+            	fn: "onRegistrationLinkTap"
         	}
         ]
 	},
@@ -75,6 +76,9 @@ Ext.define("inkle.view.Login", {
     },
     onEmailLoginButtonTap: function () {
         this.fireEvent("emailLoginButtonTapped");
+    },
+    onRegistrationLinkTap: function() {
+        this.fireEvent("registrationLinkTapped");
     }
 
 });
