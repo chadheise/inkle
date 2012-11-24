@@ -227,9 +227,9 @@ class Member(User):
     #user = models.OneToOneField(User)
     
     # General information
-    gender = models.CharField(max_length=1, choices=(('m', 'Male'), ('f', 'Female')), blank=True, null=True)
+    gender = models.CharField(max_length = 1, choices=(('m', 'Male'), ('f', 'Female')), blank = True, null = True)
     birthday = models.DateField()
-    facebookId = models.BigIntegerField(blank=True, null=True, unique=True)
+    facebookId = models.BigIntegerField(blank = True, null = True, unique = True)
     
     # Friends
     friends = models.ManyToManyField("self")

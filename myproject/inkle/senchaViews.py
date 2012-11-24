@@ -22,8 +22,12 @@ from django.db.models import Q
 # Date/time module
 import datetime
 
+# Regular expression module
+import re
+
 import string
 import random
+import shutil
 
 def s_is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
@@ -141,6 +145,7 @@ def s_login_view(request):
         "success" : success,
         "error" : response_error
     })
+    # TODO: Do we need this modified thing anymore?
     request.session.modified = True
     return HttpResponse(response, mimetype = "application/json")
 
@@ -154,6 +159,142 @@ def s_logout_view(request):
         pass
 
     return HttpResponse()
+
+def is_email(email):
+    """Returns True if the inputted email is a valid email address format; otherwise, returns False."""
+    if (re.search(r"[a-zA-Z0-9+_\-\.]+@[0-9a-zA-Z][\.-0-9a-zA-Z]*\.[a-zA-Z]+", email)):
+        return True
+    else:
+        return False
+
+def is_sixteen(month, day, year):
+    """Returns True if the inputted date represents a birthday of someone who is at least sixteen; otherwise, returns False."""
+    born = datetime.date(day = int(day), month = int(month), year = int(year))
+    today = datetime.date.today()
+    
+    try:
+        birthday = born.replace(year = today.year)
+    except ValueError:
+        birthday = born.replace(year = today.year, day = born.day - 1)
+    
+    if birthday > today:
+        age = today.year - born.year - 1
+    else:
+        age = today.year - born.year
+
+    if (age < 16):
+        return False
+    else:
+        return True
+
+@csrf_exempt
+def s_registration_view(request):
+    """Registers a new member."""
+    # Get the POST data
+    try:
+        first_name = request.POST["firstName"]
+        last_name = request.POST["lastName"]
+        gender = request.POST["gender"]
+        birthday = request.POST["birthday"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirmPassword"]
+    except KeyError:
+        raise Http404()
+
+    # Parse the birthday (format: YYYY-MM-DDT00:00:00)
+    if birthday:
+        birthday = birthday.split("T")[0].split("-")
+        year = int(birthday[0])
+        month = int(birthday[1])
+        day = int(birthday[2])
+
+    # Create a string to hold the registration error
+    response_error = ""
+
+    # Validate the first name
+    if (not first_name):
+        response_error = "First name not specified"
+
+    # Validate the last name
+    elif (not last_name):
+        response_error = "Last name not specified"
+
+    # Validate the gender
+    elif (gender not in ["Male", "Female"]):
+        response_error = "Gender not specified"
+
+    # Validate the birthday
+    elif (not birthday):
+        response_error = "Birthday not specified"
+    elif (not is_sixteen(month, day, year)):
+        response_error = "You must be at least sixteen years old to use Inkle"
+
+    # Validate the email
+    elif (not email):
+        response_error = "Email not specified"
+    elif (not is_email(email)):
+        response_error = "Invalid email format"
+    elif (Member.objects.filter(email = email)):
+        response_error = "An account already exists for that email."
+
+    # Validate the password and confirm password
+    elif (not password):
+        response_error = "Password not specified"
+    elif (len(password) < 8):
+        response_error = "Password must contain at least eight characters"
+    elif (not confirm_password):
+        response_error = "Confirm password not specified"
+    elif (password != confirm_password):
+        response_error = "Password and confirm password do not match"
+
+    # If the registration form is valid, create a new member with the provided POST data
+    if (not response_error):
+        # TODO: fix this shit
+        if (len(email) > 30):
+            email = email[0:30]
+
+        birthday = datetime.date(day = day, month = month, year = year)
+
+        # Create the new member
+        member = Member(
+            first_name = first_name,
+            last_name = last_name,
+            username = email,
+            email = email,
+            birthday = datetime.date(day = day, month = month, year = year),
+            gender = gender
+        )
+            
+        # Set the new member's password
+        member.set_password(password)
+        #print member
+        
+        # Save the new member
+        member.save()
+
+        # Create the default image for the new member
+        #if (member.gender == "Male"):
+        #    shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+        #else:
+        #    shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+
+        # Log the member in
+        request.session["member_id"] = member.id
+
+    # Determine if the login was successful
+    if (response_error):
+        success = False
+    else:
+        success = True
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
 
 @csrf_exempt
 def s_all_inklings_view(request):

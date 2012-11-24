@@ -4,7 +4,9 @@ Ext.define("inkle.controller.SettingsController", {
     config: {
         refs: {
             settingsView: "settingsView",
-            loginView: "loginView"
+            loginView: "loginView",
+            loginFormView: "loginFormView",
+            registrationView: "registrationView",
         },
         control: {
             settingsView: {
@@ -19,6 +21,12 @@ Ext.define("inkle.controller.SettingsController", {
     	// Destroy the old login view, if it exists
         if (this.getLoginView()) {
         	this.getLoginView().destroy();
+        }
+        if (this.getLoginFormView()) {
+            this.getLoginFormView().destroy();
+        }
+        if (this.getRegistrationView()) {
+            this.getRegistrationView().destroy();
         }
         
         // Create the login view

@@ -9,10 +9,11 @@ from django.views.generic.simple import direct_to_template
 urlpatterns = patterns(
     "myproject.inkle.senchaViews",
 
-    # Login/logout
+    # Login, logout, and registration
     (r"^isLoggedIn/$", "s_is_logged_in"),
     (r"^login/$", "s_login_view"),
     (r"^logout/$", "s_logout_view"),
+    (r"^registration/$", "s_registration_view"),
 
     # Common
     (r"^groups/$", "s_groups_view"),

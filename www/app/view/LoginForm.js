@@ -53,7 +53,7 @@ Ext.define("inkle.view.LoginForm", {
 						xtype: "emailfield",
 						id: "loginFormEmail",
 						name: "email",
-						placeHolder: "Email"
+						placeHolder: "Email",
 					},
 					{
 						xtype: "passwordfield",
