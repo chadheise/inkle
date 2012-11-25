@@ -66,6 +66,7 @@ $badge-bg-gradient: "matte";
 @include sencha-carousel;
 @include sencha-form;
 @include sencha-msgbox;
+@include sencha-list-pullrefresh;
 
 // Your custom code goes here...
 @include sencha-toolbar-ui('customToolbar', $green3, 'none');
