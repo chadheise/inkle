@@ -46,6 +46,7 @@ Ext.define("inkle.controller.AllInklingsController", {
                 
                 deactivate: "hideAllInklingsPanels",
                 activeitemchange: "hideAllInklingsPanels",
+                allInklingsListRefreshed: "updateAllInklingsList"
             },
             
             allInklingsDatePickerPanel: {
@@ -125,6 +126,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 	
 	/* Updates the all inklings list according to the selected date and groups */
 	updateAllInklingsList: function() {
+	    console.log("woo");
 		// Get the selected date
 		var date = this.getAllInklingsDatePicker().getValue();
 	    var dayOfWeek = date.getDay();

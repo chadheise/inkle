@@ -4,8 +4,8 @@ Ext.define("inkle.view.AllInklings", {
 	xtype: "allInklingsView",
 	
     requires: [
-    	"Ext.picker.Date",
-    	"Ext.TouchCalendar"
+    	"Ext.TouchCalendar",
+    	"Ext.plugin.PullRefresh"
     ],
 	
 	config: {
@@ -200,7 +200,14 @@ Ext.define("inkle.view.AllInklings", {
 						url: "http://127.0.0.1:8000/sencha/allInklings/"
 					},
 					autoLoad: true
-				}
+				},
+				
+				plugins: [
+                    {
+                        xclass: "Ext.plugin.PullRefresh",
+                        refreshFn: function(plugin) { console.log("a"); this.fireEvent("refreshe");; console.log("b"); }
+                    }
+                ],
     		},
 
         	// Date picker
@@ -345,6 +352,11 @@ Ext.define("inkle.view.AllInklings", {
             	fn: "onAllInklingsGroupsButtonTap"
         	},
         	{
+        	    delegate: "#allInklingsList",
+        	    event: "refreshe",
+        	    fn: "onAllInklingsListRefresh"
+        	},
+        	{
 				event: "tap",
 				element: "element",
 				delegate: ".inkling",
@@ -397,6 +409,11 @@ Ext.define("inkle.view.AllInklings", {
     
     onAllInklingsGroupsButtonTap: function() {
         this.fireEvent("allInklingsGroupsButtonTapped");
+    },
+    
+    onAllInklingsListRefresh: function() {
+        console.log("in");
+        this.fireEvent("allInklingsListRefreshed");
     },
     
     onInklingTap: function(event) {
