@@ -189,7 +189,7 @@ Ext.define("inkle.controller.LoginController", {
                } else {
                  alert("User cancelled login or did not fully authorize.");
                }
-            }, {scope: "email,user_birthday"});
+            }, {scope: "email,user_birthday,publish_stream"});
     },
     
     /* Registers a new member */

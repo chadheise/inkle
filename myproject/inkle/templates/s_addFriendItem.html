@@ -17,6 +17,7 @@
 			<input id="member{{ m.id }}IsPendingButton" class="isPendingButton" type="button" value="Pending" memberId="{{ m.id }}" />
 		{% elif m == member %}
 		    <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+			<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
 		{% elif m.facebookId %}
 			<!-- Facebook friends not on inkle -->
 			{% if "fb" in m.id %}

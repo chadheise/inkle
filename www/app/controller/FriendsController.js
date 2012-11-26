@@ -566,40 +566,34 @@ Ext.define("inkle.controller.FriendsController", {
             // the user isn't logged in to Facebook.
           }
          });
-         
-		/*Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/facebookPost/",
-    		params: {
-    			fbId: memberId,
-    			fbAccessToken: fbAccessToken
-    		},
-        	failure: function(response) {
-        		Ext.Msg.alert("Error", response.responseText);
-        	}
-		});*/
 		
 		Ext.Ajax.request({
+		    // THIS INCLUDES THE CLEINT_SECRET AND SHOULD NOT BE VISIBLE TO USERS - May need to hide on server side
     		url: "https://graph.facebook.com/oauth/access_token?client_id=355653434520396&client_secret=e6df96d1801e704fecd7cb3fea71b944&grant_type=client_credentials",
         	success: function(response) {
-                alert("1 Success " + response.responseText);
                 appAccessToken = response.responseText.replace("access_token=", "");
         	    fbId = memberId.replace("fb","");
-        	    console.log("appAccessToken: " + appAccessToken);
-        		console.log("friendID: " + fbId);
+        		
         		var postData = {
         		    access_token: fbAccessToken,
-        		    body: 'body',
-        		    message: "test message"
+        		    //body: 'body',
+        		    message: "I've been using inkle to easily make social plans. You should join too!",
+        		    link: "www.facebook.com/inkleit"
         		}
         		console.log(postData);
                 FB.api('/' + fbId + '/feed', 'post', postData, function(response) {
                   if (!response || response.error) {
-                    alert("Failed");
+                    alert("You have not given inkle permission to post on your behalf. Enable these permissions to invite your friends.");
                     console.log(response);
+                    FB.login(function() {
+                      if (response.authResponse) {
+                        // user gave permission        
+                      } else {
+                        // user did not give permission
+                      }
+                    }, {scope:'publish_stream'});
                   } else {
-                    alert("Success!");
-                    alert('Post ID: ' + response.id);
-                    alert(response.responseText);
+                    alert("A message inviting them to inkle has been posted to their facebook feed.");
                   }
                 });
         	
