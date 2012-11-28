@@ -51,6 +51,10 @@ Ext.define("inkle.controller.FriendsController", {
            		
            		friendsViewGroupsListItemTapped: "activateGroupMembersView",
            		
+           		friendsViewFriendsListRefreshed: "updateFriendsList",
+           		friendsViewGroupsListRefreshed: "updateGroupsList",
+           		friendsViewRequestsListRefreshed: "updateRequestsList",
+           		
            		activate: "hideFriendsTabBadge",
            		deactivate: "showFriendsTabBadge"
            	},
@@ -81,7 +85,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Show the friends view toolbar
         this.getFriendsViewToolbar().show();
         
-        this.getGroupsList().getStore().load();
+        this.updateGroupsList();
     },
 	
 	/* Activates the add friends view from the friends view friends list */
@@ -661,8 +665,8 @@ Ext.define("inkle.controller.FriendsController", {
 					requestsButton.setBadgeText("");
 				}
 				
-				this.getFriendsList().getStore().load();
-				this.getRequestsList().getStore().load();
+				this.updateFriendsList();
+				this.updatedRequestsList();
     		},
         	failure: function(response) {
         		console.log(response.responseText);
@@ -670,5 +674,17 @@ Ext.define("inkle.controller.FriendsController", {
         	},
         	scope: this
 		});
+	},
+	
+	updateFriendsList: function() {
+	    this.getFriendsList().getStore().load();
+	},
+	
+	updateGroupsList: function() {
+	    this.getGroupsList().getStore().load();
+	},
+	
+	updateRequestsList: function() {
+	    this.getRequestsList().getStore().load();
 	}
 });

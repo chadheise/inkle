@@ -53,6 +53,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             	activate: "hideMyInklingsTabBadge",
             	deactivate: "hideMyInklingsPanels",
             	activeitemchange: "hideMyInklingsPanels",
+            	myInklingsListRefreshed: "updateMyInklingsList"
             },
             
             newInklingView: {
@@ -258,7 +259,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 				}
 			});
 		
-		    this.getMyInklingsList().getStore().load();
+		    this.updateMyInklingsList();
 		
 			this.activateMyInklingsView();
 		}
@@ -476,7 +477,7 @@ Ext.define("inkle.controller.MyInklingsController", {
                 
                 this.getInklingInvitationsList().getStore().load();
                 if (invitationResponse == "accepted") {
-                    this.getMyInklingsList().getStore().load();
+                    this.updateMyInklingsList();
                 }
                 
             },
@@ -485,5 +486,9 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             scope: this
         });
+	},
+	
+	updateMyInklingsList: function() {
+	    this.getMyInklingsList().getStore().load();
 	}
 });
