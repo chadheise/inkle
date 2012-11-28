@@ -760,17 +760,83 @@ def s_my_inklings_view(request):
     today = datetime.date.today()
     tomorrow = today + datetime.timedelta(days = 1)
     this_week = today + datetime.timedelta(days = 6)
-    
-    # Get the logged in member's inklings for each time period
-    inklings = []
-    inklings.append(["Today", member.inklings.filter(date = datetime.date.today())])
-    inklings.append(["Tomorrow", member.inklings.filter(date__gt = today).filter(date__lte = tomorrow)])
-    inklings.append(["This Week", member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week)])
-    inklings.append(["Future", member.inklings.filter(date__gte = this_week)])
 
-    return render_to_response( "s_myInklings.html",
-        { "inklings" : inklings },
-        context_instance = RequestContext(request) )
+    # Get a list of all the inklings the logged-in member is attending today
+    response_inklings = []
+    for i in member.inklings.filter(date = today):
+        html = render_to_string( "s_inklingListItem.html", {
+            "i" : i
+        })
+        
+        response_inklings.append({
+            "id" : i.id,
+            "html" : html,
+            "group" : "Today",
+            "groupIndex" : 0,
+            "numAttendees" : i.get_num_attendees()
+        })
+
+    # Get a list of all the inklings the logged-in member is attending tomorrow
+    for i in member.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
+        html = render_to_string( "s_inklingListItem.html", {
+            "i" : i
+        })
+        
+        response_inklings.append({
+            "id" : i.id,
+            "html" : html,
+            "group" : "Tomorrow",
+            "groupIndex" : 1,
+            "numAttendees" : i.get_num_attendees()
+        })
+
+    # Get a list of all the inklings the logged-in member is attending this week
+    for i in member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
+        html = render_to_string( "s_inklingListItem.html", {
+            "i" : i
+        })
+        
+        response_inklings.append({
+            "id" : i.id,
+            "html" : html,
+            "group" : "This Week",
+            "groupIndex" : 2,
+            "numAttendees" : i.get_num_attendees()
+        })
+
+    # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
+    future_inklings = list(member.inklings.filter(date__gte = this_week))
+    future_inklings.sort(key = lambda i : i.date)
+    for i in future_inklings:
+        html = render_to_string( "s_inklingListItem.html", {
+            "i" : i
+        })
+        
+        response_inklings.append({
+            "id" : i.id,
+            "html" : html,
+            "group" : "Future",
+            "groupIndex" : 3,
+            "numAttendees" : i.get_num_attendees()
+        })
+
+    # Get a list of all the inklings the logged-in member is attending which do not have a date
+    for i in  member.inklings.filter(date__exact = None):
+        html = render_to_string( "s_inklingListItem.html", {
+            "i" : i
+        })
+        
+        response_inklings.append({
+            "id" : i.id,
+            "html" : html,
+            "group" : "Future",
+            "groupIndex" : 3,
+            "numAttendees" : i.get_num_attendees()
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_inklings)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 def s_num_inkling_invitations_view(request):
