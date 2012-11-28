@@ -114,11 +114,39 @@ Ext.define("inkle.view.MyInklings", {
                 ]
     		},
     		
-    		// Main content
+    		// My inklings list
     		{
-    			xtype: "htmlcontainer",
-    			scrollable: true,
-				url: "http://127.0.0.1:8000/sencha/myInklings/",
+    			xtype: "list",
+				id: "myInklingsList",
+				loadingText: "Loading inklings...",
+				emptyText: "<div class='emptyListText'>No inklings</div>",
+				disableSelection: true,
+				grouped: true,
+				itemTpl: [
+					"{ html }"
+				],
+				store: {
+					fields: [
+						"id",
+						"html",
+						"group",
+						"groupIndex"
+					],
+					proxy: {
+						type: "ajax",
+						actionMethods: {
+							read: "POST"
+						},
+						url: "http://127.0.0.1:8000/sencha/myInklings/"
+					},
+					grouper: {
+					    sortProperty: "groupIndex",
+                        groupFn: function(record) {
+                            return record.get("group");
+                        }
+                    },
+					autoLoad: true
+				}
     		},
     		
     		// Inkling invitations

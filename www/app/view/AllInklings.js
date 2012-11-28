@@ -207,7 +207,7 @@ Ext.define("inkle.view.AllInklings", {
                         xclass: "Ext.plugin.PullRefresh",
                         refreshFn: function(plugin) { console.log("a"); this.fireEvent("refreshe");; console.log("b"); }
                     }
-                ],
+                ]
     		},
 
         	// Date picker

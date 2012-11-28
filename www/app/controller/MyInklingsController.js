@@ -21,6 +21,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         	newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
         	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",        
         	
+        	myInklingsList: "#myInklingsList",
+        	
             // Toolbar buttons
             inklingInvitationsButton: "#inklingInvitationsButton",
             newInklingButton: "#newInklingButton",
@@ -256,6 +258,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 				}
 			});
 		
+		    this.getMyInklingsList().getStore().load();
+		
 			this.activateMyInklingsView();
 		}
     },
@@ -454,12 +458,12 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    //}
 	},
 	
-	respondToInklingInvitation: function(invitationId, response) {
+	respondToInklingInvitation: function(invitationId, invitationResponse) {
 	    Ext.Ajax.request({
             url: "http://127.0.0.1:8000/sencha/respondToInklingInvitation/",
             params: {
 				invitationId: invitationId,
-				response: response
+				response: invitationResponse
 			},
             success: function(response) {
                 var numInklingInvitations = response.responseText;
@@ -471,7 +475,9 @@ Ext.define("inkle.controller.MyInklingsController", {
                 }
                 
                 this.getInklingInvitationsList().getStore().load();
-                //this.getMyInklingsList.getStore().load();
+                if (invitationResponse == "accepted") {
+                    this.getMyInklingsList().getStore().load();
+                }
                 
             },
             failure: function(response) {
