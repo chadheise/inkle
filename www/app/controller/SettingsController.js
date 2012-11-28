@@ -7,11 +7,13 @@ Ext.define("inkle.controller.SettingsController", {
             loginView: "loginView",
             loginFormView: "loginFormView",
             registrationView: "registrationView",
+            inviteFacebookFriendsView: "inviteFacebookFriendsView"
         },
         control: {
             settingsView: {
                 settingsLogoutButtonTapped: "logout",
-                settingsEditButtonTapped: "editSettings"
+                settingsEditButtonTapped: "editSettings",
+                inviteFacebookFriendsTapped: "inviteFacebookFriends"
             }
         }
     },
@@ -56,6 +58,17 @@ Ext.define("inkle.controller.SettingsController", {
 		
 		// Active the login view
 		this.activateLoginView();
+    },
+ 
+    /* Activates the add friends view from the friends view friends list */
+	inviteFacebookFriends: function() {
+    	alert("inside controller");
+    	// Push the invite facebook friends view onto the settings view
+    	console.log(this.getSettingsView());
+    	this.getSettingsView().push({
+        	xtype: "inviteFacebookFriendsView"
+        });
+        alert("controller 2");
     },
  
     editSettings: function() {

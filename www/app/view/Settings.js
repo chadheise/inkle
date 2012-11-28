@@ -1,5 +1,5 @@
 Ext.define("inkle.view.Settings", {
-	extend: "Ext.Container",
+	extend: "Ext.navigation.View",
 	
 	xtype: "settingsView",
 	
@@ -8,13 +8,13 @@ Ext.define("inkle.view.Settings", {
     ],
 	
 	config: {
-		// Tab information    
+		// Tab information
 		title: "Settings",
 		iconCls: "settingsIcon",
     	
     	// Layout information
     	scrollable: true,
-    	layout: "vbox",
+    	layout: "card",
     	
     	items: [
     		// Top toolbar
@@ -50,7 +50,8 @@ Ext.define("inkle.view.Settings", {
 					data: [
 						{ text: "Notifications" },
 						{ text: "Settings" },
-						{ text: "Privacy" }
+						{ text: "Privacy" },
+						{ text: "Invite Facebook Friends" }
 					],
 					autoLoad: true
 				}
@@ -62,12 +63,26 @@ Ext.define("inkle.view.Settings", {
             	delegate: "#settingsLogoutButton",
             	event: "tap",
             	fn: "onSettingsLogoutButtonTap"
+        	},
+        	{
+            	delegate: "#settingsViewList",
+            	event: "itemtap",
+            	fn: "onSettingsViewListItemTap"
         	}
+        	
         ]
 	},
 	
 	// Event firings
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
-    }
+    },
+    onSettingsViewListItemTap: function(settingsList, index) {
+        if (index < 3) {
+            alert("Clicked " + index);
+        }
+        else if (index == 3) {
+            this.fireEvent("inviteFacebookFriendsTapped");
+        }
+    },
 });
