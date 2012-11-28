@@ -146,7 +146,15 @@ Ext.define("inkle.view.MyInklings", {
                         }
                     },
 					autoLoad: true
-				}
+				},				
+                plugins: [
+                    {
+                        xclass: "Ext.plugin.PullRefresh",
+                        refreshFn: function(plugin) {
+                            plugin.up().fireEvent("pullToRefresh");
+                        }
+                    }
+                ]
     		},
     		
     		// Inkling invitations
@@ -239,6 +247,11 @@ Ext.define("inkle.view.MyInklings", {
     	],
     	
     	listeners: [
+    	    {
+        	    delegate: "#myInklingsList",
+        	    event: "pullToRefresh",
+        	    fn: "onMyInklingsListRefresh"
+        	},
     		{
     			delegate: "#inklingInvitationsButton",
             	event: "tap",
@@ -299,6 +312,10 @@ Ext.define("inkle.view.MyInklings", {
 	},
 	
 	// Event firings
+	onMyInklingsListRefresh: function() {
+        this.fireEvent("myInklingsListRefreshed");
+    },
+	
 	onInklingInvitationsButtonTap: function() {
 		this.fireEvent("inklingInvitationsButtonTapped");
 	},

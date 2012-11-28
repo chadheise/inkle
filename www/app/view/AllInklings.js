@@ -205,7 +205,9 @@ Ext.define("inkle.view.AllInklings", {
 				plugins: [
                     {
                         xclass: "Ext.plugin.PullRefresh",
-                        refreshFn: function(plugin) { console.log("a"); this.fireEvent("refreshe");; console.log("b"); }
+                        refreshFn: function(plugin) {
+                            plugin.up().fireEvent("pullToRefresh");
+                        }
                     }
                 ]
     		},
@@ -353,7 +355,7 @@ Ext.define("inkle.view.AllInklings", {
         	},
         	{
         	    delegate: "#allInklingsList",
-        	    event: "refreshe",
+        	    event: "pullToRefresh",
         	    fn: "onAllInklingsListRefresh"
         	},
         	{
@@ -412,7 +414,6 @@ Ext.define("inkle.view.AllInklings", {
     },
     
     onAllInklingsListRefresh: function() {
-        console.log("in");
         this.fireEvent("allInklingsListRefreshed");
     },
     

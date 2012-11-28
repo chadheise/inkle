@@ -130,7 +130,15 @@ Ext.define("inkle.view.Friends", {
 								}
 							},
         					autoLoad: true
-        				}
+        				},				
+                        plugins: [
+                            {
+                                xclass: "Ext.plugin.PullRefresh",
+                                refreshFn: function(plugin) {
+                                    plugin.up().fireEvent("pullToRefresh");
+                                }
+                            }
+                        ]
 					},
 					
 					// Groups list
@@ -159,7 +167,15 @@ Ext.define("inkle.view.Friends", {
 								}
         					},
         					autoLoad: true
-        				}
+        				},				
+                        plugins: [
+                            {
+                                xclass: "Ext.plugin.PullRefresh",
+                                refreshFn: function(plugin) {
+                                    plugin.up().fireEvent("pullToRefresh");
+                                }
+                            }
+                        ]
 					},
 					
 					// Friend requests list
@@ -190,7 +206,15 @@ Ext.define("inkle.view.Friends", {
         						}
         					},
         					autoLoad: true
-        				}
+        				},				
+                        plugins: [
+                            {
+                                xclass: "Ext.plugin.PullRefresh",
+                                refreshFn: function(plugin) {
+                                    plugin.up().fireEvent("pullToRefresh");
+                                }
+                            }
+                        ]
 					}
 				]
     		}
@@ -221,6 +245,21 @@ Ext.define("inkle.view.Friends", {
             	delegate: "#friendsViewCreateGroupButton",
             	event: "tap",
             	fn: "onFriendsViewCreateGroupButtonTap"
+        	},
+        	{
+        	    delegate: "#friendsViewFriendsList",
+        	    event: "pullToRefresh",
+        	    fn: "onFriendsViewFriendsListRefresh"
+        	},
+        	{
+        	    delegate: "#friendsViewGroupsList",
+        	    event: "pullToRefresh",
+        	    fn: "onFriendsViewGroupsListRefresh"
+        	},
+        	{
+        	    delegate: "#friendsViewRequestsList",
+        	    event: "pullToRefresh",
+        	    fn: "onFriendsViewRequestsListRefresh"
         	},
         	{
 				event: "tap",
@@ -280,6 +319,18 @@ Ext.define("inkle.view.Friends", {
     
     onFriendsViewCreateGroupButtonTap: function() {
 		this.fireEvent("friendsViewCreateGroupButtonTapped");
+    },
+    
+    onFriendsViewFriendsListRefresh: function() {
+        this.fireEvent("friendsViewFriendsListRefreshed");
+    },
+    
+    onFriendsViewGroupsListRefresh: function() {
+        this.fireEvent("friendsViewGroupsListRefreshed");
+    },
+    
+    onFriendsViewRequestsListRefresh: function() {
+        this.fireEvent("friendsViewRequestsListRefreshed");
     },
     
     onDeleteLockTap: function(event) {
