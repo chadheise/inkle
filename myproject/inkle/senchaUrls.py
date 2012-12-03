@@ -56,6 +56,8 @@ urlpatterns = patterns(
     (r"^createGroup/$", "s_create_group_view"),
     (r"^renameGroup/$", "s_rename_group_view"),
     
+    (r"^inviteFacebookFriendsView/$", "s_invite_facebook_friends_view"),
+    
     (r"^facebookPost/$", "s_facebook_post"),
 
     (r"^profile/$", "s_profile_view"),

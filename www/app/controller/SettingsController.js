@@ -7,7 +7,8 @@ Ext.define("inkle.controller.SettingsController", {
             loginView: "loginView",
             loginFormView: "loginFormView",
             registrationView: "registrationView",
-            inviteFacebookFriendsView: "inviteFacebookFriendsView"
+            inviteFacebookFriendsView: "inviteFacebookFriendsView",
+            inviteFacebookFriendsList: "#inviteFacebookFriendsList"
         },
         control: {
             settingsView: {
@@ -64,11 +65,32 @@ Ext.define("inkle.controller.SettingsController", {
 	inviteFacebookFriends: function() {
     	alert("inside controller");
     	// Push the invite facebook friends view onto the settings view
-    	console.log(this.getSettingsView());
+    	//console.log(this.getSettingsView());
     	this.getSettingsView().push({
         	xtype: "inviteFacebookFriendsView"
         });
-        alert("controller 2");
+
+        var fbAccessToken = "";
+		FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            fbAccessToken = response.authResponse.accessToken;
+          } else if (response.status === 'not_authorized') {
+            // the user is logged in to Facebook, 
+            // but has not authenticated your app
+          } else {
+            // the user isn't logged in to Facebook.
+          }
+         });
+
+        // Update the invite facebook friends list
+		var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
+		inviteFacebookFriendsListStore.setProxy({
+			extraParams: {
+				fbAccessToken: fbAccessToken
+			}
+		});
+		inviteFacebookFriendsListStore.load();
+        alert("Store loaded");
     },
  
     editSettings: function() {
