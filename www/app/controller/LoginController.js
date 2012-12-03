@@ -76,6 +76,7 @@ Ext.define("inkle.controller.LoginController", {
 
 	    // Set the focus on the email input
 	    this.getLoginEmail().focus();
+	    //windows.scrollTo(0,0);
 	},
 	
 	/* Creates and activates the registration view */

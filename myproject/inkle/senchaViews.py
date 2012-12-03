@@ -370,12 +370,12 @@ def s_all_inklings_view(request):
                     response_inklings.append({
                         "id" : i.id,
                         "html" : html,
-                        "numAttendees" : i.get_num_attendees()
+                        "numMembersAttending" : i.get_num_members_attending()
                     })
                     inklings.append(i)
 
     # Sort the inklings according to their number of attendees
-    response_inklings.sort(key = lambda i : i["numAttendees"], reverse = True)
+    response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
 
     # Create and return a JSON object
     response = simplejson.dumps(response_inklings)
@@ -523,9 +523,47 @@ def s_inkling_view(request):
     except:
         raise Http404()
 
+    # Set the number of member pictures to show for each section
+    num_member_pics = 8
+
+    # Get the members who are attending the inkling
+    i = 0
+    members_attending = []
+    if (inkling in member.inklings.all()):
+        members_attending.append(member)
+        i = 1
+    
+    for m in inkling.get_members_attending():
+        if (i == num_member_pics):
+            break
+        elif (m != member):
+            members_attending.append(m)
+            i = i + 1
+
+    num_other_members_attending = inkling.get_num_members_attending() - i
+
+    print members_attending
+    print num_other_members_attending
+
+    # Get the members who are awaiting reply to the inkling
+    i = 0
+    members_awaiting_reply = []
+    if (inkling.member_has_pending_invitation(member)):
+        members_awaiting_reply.append(member)
+        i = 1
+    
+    for m in inkling.get_members_awaiting_reply():
+        if (i == num_member_pics):
+            break
+        elif (m != member):
+            members_awaiting_reply.append(m)
+            i = i + 1
+
+    num_other_members_awaiting_reply = inkling.get_num_members_awaiting_reply() - i
+
     # Return the HTML for the current inkling
     return render_to_response( "s_inkling.html",
-        { "member" : member, "inkling" : inkling },
+        { "member" : member, "inkling" : inkling, "members_attending" : members_attending, "num_other_members_attending" : num_other_members_attending, "members_awaiting_reply" : members_awaiting_reply, "num_other_members_awaiting_reply" : num_other_members_awaiting_reply },
         context_instance = RequestContext(request) )
 
 @csrf_exempt
@@ -725,6 +763,78 @@ def s_inkling_feed_view(request):
 
 
 @csrf_exempt
+def s_inkling_members_attending_view(request):
+    """Returns a list of the members who are attending the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a list to hold all the members attending the current inkling
+    response_members_attending = []
+    for m in inkling.get_members_attending():
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m
+        })
+        
+        response_members_attending.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_members_attending)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def s_inkling_members_awaiting_reply_view(request):
+    """Returns a list of the members who have been invited to the inputted inkling but have not responded yet."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a list to hold all the members awaiting reply to the current inkling
+    response_members_awaiting_reply = []
+    for m in inkling.get_members_awaiting_reply():
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m
+        })
+        
+        response_members_awaiting_reply.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_members_awaiting_reply)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
 def s_add_feed_comment_view(request):
     """Adds a new comment to the inputted inkling's feed."""
     # Get the logged-in member
@@ -773,7 +883,7 @@ def s_my_inklings_view(request):
             "html" : html,
             "group" : "Today",
             "groupIndex" : 0,
-            "numAttendees" : i.get_num_attendees()
+            "numMembersAttending" : i.get_num_members_attending()
         })
 
     # Get a list of all the inklings the logged-in member is attending tomorrow
@@ -787,7 +897,7 @@ def s_my_inklings_view(request):
             "html" : html,
             "group" : "Tomorrow",
             "groupIndex" : 1,
-            "numAttendees" : i.get_num_attendees()
+            "numMembersAttending" : i.get_num_members_attending()
         })
 
     # Get a list of all the inklings the logged-in member is attending this week
@@ -801,7 +911,7 @@ def s_my_inklings_view(request):
             "html" : html,
             "group" : "This Week",
             "groupIndex" : 2,
-            "numAttendees" : i.get_num_attendees()
+            "numMembersAttending" : i.get_num_members_attending()
         })
 
     # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
@@ -817,7 +927,7 @@ def s_my_inklings_view(request):
             "html" : html,
             "group" : "Future",
             "groupIndex" : 3,
-            "numAttendees" : i.get_num_attendees()
+            "numMembersAttending" : i.get_num_members_attending()
         })
 
     # Get a list of all the inklings the logged-in member is attending which do not have a date
@@ -831,7 +941,7 @@ def s_my_inklings_view(request):
             "html" : html,
             "group" : "Future",
             "groupIndex" : 3,
-            "numAttendees" : i.get_num_attendees()
+            "numMembersAttending" : i.get_num_members_attending()
         })
 
     # Create and return a JSON object

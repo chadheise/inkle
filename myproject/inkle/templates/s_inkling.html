@@ -1,17 +1,19 @@
 {% load humanize %}
 
 <div class="view" id="inklingView">
-    <!-- Inkling name and number of attendees -->
+    <!-- Inkling header -->
     <div id="inklingHeader">
-        <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+        <div class="numAttendees">{{ inkling.get_num_members_attending }}</div>
         <div class="location">{{ inkling.location|default:"Location TBD" }}</div>
         {% if inkling in member.inklings.all %}
-            <img id="editInklingButton" src="resources/images/gear.png" />
+            <img id="editInklingButton" src="resources/images/icons/gear.png" />
         {% endif %}
         <div class="clear"></div>
     </div>
+
+    <!-- Inkling information -->
     <div id="inklingInfo">
-        <!-- Inkling basic information -->
+        <!-- Basic info -->
         {% if inkling.time or inkling.category %}
             <div class="banner">Basic Information</div>
             <div class="infoContainer">
@@ -25,18 +27,51 @@
             </div>
         {% endif %}
 
-        <!-- Inkling attendees -->
-        <div class="banner">Attendees</div>
+        <!-- Attending -->
+        <div class="banner">Attending</div>
         <div class="infoContainer">
-            {% for attendee in inkling.get_attendees %}
-                <img class="attendeePicture" src="{{ STATIC_URL }}/media/images/members/{{ attendee.id }}.jpg" />
-            {% empty %}
-                <div>No attendees</div>
-            {% endfor %}
+            <div id="membersAttendingPictures">
+                {% for m in members_attending %}
+                    <img class="memberPicture" src="{{ STATIC_URL }}/media/images/members/{{ m.id }}.jpg" memberName="{{ m.get_full_name }}" />
+                {% empty %}
+                    <div>No attendees</div>
+                {% endfor %}
+            </div>
+
+            <!-- Disclosure arrow -->
+            <img id="membersAttendingDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+
+            <div class="clear"></div>
+
+            {% if num_other_members_attending != 0 %}
+                <p>{{ num_other_members_attending }} other members attending.</p>
+            {% endif %}
+            
             <div class="clear"></div>
         </div>
 
-        <!-- Inkling notes -->
+        <!-- Awaiting reply -->
+        <div class="banner">Awaiting</div>
+        <div class="infoContainer">
+            {% for m in members_awaiting_reply %}
+                <img class="memberPicture" src="{{ STATIC_URL }}/media/images/members/{{ m.id }}.jpg" memberName="{{ m.get_full_name }}" />
+            {% empty %}
+                <div>No pending invitations</div>
+            {% endfor %}
+            
+            <div class="clear"></div>
+
+            {% if num_other_members_awaiting_reply != 0 %}
+                <p>{{ num_other_members_awaiting_reply }} other members awaiting reply.</p>
+            {% endif %}
+
+            <!-- Disclosure arrow -->
+            <img id="membersAwaitingReplyDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+            
+            <div class="clear"></div>
+        </div>
+
+        <!-- Notes -->
         {% if inkling.notes %}
             <div class="banner">Notes</div>
             <div class="infoContainer">

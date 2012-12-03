@@ -35,7 +35,7 @@ Ext.define("inkle.view.InklingFeed", {
 				}
 			},
             
-            // Groups list the
+            // Add comment panel
         	{
         		xtype: "panel",
         		id: "addCommentPanel",

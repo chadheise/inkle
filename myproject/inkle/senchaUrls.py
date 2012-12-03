@@ -26,6 +26,8 @@ urlpatterns = patterns(
     (r"^saveInkling/$", "s_save_inkling_view"),
     (r"^joinInkling/$", "s_join_inkling_view"),
     (r"^inklingFeed/$", "s_inkling_feed_view"),
+    (r"^inklingMembersAttending/$", "s_inkling_members_attending_view"),
+    (r"^inklingMembersAwaitingReply/$", "s_inkling_members_awaiting_reply_view"),
     (r"^addFeedComment/$", "s_add_feed_comment_view"),
     
     (r"^myInklings/$", "s_my_inklings_view"),

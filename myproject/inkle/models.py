@@ -184,13 +184,24 @@ class Inkling(models.Model):
         else:
             return "Date Unknown"
 
-    def get_attendees(self):
+    def get_members_attending(self):
         """Returns a list of all the members attending the current inkling."""
         return self.member_set.all()
 
-    def get_num_attendees(self):
+    def get_num_members_attending(self):
         """Returns the number of members attending the current inkling."""
         return self.member_set.count()
+
+    def get_members_awaiting_reply(self):
+        """Returns a list of all the members who have been invited but have not responded to the current inkling."""
+        awaiting_reply = []
+        for i in InklingInvitation.objects.filter(inkling = self, status = "pending"):
+            awaiting_reply.append(i.receiver)
+        return awaiting_reply
+
+    def get_num_members_awaiting_reply(self):
+        """Returns the number of members who have been invited but have not responded to the current inkling."""
+        return InklingInvitation.objects.filter(inkling = self, status = "pending").count()
 
     def member_has_pending_invitation(self, m):
         """Returns True if the inputted member has a pending invitation to the current inkling or False otherwise."""

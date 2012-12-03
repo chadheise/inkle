@@ -3,7 +3,7 @@
 <div class="view" id="inklingView">
     <!-- Inkling name and number of attendees -->
     <div id="inklingHeader">
-        <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+        <div class="numAttendees">{{ inkling.get_num_members_attending }}</div>
         <input id="location" type="text" value="{{ inkling.location|default:'' }}" />
         <div class="clear"></div>
     </div>

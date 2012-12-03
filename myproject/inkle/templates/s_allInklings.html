@@ -1,7 +1,7 @@
 <div class="view" id="allInklingsView">
     {% for inkling in inklings %}
         <div class="inkling" inklingId="{{ inkling.id }}">
-            <div class="numAttendees">{{ inkling.get_num_attendees }}</div>
+            <div class="numAttendees">{{ inkling.get_num_members_attending }}</div>
             <div class="inklingInfo">
                 <div class="location">{{ inkling.location|default:"Location TBD" }}</div>
                 <div>

@@ -71,8 +71,7 @@ Ext.define("inkle.view.LoginForm", {
             	event: "tap",
             	fn: "onLoginFormCancelButtonTap"
         	},
-        	
-			{
+        	{
             	delegate: "#loginFormLoginButton",
             	event: "tap",
             	fn: "onLoginFormLoginButtonTap"

@@ -16,6 +16,8 @@ Ext.application({
     	"NewInklingInvitedFriends",
     	"Inkling",
     	"InklingFeed",
+    	"InklingMembersAttending",
+    	"InklingMembersAwaitingReply",
     	"Friends",
     	"AddFriends",
     	"GroupMembers",
