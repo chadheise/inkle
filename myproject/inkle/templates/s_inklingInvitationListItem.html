@@ -1,6 +1,6 @@
 <div class="inklingInvitation" inklingId="{{ invitation.inkling.id }}">
     <!-- Inkling information -->
-    <div class="numAttendees">{{ invitation.inkling.get_num_attendees }}</div>
+    <div class="numAttendees">{{ invitation.inkling.get_num_members_attending }}</div>
     <div class="inklingInfo">
         <div class="location">{{ invitation.inkling.location|default:"Location TBD" }}</div>
         <div>

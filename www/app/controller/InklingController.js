@@ -29,7 +29,11 @@ Ext.define("inkle.controller.InklingController", {
             
             addCommentButton: "#addCommentButton",
             
-            addCommentPanel: "#addCommentPanel"
+            addCommentPanel: "#addCommentPanel",
+            
+            
+            inklingMembersAttendingList: "#inklingMembersAttendingList",
+            inklingMembersAwaitingReplyList: "#inklingMembersAwaitingReplyList"
         },
         
         control: {
@@ -44,7 +48,7 @@ Ext.define("inkle.controller.InklingController", {
             	joinInklingButtonTapped: "joinInkling",
             	saveInklingButtonTapped: "saveInkling",
             	cancelEditInklingButtonTapped: "cancelEditInkling",
-            	addCommentButtonTapped: "toggleAddCommentPanelVisibility"
+            	addCommentButtonTapped: "toggleAddCommentPanelVisibility",
             },
             myInklingsView: {
             	// View transitions
@@ -52,7 +56,10 @@ Ext.define("inkle.controller.InklingController", {
             },
             inklingView: {
             	// Commands
-            	editInklingButtonTapped: "editInkling"
+            	editInklingButtonTapped: "editInkling",
+            	memberPictureTapped: "showMemberName",
+            	membersAttendingDisclosureArrowTapped: "activateInklingMembersAttendingView",
+            	membersAwaitingReplyDisclosureArrowTapped: "activateInklingMembersAwaitingReplyView"
             },
             addCommentPanel: {
             	// Commands
@@ -140,13 +147,46 @@ Ext.define("inkle.controller.InklingController", {
         this.getAddCommentPanel().destroy();
     },
 	
+	activateInklingMembersAttendingView: function() {
+	    // Display the appropriate top toolbar buttons
+		this.getAllInklingsDateButton().hide();
+		this.getAllInklingsGroupsButton().hide();
+		this.getAllInklingsInklingBackButton().hide();
+		this.getInklingFeedBackButton().show();
+		this.getInklingFeedButton().hide();
+		
+		// Push the inkling members attending view onto the inkling view
+    	this.getAllInklingsView().push({
+        	xtype: "inklingMembersAttending"
+        });
+        
+        // Update the inkling members attending list
+        this.updateInklingMembersAttendingList();
+	},
+	
+	activateInklingMembersAwaitingReplyView: function() {
+	    // Display the appropriate top toolbar buttons
+		this.getAllInklingsDateButton().hide();
+		this.getAllInklingsGroupsButton().hide();
+		this.getAllInklingsInklingBackButton().hide();
+		this.getInklingFeedBackButton().show();
+		this.getInklingFeedButton().hide();
+
+		// Push the inkling members attending view onto the inkling view
+    	this.getAllInklingsView().push({
+        	xtype: "inklingMembersAwaitingReply"
+        });
+
+        // Update the inkling members awaiting reply list
+        this.updateInklingMembersAwaitingRelpyList();
+	},
 	
     /**************/
 	/*  COMMANDS  */
 	/**************/
 	
-	 /* Updates the inkling feed list */
-	 updateInklingFeedList: function() {
+	/* Updates the inkling feed list */
+	updateInklingFeedList: function() {
         // Get the inkling feed list's store
         var inklingFeedListStore = this.getInklingFeedList().getStore();
 		
@@ -159,6 +199,38 @@ Ext.define("inkle.controller.InklingController", {
 		
 		// Re-load the inkling feed list
 		inklingFeedListStore.load();
+	},
+	
+	/* Updates the inkling members attending list */
+	updateInklingMembersAttendingList: function() {
+        // Get the inkling members attending list's store
+        var inklingMembersAttendingListStore = this.getInklingMembersAttendingList().getStore();
+		
+		// Update the inkling members attending list's store
+		inklingMembersAttendingListStore.setProxy({
+			extraParams: {
+				inklingId: this.getInklingView().getData()["inklingId"]
+			}
+		});
+		
+		// Re-load the inkling members attending list
+		inklingMembersAttendingListStore.load();
+	},
+	
+	/* Updates the inkling members awaiting reply list */
+	updateInklingMembersAwaitingReplyList: function() {
+        // Get the inkling members awaiting reply list's store
+        var inklingMembersAwaitingReplyListStore = this.getInklingMembersAwaitingReplyList().getStore();
+		
+		// Update the inkling members awaiting reply list's store
+		inklingMembersAwaitingReplyListStore.setProxy({
+			extraParams: {
+				inklingId: this.getInklingView().getData()["inklingId"]
+			}
+		});
+		
+		// Re-load the inkling members awaiting reply list
+		inklingMembersAwaitingReplyListStore.load();
 	},
 	
 	/* Adds the current inkling to the current member's list of inklings */
@@ -271,6 +343,15 @@ Ext.define("inkle.controller.InklingController", {
 		this.getAllInklingsInklingBackButton().show();
 		this.getSaveInklingButton().hide();
 		this.getCancelEditInklingButton().hide();
+    },
+    
+    showMemberName: function(memberName, target) {
+        target = Ext.fly(target);
+        var panel = Ext.create("Ext.Panel", {
+             html: memberName,
+             left: 0,
+             padding: 10
+        }).showBy(target);
     },
     
     toggleAddCommentPanelVisibility: function() {

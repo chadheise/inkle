@@ -56,34 +56,15 @@ Ext.define("inkle.view.AllInklings", {
                 	{
                 		xtype: "button",
                 		ui: "action",
-                		itemId: "allInklingsDateButton",
-                		showAnimation: {
-                			type: "fadeIn",
-                			direction: "right",
-                			delay: 150
-                		},
-                		hideAnimation: {
-                			type: "slideOut",
-                			fade: true,
-                			direction: "left"
-                		}
+                		itemId: "allInklingsDateButton"
                 	},
                 	{
                 		xtype: "button",
-                		//ui: "back",
-                		ui: "customPressedCls",
+                		ui: "back",
+                		//ui: "customPressedCls",
                 		text: "All Inklings",
                 		itemId: "allInklingsInklingBackButton",
-                		hidden: true,
-                		showAnimation: {
-                			type: "fadeIn",
-                			direction: "left",
-                			delay: 150
-                		},
-                		hideAnimation: {
-                			type: "slideOut",
-                			direction: "right"
-                		}
+                		hidden: true
                 	},
                 	{
                 		xtype: "button",
@@ -111,50 +92,22 @@ Ext.define("inkle.view.AllInklings", {
                         ui: "action",
                         //pressedCls: 'customPressedCls',
                         text: "Groups",
-                        itemId: "allInklingsGroupsButton",
-                		showAnimation: {
-                			type: "fadeIn",
-                			direction: "right",
-                			delay: 150
-                		},
-                		hideAnimation: {
-                			type: "slideOut",
-                			direction: "left"
-                		}
+                        itemId: "allInklingsGroupsButton"
                     },
                     {
                         xtype: "button",
                         ui: "action",
                         text: "Join",
                         itemId: "joinInklingButton",
-                        hidden: true,
-                        showAnimation: {
-                			type: "fadeIn",
-                			direction: "left",
-                			delay: 150
-                		},
-                		hideAnimation: {
-                			type: "slideOut",
-                			direction: "right"
-                		}
+                        hidden: true
                     },
                     {
                         xtype: "button",
                         ui: "action",
                         iconMask: true,
                 		iconCls: "feedIcon",
-                        //text: "Feed",
                         itemId: "inklingFeedButton",
-                        hidden: true,
-                        showAnimation: {
-                			type: "fadeIn",
-                			direction: "left",
-                			delay: 150
-                		},
-                		hideAnimation: {
-                			type: "slideOut",
-                			direction: "right"
-                		}
+                        hidden: true
                     },
                     {
                         xtype: "button",
