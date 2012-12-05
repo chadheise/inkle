@@ -13,8 +13,9 @@ Ext.define("inkle.view.Settings", {
 		iconCls: "settingsIcon",
     	
     	// Layout information
-    	scrollable: true,
     	layout: "card",
+    	navigationBar: false,
+    	//scrollable: true,
     	
     	items: [
     		// Top toolbar
@@ -28,6 +29,13 @@ Ext.define("inkle.view.Settings", {
                 		ui: "action",
                 		text: "Logout",
                 		itemId: "settingsLogoutButton"
+                	},
+                	{
+                		xtype: "button",
+                		itemId: "inviteFacebookFriendsBackButton",
+                		ui: "back",
+                		text: "Settings",
+                		hidden: true,
                 	}
                 ]
     		},
@@ -68,7 +76,12 @@ Ext.define("inkle.view.Settings", {
             	delegate: "#settingsViewList",
             	event: "itemtap",
             	fn: "onSettingsViewListItemTap"
-        	}
+        	},
+        	{
+            	delegate: "#inviteFacebookFriendsBackButton",
+            	event: "tap",
+            	fn: "onInviteFacebookFriendsBackButtonTap"
+        	},
         	
         ]
 	},
@@ -85,4 +98,7 @@ Ext.define("inkle.view.Settings", {
             this.fireEvent("inviteFacebookFriendsTapped");
         }
     },
+    onInviteFacebookFriendsBackButtonTap: function() {
+        this.fireEvent("inviteFacebookFriendsBackButtonTapped");
+    }
 });
