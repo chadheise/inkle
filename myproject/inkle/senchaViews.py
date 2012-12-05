@@ -1398,6 +1398,98 @@ def s_profile_view(request):
         { "member" : member },
         context_instance = RequestContext(request) )
 
+@csrf_exempt
+def s_invite_facebook_friends_view(request):
+    """Returns a list of a member's facebook friends so they can invite or add them"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    # Get the search query
+    try:
+        fbAccessToken = request.POST["fbAccessToken"]
+    except:
+        raise Http404()
+
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        fbUrl = "https://graph.facebook.com/fql?q="
+        fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
+        fbQuery += "FROM user WHERE uid IN "
+        fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
+        if fbQuery:
+            fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
+            try:
+                fbResponse = urllib2.urlopen(fbRequest).read()
+            except Exception, e:
+                print "except: " + str(e)
+            fbData = simplejson.loads(fbResponse)
+
+    facebookInkleFriends = [] #List of facebook friends who are also on inkle
+    facebookOnlyFriends = [] #List of facebook friends who are not on inkle
+    for fbFriend in fbData["data"]:
+        if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
+            #Get inkle user from facebook user id
+            inkleUser = Member.objects.get(facebookId = fbFriend["uid"]) #Will throw error if no member object exists with the given facebookId
+            if inkleUser not in member.friends.all(): #If the facebook friend is not an inkle friend
+                inkleUser.is_friend = False
+                inkleUser.is_pending = member.has_pending_friend_request_to(inkleFriend)
+            else: #If the facebook friend is an inkle friend
+                inkleUser.is_friend = True
+            inkleUser.num_mutual_friends = member.get_num_mutual_friends(inkleFriend)
+            facebookInkleFriends.append(inkleUser)
+        else: #If the facebook friend is not an inkle member
+            personData = {} #Create dictionary for facebook friend data
+            personData["first_name"] = fbFriend["first_name"]
+            personData["last_name"] = fbFriend["last_name"]
+            personData["facebookId"] = fbFriend["uid"]
+            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
+            personData["id"] = "fb" + str(fbFriend["uid"])
+            personData["num_mutual_friends"] = 0
+            personData["is_friend"] = False
+            personData["is_pending"] = False
+            personData["get_picture_path"] = fbFriend["pic_square"]
+            facebookOnlyFriends.append(personData)
+    #Sort each individual list of friends
+    facebookInkleFriends = sorted(facebookInkleFriends, key = lambda m : m.last_name)
+    facebookOnlyFriends = sorted(facebookOnlyFriends, key = lambda m : m["last_name"])
+    #Merge the two lists into one
+    facebookFriends = []
+    inkleIndex = 0
+    facebookIndex = 0
+    while (inkleIndex < len(facebookInkleFriends) and facebookIndex < len(facebookOnlyFriends)):
+        if facebookOnlyFriends[facebookIndex]["last_name"] < facebookInkleFriends[inkleIndex].last_name:
+            facebookFriends.append(facebookOnlyFriends[facebookIndex])
+            facebookIndex += 1
+        else:
+            facebookFriends.append(facebookInkleFriends[inkleIndex])
+            inkleIndex += 1
+    if inkleIndex < len(facebookInkleFriends):
+        facebookFriends += facebookInkleFriends[inkleIndex:]
+    if facebookIndex < len(facebookOnlyFriends):
+        facebookFriends += facebookOnlyFriends[facebookIndex:]
+    # Get the HTML for each of the logged-in member's facebook friends
+    response_friends = []
+    for m in facebookFriends:
+        html = render_to_string( "s_inviteFacebookFriendListItem.html", {
+            "m" : m,
+        })
+        try:
+            personId = m.id
+            lastName = m.last_name
+        except:
+            personId = m["id"]
+            lastName = m["last_name"]
+        response_friends.append({
+            "id" : personId,
+            "lastName" : lastName,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friends)
+    return HttpResponse(response, mimetype = "application/json")
 
 @csrf_exempt
 def s_people_search_view(request):
@@ -1496,7 +1588,6 @@ def s_people_search_view(request):
             personData["is_friend"] = False
             personData["is_pending"] = False
             personData["get_picture_path"] = fbFriend["pic_square"]
-            print personData["get_picture_path"]
             facebookNotInkle.append(personData)
     
     searchResults = []
@@ -1507,7 +1598,7 @@ def s_people_search_view(request):
     if facebookInkle:
         searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
     if facebookNotInkle:
-        searchResults += sorted(facebookNotInkle, key = lambda m: m['last_name']) 
+        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
     

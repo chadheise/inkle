@@ -70,13 +70,22 @@ Ext.define("inkle.view.Friends", {
 						]
                     },
                     { xtype: "spacer" },
+                    /*{
+                        xtype: "button",
+                        id: "testButton",
+                        cls: "buttonTest",
+                        pressedCls: "buttonTest",
+                        margin: 0,
+                    	height: 40,
+                    	width: 40,
+                    },*/
                     {
                 		xtype: "button",
                 		ui: "action",
                 		iconMask: true,
                 		iconCls: "plusFriendIcon",
                 		itemId: "friendsViewAddFriendsButton",
-                		padding: 5
+                		padding: 5,
                 	},
                 	{
                 		xtype: "button",
