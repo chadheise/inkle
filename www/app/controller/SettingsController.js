@@ -8,13 +8,19 @@ Ext.define("inkle.controller.SettingsController", {
             loginFormView: "loginFormView",
             registrationView: "registrationView",
             inviteFacebookFriendsView: "inviteFacebookFriendsView",
-            inviteFacebookFriendsList: "#inviteFacebookFriendsList"
+            inviteFacebookFriendsList: "#inviteFacebookFriendsList",
+            
+            // Toolbar buttons
+            settingsLogoutButton: "#settingsLogoutButton",
+            inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
+
         },
         control: {
             settingsView: {
                 settingsLogoutButtonTapped: "logout",
                 settingsEditButtonTapped: "editSettings",
-                inviteFacebookFriendsTapped: "inviteFacebookFriends"
+                inviteFacebookFriendsTapped: "inviteFacebookFriends",
+                inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
             }
         }
     },
@@ -63,13 +69,14 @@ Ext.define("inkle.controller.SettingsController", {
  
     /* Activates the add friends view from the friends view friends list */
 	inviteFacebookFriends: function() {
-    	alert("inside controller");
     	// Push the invite facebook friends view onto the settings view
-    	//console.log(this.getSettingsView());
+        //console.log(this.getSettingsView());
     	this.getSettingsView().push({
         	xtype: "inviteFacebookFriendsView"
         });
-
+        this.getSettingsLogoutButton().hide();
+        this.getInviteFacebookFriendsBackButton().show();
+        
         var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
           if (response.status === 'connected') {
@@ -89,8 +96,13 @@ Ext.define("inkle.controller.SettingsController", {
 				fbAccessToken: fbAccessToken
 			}
 		});
-		inviteFacebookFriendsListStore.load();
-        alert("Store loaded");
+		inviteFacebookFriendsListStore.load();   
+    },
+ 
+    inviteFacebookFriendsBack: function() {
+        this.getSettingsView().pop();
+        this.getInviteFacebookFriendsBackButton().hide();
+        this.getSettingsLogoutButton().show();
     },
  
     editSettings: function() {
