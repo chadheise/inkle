@@ -1,5 +1,5 @@
 Ext.define("inkle.view.Settings", {
-	extend: "Ext.Container",
+	extend: "Ext.navigation.View",
 	
 	xtype: "settingsView",
 	
@@ -8,13 +8,14 @@ Ext.define("inkle.view.Settings", {
     ],
 	
 	config: {
-		// Tab information    
+		// Tab information
 		title: "Settings",
 		iconCls: "settingsIcon",
     	
     	// Layout information
-    	scrollable: true,
-    	layout: "vbox",
+    	layout: "card",
+    	navigationBar: false,
+    	//scrollable: true,
     	
     	items: [
     		// Top toolbar
@@ -28,6 +29,13 @@ Ext.define("inkle.view.Settings", {
                 		ui: "action",
                 		text: "Logout",
                 		itemId: "settingsLogoutButton"
+                	},
+                	{
+                		xtype: "button",
+                		itemId: "inviteFacebookFriendsBackButton",
+                		ui: "back",
+                		text: "Settings",
+                		hidden: true,
                 	}
                 ]
     		},
@@ -50,7 +58,8 @@ Ext.define("inkle.view.Settings", {
 					data: [
 						{ text: "Notifications" },
 						{ text: "Settings" },
-						{ text: "Privacy" }
+						{ text: "Privacy" },
+						{ text: "Invite Facebook Friends" }
 					],
 					autoLoad: true
 				}
@@ -62,12 +71,34 @@ Ext.define("inkle.view.Settings", {
             	delegate: "#settingsLogoutButton",
             	event: "tap",
             	fn: "onSettingsLogoutButtonTap"
-        	}
+        	},
+        	{
+            	delegate: "#settingsViewList",
+            	event: "itemtap",
+            	fn: "onSettingsViewListItemTap"
+        	},
+        	{
+            	delegate: "#inviteFacebookFriendsBackButton",
+            	event: "tap",
+            	fn: "onInviteFacebookFriendsBackButtonTap"
+        	},
+        	
         ]
 	},
 	
 	// Event firings
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
+    },
+    onSettingsViewListItemTap: function(settingsList, index) {
+        if (index < 3) {
+            alert("Clicked " + index);
+        }
+        else if (index == 3) {
+            this.fireEvent("inviteFacebookFriendsTapped");
+        }
+    },
+    onInviteFacebookFriendsBackButtonTap: function() {
+        this.fireEvent("inviteFacebookFriendsBackButtonTapped");
     }
 });

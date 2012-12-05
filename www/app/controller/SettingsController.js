@@ -7,11 +7,20 @@ Ext.define("inkle.controller.SettingsController", {
             loginView: "loginView",
             loginFormView: "loginFormView",
             registrationView: "registrationView",
+            inviteFacebookFriendsView: "inviteFacebookFriendsView",
+            inviteFacebookFriendsList: "#inviteFacebookFriendsList",
+            
+            // Toolbar buttons
+            settingsLogoutButton: "#settingsLogoutButton",
+            inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
+
         },
         control: {
             settingsView: {
                 settingsLogoutButtonTapped: "logout",
-                settingsEditButtonTapped: "editSettings"
+                settingsEditButtonTapped: "editSettings",
+                inviteFacebookFriendsTapped: "inviteFacebookFriends",
+                inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
             }
         }
     },
@@ -56,6 +65,44 @@ Ext.define("inkle.controller.SettingsController", {
 		
 		// Active the login view
 		this.activateLoginView();
+    },
+ 
+    /* Activates the add friends view from the friends view friends list */
+	inviteFacebookFriends: function() {
+    	// Push the invite facebook friends view onto the settings view
+        //console.log(this.getSettingsView());
+    	this.getSettingsView().push({
+        	xtype: "inviteFacebookFriendsView"
+        });
+        this.getSettingsLogoutButton().hide();
+        this.getInviteFacebookFriendsBackButton().show();
+        
+        var fbAccessToken = "";
+		FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            fbAccessToken = response.authResponse.accessToken;
+          } else if (response.status === 'not_authorized') {
+            // the user is logged in to Facebook, 
+            // but has not authenticated your app
+          } else {
+            // the user isn't logged in to Facebook.
+          }
+         });
+
+        // Update the invite facebook friends list
+		var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
+		inviteFacebookFriendsListStore.setProxy({
+			extraParams: {
+				fbAccessToken: fbAccessToken
+			}
+		});
+		inviteFacebookFriendsListStore.load();   
+    },
+ 
+    inviteFacebookFriendsBack: function() {
+        this.getSettingsView().pop();
+        this.getInviteFacebookFriendsBackButton().hide();
+        this.getSettingsLogoutButton().show();
     },
  
     editSettings: function() {

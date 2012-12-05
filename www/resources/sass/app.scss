@@ -85,21 +85,24 @@ $badge-bg-gradient: "matte";
 /*   LOGIN BUTTONS 	  */
 /**********************/
 .facebookLoginButton {
-	background: url('../images/facebookLogin.png');
+	background: url("../images/facebookLogin.png");
 }
 
 .facebookLoginDarkButton {
-	background: url('../images/facebookLoginDark.png');
+	background: url("../images/facebookLoginDark.png");
 }
 
 .emailLoginButton {
-	background: url('../images/emailLogin.png');
+	background: url("../images/emailLogin.png");
 }
 
 .emailLoginDarkButton {
-	background: url('../images/emailLoginDark.png');
+	background: url("../images/emailLoginDark.png");
 }
 
+.buttonTest {
+	background: url("../images/button.png");
+}
 /**********************/
 /*  CUSTOM TAB ICONS  */
 /**********************/
