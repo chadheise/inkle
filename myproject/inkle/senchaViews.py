@@ -1472,7 +1472,7 @@ def s_invite_facebook_friends_view(request):
     # Get the HTML for each of the logged-in member's facebook friends
     response_friends = []
     for m in facebookFriends:
-        html = render_to_string( "s_inviteFacebookFriendListItem.html", {
+        html = render_to_string( "s_addFriendItem.html", {
             "m" : m,
         })
         try:
