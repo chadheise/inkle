@@ -48,18 +48,18 @@ Ext.define("inkle.view.InviteFacebookFriends", {
     	],
     	
     	listeners: [
-    		{
-            	delegate: "#inviteFacebookFriendsBackButton",
-            	event: "tap",
-            	fn: "onInviteFacebookFriendsBackButtonTapped"
-        	},
+            {
+				event: "tap",
+				element: "element",
+				delegate: ".inviteFriendButton",
+				fn: "onInviteFriendButtonTap"
+        	}
         ]
     },
     
     // Event firings
-	onInviteFacebookFriendsBackButtonTapped: function() {
-        //this.fireEvent("addFriendsDoneButtonTapped");
-        alert("Invite Facebook Friends Back");
-    },
-    
+    onInviteFriendButtonTap: function(event) {
+    	var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
+        this.fireEvent("inviteFriendButtonTapped", tappedId);
+    }
 });

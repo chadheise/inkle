@@ -27,7 +27,7 @@ Ext.define("inkle.view.LinkFacebookAccount", {
 		        items: [
 		            {
                         xtype: "button",
-                        id: "facebookLoginButton",
+                        id: "linkFacebookAccountButton",
                         cls: "facebookLoginButton",
                         pressedCls: "facebookLoginDarkButton",
                     	margin: 15,
@@ -39,17 +39,17 @@ Ext.define("inkle.view.LinkFacebookAccount", {
     	],
     	
     	listeners: [
-    		{
-            	delegate: "#inviteFacebookFriendsBackButton",
+        	{
+				delegate: "#linkFacebookAccountButton",
             	event: "tap",
-            	fn: "onInviteFacebookFriendsBackButtonTapped"
-        	},
+            	fn: "onLinkFacebookAccountButtonTap"
+			},
         ]
     },
     
     // Event firings
-	onInviteFacebookFriendsBackButtonTapped: function() {
-        alert("Invite Facebook Friends Back");
-    },
+    onLinkFacebookAccountButtonTapped: function() {
+        alert("Link to fb account tapped");
+    }
     
 });
