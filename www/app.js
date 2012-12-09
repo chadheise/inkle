@@ -22,7 +22,8 @@ Ext.application({
     	"AddFriends",
     	"GroupMembers",
     	"Settings",
-    	"InviteFacebookFriends"
+    	"InviteFacebookFriends",
+    	"LinkFacebookAccount"
     ],
     controllers: [
     	"LoginController",

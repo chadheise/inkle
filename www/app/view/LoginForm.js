@@ -47,6 +47,12 @@ Ext.define("inkle.view.LoginForm", {
 				top: 0,
 				margin: 10,
 				width: "94%",
+				/*listeners: {
+                    focus: function() {
+                        alert("hey!");
+                        window.scrollTo(0,0);
+                    }
+                },*/
 				
 				items: [
 					{
@@ -75,7 +81,12 @@ Ext.define("inkle.view.LoginForm", {
             	delegate: "#loginFormLoginButton",
             	event: "tap",
             	fn: "onLoginFormLoginButtonTap"
-        	}
+        	},
+        	{
+        	    delegate: "#loginFormPassword",
+        	    event: "focus",
+        	    fn: "onLoginFormTap"
+            }
         ]
 	},
 	
@@ -86,5 +97,11 @@ Ext.define("inkle.view.LoginForm", {
 	
 	onLoginFormLoginButtonTap: function () {
         this.fireEvent("loginFormLoginButtonTapped");
+    },
+    
+    onLoginFormTap: function() {
+        //window.scrollTo(500,500);
+        //alert(this.getLoginFormToolbar());
+        //this.getLoginFormToolbar().scrollTo(0,0);
     }
 });
