@@ -63,7 +63,7 @@ Ext.define("inkle.view.Settings", {
 					],
 					autoLoad: true
 				}
-    		}
+    		},
     	],
     	
     	listeners: [

@@ -15,6 +15,9 @@ Ext.define("inkle.controller.SettingsController", {
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
 
+            // Other
+            linkFacebookAccountMessage: "#linkFacebookAccountMessage",
+
         },
         control: {
             settingsView: {
@@ -135,7 +138,42 @@ Ext.define("inkle.controller.SettingsController", {
 		});
 	},
  
-    /* Activates the add friends view from the friends view friends list */
+    /* Logs the user in with facbeook and links their existing account to facebook */
+	linkFacebookAccount: function() {
+        var object = this;
+        var facebookAccessToken;
+        FB.login(function(response) {
+            if (response.authResponse) {
+                facebookAccessToken = response.authResponse.accessToken;
+                 FB.api("/me", function(response) {
+           		   //Log the user in to inkle
+               	   Ext.Ajax.request({
+                       url: "http://127.0.0.1:8000/sencha/linkFacebookAccount/",
+                       params: {
+                           facebookId: response.id,
+                           facebookAccessToken: facebookAccessToken,
+                   		   email: response.email,
+                   		   first_name: response.first_name,
+                   		   last_name: response.last_name,
+                   		   gender: response.gender,
+                   		   birthday: response.birthday
+                   	   },
+               		   success: function(response) {
+                           //this.activateMainTabView();
+                           alert("success!");
+                       },
+                       failure: function(response) {
+                           Ext.Msg.alert(response.error);
+                        },
+                       	scope: object
+               		});
+                 });
+               } else {
+                 alert("User cancelled login or did not fully authorize.");
+               }
+            }, {scope: "email,user_birthday,publish_stream"});
+    },
+
 	inviteFacebookFriends: function() {
         
         var fbAccessToken = "";
@@ -167,10 +205,38 @@ Ext.define("inkle.controller.SettingsController", {
         }
         else {
             // Push the view to link their account to facebook
-            alert("not fb logged in");
+            var message = ""
+            Ext.Ajax.request({
+    			async: false,
+    			url: "http://127.0.0.1:8000/sencha/isFacebookUser/",
+    			success: function(response) {
+    				if (response.responseText == "True") {
+    				    message = [
+            	            "<div>",
+            	            "   <span>You must be logged in with facebook to invite facebook friends.</span>",
+            	            "</div>",
+            	        ].join("");
+    				}
+    				else {
+    				    message = [
+            	            "<div>",
+            	            "   <span>To find facebook friends you need to link your inkle account to facebook. ",
+            	            "Once you do so, you can login via email or facebook</span>",
+            	            "</div>",
+            	        ].join("");
+    				}
+    			},
+    			failure: function(response) {
+            		alert("Error " + response.errors);
+    			}
+    		});
+            
             this.getSettingsView().push({
         	    xtype: "linkFacebookAccountView"
             });
+            
+            this.getLinkFacebookAccountMessage().setHtml(message);
+            
         }
 
         //Update buttons
