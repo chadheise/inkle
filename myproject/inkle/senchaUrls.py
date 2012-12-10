@@ -14,6 +14,8 @@ urlpatterns = patterns(
     (r"^login/$", "s_login_view"),
     (r"^logout/$", "s_logout_view"),
     (r"^registration/$", "s_registration_view"),
+    (r"^isFacebookUser/$", "s_is_facebook_user"),
+    (r"^linkFacebookAccount/$", "s_link_facebook_account_view"),
 
     # Common
     (r"^groups/$", "s_groups_view"),

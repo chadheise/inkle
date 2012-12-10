@@ -14,12 +14,8 @@ Ext.define("inkle.view.LinkFacebookAccount", {
     	items: [
     	    {
 		        xtype: "container",
-		        html: [
-		            "<div>",
-		            "   <span>To find facebook friends you need to register your inkle account through facebook. ",
-		            "Once you do so, you will no longer log in to inkle with your email and password and will use your facebook account instead.</span>",
-		            "</div>",
-		        ].join("")
+		        id: "linkFacebookAccountMessage",
+		        html: "" //Message is set dynamically in settingsController depending on how/if the user has connected with facebook
 		    },
     		{
 		        xtype: "container",

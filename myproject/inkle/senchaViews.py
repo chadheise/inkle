@@ -33,6 +33,18 @@ def s_is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
 
+@csrf_exempt
+def s_is_facebook_user(request):
+    """Returns True if the logged in user is linked to a facebook ID, false otherwise."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+        print member
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    if member.facebookId:
+        return HttpResponse(True)
+    return HttpResponse(False)
 
 @csrf_exempt
 def s_login_view(request):
@@ -294,6 +306,76 @@ def s_registration_view(request):
         "error" : response_error
     })
 
+    return HttpResponse(response, mimetype = "application/json")
+
+@csrf_exempt
+def s_link_facebook_account_view(request):
+    """Links an existing user account to a facebook account."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Create a string to hold the login error
+    response_error = ""
+    success = True
+    
+    # Get the facebook credentials
+    try:
+        if ("facebookId" in request.POST):
+            facebookId = request.POST["facebookId"]
+            facebookAccessToken = request.POST["facebookAccessToken"]
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            day = int(request.POST["birthday"].split('/')[1])
+            month = int(request.POST["birthday"].split('/')[0])
+            year = int(request.POST["birthday"].split('/')[2])
+            birthday = datetime.date(day = day, month = month, year = year)
+            gender = request.POST["gender"][0]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+        success = False
+
+    # Check for existing member with the facebook ID
+    try:
+        fbMember = Member.active.get(facebookId = facebookId)
+        #NEED TO DECIDE WHAT TO DO IN THIS CASE
+    except:
+        #There is no existing member with the provided facebook ID
+        fbMember = None
+
+    if (email != member.email):
+        # User will need to update their inkle email to match the one in their facebook account
+        response_error = "Facebook account email does not match inkle account email"
+        success = False
+
+    if (fbMember is not None):
+        try:
+            member.facebookId = facebookId #Store their facebookId for future use
+            member.save()
+        except:
+            # Error saving member
+            HttpResponse("Error saving member object")
+            success = False
+
+    # Validate facebook authentication token or log them out
+    # Confirm the user is active and log them in
+    try:
+        fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
+        fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+        request.session["facebook_access_token"] = facebookAccessToken
+        fbData = simplejson.loads(fbResponse)
+    except Exception, e:
+        response_error = "Could not authenticate with facebook"
+        success = False
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
     return HttpResponse(response, mimetype = "application/json")
 
 @csrf_exempt
