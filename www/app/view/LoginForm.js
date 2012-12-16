@@ -47,12 +47,6 @@ Ext.define("inkle.view.LoginForm", {
 				top: 0,
 				margin: 10,
 				width: "94%",
-				/*listeners: {
-                    focus: function() {
-                        alert("hey!");
-                        window.scrollTo(0,0);
-                    }
-                },*/
 				
 				items: [
 					{

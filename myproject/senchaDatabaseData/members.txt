@@ -29,3 +29,4 @@ Susan | Garabedian | sgara@nd.edu | 20 | 3 | 1990 | Female | False
 Rosemary | Alberico | ralber@nd.edu | 3 | 8 | 1990 | Female | False
 Barack | Obama | bobama@nd.edu | 4 | 10 | 1970 | Male | False
 Bill | Clinton | bclinton@nd.edu | 12 | 1 | 1955 | Male | False
+Test | Inkle | test@inkleit.com	| 1 | 1 | 1980 | Male | False
