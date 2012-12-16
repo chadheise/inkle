@@ -1,42 +1,44 @@
-<div id="member{{ m.id }}" class="member">
-    <!-- Left-hand button -->
+{% load truncate_characters from senchaTags %}
+
+<!--<div id="member{{ m.id }}" class="member">-->
+<div class="memberListItem">
+    <!-- Left-hand items -->
     {% if include_delete_items %}
         <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
-    {% else %}
-        {% if include_selection_item %}
-            {% if group %}
-                {% if m in group.members.all %}
-                    <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/selected.png">
-                {% else %}
-                    <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/deselected.png">
-                {% endif %}
+    {% endif %}
+    {% if include_selection_item %}
+        {% if group %}
+            {% if m in group.members.all %}
+                <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/selected.png">
+            {% else %}
+                <img id="member{{ m.id }}SelectionItem" class="selectionItem" memberId="{{ m.id }}" src="resources/images/deselected.png">
             {% endif %}
         {% endif %}
     {% endif %}
 
     <!-- Member info -->
-    <img class="image" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
+    <!-- TODO: fix image src -->
+    <img class="memberImage" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
     <div class="memberInfo">
         <div class="name">
             <span class="firstName">{{ m.first_name }}</span> 
-            <span class="lastName">{{ m.last_name }}</span>
+            <span class="lastName">{{ m.last_name|truncate_characters:last_name_truncate_characters_value }}</span>
         </div>
         <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
     </div>
 
-    <!-- Right-hand button -->
+    <!-- Right-hand items -->
     {% if include_delete_items %}
         <input id="member{{ m.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" memberId="{{ m.id }}" />
-    {% else %}
-        {% if include_add_friend_buttons %}
-            {% if m in member.friends.all %}
-                <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
+    {% endif %}
+    {% if include_add_friend_buttons %}
+        {% if m in member.friends.all %}
+            <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
+        {% else %}
+            {% if m == member %}
+                <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
             {% else %}
-                {% if m == member %}
-                    <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
-                {% else %}
-                    <input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
-                {% endif %}
+                <input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
             {% endif %}
         {% endif %}
     {% endif %}

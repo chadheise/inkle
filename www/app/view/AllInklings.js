@@ -131,6 +131,7 @@ Ext.define("inkle.view.AllInklings", {
     		{
     			xtype: "list",
 				id: "allInklingsList",
+                cls: "inklingList",
 				loadingText: "Loading inklings...",
 				emptyText: "<div class='emptyListText'>No inklings</div>",
 				disableSelection: true,
@@ -314,7 +315,7 @@ Ext.define("inkle.view.AllInklings", {
         	{
 				event: "tap",
 				element: "element",
-				delegate: ".inkling",
+				delegate: ".inklingListItem",
 				fn: "onInklingTap"
         	},
         	
@@ -371,7 +372,7 @@ Ext.define("inkle.view.AllInklings", {
     },
     
     onInklingTap: function(event) {
-        var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
+        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("inklingId");
         this.fireEvent("inklingTapped", tappedInklingId);
     },
     

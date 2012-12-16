@@ -1,17 +1,22 @@
-<div class="inkling" inklingId="{{ i.id }}">
-    <div class="numAttendees">{{ i.get_num_members_attending }}</div>
-    <div class="inklingInfo">
+<div class="inklingListItem" inklingId="{{ i.id }}">
+        <!-- Location -->
         <div class="location">{{ i.location|default:"Location TBD" }}</div>
-        <div>
-            {% if i.time %}
-                <div class="time">{{ i.time }}</div>
-                {% if i.category %}
-                    <div class="dot">&middot</div>
-                {% endif %}
+        
+        <!-- Time -->
+        {% if i.time %}
+            <div class="time">{{ i.time }}</div>
+            <div class="dot">&middot</div>
+        {% endif %}
+
+        <!-- Members attending -->
+        {% for me in members_attending %}
+            {% if m.is_facebook_member %}
+                <img class="attendingMemberThumbnail" src="https://graph.facebook.com/{{ m.facebookId }}/picture" />
+            {% else %}
+                <img class="attendingMemberThumbnail" src="{{ m.getPicturePath }}" />
             {% endif %}
-            {% if i.category %}
-                <div class="category">{{ i.category }}</div>
-            {% endif %}
-        </div>
-    </div>
+        {% endfor %}
+        {% if num_other_members_attending > 0 %}
+            <div class="numOtherMembersAttending">+{{ num_other_members_attending }}</div>
+        {% endif %}
 </div>

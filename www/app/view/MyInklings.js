@@ -118,6 +118,7 @@ Ext.define("inkle.view.MyInklings", {
     		{
     			xtype: "list",
 				id: "myInklingsList",
+                cls: "inklingList",
 				loadingText: "Loading inklings...",
 				emptyText: "<div class='emptyListText'>No inklings</div>",
 				disableSelection: true,
