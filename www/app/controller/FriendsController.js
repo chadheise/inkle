@@ -42,7 +42,7 @@ Ext.define("inkle.controller.FriendsController", {
            		friendsViewCreateGroupButtonTapped: "createGroup",
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
-           		deleteLockTapped: "toggleGroupsListDeleteLockRotation",
+           		deleteLockTapped: "toggleDeleteButtonVisibility",
            		deleteButtonTapped: "deleteListItem",
            		groupNameInputBlurred: "renameGroup",
            		
@@ -275,14 +275,14 @@ Ext.define("inkle.controller.FriendsController", {
 		for (var i = 0; i < deleteLocks.length; i++) {
 			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
 			if (deleteLock.hasCls("deleteLockHidden")) {
-				deleteLock.removeCls("deleteLockHidden");
 				deleteLock.removeCls("deleteLockSlideLeft");
 				deleteLock.addCls("deleteLockSlideRight");
+				deleteLock.removeCls("deleteLockHidden");
 			}
 			else {
 				deleteLock.removeCls("deleteLockSlideRight");
-				deleteLock.addCls("deleteLockHidden");
 				deleteLock.addCls("deleteLockSlideLeft");
+				deleteLock.addCls("deleteLockHidden");
 			}
 			deleteLock.removeCls("deleteLockRotateLeft");
 			deleteLock.removeCls("deleteLockRotateRight");
@@ -385,9 +385,11 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
-	/* Toggles the rotation of the inputted groups list delete lock */
-	toggleGroupsListDeleteLockRotation: function(tappedId) {
+	/* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
+	toggleDeleteButtonVisibility: function(tappedId) {
 		var deleteLock = Ext.fly(tappedId + "DeleteLock");
+		
+		// Show delete button if it is hidden
 		if (deleteLock.hasCls("deleteLockRotateLeft")) {
 			deleteLock.removeCls("deleteLockRotateLeft");
 			deleteLock.addCls("deleteLockRotateRight");
@@ -397,6 +399,8 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteButton.addCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideRight");
 		}
+		
+		// Hide delete button if it is shown
 		else {
 			deleteLock.removeCls("deleteLockRotateRight");
 			deleteLock.addCls("deleteLockRotateLeft");

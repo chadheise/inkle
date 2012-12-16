@@ -296,6 +296,62 @@ def s_registration_view(request):
 
     return HttpResponse(response, mimetype = "application/json")
 
+def get_members_from_groups(member, group_ids):
+    members = []
+
+    for group_id in group_ids:
+        # If the group ID is -1, add all the members who are in none of the logged-in member's groups
+        if (group_id == "-1"):
+            not_grouped_members = list(member.friends.all())
+            for g in member.group_set.all():
+                for m in g.members.all():
+                    if (m in not_grouped_members):
+                        not_grouped_members.remove(m)
+
+            members.extend(not_grouped_members)
+
+        # Otherwise, add each member from the group corresponding to the current group ID
+        else:
+            group = Group.objects.get(pk = group_id)
+            if (group.creator == member):
+                for m in group.members.all():
+                    if (m not in members):
+                        members.append(m)
+
+    return members
+
+def get_inklings(member, members, date):
+    inklings = []
+    response_inklings = []
+
+    for m in members:
+        for i in m.inklings.filter(date = date):
+            if i not in inklings:
+                try:
+                    sp = SharingPermission.objects.get(creator = m, inkling = i)
+                except:
+                    raise Http404()
+
+                if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
+                    num_members_attending_thumbnails = min(i.member_set.count(), 7)
+                    members_attending = list(i.member_set.all())[0:num_members_attending_thumbnails]
+
+                    html = render_to_string( "s_inklingListItem.html", {
+                        "i" : i,
+                        "members_attending" : members_attending,
+                        "num_other_members_attending" : i.get_num_members_attending() - num_members_attending_thumbnails
+                    })
+
+                    response_inklings.append({
+                        "id" : i.id,
+                        "html" : html,
+                        "numMembersAttending" : i.get_num_members_attending()
+                    })
+
+                    inklings.append(i)
+
+    return response_inklings
+
 @csrf_exempt
 def s_all_inklings_view(request):
     """Returns a list of inklings which the logged-in member's friends are attending."""
@@ -323,56 +379,17 @@ def s_all_inklings_view(request):
     else:
         date = None
 
-    # Get a list of the members who are in the groups selected by the logged-in member
+    # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
     if ("selectedGroupIds" in request.POST):
-        members = []
-        for group_id in request.POST["selectedGroupIds"].split(",")[:-1]:
-            # If the group ID is -1, add all the members who are in none of the logged-in member's groups
-            if (group_id == "-1"):
-                not_grouped_members = list(member.friends.all())
-                for g in member.group_set.all():
-                    for m in g.members.all():
-                        if (m in not_grouped_members):
-                            not_grouped_members.remove(m)
-
-                members.extend(not_grouped_members)
-
-            # Otherwise, add each member from the group corresponding to the current group ID
-            else:
-                group = Group.objects.get(pk = group_id)
-                if (group.creator == member):
-                    for m in group.members.all():
-                        if (m not in members):
-                            members.append(m)
-
-    # Otherwise, if no groups are selected, get all of the logged-in members's active friends
+        members = get_members_from_groups(member, request.POST["selectedGroupIds"].split(",")[:-1])
     else:
-        members = member.friends.filter(is_active = True)
+        members = list(member.friends.filter(is_active = True))
 
     # Append the logged-in member to the members list
-    members = list(members)
     members.append(member)
 
     # Get a list of all the inklings the members are attending on the specified date
-    response_inklings = []
-    inklings = []
-    for m in members:
-        for i in m.inklings.filter(date = date):
-            if i not in inklings:
-                try:
-                    sp = SharingPermission.objects.get(creator = m, inkling = i)
-                except:
-                    raise Http404()
-                if (member in list(sp.members.all())):
-                    html = render_to_string( "s_inklingListItem.html", {
-                        "i" : i
-                    })
-                    response_inklings.append({
-                        "id" : i.id,
-                        "html" : html,
-                        "numMembersAttending" : i.get_num_members_attending()
-                    })
-                    inklings.append(i)
+    response_inklings = get_inklings(member, members, date)
 
     # Sort the inklings according to their number of attendees
     response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
@@ -1315,15 +1332,20 @@ def s_friends_view(request):
     # Get the list of the logged-in member's friends
     friends = list(member.friends.all())
 
+    # Determine what items to include in the member list item
+    include_delete_items = (mode == "friends")
+    include_selection_item = (mode == "invite")
+
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
-        
+
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : mode == "friends", # TODO: get rid of this
-            "include_selection_item" : mode == "invite" # TODO: get rid of this
+            "last_name_truncate_characters_value" : 18 - len(m.first_name),
+            "include_delete_items" : include_delete_items,
+            "include_selection_item" : include_selection_item
         })
         
         response_friends.append({
