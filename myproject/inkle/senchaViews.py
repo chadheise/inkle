@@ -95,11 +95,13 @@ def s_login_view(request):
         except:
             member = []
             
-        if (facebookId and not member):
+        if (facebookId and not member): #A new member registering facebook (the facebookId was sent but no member object exists for that facebookId)
+            print "facebookId and not member"
             try:
                 #If the user has not logged in with facebook before but they registered with their email
                 member = Member.active.get(email = email)
                 if member:
+                    print "found member by email"
                     response_error = "A user with that email address already exists. "
                     response_error += "You can link your account to facebook by logging in with your email and going to the settings tab."
                     # Create and return a JSON object
@@ -107,7 +109,10 @@ def s_login_view(request):
                         "success" : False,
                         "error" : response_error
                     })
+                    print response
+                    return HttpResponse(response, mimetype = "application/json")
             except:
+                print "except"
                 # Create the new member
                 member = Member(
                     facebookId = facebookId,

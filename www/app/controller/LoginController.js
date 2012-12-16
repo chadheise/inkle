@@ -178,11 +178,15 @@ Ext.define("inkle.controller.LoginController", {
                    		   gender: response.gender,
                    		   birthday: response.birthday
                    	   },
-               		   success: function(response) {
-                           this.activateMainTabView();
-                       },
-                       failure: function(response) {
-                           Ext.Msg.alert(response.error);
+                   	   //Must use callback instead of normal success/failure because request is not sent in a form
+                       callback: function(options, success, response){
+                           var data = Ext.decode(response.responseText);
+                           if (data.success) {
+                               this.activateMainTabView();
+                           }
+                           else{
+                               Ext.Msg.alert("Error", data.error);
+                           }
                         },
                        	scope: object
                		});
