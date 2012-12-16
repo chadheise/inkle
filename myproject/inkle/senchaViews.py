@@ -39,7 +39,6 @@ def s_is_facebook_user(request):
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
-        print member
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
     if member.facebookId:
@@ -100,8 +99,14 @@ def s_login_view(request):
             try:
                 #If the user has not logged in with facebook before but they registered with their email
                 member = Member.active.get(email = email)
-                member.facebookId = facebookId #Store their facebookId for future use
-                member.save()
+                if member:
+                    response_error = "A user with that email address already exists. "
+                    response_error += "You can link your account to facebook by logging in with your email and going to the settings tab."
+                    # Create and return a JSON object
+                    response = simplejson.dumps({
+                        "success" : False,
+                        "error" : response_error
+                    })
             except:
                 # Create the new member
                 member = Member(
@@ -127,8 +132,6 @@ def s_login_view(request):
                     fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
                     request.session["facebook_access_token"] = facebookAccessToken
                     fbData = simplejson.loads(fbResponse)
-                    #for fbFriend in fbData["data"]:
-                    #    print fbFriend["first_name"] + " " + fbFriend["last_name"]
                     member.last_login = datetime.datetime.now()
                     member.save()
                 # Otherwise, add to the errors list
@@ -179,8 +182,8 @@ def is_email(email):
     else:
         return False
 
-def is_sixteen(month, day, year):
-    """Returns True if the inputted date represents a birthday of someone who is at least sixteen; otherwise, returns False."""
+def is_thirteen(month, day, year):
+    """Returns True if the inputted date represents a birthday of someone who is at least thirteen; otherwise, returns False."""
     born = datetime.date(day = int(day), month = int(month), year = int(year))
     today = datetime.date.today()
     
@@ -194,7 +197,7 @@ def is_sixteen(month, day, year):
     else:
         age = today.year - born.year
 
-    if (age < 16):
+    if (age < 13):
         return False
     else:
         return True
@@ -239,8 +242,8 @@ def s_registration_view(request):
     # Validate the birthday
     elif (not birthday):
         response_error = "Birthday not specified"
-    elif (not is_sixteen(month, day, year)):
-        response_error = "You must be at least sixteen years old to use Inkle"
+    elif (not is_thirteen(month, day, year)):
+        response_error = "You must be at least thirteen years old to use Inkle"
 
     # Validate the email
     elif (not email):
@@ -319,7 +322,6 @@ def s_link_facebook_account_view(request):
     
     # Create a string to hold the login error
     response_error = ""
-    success = True
     
     # Get the facebook credentials
     try:
@@ -336,7 +338,6 @@ def s_link_facebook_account_view(request):
             gender = request.POST["gender"][0]
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
-        success = False
 
     # Check for existing member with the facebook ID
     try:
@@ -346,19 +347,25 @@ def s_link_facebook_account_view(request):
         #There is no existing member with the provided facebook ID
         fbMember = None
 
+    if fbMember is not None:
+        response = simplejson.dumps({
+            "success" : False,
+            "error" : "An inkle account already exists for that facebook user"
+        })
+        return HttpResponse(response, mimetype = "application/json")
+
     if (email != member.email):
         # User will need to update their inkle email to match the one in their facebook account
-        response_error = "Facebook account email does not match inkle account email"
-        success = False
+        response_error = "The email address for the facebook account does not match your inkle account email. "
+        response_error += "Please update your email in the settings before linking your account to facebook."
 
-    if (fbMember is not None):
+    if (fbMember is None):
         try:
             member.facebookId = facebookId #Store their facebookId for future use
             member.save()
         except:
             # Error saving member
             HttpResponse("Error saving member object")
-            success = False
 
     # Validate facebook authentication token or log them out
     # Confirm the user is active and log them in
@@ -369,7 +376,12 @@ def s_link_facebook_account_view(request):
         fbData = simplejson.loads(fbResponse)
     except Exception, e:
         response_error = "Could not authenticate with facebook"
+
+    # Determine if the link was successful
+    if (response_error):
         success = False
+    else:
+        success = True
 
     # Create and return a JSON object
     response = simplejson.dumps({
