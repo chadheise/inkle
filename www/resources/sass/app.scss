@@ -189,6 +189,33 @@ $badge-bg-gradient: "matte";
     font-size: 14px;
 }
 
+/* Group list (main content) */
+.groupListMainContent .x-list-item-label {
+	height: 60px !important;
+	padding: 5px !important;
+}
+
+.groupListMainContent .groupName {
+	margin-top: -3px;
+	color: $blue3;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.groupListMainContent .groupMemberThumbnail {
+    float: left;
+    margin: 2px 5px 0px 0px;
+    height: 20px;
+    width: 20px;
+}
+
+.groupListMainContent .numOtherGroupMembers {
+    float: left;
+    margin-top: 3px;
+    color: #777;
+    font-size: 14px;
+}
+
 /***********************/
 /*  ALL INKLINGS VIEW  */
 /***********************/
@@ -594,33 +621,6 @@ $badge-bg-gradient: "matte";
 	100% { opacity: 0; margin-right: -75px; }
 }
 
-#friendsViewGroupsList .numMembers {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
-	font-weight: bold;
-	text-align: center;
-	padding-top: 5px;
-	height: 50px;
-	width: 50px;
-	margin: 0px 0px 0px 0px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $green5;
-	box-shadow: 0px 0px 10px #888;
-}
-
-#friendsViewGroupsList .groupInfo {
-	float: left;
-	padding: 12px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#friendsViewGroupsList .name {
-	font-size: 20px;
-	font-weight: bold;
-}
-
 .isFriendButton {
 	float: right;
 	font-size: 14px;
@@ -740,7 +740,7 @@ $badge-bg-gradient: "matte";
 /******************/
 
 /* Friends list */
-#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #friendsViewGroupsList .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
+#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
 	height: 60px;
 	padding: 5px 55px 5px 5px;
 	margin-right: -50px;
