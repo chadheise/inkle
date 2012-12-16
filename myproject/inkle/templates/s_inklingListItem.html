@@ -1,15 +1,15 @@
 <div class="inklingListItem" inklingId="{{ i.id }}">
         <!-- Location -->
-        <div class="location">{{ i.location|default:"Location TBD" }}</div>
+        <p class="location">{{ i.location|default:"Location TBD" }}</p>
         
         <!-- Time -->
         {% if i.time %}
-            <div class="time">{{ i.time }}</div>
-            <div class="dot">&middot</div>
+            <p class="time">{{ i.time }}</p>
+            <p class="dot">&middot</p>
         {% endif %}
 
         <!-- Members attending -->
-        {% for me in members_attending %}
+        {% for m in members_attending %}
             {% if m.is_facebook_member %}
                 <img class="attendingMemberThumbnail" src="https://graph.facebook.com/{{ m.facebookId }}/picture" />
             {% else %}
@@ -17,6 +17,6 @@
             {% endif %}
         {% endfor %}
         {% if num_other_members_attending > 0 %}
-            <div class="numOtherMembersAttending">+{{ num_other_members_attending }}</div>
+            <p class="numOtherMembersAttending">+{{ num_other_members_attending }}</p>
         {% endif %}
 </div>

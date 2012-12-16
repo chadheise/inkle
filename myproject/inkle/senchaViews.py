@@ -29,6 +29,8 @@ import string
 import random
 import shutil
 
+# TODO: clean up print statements
+
 def s_is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
@@ -320,41 +322,45 @@ def get_members_from_groups(member, group_ids):
 
     return members
 
-def get_inklings(member, members, date):
-    inklings = []
-    response_inklings = []
+def get_inkling_list_item_html(inkling):
+    """Returns the HTML for an inkling list item."""
+    # Get the member thumbnails for those attending the inputted inkling
+    num_members_attending = inkling.get_num_members_attending()
+    num_members_attending_thumbnails = min(num_members_attending, 7)   # TODO: make 7 a global variable
+    members_attending = list(inkling.get_members_attending())[0:num_members_attending_thumbnails]
+    
+    # Get the HTML for the inkling list item
+    html = render_to_string( "s_inklingListItem.html", {
+        "i" : inkling,
+        "members_attending" : members_attending,
+        "num_other_members_attending" : num_members_attending - num_members_attending_thumbnails
+    })
+    
+    return html
 
-    for m in members:
-        for i in m.inklings.filter(date = date):
-            if i not in inklings:
-                try:
-                    sp = SharingPermission.objects.get(creator = m, inkling = i)
-                except:
-                    raise Http404()
+def get_group_list_item_main_content_html(group, group_members = None):
+    """Returns the HTML for a group list item (in the main content)."""
+    # Get the group members if this is not the "Not Grouped" group
+    if (not group_members):
+        group_members = list(group.members.all())
 
-                if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
-                    num_members_attending_thumbnails = min(i.member_set.count(), 7)
-                    members_attending = list(i.member_set.all())[0:num_members_attending_thumbnails]
+    # Get the member thumbnails for those a part of the inputted group
+    num_group_members = len(group_members)
+    num_group_member_thumbnails = min(num_group_members, 10)   # TODO: make 7 a global variable
+    group_members = group_members[0:num_group_member_thumbnails]
 
-                    html = render_to_string( "s_inklingListItem.html", {
-                        "i" : i,
-                        "members_attending" : members_attending,
-                        "num_other_members_attending" : i.get_num_members_attending() - num_members_attending_thumbnails
-                    })
+    # Get the HTML for the group list item
+    html = render_to_string( "s_groupListItemMainContent.html", {
+        "g" : group,
+        "group_members" : group_members,
+        "num_other_group_members" : num_group_members - num_group_member_thumbnails
+    })
 
-                    response_inklings.append({
-                        "id" : i.id,
-                        "html" : html,
-                        "numMembersAttending" : i.get_num_members_attending()
-                    })
-
-                    inklings.append(i)
-
-    return response_inklings
+    return html
 
 @csrf_exempt
 def s_all_inklings_view(request):
-    """Returns a list of inklings which the logged-in member's friends are attending."""
+    """Returns a list of the inklings which the logged-in member's friends are attending."""
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -378,18 +384,37 @@ def s_all_inklings_view(request):
             date = datetime.date.today()
     else:
         date = None
-
+    
     # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
     if ("selectedGroupIds" in request.POST):
         members = get_members_from_groups(member, request.POST["selectedGroupIds"].split(",")[:-1])
     else:
         members = list(member.friends.filter(is_active = True))
-
+    
     # Append the logged-in member to the members list
     members.append(member)
 
-    # Get a list of all the inklings the members are attending on the specified date
-    response_inklings = get_inklings(member, members, date)
+    # Get the inklings the members are attending on the specified date
+    inklings = []
+    for m in members:
+        for i in m.inklings.filter(date = date):
+            if i not in inklings:
+                try:
+                    sp = SharingPermission.objects.get(creator = m, inkling = i)
+                except:
+                    raise Http404()
+
+                if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
+                    inklings.append(i)
+
+    # Get the HTML for every inkling
+    response_inklings = []
+    for i in inklings:
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending()
+        })
 
     # Sort the inklings according to their number of attendees
     response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
@@ -408,50 +433,50 @@ def s_groups_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    # Get the view that is requesting the current groups list
+    # Get the source of the groups list request
     try:
-        view = request.POST["view"]
+        source = request.POST["source"]
     except:
         raise Http404()
 
     # Get the current inkling if we are in the invites view
-    if (view == "invites"):
+    if (source == "invites"):
         try:
             inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         except:
             raise Http404()
    
-    # Get a list of the logged-in member's friends who are not in one of the logged-in member's groups
-    not_grouped_members = list(member.friends.all())
-    for g in member.group_set.all():
-        for m in g.members.all():
-            if (m in not_grouped_members):
-                not_grouped_members.remove(m)
-
     # Get an alphabetical list of the logged-in member's groups
     groups = list(member.group_set.all())
     groups.sort(key = lambda g : g.name)
 
+    # Get a list of the logged-in member's not grouped friends
+    not_grouped_members = list(member.friends.all())
+    for g in groups:
+        for m in g.members.all():
+            if (m in not_grouped_members):
+                not_grouped_members.remove(m)
+
     # Create a list to hold the response data
     response_groups = []
 
-    # Get the HTML for the logged-in member's group list items
+    # Get the HTML for the logged-in member's groups
     for g in groups:
-        if (view == "allInklings"):
-            g.selected = True
-        elif (view == "invites"):
-            g.selected = True
-            for m in g.members.all():
-                if (not inkling.member_has_pending_invitation(m)):
-                    g.selected = False
-                    break
-
-        if (view == "friends"):
+        if (source == "friendsViewMainContent"):
             g.num_members = g.members.count()
             html = render_to_string( "s_friendsViewGroupListItem.html", {
                 "g" : g,
             })
         else:
+            if (source == "allInklings"):
+                g.selected = True
+            elif (source == "invites"):
+                g.selected = True
+                for m in g.members.all():
+                    if (not inkling.member_has_pending_invitation(m)):
+                        g.selected = False
+                        break
+
             html = render_to_string( "s_groupListItem.html", {
                 "g" : g
             })
@@ -466,14 +491,14 @@ def s_groups_view(request):
     
     # Determine if the "Not Grouped" group should be selected
     not_grouped_group["selected"] = True
-    if (view == "invites"):
+    if (source == "invites"):
         for m in not_grouped_members:
             if (not inkling.member_has_pending_invitation(m)):
                 not_grouped_group["selected"] = False
                 break
 
-    # If the current view is the friends view, determine the number of friends who are not grouped and genearte the HTML
-    if (view == "friends"):
+    # If the current view is the friends view, determine the number of friends who are not grouped and generate the HTML
+    if (source == "friends"):
         not_grouped_members = list(member.friends.all())
         for g in member.group_set.all():
             for m in g.members.all():
@@ -497,6 +522,60 @@ def s_groups_view(request):
         "html" : html
     })
 
+    # Create and return a JSON object
+    response = simplejson.dumps(response_groups)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+def get_not_grouped_members(member, groups = None):
+    if (not groups):
+        groups = member.group_set.all()
+
+    not_grouped_members = list(member.friends.all())
+    for g in groups:
+        for m in g.members.all():
+            if (m in not_grouped_members):
+                not_grouped_members.remove(m)
+
+    return not_grouped_members
+
+
+@csrf_exempt
+def s_groups_main_content_view(request):
+    """Returns a list of the logged-in member's groups (with HTML for the main content window)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Create a list to hold the response data
+    response_groups = []
+
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
+
+    # Get a list of the logged-in member's not grouped friends
+    not_grouped_members = get_not_grouped_members(member, groups)
+    
+    # Add the "Not Grouped" group to the response list
+    not_grouped_group = {
+        "id" : -1,
+        "name" : "Not Grouped"
+    }
+    response_groups.append({
+        "id" : not_grouped_group["id"],
+        "html" : get_group_list_item_main_content_html(not_grouped_group, not_grouped_members)
+    })
+
+    # Get the HTML for the logged-in member's groups
+    for g in groups:
+        response_groups.append({
+            "id" : g.id,
+            "html" : get_group_list_item_main_content_html(g)
+        })
+    
     # Create and return a JSON object
     response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")
@@ -558,9 +637,6 @@ def s_inkling_view(request):
             i = i + 1
 
     num_other_members_attending = inkling.get_num_members_attending() - i
-
-    print members_attending
-    print num_other_members_attending
 
     # Get the members who are awaiting reply to the inkling
     i = 0
@@ -876,7 +952,7 @@ def s_add_feed_comment_view(request):
 # TODO: remove csrf_exempt?
 @csrf_exempt
 def s_my_inklings_view(request):
-    """Returns the HTML for the logged-in member's inklings."""  # TODO: update comment
+    """Returns a list of the inklings which the logged-in member is attending."""
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -891,74 +967,54 @@ def s_my_inklings_view(request):
     # Get a list of all the inklings the logged-in member is attending today
     response_inklings = []
     for i in member.inklings.filter(date = today):
-        html = render_to_string( "s_inklingListItem.html", {
-            "i" : i
-        })
-        
         response_inklings.append({
             "id" : i.id,
-            "html" : html,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Today",
-            "groupIndex" : 0,
-            "numMembersAttending" : i.get_num_members_attending()
+            "groupIndex" : 0
         })
 
     # Get a list of all the inklings the logged-in member is attending tomorrow
     for i in member.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
-        html = render_to_string( "s_inklingListItem.html", {
-            "i" : i
-        })
-        
         response_inklings.append({
             "id" : i.id,
-            "html" : html,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Tomorrow",
-            "groupIndex" : 1,
-            "numMembersAttending" : i.get_num_members_attending()
+            "groupIndex" : 1
         })
 
     # Get a list of all the inklings the logged-in member is attending this week
     for i in member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
-        html = render_to_string( "s_inklingListItem.html", {
-            "i" : i
-        })
-        
         response_inklings.append({
             "id" : i.id,
-            "html" : html,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
             "group" : "This Week",
-            "groupIndex" : 2,
-            "numMembersAttending" : i.get_num_members_attending()
+            "groupIndex" : 2
         })
 
     # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
     future_inklings = list(member.inklings.filter(date__gte = this_week))
     future_inklings.sort(key = lambda i : i.date)
     for i in future_inklings:
-        html = render_to_string( "s_inklingListItem.html", {
-            "i" : i
-        })
-        
         response_inklings.append({
             "id" : i.id,
-            "html" : html,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Future",
-            "groupIndex" : 3,
-            "numMembersAttending" : i.get_num_members_attending()
+            "groupIndex" : 3
         })
 
     # Get a list of all the inklings the logged-in member is attending which do not have a date
-    for i in  member.inklings.filter(date__exact = None):
-        html = render_to_string( "s_inklingListItem.html", {
-            "i" : i
-        })
-        
+    for i in member.inklings.filter(date__exact = None):
         response_inklings.append({
             "id" : i.id,
-            "html" : html,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Future",
-            "groupIndex" : 3,
-            "numMembersAttending" : i.get_num_members_attending()
+            "groupIndex" : 3
         })
 
     # Create and return a JSON object

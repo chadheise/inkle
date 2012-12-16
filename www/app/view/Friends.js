@@ -145,6 +145,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewGroupsList",
+                        cls: "groupListMainContent",
 						loadingText: "Loading groups...",
 						emptyText: "<div class='emptyListText'>No groups</div>",
 						disableSelection: true,
@@ -161,10 +162,7 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/groups/",
-        						extraParams: {
-                    				view: "friends"
-								}
+        						url: "http://127.0.0.1:8000/sencha/groupsMainContent/"
         					},
         					autoLoad: true
         				},				
