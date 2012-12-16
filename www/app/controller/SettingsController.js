@@ -205,32 +205,6 @@ Ext.define("inkle.controller.SettingsController", {
         }
         else {
             // Push the view to link their account to facebook
-            var message = ""
-            Ext.Ajax.request({
-    			async: false,
-    			url: "http://127.0.0.1:8000/sencha/isFacebookUser/",
-    			success: function(response) {
-    				if (response.responseText == "True") {
-    				    message = [
-            	            "<div>",
-            	            "   <span>You must be logged in with facebook to invite facebook friends.</span>",
-            	            "</div>",
-            	        ].join("");
-    				}
-    				else {
-    				    message = [
-            	            "<div>",
-            	            "   <span>To find facebook friends you need to link your inkle account to facebook. ",
-            	            "Once you do so, you can login via email or facebook</span>",
-            	            "</div>",
-            	        ].join("");
-    				}
-    			},
-    			failure: function(response) {
-            		alert("Error " + response.errors);
-    			}
-    		});
-            
             this.getSettingsView().push({
         	    xtype: "linkFacebookAccountView"
             });

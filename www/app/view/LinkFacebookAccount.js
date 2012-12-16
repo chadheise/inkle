@@ -15,7 +15,12 @@ Ext.define("inkle.view.LinkFacebookAccount", {
     	    {
 		        xtype: "container",
 		        id: "linkFacebookAccountMessage",
-		        html: "" //Message is set dynamically in settingsController depending on how/if the user has connected with facebook
+		        html: [
+    	            "<div>",
+    	                "<span><p>To share inkle with facebook friends you need to link your inkle account to facebook.</p></span>",
+    	                "<span><p>Once you do, you will need to login with your facebook account instead of your email.</p></span>",
+    	            "</div>",
+    	        ].join("")
 		    },
     		{
 		        xtype: "container",
@@ -38,7 +43,7 @@ Ext.define("inkle.view.LinkFacebookAccount", {
         	{
 				delegate: "#linkFacebookAccountButton",
             	event: "tap",
-            	fn: "onLinkFacebookAccountButtonTap"
+            	fn: "onLinkFacebookAccountButtonTapped"
 			},
         ]
     },
