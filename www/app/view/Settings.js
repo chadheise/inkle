@@ -36,7 +36,14 @@ Ext.define("inkle.view.Settings", {
                 		ui: "back",
                 		text: "Settings",
                 		hidden: true,
-                	}
+                	},
+                	{
+                		xtype: "button",
+                		itemId: "shareSettingsBackButton",
+                		ui: "back",
+                		text: "Settings",
+                		hidden: true,
+                	},
                 ]
     		},
     		
@@ -56,10 +63,13 @@ Ext.define("inkle.view.Settings", {
 						"text"
 					],
 					data: [
+						{ text: "Update email" },
+						{ text: "Update password" },
+						{ text: "Update picture" },
 						{ text: "Notifications" },
-						{ text: "Settings" },
-						{ text: "Privacy" },
-						{ text: "Invite Facebook Friends" }
+						{ text: "Sharing" },
+						{ text: "Invite Facebook Friends" },
+						{ text : "Link to Facebook account" }
 					],
 					autoLoad: true
 				}
@@ -82,6 +92,11 @@ Ext.define("inkle.view.Settings", {
             	event: "tap",
             	fn: "onInviteFacebookFriendsBackButtonTap"
         	},
+        	{
+            	delegate: "#shareSettingsBackButton",
+            	event: "tap",
+            	fn: "onShareSettingsBackButtonTap"
+        	},
         	
         ]
 	},
@@ -94,11 +109,17 @@ Ext.define("inkle.view.Settings", {
         if (index < 3) {
             alert("Clicked " + index);
         }
-        else if (index == 3) {
+        else if (index == 4) {
+            this.fireEvent("shareSettingsTapped");
+        }
+        else if (index == 5 || index == 6) {
             this.fireEvent("inviteFacebookFriendsTapped");
         }
     },
     onInviteFacebookFriendsBackButtonTap: function() {
         this.fireEvent("inviteFacebookFriendsBackButtonTapped");
+    },
+    onShareSettingsBackButtonTap: function() {
+        this.fireEvent("shareSettingsBackButtonTapped");
     }
 });
