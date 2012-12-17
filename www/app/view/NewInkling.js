@@ -63,7 +63,14 @@ Ext.define("inkle.view.NewInkling", {
 				    "</div>"
 				].join("")
 			},
-			
+			{
+    	        xtype: "container",
+    	        html: [
+    	            "<div>",
+    	                "<p id='newInklingPrivacyFormHeader'>Who else is this shared with?</p>",
+    	            "</div>",
+    	        ].join("")
+    	    },
 			{
 			    xtype: "htmlcontainer",
 			    url: "http://127.0.0.1:8000/sencha/newInklingPrivacyForm/"
