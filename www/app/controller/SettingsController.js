@@ -10,10 +10,12 @@ Ext.define("inkle.controller.SettingsController", {
             inviteFacebookFriendsView: "inviteFacebookFriendsView",
             inviteFacebookFriendsList: "#inviteFacebookFriendsList",
             linkFacebookAccountView: "linkFacebookAccountView",
+            shareSettingsView: "shareSettingsView",
             
             // Toolbar buttons
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
+            shareSettingsBackButton: "#shareSettingsBackButton",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -25,6 +27,8 @@ Ext.define("inkle.controller.SettingsController", {
                 settingsEditButtonTapped: "editSettings",
                 inviteFacebookFriendsTapped: "inviteFacebookFriends",
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
+                shareSettingsTapped: "shareSettings",
+                shareSettingsBackButtonTapped: "shareSettingsBack",
             },
             inviteFacebookFriendsView: {
            		inviteFriendButtonTapped: "inviteFriend",
@@ -217,9 +221,6 @@ Ext.define("inkle.controller.SettingsController", {
             this.getSettingsView().push({
         	    xtype: "linkFacebookAccountView"
             });
-            
-            this.getLinkFacebookAccountMessage().setHtml(message);
-            
         }
 
         //Update buttons
@@ -233,8 +234,25 @@ Ext.define("inkle.controller.SettingsController", {
         this.getInviteFacebookFriendsBackButton().hide();
         this.getSettingsLogoutButton().show();
     },
+    
+    shareSettings: function() {
+        // Push the share settings view
+        this.getSettingsView().push({
+    	    xtype: "shareSettingsView"
+        });
+        //Update buttons
+        this.getSettingsLogoutButton().hide();
+        this.getShareSettingsBackButton().show();
+    },
+    
+    shareSettingsBack: function() {
+        this.getSettingsView().pop();
+        this.getShareSettingsBackButton().hide();
+        this.getSettingsLogoutButton().show();
+    },
  
     editSettings: function() {
         console.log("editSettings");
-    }
+    },
+    
 });
