@@ -50,7 +50,7 @@ Ext.define("inkle.view.LinkFacebookAccount", {
     
     // Event firings
     onLinkFacebookAccountButtonTapped: function() {
-        alert("Link to fb account tapped");
+        this.fireEvent("linkFacebookAccountTapped");
     }
     
 });
