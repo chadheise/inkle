@@ -27,8 +27,11 @@ Ext.define("inkle.controller.SettingsController", {
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
             },
             inviteFacebookFriendsView: {
-           		inviteFriendButtonTapped: "inviteFriend"
+           		inviteFriendButtonTapped: "inviteFriend",
            	},
+           	linkFacebookAccountView: {
+           	    linkFacebookAccountTapped: "linkFacebookAccount",
+           	}
         }
     },
 	
@@ -159,10 +162,16 @@ Ext.define("inkle.controller.SettingsController", {
                    		   birthday: response.birthday
                    	   },
                		   success: function(response) {
-                           //this.activateMainTabView();
                            alert("success!");
+                           //Pop the linkFacebookAccount view off the settings page
+                           this.getSettingsView().pop();
+                           //Push the invite friends view now that they are linked to facebook
+                           this.getSettingsView().push({
+                       	    xtype: "inviteFacebookFriendsView"
+                           });
                        },
                        failure: function(response) {
+                           Ext.Msg.alert(response.responseText);
                            Ext.Msg.alert(response.error);
                         },
                        	scope: object

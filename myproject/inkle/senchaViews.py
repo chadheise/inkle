@@ -367,6 +367,9 @@ def s_link_facebook_account_view(request):
     if (fbMember is None):
         try:
             member.facebookId = facebookId #Store their facebookId for future use
+            #Replace the users password with a random one - they must login with facebook now
+            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
+            member.set_password(password)
             member.save()
         except:
             # Error saving member

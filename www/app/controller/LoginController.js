@@ -186,6 +186,10 @@ Ext.define("inkle.controller.LoginController", {
                            }
                            else{
                                Ext.Msg.alert("Error", data.error);
+                               //Logout of facebook
+                               FB.logout(function(response) {
+                                 // user is now logged out
+                               }); 
                            }
                         },
                        	scope: object
