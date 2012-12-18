@@ -137,6 +137,7 @@ Ext.define("inkle.controller.LoginController", {
 	/**************/
 	/* Submits the login form */
     loginWithEmail: function() {
+        alert("login function");
 		this.getLoginFormView().submit({
 			method: "POST",
 						
@@ -147,12 +148,17 @@ Ext.define("inkle.controller.LoginController", {
          	},
          				
          	success: function(form, response) {
+         	    alert("success");
             	this.activateMainTabView();
          	},
          				
          	failure: function(form, response) {
-        	    Ext.Msg.alert("Error", response.error);
+         	    alert("ERROR!");
+        	    //Ext.Msg.alert("Error", response.error);
          	},
+         	/*callback: function(response){
+         	    alert(response.responseText);
+         	},*/
          	
          	scope: this
         });

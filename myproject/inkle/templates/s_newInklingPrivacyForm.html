@@ -6,7 +6,7 @@
     </div>
     {% for g in member.group_set.all %}
         <div class="selectedGroupsGroup">
-            <img id="group{{ g.id }}SelectionItem" class="selectedGroupSelectionItem selectionItem" groupId="{{ g.id }}" src="resources/images/selected.png">
+            <img id="group{{ g.id }}SelectionItem" class="{% if g.shareByDefault %}selectedGroupSelectionItem{% endif %} selectionItem" groupId="{{ g.id }}" src="resources/images/selected.png">
             <p>{{ g.name }}</p>
         </div>
     {% endfor %}
