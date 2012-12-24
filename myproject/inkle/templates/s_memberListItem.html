@@ -1,5 +1,3 @@
-{% load truncate_characters from senchaTags %}
-
 <!--<div id="member{{ m.id }}" class="member">-->
 <div class="memberListItem">
     <!-- Left-hand items -->
@@ -21,8 +19,8 @@
     <img class="memberImage" src="file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg" />
     <div class="memberInfo">
         <div class="name">
-            <span class="firstName">{{ m.first_name }}</span> 
-            <span class="lastName">{{ m.last_name|truncate_characters:last_name_truncate_characters_value }}</span>
+            <span class="firstName">{{ m.first_name }}</span>
+            <span class="lastName">{{ m.last_name }}</span>
         </div>
         <p class="mutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
     </div>

@@ -100,6 +100,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewFriendsList",
+                        cls: "memberList",
 						loadingText: "Loading friends...",
 						emptyText: "<div class='emptyListText'>No friends</div>",
 						grouped: true,
@@ -259,6 +260,11 @@ Ext.define("inkle.view.Friends", {
         	    event: "pullToRefresh",
         	    fn: "onFriendsViewRequestsListRefresh"
         	},
+            {
+                delegate: "#friendsViewGroupsList",
+                event: "itemswipe",
+                fn: "onFriendsViewGroupsListItemSwipe"
+            },
         	{
 				event: "tap",
 				element: "element",
@@ -331,6 +337,44 @@ Ext.define("inkle.view.Friends", {
         this.fireEvent("friendsViewRequestsListRefreshed");
     },
     
+    onFriendsViewGroupsListItemSwipe: function(groupsList, index, target, record, event, options) {
+        console.log("in");
+        if (event.direction == "left") {
+            console.log("left_in");
+            var del = Ext.create("Ext.Button", {
+                ui: "decline",
+                text: "Delete",
+                style: "position:absolute;right:0.125in;",
+                handler: function() {
+                    record.stores[0].remove(record);
+                    record.stores[0].sync();
+                }
+            });
+
+            var removeDeleteButton = function() {
+                Ext.Anim.run(del, "fade", {
+                    after: function() {
+                        del.destroy();
+                    },
+                    out: true
+                });
+            };
+            del.renderTo(Ext.DomQuery.selectNode(".deleteplaceholder", target.dom));
+            groupsList.on({
+                single: true,
+                buffer: 250,
+                itemtouchstart: removeDeleteButton
+            });
+            groupsList.element.on({
+                single: true,
+                buffer: 250,
+                touchstart: removeDeleteButton
+            });
+            console.log("left_out")
+        }
+        console.log("out");
+    },
+
     onDeleteLockTap: function(event) {
 		var tappedId = event.getTarget(".deleteLock").getAttribute("groupId");
         if (tappedId) {
