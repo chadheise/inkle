@@ -260,6 +260,10 @@ class Member(User):
         """String representation for the current member."""
         return "%d: %s" % (self.id, self.get_full_name())
 
+    def is_facebook_member(self):
+        """Returns True if the current member logged in using Facebook or False otherwise."""
+        return (self.facebookId != None)
+
     def get_full_name(self):
         """Returns the current member's full name."""
         return "%s %s" % (self.first_name, self.last_name)

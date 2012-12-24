@@ -19,6 +19,8 @@ urlpatterns = patterns(
 
     # Common
     (r"^groups/$", "s_groups_view"),
+    (r"^groupsMainContent/$", "s_groups_main_content_view"),
+    (r"^groupsPanel/$", "s_groups_panel_view"),
     
     # All Inklings
     (r"^allInklings/$", "s_all_inklings_view"),

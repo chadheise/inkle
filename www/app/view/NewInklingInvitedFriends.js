@@ -56,6 +56,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         			{
 						xtype: "list",
 						id: "newInklingInvitedGroupsList",
+                        cls: "groupListPanel",
 						loadingText: "Loading groups...",
 						emptyText: "<div class='emptyListText'>No groups to invite</div>",
 						disableSelection: true,
@@ -70,7 +71,11 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/groups/"
+								url: "http://127.0.0.1:8000/sencha/groupsPanel/",
+                                extraParams: {
+                                    autoSetGroupsAsSelected: "false",
+                                    inklingId: "-1"
+                                }
 							},
 							autoLoad: false
 						}
