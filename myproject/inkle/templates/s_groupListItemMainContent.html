@@ -1,12 +1,14 @@
 <div id="group{{ g.id }}" class="group">
+    <!-- Note: [g.id == -1] represents "Not Grouped" group -->
+
     <!-- Delete lock -->
-    {% if g.id != -1 %}    <!-- g.id == -1 represents "Not Grouped" group -->
+    {% if g.id != -1 %}
         <img id="group{{ g.id }}DeleteLock" class="deleteLock deleteLockHidden" groupId="{{ g.id }}" src="resources/images/delete.png">
     {% endif %}
 
     <!-- Group name -->
     <p id="group{{ g.id }}Name" class="groupName" groupId="{{ g.id }}">{{ g.name }}</p>
-    {% if g.id != -1 %}    <!-- g.id == -1 represents "Not Grouped" group -->
+    {% if g.id != -1 %}
         <input id="group{{ g.id }}NameInput" class="groupNameInput groupNameInputHidden" groupId="{{ g.id }}" value="{{ g.name }}" />
     {% endif %}
 
@@ -26,7 +28,8 @@
     <img id="group{{ g.id }}DisclosureArrow" class="disclosureArrow" groupId="{{ g.id }}" src="resources/images/disclosureArrow.png" />
 
     <!-- Delete button -->
-    {% if g.id != -1 %}    <!-- g.id == -1 represents "Not Grouped" group -->
+    <!--{% if g.id != -1 %}
         <input id="group{{ g.id }}DeleteButton" class="deleteButton deleteButtonHidden" type="button" value="Delete" groupId="{{ g.id }}" />
-    {% endif %}
+    {% endif %}-->
+    <div class="deleteplaceholder"></div>
 </div>

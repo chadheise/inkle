@@ -246,6 +246,7 @@ Ext.define("inkle.view.AllInklings", {
         	{
         		xtype: "panel",
         		id: "allInklingsGroupsListPanel",
+                cls: "groupListPanel",
         		hidden: true,
         		top: 0,
         		width: 300,
@@ -269,9 +270,9 @@ Ext.define("inkle.view.AllInklings", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/groups/",
+								url: "http://127.0.0.1:8000/sencha/groupsPanel/",
 								extraParams: {
-									view: "allInklings"
+									autoSetGroupsAsSelected: "true"
 								}
 							},
 							autoLoad: true

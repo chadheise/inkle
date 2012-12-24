@@ -269,25 +269,9 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
-	/* Toggles the visibility of the delete locks */
+	/* Toggles the visibility of the delete locks (for the friends and groups list) */
 	toggleDeleteLocksVisibility: function(listId, buttonIconCls) {
-		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
-		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
-			if (deleteLock.hasCls("deleteLockHidden")) {
-				deleteLock.removeCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockSlideRight");
-				deleteLock.removeCls("deleteLockHidden");
-			}
-			else {
-				deleteLock.removeCls("deleteLockSlideRight");
-				deleteLock.addCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockHidden");
-			}
-			deleteLock.removeCls("deleteLockRotateLeft");
-			deleteLock.removeCls("deleteLockRotateRight");
-		}
-		
+		// Get the clicked button
 		var button;
 		if (buttonIconCls == "minusFriendIcon") {
 			button = this.getRemoveFriendsButton();
@@ -296,7 +280,7 @@ Ext.define("inkle.controller.FriendsController", {
 			button = this.getEditGroupsButton();
 		}
 		
-		// If the remove friends or edits groups button (aka not the "Done" button) was pressed 
+		// If the remove friends or edits groups button (aka not the "Done" button) was clicked 
 		if (button.getIconMask()) {
 			// Update the button into a "Done" button
 			button.setIconMask(false);
@@ -311,6 +295,7 @@ Ext.define("inkle.controller.FriendsController", {
 				this.getCreateGroupButton().hide();
 			}		
 			
+			// Hide the disclosure arrows by sliding them to the right
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
 				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
@@ -335,7 +320,7 @@ Ext.define("inkle.controller.FriendsController", {
 			}
 		}
 		
-		// Otherwise, the "Done" button was pressed
+		// Otherwise, the "Done" button was clicked
 		else {
 		    // Update the button from a "Done" button to an icon button
 			button.setText("");
@@ -362,6 +347,7 @@ Ext.define("inkle.controller.FriendsController", {
 				}
 			}
 			
+			// Unhide the disclosure arrows by sliding them to the left
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
 				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
@@ -371,17 +357,37 @@ Ext.define("inkle.controller.FriendsController", {
 				disclosureArrow.addCls("disclosureArrowSlideLeft");
 			}
 			
+			// Hide the group name inputs
 			var groupNameInputs = Ext.query("#" + listId + " .groupNameInput");
 			for (var i = 0; i < groupNameInputs.length; i++) {
 				var groupNameInput = Ext.fly(groupNameInputs[i].getAttribute("id"));
 				groupNameInput.addCls("groupNameInputHidden");
 			}
 			
+			// Unhide the group names
 			var groupNames = Ext.query("#" + listId + " .groupName");
 			for (var i = 0; i < groupNames.length; i++) {
 				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
 				groupName.removeCls("groupNameHidden");
 			}
+		}
+
+		// Toggle the visibility of the delete locks
+		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
+		for (var i = 0; i < deleteLocks.length; i++) {
+			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+			if (deleteLock.hasCls("deleteLockHidden")) {
+				deleteLock.removeCls("deleteLockHidden");
+				deleteLock.removeCls("deleteLockSlideLeft");
+				deleteLock.addCls("deleteLockSlideRight");
+			}
+			else {
+				deleteLock.removeCls("deleteLockSlideRight");
+				deleteLock.addCls("deleteLockSlideLeft");
+				deleteLock.addCls("deleteLockHidden");
+			}
+			deleteLock.removeCls("deleteLockRotateLeft");
+			deleteLock.removeCls("deleteLockRotateRight");
 		}
 	},
 	
