@@ -110,7 +110,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewFriendsList",
-                        cls: "memberList",
+                        cls: "membersList",
 						loadingText: "Loading friends...",
 						emptyText: "<div class='emptyListText'>No friends</div>",
 						grouped: true,
@@ -156,7 +156,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewGroupsList",
-                        cls: "groupListMainContent",
+                        cls: "groupsListMainContent",
 						loadingText: "Loading groups...",
 						emptyText: "<div class='emptyListText'>No groups</div>",
 						disableSelection: true,

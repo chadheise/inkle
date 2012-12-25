@@ -1127,7 +1127,7 @@ def s_num_inkling_invitations_view(request):
 
 @csrf_exempt
 def s_inkling_invitations_view(request):
-    """Returns a list of the inklings to which the logged-in member has pending invitations."""
+    """Returns a list of the inkling invitations to which the logged-in member has not yet responded."""
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
@@ -1142,18 +1142,20 @@ def s_inkling_invitations_view(request):
         })
         
         response_invitations.append({
-            "id" : invitation.id,
+            "invitationId" : invitation.id,
+            "inklingId" : invitation.inkling.id,
             "html": html
         })
 
-    # Add the inklings to which the logged-in members has passed invitations
+    # Add the inklings to which the logged-in members has missed invitations
     for invitation in member.inkling_invitations_received.filter(status = "missed"):
         html = render_to_string( "s_inklingInvitationListItem.html", {
             "invitation" : invitation
         })
         
         response_invitations.append({
-            "id" : invitation.id,
+            "invitationId" : invitation.id,
+            "inklingId" : invitation.inkling.id,
             "html": html
         })
     

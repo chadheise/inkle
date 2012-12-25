@@ -197,12 +197,12 @@ $badge-bg-gradient: "matte";
 /*  LISTS  */
 /***********/
 /* Inkling list */
-.inklingList .x-list-item-label {
+.inklingsList .x-list-item-label {
 	height: 60px !important;
 	padding: 5px !important;
 }
 
-.inklingList .location {
+.inklingsList .location {
 	margin-top: -3px;
 	color: $mediumBlue;
 	font-weight: bold;
@@ -212,7 +212,7 @@ $badge-bg-gradient: "matte";
 	text-overflow: ellipsis;
 }
 
-.inklingList .time {
+.inklingsList .time {
     float: left;
     color: $mediumGray;
     font-size: 18px;
@@ -222,34 +222,120 @@ $badge-bg-gradient: "matte";
 	text-overflow: ellipsis;
 }
 
-.inklingList .dot {
+.inklingsList .dot {
 	float: left;
 	color: $mediumGray;
 	margin: 0px 5px 0px 5px;
 }
 
-.inklingList .attendingMemberThumbnail {
+.inklingsList .attendingMemberThumbnail {
     float: left;
     margin: 2px 5px 0px 0px;
     height: 20px;
     width: 20px;
 }
 
-.inklingList .numOtherMembersAttending {
+.inklingsList .numOtherMembersAttending {
     float: left;
     margin-top: 3px;
     color: $mediumGray;
     font-size: 14px;
 }
 
+/* Inkling invitations list */
+.inklingInvitationsList .x-list-item-label {
+	height: 90px !important;
+	padding: 5px !important;
+}
+
+.inklingInvitationsList .location {
+	margin-top: -3px;
+	color: $mediumBlue;
+	font-weight: bold;
+	font-size: 24px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .time {
+    float: left;
+    color: $mediumGray;
+    font-size: 18px;
+    max-width: 145px;
+    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .date {
+    float: left;
+    clear: right;
+    color: $mediumGray;
+    font-size: 18px;
+    max-width: 145px;
+    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .dot {
+	float: left;
+	color: $mediumGray;
+	margin: 0px 5px 0px 5px;
+}
+
+.inklingInvitationsList .attendingMemberThumbnail {
+    float: left;
+    margin: 2px 5px 0px 0px;
+    height: 20px;
+    width: 20px;
+}
+
+.inklingInvitationsList .numOtherMembersAttending {
+    float: left;
+    margin-top: 3px;
+    color: $mediumGray;
+    font-size: 14px;
+}
+
+.inklingInvitationsList input[type="button"] {
+	color: #FFFFFF;
+	border-radius: 3px !important;
+	float: left;
+}
+
+.inklingInvitationsList .acceptInklingInvitationButton {
+	clear: left;
+	margin-right: 10px;
+	background-color: $mediumGreen !important;
+	border: solid 1px $darkestGreen !important;
+}
+
+.inklingInvitationsList .ignoreInklingInvitationButton {
+	background-color: $mediumRed !important;
+	border: solid 1px $darkestRed !important;
+}
+
+.inklingInvitationsList .hideInklingInvitationButton {
+	clear: left;
+	background-color: $mediumBlue !important;
+	border: solid 1px $darkestBlue !important;
+}
+
+.inklingInvitationsList .disclosureArrow {
+	float: right;
+	margin: -17px 3px 0px 0px;
+}
+
 /* Group list (main content) */
-.groupListMainContent .x-list-item-label {
+.groupsListMainContent .x-list-item-label {
 	height: 60px !important;
 	padding: 5px !important;
 	background-color: #FFFFFF;
 }
 
-.groupListMainContent .groupName {
+.groupsListMainContent .groupName {
 	margin-top: -3px;
 	width: 270px;
 	color: $mediumBlue;
@@ -260,26 +346,26 @@ $badge-bg-gradient: "matte";
 	text-overflow: ellipsis;
 }
 
-.groupListMainContent .groupMemberThumbnail {
+.groupsListMainContent .groupMemberThumbnail {
     float: left;
     margin: 2px 5px 0px 0px;
     height: 20px;
     width: 20px;
 }
 
-.groupListMainContent .numOtherGroupMembers {
+.groupsListMainContent .numOtherGroupMembers {
     float: left;
     margin-top: 3px;
     color: $mediumGray;
     font-size: 14px;
 }
 
-.groupListMainContent .disclosureArrow {
+.groupsListMainContent .disclosureArrow {
 	float: right;
 	margin: -10px 3px 0px 0px;
 }
 
-.groupListMainContent .groupNameInput {
+.groupsListMainContent .groupNameInput {
 	margin-top: -3px;
 	width: 270px;
 	color: $mediumBlue;
@@ -289,17 +375,17 @@ $badge-bg-gradient: "matte";
 	background-color: #FFFFFF;
 }
 
-.groupListMainContent .groupNameHidden, .groupListMainContent .groupNameInputHidden {
+.groupsListMainContent .groupNameHidden, .groupsListMainContent .groupNameInputHidden {
 	display: none;
 }
 
 /* Group list (panel) */
-.groupListPanel .selectionButton {
+.groupsListPanel .selectionButton {
 	float: left;
 	margin: -4px 5px 0px -10px;
 }
 
-.groupListPanel .groupName {
+.groupsListPanel .groupName {
 	font-weight: bold;
 	color: $mediumBlue;
 	font-weight: bold;
@@ -310,14 +396,14 @@ $badge-bg-gradient: "matte";
 }
 
 /* Member list */
-.memberList .x-list-item-label {
+.membersList .x-list-item-label {
 	height: 60px;
 	padding: 5px 55px 5px 5px;
 	margin-right: -50px;
 	border: solid red 1px;
 }
 
-.memberList .memberImage {
+.membersList .memberImage {
 	float: left;
 	height: 50px;
 	width: 50px;
@@ -325,7 +411,7 @@ $badge-bg-gradient: "matte";
 	border: solid green 1px;
 }
 
-.memberList .memberInfo {
+.membersList .memberInfo {
 	float: left;
 	width: 87%;
 	padding-left: 55px;
@@ -333,7 +419,7 @@ $badge-bg-gradient: "matte";
 	border: solid blue 1px;
 }
 
-.memberList .name {
+.membersList .name {
 	font-size: 22px;
 	color: $mediumBlue;
 	overflow: hidden;
@@ -341,11 +427,11 @@ $badge-bg-gradient: "matte";
 	text-overflow: ellipsis;
 }
 
-.memberList .lastName {
+.membersList .lastName {
 	font-weight: bold;
 }
 
-.memberList .mutualFriends {
+.membersList .mutualFriends {
 	font-size: 16px;
 	color: $mediumGray;
 }
