@@ -50,7 +50,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         		id: "newInklingInvitedGroupsPanel",
         		hidden: true,
         		width: 250,
-        		height: 300,
+        		height: 310,
         		layout: "fit",
         		items: [
         			{
@@ -63,7 +63,6 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 						itemTpl: "{ html }",
 						store: {
 							fields: [
-								"id",
 								"html"
 							],
 							proxy: {
@@ -86,15 +85,15 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 					{
 						event: "tap",
 						element: "element",
-						delegate: ".group .selectionButton",
+						delegate: ".selectionButton",
 						fn: "onGroupSelectionButtonTap"
 					},
 				],
 				
 				// Event firings
 				onGroupSelectionButtonTap: function(event, target) {
-					var groupId = event.getTarget(".selectionButton").getAttribute("groupId");
 					var groupSelectionButton = Ext.fly(target);
+                    var groupId = groupSelectionButton.parent(".group").getAttribute("data-groupId");
 					this.fireEvent("groupSelectionButtonTapped", groupSelectionButton, groupId, "Group");
 				}
         	}

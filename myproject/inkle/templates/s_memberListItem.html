@@ -1,5 +1,5 @@
 <!--<div id="member{{ m.id }}" class="member">-->
-<div class="memberListItem">
+<div class="memberListItem member" data-memberId="{{ m.id }}">
     <!-- Left-hand items -->
     {% if include_delete_items %}
         <img id="member{{ m.id }}DeleteLock" class="deleteLock deleteLockHidden" memberId="{{ m.id }}" src="resources/images/delete.png">
