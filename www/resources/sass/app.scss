@@ -246,11 +246,12 @@ $badge-bg-gradient: "matte";
 .groupListMainContent .x-list-item-label {
 	height: 60px !important;
 	padding: 5px !important;
+	background-color: #FFFFFF;
 }
 
 .groupListMainContent .groupName {
 	margin-top: -3px;
-	width: 95%;
+	width: 270px;
 	color: $mediumBlue;
 	font-weight: bold;
 	font-size: 24px;
@@ -278,6 +279,20 @@ $badge-bg-gradient: "matte";
 	margin: -10px 3px 0px 0px;
 }
 
+.groupListMainContent .groupNameInput {
+	margin-top: -3px;
+	width: 270px;
+	color: $mediumBlue;
+	font-weight: bold;
+	font-size: 24px;
+	border-width: 0px;
+	background-color: #FFFFFF;
+}
+
+.groupListMainContent .groupNameHidden, .groupListMainContent .groupNameInputHidden {
+	display: none;
+}
+
 /* Group list (panel) */
 .groupListPanel .selectionButton {
 	float: left;
@@ -292,18 +307,6 @@ $badge-bg-gradient: "matte";
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-}
-
-.groupListPanel .groupNameHidden, .groupListPanel .groupNameInputHidden {
-	display: none;
-	width: 0px;
-}
-
-.groupListPanel .groupNameInput {
-	font-size: 20px;
-	font-weight: bold;
-	border-width: 0px;
-	width: 220px;
 }
 
 /* Member list */
@@ -381,11 +384,11 @@ $badge-bg-gradient: "matte";
 }
 
 .deleteLockSlideLeft {
-	-webkit-animation: deleteLockSlideLeftAnimation 1.0s 1; 
+	-webkit-animation: deleteLockSlideLeftAnimation 0.5s 1; 
 }
 
 .deleteLockSlideRight {
-	-webkit-animation: deleteLockSlideRightAnimation 1.0s 1; 
+	-webkit-animation: deleteLockSlideRightAnimation 0.5s 1; 
 }
 
 @-webkit-keyframes deleteLockSlideLeftAnimation {

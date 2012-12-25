@@ -481,13 +481,13 @@ def s_all_inklings_view(request):
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-
+    
     # Determine if we should return dated or no-dated inklings
     try:
         onlyIncludeNoDatedInklings = request.POST["onlyIncludeNoDatedInklings"]
     except:
         onlyIncludeNoDatedInklings = "false"
-
+    
     # If necessary, get the date, or set it to today if no date is specified
     if (onlyIncludeNoDatedInklings == "false"):
         try:
@@ -502,25 +502,31 @@ def s_all_inklings_view(request):
     
     # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
     if ("selectedGroupIds" in request.POST):
-        members = get_members_from_groups(member, request.POST["selectedGroupIds"].split(",")[:-1])
+        selected_group_ids = request.POST["selectedGroupIds"]
+        if (selected_group_ids):
+            selected_group_ids = selected_group_ids.split(",")[:-1]
+        members = get_members_from_groups(member, selected_group_ids)
     else:
         members = list(member.friends.filter(is_active = True))
     
     # Append the logged-in member to the members list
     members.append(member)
-
+    
     # Get the inklings the members are attending on the specified date
     inklings = []
     for m in members:
         for i in m.inklings.filter(date = date):
             if i not in inklings:
-                try:
-                    sp = SharingPermission.objects.get(creator = m, inkling = i)
-                except:
-                    raise Http404()
-
-                if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
+                if (m == member):
                     inklings.append(i)
+                else:
+                    try:
+                        sp = SharingPermission.objects.get(creator = m, inkling = i)
+                    except:
+                        raise Http404()
+
+                    if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
+                        inklings.append(i)
 
     # Get the HTML for every inkling
     response_inklings = []
@@ -530,7 +536,7 @@ def s_all_inklings_view(request):
             "html" : get_inkling_list_item_html(i),
             "numMembersAttending" : i.get_num_members_attending()
         })
-
+    
     # Sort the inklings according to their number of attendees
     response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
 
@@ -548,37 +554,35 @@ def s_groups_panel_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    print "a"
-
     # Get whether or not the groups should automatically be set as selected
     try:
         auto_set_groups_as_selected = (request.POST["autoSetGroupsAsSelected"] == "true")
     except:
         raise Http404()
-    print "b"
+    
     # Get the current inkling if we are in the invites view
     if (not auto_set_groups_as_selected):
         try:
             inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         except:
             raise Http404()
-    print "c"
+    
     # Create a list to hold the response data
     response_groups = []
-    print "d"
+    
     # Get an alphabetical list of the logged-in member's groups
     groups = list(member.group_set.all())
     groups.sort(key = lambda g : g.name)
-    print "e"
+    
     # Get a list of the logged-in member's not grouped friends
     not_grouped_members = get_not_grouped_members(member, groups)
-    print "f"
+    
     # Create the "Not Grouped" group
     not_grouped_group = {
         "id" : -1,
         "name" : "Not Grouped"
     }
-    print "g"
+    
     # Determine if the "Not Grouped" group should be selected
     not_grouped_group["selected"] = True
     if (not auto_set_groups_as_selected):
@@ -586,29 +590,27 @@ def s_groups_panel_view(request):
             if (not inkling.member_has_pending_invitation(m)):
                 not_grouped_group["selected"] = False
                 break
-    print "h"
+    
     # Add the "Not Grouped" group to the response list
     response_groups.append({
-        "id" : not_grouped_group["id"],
         "html" : get_group_list_item_panel_html(not_grouped_group, not_grouped_members)
     })
-    print "i"
+    
     # Get the HTML for the logged-in member's groups
     for g in groups:
-        print "i1"
+        
         g.selected = True
         if (not auto_set_groups_as_selected):
             for m in g.members.all():
                 if (not inkling.member_has_pending_invitation(m)):
                     g.selected = False
                     break
-        print "i2"
+        
         response_groups.append({
             "id" : g.id,
             "html" : get_group_list_item_panel_html(g)
         })
-        print "i3"
-    print "j"
+
     # Create and return a JSON object
     response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")

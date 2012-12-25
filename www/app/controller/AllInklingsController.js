@@ -141,11 +141,11 @@ Ext.define("inkle.controller.AllInklingsController", {
 		var groupSelectionButtons = Ext.query("#allInklingsGroupsList .selectionButton");
 		for (var i = 0; i < groupSelectionButtons.length; i++) {
 			var groupSelectionButton = Ext.fly(groupSelectionButtons[i]);
-			if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
-				selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
+			if (groupSelectionButton.hasCls("selected")) {
+				selectedGroupIds = selectedGroupIds + groupSelectionButton.parent(".group").getAttribute("data-groupId") + ",";
 			}
 		}
-        
+
     	// Update the all inklings list
 		var allInklingsListStore = this.getAllInklingsList().getStore();
 		allInklingsListStore.setProxy({
@@ -224,15 +224,17 @@ Ext.define("inkle.controller.AllInklingsController", {
 	/* Toggles the state of the inputted group selection button and updates the all inklings list */
     toggleGroupSelectionButton: function(groupSelectionButton) {
 		// Toggle the selection button's image source
-		if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+		if (groupSelectionButton.hasCls("selected")) {
 			groupSelectionButton.set({
 				"src": "resources/images/deselected.png"
 			});
+            groupSelectionButton.removeCls("selected");
 		}
 		else {
 			groupSelectionButton.set({
 				"src": "resources/images/selected.png"
 			});
+            groupSelectionButton.addCls("selected");
 		}
 		
 		// Update the all inklings list

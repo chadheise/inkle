@@ -281,11 +281,17 @@ Ext.define("inkle.view.Friends", {
 				delegate: ".deleteLock",
 				fn: "onDeleteLockTap"
         	},
+            {
+                event: "tap",
+                element: "element",
+                delegate: "#friendsViewFriendsList .deleteButton",
+                fn: "onFriendDeleteButtonTap"
+            },
         	{
 				event: "tap",
 				element: "element",
-				delegate: ".deleteButton",
-				fn: "onDeleteButtonTap"
+				delegate: "#friendsViewGroupsList .deleteButton",
+				fn: "onGroupDeleteButtonTap"
         	},
         	{
 				event: "blur",
@@ -385,26 +391,16 @@ Ext.define("inkle.view.Friends", {
         console.log("out");
     },
 
-    onDeleteLockTap: function(event) {
-		var tappedId = event.getTarget(".deleteLock").getAttribute("groupId");
-        if (tappedId) {
-        	tappedId = "group" + tappedId;
-        }
-        else {
-        	tappedId = event.getTarget(".deleteLock").getAttribute("memberId");
-        	tappedId = "member" + tappedId;
-        }
-        this.fireEvent("deleteLockTapped", tappedId);
+    onDeleteLockTap: function(event, target) {
+        this.fireEvent("deleteLockTapped", Ext.fly(target));
     },
     
-    onDeleteButtonTap: function(event) {
-		var tappedId = event.getTarget(".deleteButton").getAttribute("groupId");
-		var idType = "group";
-		if (tappedId == null) {
-        	tappedId = event.getTarget(".deleteButton").getAttribute("memberId");
-        	idType = "member"
-        }
-        this.fireEvent("deleteButtonTapped", tappedId, idType);
+    onFriendDeleteButtonTap: function(event, target) {
+		this.fireEvent("friendDeleteButtonTapped", Ext.fly(target));
+    },
+
+    onGroupDeleteButtonTap: function(event, target) {
+        this.fireEvent("groupDeleteButtonTapped", Ext.fly(target));
     },
     
     onFriendsViewGroupsListItemTap: function(groupsList, index, target, record, event, options) {
@@ -414,8 +410,8 @@ Ext.define("inkle.view.Friends", {
     	}
     },
     
-    onGroupNameInputBlurred: function(event) {
-    	var groupId = event.getTarget(".groupNameInput").getAttribute("groupId");
+    onGroupNameInputBlurred: function(event, target) {
+    	var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
     	this.fireEvent("groupNameInputBlurred", groupId);
     },
     
