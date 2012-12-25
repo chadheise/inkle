@@ -48,6 +48,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         	{
         		xtype: "panel",
         		id: "newInklingInvitedGroupsPanel",
+                cls: "groupsListPanel",
         		hidden: true,
         		width: 250,
         		height: 310,

@@ -464,6 +464,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	respondToInklingInvitation: function(invitationId, invitationResponse) {
+        console.log(invitationId);
+        console.log(invitationResponse);
 	    Ext.Ajax.request({
             url: "http://127.0.0.1:8000/sencha/respondToInklingInvitation/",
             params: {

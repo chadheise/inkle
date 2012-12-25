@@ -131,7 +131,7 @@ Ext.define("inkle.view.AllInklings", {
     		{
     			xtype: "list",
 				id: "allInklingsList",
-                cls: "inklingList",
+                cls: "inklingsList",
 				loadingText: "Loading inklings...",
 				emptyText: "<div class='emptyListText'>No inklings</div>",
 				disableSelection: true,
@@ -246,7 +246,7 @@ Ext.define("inkle.view.AllInklings", {
         	{
         		xtype: "panel",
         		id: "allInklingsGroupsListPanel",
-                cls: "groupListPanel",
+                cls: "groupsListPanel",
         		hidden: true,
         		top: 0,
         		width: 310,
