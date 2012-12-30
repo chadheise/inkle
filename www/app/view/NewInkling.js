@@ -73,7 +73,7 @@ Ext.define("inkle.view.NewInkling", {
     	    },
 			{
 			    xtype: "htmlcontainer",
-			    url: "http://127.0.0.1:8000/sencha/newInklingPrivacyForm/"
+			    url: "http://127.0.0.1:8000/sencha/shareSettingsForm/"
 			},
 			
 			// Privacy form fields

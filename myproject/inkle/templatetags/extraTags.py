@@ -10,6 +10,14 @@ from myproject.settings import DEBUG
 
 register = template.Library()
 
+from django.template import Library
+
+register = Library()
+
+@register.filter()
+def is_false(arg): 
+    return arg is False
+
 @register.filter()
 @stringfilter
 def truncate_characters(value, arg):

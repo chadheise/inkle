@@ -679,24 +679,24 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*  NEW INKLING VIEW  */
 /**********************/
-#newInklingPrivacyForm #selectedGroupsHeader, #newInklingPrivacyForm #noOne,  #newInklingPrivacyForm #forwarding {
+#shareSettingsForm #selectedGroupsHeader, #shareSettingsForm #noOne,  #shareSettingsForm #forwarding {
     clear: both;
 }
 
-#newInklingPrivacyForm #forwarding {
+#shareSettingsForm #forwarding {
     margin-top: 25px;
 }
 
-#newInklingPrivacyForm .selectedGroupsGroup {
+#shareSettingsForm .selectedGroupsGroup {
     clear: both;
 }
 
-#newInklingPrivacyForm .selectionItem {
+#shareSettingsForm .selectionItem {
 	float: left;
 	padding: 0px;
 }
 
-#newInklingPrivacyForm .selectedGroupsGroup .selectionItem {
+#shareSettingsForm .selectedGroupsGroup .selectionItem {
 	margin-left: 25px;
 }
 

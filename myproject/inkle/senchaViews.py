@@ -669,7 +669,7 @@ def s_inkling_view(request):
         context_instance = RequestContext(request) )
 
 @csrf_exempt
-def s_new_inkling_privacy_form_view(request):
+def s_share_settings_form_view(request):
     """Returns the HTML for a single inkling"""
     # Get the logged-in member
     try:
@@ -678,7 +678,7 @@ def s_new_inkling_privacy_form_view(request):
         raise Http404()
 
     # Return the HTML for the current inkling
-    return render_to_response( "s_newInklingPrivacyForm.html",
+    return render_to_response( "s_shareSettingsForm.html",
         { "member" : member },
         context_instance = RequestContext(request) )
 

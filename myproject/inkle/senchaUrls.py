@@ -43,7 +43,7 @@ urlpatterns = patterns(
     (r"^uninviteGroup/$", "s_uninvite_group_view"),
     (r"^numInklingInvitations/$", "s_num_inkling_invitations_view"),
     (r"^inklingInvitations/$", "s_inkling_invitations_view"),
-    (r"^newInklingPrivacyForm/$", "s_new_inkling_privacy_form_view"),
+    (r"^shareSettingsForm/$", "s_share_settings_form_view"),
     (r"^respondToInklingInvitation/$", "s_respond_to_inkling_invitation_view"),
 
     (r"^friends/$", "s_friends_view"),
