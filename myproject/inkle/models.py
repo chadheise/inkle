@@ -252,6 +252,7 @@ class Member(User):
     inklings = models.ManyToManyField(Inkling)
 
     # Inkling default share settings
+    shareWithSelectedGroups = models.BooleanField(default=True)
     allowInklingAttendeesToShare = models.BooleanField(default=False)
     # Group share settings are part of the Group object
 
