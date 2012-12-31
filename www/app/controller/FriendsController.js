@@ -43,8 +43,6 @@ Ext.define("inkle.controller.FriendsController", {
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
            		deleteLockTapped: "toggleDeleteButtonVisibility",
-           		friendDeleteButtonTapped: "deleteFriendListItem",
-                groupDeleteButtonTapped: "deleteGroupListItem",
            		groupNameInputBlurred: "renameGroup",
            		
            		acceptRequestButtonTapped: "respondToRequest",
@@ -102,7 +100,7 @@ Ext.define("inkle.controller.FriendsController", {
         // Hide the delete locks
         var deleteLocks = Ext.query(".deleteLock");
 		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+			var deleteLock = Ext.fly(deleteLocks[i]);
 			deleteLock.removeCls("deleteLockSlideRight");
 			deleteLock.removeCls("deleteLockSlideLeft");
 			deleteLock.addCls("deleteLockHidden");
@@ -111,7 +109,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Hide the delete buttons
 		var deleteButtons = Ext.query(".deleteButton");
 		for (var i = 0; i < deleteButtons.length; i++) {
-			var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+			var deleteButton = Ext.fly(deleteButtons[i]);
 			deleteButton.removeCls("deleteButtonSlideLeft");
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.addCls("deleteButtonHidden");
@@ -152,7 +150,7 @@ Ext.define("inkle.controller.FriendsController", {
 			// Hide the delete locks
 			var deleteLocks = Ext.query(".deleteLock");
 			for (var i = 0; i < deleteLocks.length; i++) {
-				var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+				var deleteLock = Ext.fly(deleteLocks[i]);
 				deleteLock.removeCls("deleteLockSlideRight");
 				deleteLock.removeCls("deleteLockSlideLeft");
 				deleteLock.addCls("deleteLockHidden");
@@ -161,7 +159,7 @@ Ext.define("inkle.controller.FriendsController", {
 			// Hide the delete buttons
 			var deleteButtons = Ext.query(".deleteButton");
 			for (var i = 0; i < deleteButtons.length; i++) {
-				var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+				var deleteButton = Ext.fly(deleteButtons[i]);
 				deleteButton.removeCls("deleteButtonSlideLeft");
 				deleteButton.removeCls("deleteButtonSlideRight");
 				deleteButton.addCls("deleteButtonHidden");
@@ -403,9 +401,9 @@ Ext.define("inkle.controller.FriendsController", {
 		for (var i = 0; i < deleteLocks.length; i++) {
 			var deleteLock = Ext.fly(deleteLocks[i]);
 			if (deleteLock.hasCls("deleteLockHidden")) {
-				deleteLock.removeCls("deleteLockHidden");
 				deleteLock.removeCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockSlideRight");
+                deleteLock.removeCls("deleteLockHidden");
+                deleteLock.addCls("deleteLockSlideRight");
 			}
 			else {
 				deleteLock.removeCls("deleteLockSlideRight");
@@ -418,7 +416,7 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	/* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
-	toggleDeleteButtonVisibility: function(tappedDeleteLock) {
+	/*toggleDeleteButtonVisibility: function(tappedDeleteLock) {
 		// Get the delete button associated with the tapped delete lock
         try {
             var deleteButton = tappedDeleteLock.parent(".group").child(".deleteButton");
@@ -444,58 +442,86 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteButton.removeCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideLeft");
         }
-	},
-	
-    /* Removes the friend associated with the tapped delete button from the logged-in member's friends list */
-	deleteFriendListItem: function(tappedDeleteButton) {
-		// Get the member ID associated with the tapped delete button
-        var tappedId = tappedDeleteButton.parent(".member").getAttribute("data-memberId");
-        
-        // Remove the friend associated with the tapped delete button from the logged-in member's friends list
-        Ext.Ajax.request({
-			url: "http://127.0.0.1:8000/sencha/removeFriend/",
-			params: {
-				memberId: tappedId
-			},
-            success: function(response) {
-                // Remove the coresponding record from the friends list
-                var friendsStore = this.getFriendsList().getStore();
-                var record = friendsStore.findRecord("id", tappedId);
-                friendsStore.remove(record);
-            },
-			failure: function(response) {
-                console.log(response.responseText);
-				Ext.Msg.alert("Error", "Unable to remove friend at this moment. Please try again later.");
-			}, 
-            scope: this
-		});
+    },*/
+
+    /* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
+    toggleDeleteButtonVisibility: function(list, tappedListItem, tappedDeleteLock, tappedRecord) {
+        // Update variables depending on the list type of the tapped delete lock
+        var tappedId, url;
+        if (tappedDeleteLock.parent(".group")) {
+            tappedId = tappedDeleteLock.parent(".group").getAttribute("data-groupId");
+            url = "http://127.0.0.1:8000/sencha/deleteGroup/";
+        }
+        else {
+            tappedId = tappedDeleteLock.parent(".member").getAttribute("data-memberId");
+            url = "http://127.0.0.1:8000/sencha/removeFriend/";
+        }
+
+        // "Lock" the tapped delete lock if it is already "unlocked"
+        if (tappedDeleteLock.hasCls("deleteLockRotateLeft")) {
+            tappedDeleteLock.removeCls("deleteLockRotateLeft");
+            tappedDeleteLock.addCls("deleteLockRotateRight");
+        }
+
+        // Otherwise, "unlock" the tapped delete lock and create the corresponding delete button
+        else {
+            tappedDeleteLock.removeCls("deleteLockRotateRight");
+            tappedDeleteLock.addCls("deleteLockRotateLeft");
+
+            // Create the corresponding delete button
+            var deleteButton = Ext.create("Ext.Button", {
+                text: "Delete",
+                cls: "listDeleteButton",
+                handler: function() {
+                    // Remove the corresponding item from the logged-in member's friends or groups list
+                    Ext.Ajax.request({
+                        url: url,
+                        params: {
+                            groupId: tappedId,
+                            memberId: tappedId
+                        },
+                        success: function(response) {
+                            // Remove the tapped record from the store
+                            tappedRecord.stores[0].remove(tappedRecord);
+                        },
+                        failure: function(response) {
+                            console.log(response.resonseText);
+                            Ext.Msg.alert("Error", "Unable to delete item at this moment. Please try again later.");
+                        },
+                        scope: this
+                    });
+                }
+            });
+
+            // Add the delete button to the list item
+            deleteButton.renderTo(Ext.DomQuery.selectNode(".deleteButtonPlaceholder", tappedListItem.dom));
+
+            // Add a handler to remove the delete button when a touch event occurs in the corresponding list
+            var removeDeleteButton = function() {
+                /*Ext.Anim.run(deleteButton, "fade", {
+                    after: function() {*/
+                        deleteButton.destroy();
+                        tappedDeleteLock.removeCls("deleteLockRotateLeft");
+                        tappedDeleteLock.addCls("deleteLockRotateRight");
+                    /*},
+                    out: true
+                });*/
+            };
+            
+            list.on({
+                single: true,
+                buffer: 250,
+                itemtouchstart: removeDeleteButton
+            });
+
+            list.element.on({
+                single: true,
+                buffer: 250,
+                touchstart: removeDeleteButton
+            });
+        }
 	},
 
-    /* Removes the group associated with the tapped delete button from the logged-in member's groups list */
-    deleteGroupListItem: function(tappedDeleteButton) {
-        // Get the ID of the tapped group list item
-        var tappedId = tappedDeleteButton.parent(".group").getAttribute("data-groupId");
-
-        // Remove the group associated with the tapped delete button from the logged-in member's groups list
-        Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/sencha/deleteGroup/",
-            params: {
-                groupId: tappedId
-            },
-            success: function(response) {
-                // Remove the corresponding record from the friends list
-                var groupsStore = this.getGroupsList().getStore();
-                var record = groupsStore.findRecord("id", tappedId);
-                groupsStore.remove(record);
-            },
-            failure: function(response) {
-                console.log(response.resonseText);
-                Ext.Msg.alert("Error", "Unable to delete group at this moment. Please try again later.");
-            },
-            scope: this
-        });
-    },
-	
 	/* Creates a new group, puts the groups list in edit mode, and sets the focus on the new group */
 	createGroup: function() {
 		Ext.Ajax.request({
@@ -661,44 +687,54 @@ Ext.define("inkle.controller.FriendsController", {
 		});
 	},
 	
-	toggleSelectionItem: function(memberId) {
-		var selectionItem = Ext.fly("member" + memberId + "SelectionItem");
-		var selectionItemSrc = selectionItem.getAttribute("src");
+    /* Toggles the tapped selection item's state and the membership of corresponding member in the current group */
+	toggleSelectionItem: function(tappedSelectionItem) {
+        // Get the member and gropu IDs associate with the tapped selection item 
+		var memberId = tappedSelectionItem.parent(".member").getAttribute("data-memberId");
+		var groupId = this.getGroupMembersView().getData()["groupId"];
 
-		if (selectionItemSrc == "resources/images/selected.png") {
-			selectionItem.set({
-				"src" : "resources/images/deselected.png"
-			});
-			
+        // Toggle the selection item and the memsber's membership in the group
+		if (tappedSelectionItem.hasCls("selected")) {	
 			Ext.Ajax.request({
 				url: "http://127.0.0.1:8000/sencha/removeFromGroup/",
 				params: {
 					memberId: memberId,
-					groupId: this.getGroupMembersView().getData()["groupId"]
+					groupId: groupId
 				},
+                success: function(response) {
+                    tappedSelectionItem.set({
+                        "src" : "resources/images/deselected.png"
+                    });
+                },
 				failure: function(response) {
 					console.log(response.responseText);
-					Ext.Msg.alert("Error", response.responseText);
-	        	}
+					Ext.Msg.alert("Error", "Unable to remove this member from your group. Please try again later.");
+	        	},
+                scope: this
 			});
 		}
 		else {
-			selectionItem.set({
-				"src" : "resources/images/selected.png"
-			});
-			
 			Ext.Ajax.request({
 				url: "http://127.0.0.1:8000/sencha/addToGroup/",
 				params: {
 					memberId: memberId,
-					groupId: this.getGroupMembersView().getData()["groupId"]
+					groupId: groupId
 				},
+                success: function(response) {
+                    tappedSelectionItem.set({
+                        "src" : "resources/images/selected.png"
+                    });
+                },
 				failure: function(response) {
 					console.log(response.responseText);
-					Ext.Msg.alert("Error", response.responseText);
-	        	}
+					Ext.Msg.alert("Error", "Unable to add this member to your group. Please try again later.");
+	        	},
+                scope: this
 			});
 		}
+
+        // Toggle the tapped selection item's state
+        tappedSelectionItem.toggleCls("selected");
 	},
 	
 	respondToRequest: function(memberId, response) {
@@ -719,7 +755,7 @@ Ext.define("inkle.controller.FriendsController", {
 				}
 				
 				this.updateFriendsList();
-				this.updatedRequestsList();
+				this.updateRequestsList();
     		},
         	failure: function(response) {
         		console.log(response.responseText);
@@ -738,6 +774,6 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	updateRequestsList: function() {
-	    this.getRequestsList().getStore().load();
+        this.getRequestsList().getStore().load();
 	}
 });

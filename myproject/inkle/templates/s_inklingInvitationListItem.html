@@ -6,16 +6,8 @@
     {% if invitation.inkling.time %}
         <p class="time">{{ invitation.inkling.time }}</p>
         <p class="dot">&middot</p>
-        <p class="date">{{ invitation.inkling.date }}</p>
     {% endif %}
-
-    <!-- Members attending -->
-    {% for m in members_attending %}
-        <img class="attendingMemberThumbnail" src="{{ m.get_picture_path }}" />
-    {% endfor %}
-    {% if num_other_members_attending > 0 %}
-        <p class="numOtherMembersAttending">+{{ num_other_members_attending }}</p>
-    {% endif %}
+    <p class="date">{{ invitation.inkling.date|default:"No date" }}</p>
 
     <!-- Invitation response buttons -->
     {% if invitation.status == "pending" %}

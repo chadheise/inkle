@@ -1,6 +1,6 @@
 <div class="group" data-groupId="{{ g.id }}">
     <!-- Note: [g.id == -1] represents the "Not Grouped" group -->
-    
+
     <!-- Delete lock -->
     {% if g.id != -1 %}
         <img class="deleteLock deleteLockHidden" src="resources/images/delete.png">
@@ -24,9 +24,5 @@
     <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
 
     <!-- Delete button -->
-    {% if g.id != -1 %}
-        <input class="deleteButton deleteButtonHidden" type="button" value="Delete" />
-    {% endif %}
-    <!-- TODO: remove this placeholder or use it -->
-    <div class="deleteplaceholder"></div>
+    <div class="deleteButtonPlaceholder"></div>
 </div>

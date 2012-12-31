@@ -11,6 +11,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
     		{
     			xtype: "list",
 				id: "newInklingInvitedFriendsList",
+                cls: "membersList",
 				flex: 1,
 				loadingText: "Loading friends...",
 				emptyText: "<div class='emptyListText'>No friends to invite</div>",
