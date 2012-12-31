@@ -75,45 +75,6 @@ Ext.define("inkle.view.NewInkling", {
 			    xtype: "htmlcontainer",
 			    url: "http://127.0.0.1:8000/sencha/shareSettingsForm/"
 			},
-			
-			// Privacy form fields
-			/*{
-				xtype: "container",
-				margin: "-20px -10px 10px -10px",
-				title: "Who else is this shared with?",
-				layout: "vbox",
-				height: 500,
-				
-				items: [
-					{
-					    flex: 1,
-					    xtype: "list",
-						//id: "shareWithSelect",
-						loadingText: "Loading groups...",
-						emptyText: "<div class='emptyListText'>No groups.</div>",
-						disableSelection: true,
-						itemTpl: "{ html }",
-						scrollable: false,
-						store: {
-							fields: [
-								"id",
-								"html"
-							],
-							proxy: {
-								type: "ajax",
-								actionMethods: {
-									read: "POST"
-								},
-								url: "http://127.0.0.1:8000/sencha/groups/",
-								extraParams: {
-									view: "allInklings"
-								}
-							},
-							autoLoad: true
-						}
-					}
-				]
-			}*/
 		],
     	
     	// Listeners
@@ -124,7 +85,7 @@ Ext.define("inkle.view.NewInkling", {
             	delegate: "#newInklingViewInvitees",
             	fn: "onNewInklingViewInviteesTap"
         	},
-        	{
+        	/*{
         		event: "check",
         		delegate: "#isPrivateCheckbox",
         		fn: "onIsPrivateCheckboxCheck"
@@ -133,30 +94,30 @@ Ext.define("inkle.view.NewInkling", {
         		event: "uncheck",
         		delegate: "#isPrivateCheckbox",
         		fn: "onIsPrivateCheckboxUncheck"
+        	},*/
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#forwardingShareSetting",
+            	fn: "onForwardingShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#forwardingSelectionItem",
-            	fn: "onForwardingSelectionItemTap"
+            	delegate: "#selectedGroupsShareSetting",
+            	fn: "onSelectedGroupsShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#selectedGroupsSelectionItem",
-            	fn: "onSelectedGroupsSelectionItemTap"
+            	delegate: ".groupShareSetting",
+            	fn: "onGroupShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#noOneSelectionItem",
-            	fn: "onNoOneSelectionItemTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-            	delegate: ".selectedGroupSelectionItem",
-            	fn: "onSelectedGroupsGroupSelectionItemTap"
+            	delegate: "#noOneShareSetting",
+            	fn: "onNoOneShareSettingTap"
         	}
         ]
     },
@@ -166,31 +127,31 @@ Ext.define("inkle.view.NewInkling", {
         this.fireEvent("newInklingInviteesTapped");
     },
     
-    onIsPrivateCheckboxCheck: function() {
+    /*onIsPrivateCheckboxCheck: function() {
     	this.fireEvent("isPrivateCheckboxChecked");
     },
     
     onIsPrivateCheckboxUncheck: function() {
     	this.fireEvent("isPrivateCheckboxUnchecked");
+    },*/
+    
+    onSelectedGroupsShareSettingTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("selectedGroupsShareSettingTapped", selectionButton);
     },
     
-    onForwardingSelectionItemTap: function(event, target) {
+    onGroupShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
-    	this.fireEvent("forwardingSelectionItemTapped", selectionButton);
+    	this.fireEvent("groupShareSettingTapped", selectionButton);
     },
     
-    onSelectedGroupsSelectionItemTap: function(event, target) {
+    onNoOneShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
-    	this.fireEvent("selectedGroupsSelectionItemTapped", selectionButton);
+    	this.fireEvent("noOneShareSettingTapped", selectionButton);
     },
     
-    onNoOneSelectionItemTap: function(event, target) {
+    onForwardingShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
-    	this.fireEvent("noOneSelectionItemTapped", selectionButton);
+    	this.fireEvent("forwardingShareSettingTapped", selectionButton);
     },
-    
-    onSelectedGroupsGroupSelectionItemTap: function(event, target) {
-    	var selectionButton = Ext.fly(target);
-    	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
-    }
 });
