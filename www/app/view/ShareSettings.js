@@ -24,7 +24,7 @@ Ext.define("inkle.view.ShareSettings", {
     	    },
 			{
 			    xtype: "htmlcontainer",
-			    url: "http://127.0.0.1:8000/sencha/newInklingPrivacyForm/"
+			    url: "http://127.0.0.1:8000/sencha/shareSettingsForm/"
 			},
 		],
     	
@@ -69,6 +69,31 @@ Ext.define("inkle.view.ShareSettings", {
 				element: "element",
             	delegate: ".selectedGroupSelectionItem",
             	fn: "onSelectedGroupsGroupSelectionItemTap"
+        	},
+        	/*Share Settings*/
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#forwardingShareSetting",
+            	fn: "onForwardingShareSettingTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#selectedGroupsShareSetting",
+            	fn: "onSelectedGroupsShareSettingTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: ".groupShareSetting",
+            	fn: "onGroupShareSettingTap"
+        	},
+        	{
+				event: "tap",
+				element: "element",
+            	delegate: "#noOneShareSetting",
+            	fn: "onNoOneShareSettingTap"
         	}
         ]
     },
@@ -104,5 +129,26 @@ Ext.define("inkle.view.ShareSettings", {
     onSelectedGroupsGroupSelectionItemTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
-    }
+    },
+    
+    /*Share Settings Event Firings*/
+    onSelectedGroupsShareSettingTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("selectedGroupsShareSettingTapped", selectionButton);
+    },
+    
+    onGroupShareSettingTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("groupShareSettingTapped", selectionButton);
+    },
+    
+    onNoOneShareSettingTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("noOneShareSettingTapped", selectionButton);
+    },
+    
+    onForwardingShareSettingTap: function(event, target) {
+    	var selectionButton = Ext.fly(target);
+    	this.fireEvent("forwardingShareSettingTapped", selectionButton);
+    },
 });

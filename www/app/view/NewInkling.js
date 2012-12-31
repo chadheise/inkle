@@ -85,16 +85,6 @@ Ext.define("inkle.view.NewInkling", {
             	delegate: "#newInklingViewInvitees",
             	fn: "onNewInklingViewInviteesTap"
         	},
-        	/*{
-        		event: "check",
-        		delegate: "#isPrivateCheckbox",
-        		fn: "onIsPrivateCheckboxCheck"
-        	},
-        	{
-        		event: "uncheck",
-        		delegate: "#isPrivateCheckbox",
-        		fn: "onIsPrivateCheckboxUncheck"
-        	},*/
         	{
 				event: "tap",
 				element: "element",
@@ -126,14 +116,6 @@ Ext.define("inkle.view.NewInkling", {
     onNewInklingViewInviteesTap: function() {
         this.fireEvent("newInklingInviteesTapped");
     },
-    
-    /*onIsPrivateCheckboxCheck: function() {
-    	this.fireEvent("isPrivateCheckboxChecked");
-    },
-    
-    onIsPrivateCheckboxUncheck: function() {
-    	this.fireEvent("isPrivateCheckboxUnchecked");
-    },*/
     
     onSelectedGroupsShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
