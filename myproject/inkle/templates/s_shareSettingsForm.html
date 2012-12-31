@@ -9,11 +9,11 @@
     {% for g in member.group_set.all %}
         <div class="selectedGroupsGroup">
             <img id="group{{ g.id }}ShareSetting" class="groupShareSetting selectionItem" groupId="{{ g.id }}"
-				src={% if member.shareWithSelectedGroups %}
-						{% if g.shareByDefault %}
+				src={% if g.shareByDefault %}
+						{% if member.shareWithSelectedGroups %}
 							"resources/images/selected.png"
 						{% else %}
-							"resources/images/deselected.png"
+							"resources/images/fadedselected.png"
 						{% endif %}
 					{% else %}
 						"resources/images/deselected.png"

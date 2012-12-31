@@ -35,6 +35,12 @@ Ext.define("inkle.controller.SettingsController", {
            	},
            	linkFacebookAccountView: {
            	    linkFacebookAccountTapped: "linkFacebookAccount",
+           	},
+           	shareSettingsView: {
+           	    selectedGroupsShareSettingTapped: "selectSelectedGroupsShareSetting",
+            	groupShareSettingTapped: "toggleGroupShareSetting",
+            	noOneShareSettingTapped: "selectNoOneShareSetting",
+            	forwardingShareSettingTapped: "toggleForwardingShareSetting",
            	}
         }
     },
@@ -254,5 +260,77 @@ Ext.define("inkle.controller.SettingsController", {
     editSettings: function() {
         console.log("editSettings");
     },
+    
+    /*Share Settings */
+    selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
+	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
+	        selectedGroupsShareSetting.set({
+    	       "src": "resources/images/selected.png" 
+    	    });
+    	    
+    	    Ext.select('img.groupShareSetting').each(function() {
+                if (this.getAttribute("src") == "resources/images/fadedselected.png") {
+                    this.set({
+                        "src": "resources/images/selected.png"
+                    });
+                }
+            });
+    	    
+    	    var noOneShareSetting = Ext.fly("noOneShareSetting");
+            noOneShareSetting.set({
+    			"src": "resources/images/deselected.png"
+    		});
+	    }
+	},
+	
+	toggleGroupShareSetting: function(groupShareSetting) {
+    	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
+	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
+	        if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+	            groupShareSetting.set({
+	                "src": "resources/images/deselected.png"
+	            });
+	        }
+	        else {
+	            groupShareSetting.set({
+	                "src": "resources/images/selected.png"
+	            });
+	        }
+	    }
+	},
+	
+	selectNoOneShareSetting: function(noOneShareSetting) {
+	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
+	        noOneShareSetting.set({
+    	       "src": "resources/images/selected.png" 
+    	    });
+    	    
+    	    var selectedGroupsShareSetting = Ext.fly("selectedGroupsShareSetting");
+            selectedGroupsShareSetting.set({
+    			"src": "resources/images/deselected.png"
+    		});
+    		
+            Ext.select('img.groupShareSetting').each(function() {
+                if (this.getAttribute("src") == "resources/images/selected.png") {
+                    this.set({
+                        "src": "resources/images/fadedselected.png"
+                    });
+                }
+            });
+	    }
+	},
+	
+	toggleForwardingShareSetting: function(forwardingShareSetting) {
+	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
+			forwardingShareSetting.set({
+				"src": "resources/images/deselected.png"
+			});
+	    }
+	    else {
+	        forwardingShareSetting.set({
+				"src": "resources/images/selected.png"
+			});
+	    }
+	},
     
 });

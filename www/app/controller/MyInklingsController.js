@@ -57,14 +57,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             newInklingView: {
-            	newInklingInviteesTapped: "activateInklingInviteesView",
-            	//isPrivateCheckboxChecked: "toggleShareWithSelect",
-            	//isPrivateCheckboxUnchecked: "toggleShareWithSelect",
-            	
-            	/*selectedGroupsSelectionItemTapped: "selectSelectedGroupsSelectionItem",
-            	noOneSelectionItemTapped: "selectNoOneSelectionItem",
-            	selectedGroupsGroupSelectionItemTapped: "toggleSelectedGroupsGroupSelectionItem"*/
-            	
+            	newInklingInviteesTapped: "activateInklingInviteesView",	
             	selectedGroupsShareSettingTapped: "selectSelectedGroupsShareSetting",
             	groupShareSettingTapped: "toggleGroupShareSetting",
             	noOneShareSettingTapped: "selectNoOneShareSetting",
@@ -398,31 +391,6 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    this.getMainTabView().getTabBar().getAt(1).setBadgeText("");
 	},
 	
-	// Toggles the new inkling's "Share with" field
-	/*toggleShareWithSelect: function() {
-	    alert("toggling share with");
-		var shareWithSelect = this.getShareWithSelect();
-		if (shareWithSelect.getHidden()) {
-			this.getShareWithSelect().show();
-		}
-		else {
-			this.getShareWithSelect().hide();
-		}
-	},*/
-	
-	toggleForwardingShareSetting: function(forwardingShareSetting) {
-	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
-			forwardingShareSetting.set({
-				"src": "resources/images/deselected.png"
-			});
-	    }
-	    else {
-	        forwardingShareSetting.set({
-				"src": "resources/images/selected.png"
-			});
-	    }
-	},
-	
 	selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
 	        selectedGroupsShareSetting.set({
@@ -441,6 +409,22 @@ Ext.define("inkle.controller.MyInklingsController", {
             noOneShareSetting.set({
     			"src": "resources/images/deselected.png"
     		});
+	    }
+	},
+	
+	toggleGroupShareSetting: function(groupShareSetting) {
+    	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
+	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
+	        if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+	            groupShareSetting.set({
+	                "src": "resources/images/deselected.png"
+	            });
+	        }
+	        else {
+	            groupShareSetting.set({
+	                "src": "resources/images/selected.png"
+	            });
+	        }
 	    }
 	},
 	
@@ -465,19 +449,16 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    }
 	},
 	
-	toggleGroupShareSetting: function(groupShareSetting) {
-    	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
-	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	        if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	            groupShareSetting.set({
-	                "src": "resources/images/deselected.png"
-	            });
-	        }
-	        else {
-	            groupShareSetting.set({
-	                "src": "resources/images/selected.png"
-	            });
-	        }
+	toggleForwardingShareSetting: function(forwardingShareSetting) {
+	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
+			forwardingShareSetting.set({
+				"src": "resources/images/deselected.png"
+			});
+	    }
+	    else {
+	        forwardingShareSetting.set({
+				"src": "resources/images/selected.png"
+			});
 	    }
 	},
 	
