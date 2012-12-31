@@ -281,5 +281,5 @@ class Member(User):
         if (member.is_facebook_member()):
             return "https://graph.facebook.com/{{ m.facebookId }}/picture"
         else:
-            #return "file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
-            return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"
+            return "file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
+            #return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"

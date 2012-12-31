@@ -196,7 +196,7 @@ $badge-bg-gradient: "matte";
 /***********/
 /*  LISTS  */
 /***********/
-/* Inkling list */
+/* Inklings list */
 .inklingsList .x-list-item-label {
 	height: 60px !important;
 	padding: 5px !important;
@@ -328,7 +328,7 @@ $badge-bg-gradient: "matte";
 	margin: -17px 3px 0px 0px;
 }
 
-/* Group list (main content) */
+/* Groups list (main content) */
 .groupsListMainContent .x-list-item-label {
 	height: 60px !important;
 	padding: 5px !important;
@@ -379,7 +379,7 @@ $badge-bg-gradient: "matte";
 	display: none;
 }
 
-/* Group list (panel) */
+/* Groups list (panel) */
 .groupsListPanel .selectionButton {
 	float: left;
 	margin: -4px 5px 0px -10px;
@@ -395,32 +395,31 @@ $badge-bg-gradient: "matte";
 	text-overflow: ellipsis;
 }
 
-/* Member list */
+/* Members list */
 .membersList .x-list-item-label {
 	height: 60px;
-	padding: 5px 55px 5px 5px;
-	margin-right: -50px;
-	border: solid red 1px;
+	padding: 5px !important;
+}
+
+.membersListWithButtons .x-list-item-label {
+    height: 90px;
 }
 
 .membersList .memberImage {
-	float: left;
+    float: left;
 	height: 50px;
 	width: 50px;
 	margin-right: 5px;
-	border: solid green 1px;
 }
 
 .membersList .memberInfo {
-	float: left;
-	width: 87%;
-	padding-left: 55px;
-	margin-left: -55px;
-	border: solid blue 1px;
+    float: left;
+    margin-top: -3px;
+    width: 200px;
 }
 
-.membersList .name {
-	font-size: 22px;
+.membersList .memberName {
+	font-size: 24px;
 	color: $mediumBlue;
 	overflow: hidden;
 	white-space: nowrap;
@@ -431,8 +430,8 @@ $badge-bg-gradient: "matte";
 	font-weight: bold;
 }
 
-.membersList .mutualFriends {
-	font-size: 16px;
+.membersList .numMutualFriends {
+	font-size: 18px;
 	color: $mediumGray;
 }
 
@@ -454,6 +453,18 @@ $badge-bg-gradient: "matte";
 .x-indexbar div {
     color: $mediumBlue !important;
     opacity: 1 !important;
+}
+
+/* Other list items */
+.emptyListText {
+    padding-top: 10px;
+    color: #999;
+    text-align: center;
+}
+
+.selectionItem {
+    float: left;
+    padding: 8px 4px 0px 0px;
 }
 
 /*************************/
@@ -511,23 +522,20 @@ $badge-bg-gradient: "matte";
 	-webkit-transform:rotate(-90deg);
 }
 
-/* Delete button */
-.deleteButton {
-	float: right;
-	position: relative;
-	//margin: 14px 15px 0px 0px;
-	margin-left: -10px;
-	padding: 2px 5px 2px 5px;
-	border: solid 1px $darkestRed !important;
-	border-radius: 5px;
-	font-size: 14px;
-	color: #FFFFFF;
-	background-color: $mediumRed !important;
-	opacity: 1 !important;
-	z-index: 5;
+/* List delete button */
+.listDeleteButton {
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    border: solid 1px $darkestRed !important;
+    background-color: $mediumRed !important;
+    font-size: 16px;
+    color: #FFFFFF !important;
 }
 
-.deleteButtonHidden {
+/*.deleteButtonHidden {
 	margin-right: -75px;
 }
 
@@ -547,7 +555,7 @@ $badge-bg-gradient: "matte";
 @-webkit-keyframes deleteButtonSlideRightAnimation {
 	0% 	 { opacity: 1; margin-right: 10px; }
 	100% { opacity: 0; margin-right: -75px; }
-}
+}*/
 
 .disclosureArrowHidden {
 	margin-right: -150px !important;
@@ -832,49 +840,6 @@ $badge-bg-gradient: "matte";
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#inklingMembersAttendingList .image, #inklingMembersAwaitingReplyList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#inklingMembersAttendingList .memberInfo, #inklingMembersAwaitingReplyList .memberInfo {
-	float: left;
-	padding: 11px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#inklingMembersAttendingList .name, #inklingMembersAwaitingReplyList .name {
-	font-size: 20px;
-}
-
-#inklingMembersAttendingList .lastName, #inklingMembersAwaitingReplyList .lastName {
-	font-weight: bold;
-}
-
-
-.view {
-	padding: 5px 10px 1px 10px;
-	background-color: #DDD;
-}
-
 #inklingInfo, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {
 	color: #888;
 	border: solid 1px #EFEFEF;
@@ -894,34 +859,6 @@ $badge-bg-gradient: "matte";
 	margin: 10px 0px 20px 0px;
 	padding: 5px;
 	box-shadow: 0px 0px 5px #888;
-}
-
-#myInklingsView .numAttendees, #friendsView .numMembers {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
-	font-weight: bold;
-	text-align: center;
-	padding-top: 15px;
-	height: 70px;
-	width: 70px;
-	margin: -6px 10px 0px 7px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $lightestGreen;
-	box-shadow: 0px 0px 10px #888;
-}
-
-#allInklingsView .inklingInfo, #myInklingsView .inklingInfo, #friendsView .friendInfo, #friendsView .groupInfo {
-	float: left;
-	text-align: left;
-	padding-top: 3px;
-}
-
-.location, #friendsView .memberName, #friendsView .groupName {
-	color: $mediumGreen;
-	font-weight: bold;
-	font-size: 24px;
 }
 
 #inklingView .time, #inlingView .category {
@@ -961,35 +898,6 @@ $badge-bg-gradient: "matte";
 	box-shadow: 0px 0px 10px #888;
 }
 
-
-
-
-
-
-
-
-#myInklingsView .banner {
-	margin-bottom: 15px;
-	padding-left: 25px;
-}
-
-#profileView #picture {
-	float: left;
-	height: 70px;
-	width: 70px;
-	margin: -6px 10px 0px 7px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	box-shadow: 0px 0px 10px #888;
-}
-
-#profileView #name {
-	color: #288D42;
-	padding-top: 8px;
-	font-weight: bold;
-	font-size: 32px;
-}
-
 #friendsView .mutualFriends {
 	float: left;
 }
@@ -1023,17 +931,6 @@ $badge-bg-gradient: "matte";
 	margin: 14px 10px 0px 0px;
 }
 
-.emptyListText {
-	padding-top: 10px;
-	color: #999;
-	text-align: center;
-}
-
-.selectionItem {
-	float: left;
-	padding: 8px 4px 0px 0px;
-}
-
 /* Inkling invitees list */
 #groupInviteesList .groupInfo {
 	padding: 11px 0px 0px 3px;
@@ -1048,6 +945,7 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*  NEW INKLING VIEW  */
 /**********************/
+/* New inkling invitess privacy form */
 #newInklingPrivacyForm #selectedGroupsHeader, #newInklingPrivacyForm #noOne,  #newInklingPrivacyForm #forwarding {
     clear: both;
 }
@@ -1069,6 +967,24 @@ $badge-bg-gradient: "matte";
 	margin-left: 25px;
 }
 
+/* New inkling invitees button */
+#newInklingViewInvitees {
+    border: solid 1px #DDD;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+    padding: 10px;
+    height: 45px;
+}
+
+#newInklingViewInvitees p {
+    float: left;
+}
+
+#newInklingViewInvitees .disclosureArrow {
+    float: right;
+    margin-top: 5px;
+}
+
 /******************/
 /*  FRIENDS VIEW  */
 /******************/
@@ -1086,58 +1002,6 @@ $badge-bg-gradient: "matte";
 	width: 50px;
 	margin-right: 5px;
 	border: solid green 1px;
-}
-
-/* Friend requests list */
-#friendsViewRequestsList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
-}
-
-#friendsViewRequestsList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#friendsViewRequestsList .memberInfo {
-	float: left;
-	padding: 3px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#friendsViewRequestsList .name {
-	font-size: 20px;
-}
-
-#friendsViewRequestsList .lastName {
-	font-weight: bold;
-}
-
-#friendsViewRequestsList .mutualFriends {
-	font-size: 16px;
-	color: $mediumGray;
-}
-
-/*****************/
-/*  NEW INKLING  */
-/*****************/
-
-#newInklingViewInvitees {
-	border: solid 1px #DDD;
-	background-color: #FFFFFF;
-	border-radius: 7px;
-	padding: 10px;
-	height: 45px;
-}
-
-#newInklingViewInvitees p {
-	float: left;
-}
-
-#newInklingViewInvitees .disclosureArrow {
-	float: right;
-	margin-top: 5px;
 }
 
 /****************/

@@ -965,7 +965,7 @@ def s_inkling_members_attending_view(request):
     response_members_attending = []
     for m in inkling.get_members_attending():
         m.num_mutual_friends = member.get_num_mutual_friends(m)
-        
+
         html = render_to_string( "s_memberListItem.html", {
             "m" : m
         })
@@ -975,7 +975,6 @@ def s_inkling_members_attending_view(request):
             "lastName" : m.last_name,
             "html": html
         })
-
 
     # Create and return a JSON object
     response = simplejson.dumps(response_members_attending)
@@ -1011,7 +1010,6 @@ def s_inkling_members_awaiting_reply_view(request):
             "lastName" : m.last_name,
             "html": html
         })
-
 
     # Create and return a JSON object
     response = simplejson.dumps(response_members_awaiting_reply)
@@ -1271,9 +1269,9 @@ def s_inkling_invited_friends_view(request):
     for m in friends:
         m.selected = inkling.member_has_pending_invitation(m)
 
-        html = render_to_string( "s_friendInviteeListItem.html", {
+        html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "idPrefix" : "invite"
+            "include_selection_item" : True
         })
         
         response_friends.append({
@@ -1471,20 +1469,20 @@ def s_friends_view(request):
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-
+    
     # Get the mode
     try:
         mode = request.POST["mode"]
     except:
         raise Http404()
-
+    
     # Get the list of the logged-in member's friends
     friends = list(member.friends.all())
-
+    
     # Determine what items to include in the member list item
     include_delete_items = (mode == "friends")
     include_selection_item = (mode == "invite")
-
+    
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
@@ -1526,15 +1524,16 @@ def s_friend_requests_view(request):
         m = request.sender
         m.num_mutual_friends = m.get_num_mutual_friends(m)
         
-        html = render_to_string( "s_friendRequestListItem.html", {
-            "m" : m
+        html = render_to_string( "s_memberListItem.html", {
+            "m" : m,
+            "include_friend_request_buttons" : True
         })
         
         response_friend_requests.append({
             "id" : m.id,
             "html": html
         })
-    
+
     # Create and return a JSON object
     response = simplejson.dumps(response_friend_requests)
     return HttpResponse(response, mimetype = "application/json")
@@ -1986,11 +1985,11 @@ def s_group_members_view(request):
     for m in friends:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         
+        m.selected = (m in group.members.all())
+
         html = render_to_string( "s_memberListItem.html", {
             "m" : m,
-            "include_delete_items" : False, # TODO: remove this?
-            "include_selection_item" : True, # TODO: remove this?
-            "group" : group
+            "include_selection_item" : True
         })
         
         response_friends.append({
