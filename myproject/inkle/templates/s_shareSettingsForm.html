@@ -1,0 +1,37 @@
+{% load is_false from extraTags %}
+
+<div id="shareSettingsForm">
+    <!-- Selected groups -->
+    <div id="selectedGroupsHeader">
+        <img id="selectedGroupsShareSetting" class="selectionItem" src={% if member.shareWithSelectedGroups %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
+        <p>Selected groups</p>
+    </div>
+    {% for g in member.group_set.all %}
+        <div class="selectedGroupsGroup">
+            <img id="group{{ g.id }}ShareSetting" class="groupShareSetting selectionItem" groupId="{{ g.id }}"
+				src={% if g.shareByDefault %}
+						{% if member.shareWithSelectedGroups %}
+							"resources/images/selected.png"
+						{% else %}
+							"resources/images/fadedselected.png"
+						{% endif %}
+					{% else %}
+						"resources/images/deselected.png"
+					{% endif %}
+			>
+            <p>{{ g.name }}</p>
+        </div>
+    {% endfor %}
+
+    <!-- No one -->
+    <div id="noOne">
+        <img id="noOneShareSetting" class="selectionItem" src={% if member.shareWithSelectedGroups|is_false %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
+        <p>No one</p>
+    </div>
+
+    <!-- Forwarding -->
+    <div id="forwarding">
+        <img id="forwardingShareSetting" class="selectionItem" src={% if member.allowInklingAttendeesToShare %}"resources/images/selected.png"{% else %} "resources/images/deselected.png"{% endif %}>
+        <p>Allow people attending to share with others</p>
+    </div>
+</div>

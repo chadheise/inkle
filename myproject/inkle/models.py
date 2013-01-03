@@ -12,6 +12,9 @@ class Group(models.Model):
     name = models.CharField(max_length = 50)
     members = models.ManyToManyField("Member", related_name = "groups_member_of")
 
+    # Share with this group by default
+    shareByDefault = models.BooleanField(default=False)
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
     date_name_last_modified = models.DateTimeField(blank = True, null = True)
@@ -247,6 +250,11 @@ class Member(User):
     
     # Inklings
     inklings = models.ManyToManyField(Inkling)
+
+    # Inkling default share settings
+    shareWithSelectedGroups = models.BooleanField(default=True)
+    allowInklingAttendeesToShare = models.BooleanField(default=False)
+    # Group share settings are part of the Group object
 
     # Managers
     objects = models.Manager()
