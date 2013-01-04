@@ -1,26 +1,22 @@
-<div class="inklingInvitation" inklingId="{{ invitation.inkling.id }}">
-    <!-- Inkling information -->
-    <div class="numAttendees">{{ invitation.inkling.get_num_members_attending }}</div>
-    <div class="inklingInfo">
-        <div class="location">{{ invitation.inkling.location|default:"Location TBD" }}</div>
-        <div>
-            {% if invitation.inkling.time %}
-                <div class="time">{{ invitation.inkling.time }}</div>
-                {% if invitation.inkling.category %}
-                    <div class="dot">&middot</div>
-                {% endif %}
-            {% endif %}
-            {% if invitation.inkling.category %}
-                <div class="category">{{ invitation.inkling.category }}</div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Accept/ignore buttons -->
-    {% if invitation.status == "pending" %}
-        <input class="acceptInvitationButton" type="button" value="Accept" invitationId="{{ invitation.id }}" />
-        <input class="ignoreInvitationButton" type="button" value="Ignore" invitationId="{{ invitation.id }}" />
-    {% else %}
-        <input class="hideInvitationButton" type="button" value="Hide" invitationId="{{ invitation.id }}" />
+<div class="inklingInvitation" data-invitationId="{{ invitation.id }}" data-inklingId="{{ invitation.inkling.id }}">
+    <!-- Location -->
+    <p class="location">{{ invitation.inkling.location|default:"Location TBD" }}</p>
+    
+    <!-- Time -->
+    {% if invitation.inkling.time %}
+        <p class="time">{{ invitation.inkling.time }}</p>
+        <p class="dot">&middot</p>
     {% endif %}
+    <p class="date">{{ invitation.inkling.date|default:"No date" }}</p>
+
+    <!-- Invitation response buttons -->
+    {% if invitation.status == "pending" %}
+        <input class="acceptInklingInvitationButton" type="button" value="Accept" />
+        <input class="ignoreInklingInvitationButton" type="button" value="Ignore" />
+    {% else %}
+        <input class="hideInklingInvitationButton" type="button" value="Hide" />
+    {% endif %}
+
+    <!-- Disclosure arrow -->
+    <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
 </div>

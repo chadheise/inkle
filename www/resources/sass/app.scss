@@ -1,58 +1,76 @@
-//Inkle colors (dark->light = 1->5)
-$green1: #1A492B;
-$green2: #336E34;
-$green3: #288D42; //Primary green color
-$green4: #6ABB6A;
-$green5: #ABD4B0;
-$blue1: #002C45;
-$blue2: #2A4360;
-$blue3: #1B5898; //Primary blue color
-$blue4: #70A9DB;
-$blue5: #ABC2E5;
-$red1: #7E181A;
-$red2: #914044;
-$red3: #CD1A26; //Primary red color
-$red4: #E5736F;
-$red5: #EAB0B5;
+/*************************/
+/*  Inkle color palette  */
+/*************************/
+/* Green */
+$darkestGreen: #1A492B;
+$darkerGreen: #336E34;
+$mediumGreen: #288D42;	// Primary green
+$lighterGreen: #6ABB6A;
+$lightestGreen: #ABD4B0;
 
-// Sencha variable overrides
+/* Blue */
+$darkestBlue: #002C45;
+$darkerBlue: #2A4360;
+$mediumBlue: #1B5898;	// Primary blue
+$lighterBlue: #70A9DB;
+$lightestBlue: #ABC2E5;
+
+/* Red */
+$darkestRed: #7E181A;
+$darkerRed: #914044;
+$mediumRed: #CD1A26;	// Primary red
+$lighterRed: #E5736F;
+$lightestRed: #EAB0B5;
+
+/* Gray */
+$darkestGray: #333333;
+$darkerGray: #555555;
+$mediumGray: #777777;	// Primary gray
+$lighterGray: #BBBBBB;
+$lightestGray: #DDDDDD;
+
+/*******************************/
+/*  Sencha variable overrides  */
+/*******************************/
+/* General */
+$base-gradient: "flat";
 $body-bg-color: #000;
+$base-color: $mediumGreen;
+$active-color: $mediumGreen;
+$bright-color: $mediumGreen;
+$alert-color: $lightestRed;
 
-$active-color: $green3;
-$alert-color: $red5;
-$base-color: $green3;
-$base-gradient: 'flat';
-$bright-color: $green3;
-$button-gradient: 'flat';
-//$button-height
+/* Buttons */
+$button-gradient: "flat";
 $button-radius: .2em;
 //$button-stroke-weight: 0em;
 
-//$toolbar-base-color: $green3;
+/* Toolbars */
 //$toolbar-gradient: "flat";
- 
-$tabs-dark: $green3;
-$tabs-dark-active-color: #FFFFFF;
-$bar-color: $green2;
+//$toolbar-base-color: $mediumGreen;
 //$toolbar-spacing: 1em;
- 
-$tabs-bottom-radius: .2em;
-$tabs-bottom-gradient: 'flat';
-$tabs-bar-gradient: 'flat';
-$tabs-bottom-active-gradient: 'flat';
-//
+$bar-color: $darkerGreen;
 
+/* Tabs */
+$tabs-bar-gradient: "flat";
+$tabs-bottom-gradient: "flat";
+$tabs-bottom-active-gradient: "flat";
+$tabs-bottom-radius: .2em;
+$tabs-dark: $mediumGreen;
+$tabs-dark-active-color: #FFFFFF;
+
+/* Badges */
 $badge-size: 1em;
 $badge-radius: .2em;
-$badge-bg-color: $red3;
+$badge-bg-color: $mediumRed;
 $badge-bg-gradient: "matte";
 
-@import 'sencha-touch/default/all';
+/********************/
+/*  Sencha modules  */
+/********************/
+@import "sencha-touch/default/all";
 
-@include pictos-iconmask("minus1");
-
-// You may remove any of the following modules that you
-// do not use in order to create a smaller css file.
+/* TODO: remove unused modules */
 @include sencha-panel;
 @include sencha-buttons;
 @include sencha-sheet;
@@ -68,11 +86,11 @@ $badge-bg-gradient: "matte";
 @include sencha-msgbox;
 @include sencha-list-pullrefresh;
 
-// Your custom code goes here...
-@include sencha-toolbar-ui('customToolbar', $green3, 'none');
-//@include sencha-tabbar-ui('customTabBar', $green3, 'none', #FFFFFF);
+/* Toolbars */
+/* TODO: can we move this before all the [@include module] calls? */
+@include sencha-toolbar-ui("customToolbar", $mediumGreen, "none");
 .customButton {
-	background-color: $red3;
+	background-color: $mediumRed;
 }
 
 .customPressedCls {
@@ -81,34 +99,11 @@ $badge-bg-gradient: "matte";
 	color: #FFF;
 }
 
-/**********************/
-/*   LOGIN BUTTONS 	  */
-/**********************/
-.facebookLoginButton {
-	background: url("../images/facebookLogin.png");
-}
 
-.facebookLoginDarkButton {
-	background: url("../images/facebookLoginDark.png");
-}
-
-.emailLoginButton {
-	background: url("../images/emailLogin.png");
-}
-
-.emailLoginDarkButton {
-	background: url("../images/emailLoginDark.png");
-}
-
-.buttonTest {
-	background: url("../images/button.png") !important;
-	width: 40px;
-	height: 40px;
-	border: 0px !important;
-}
-/**********************/
-/*  CUSTOM TAB ICONS  */
-/**********************/
+/***************/
+/*  TAB ICONS  */
+/***************/
+/* TODO: get rid of any unused icons */
 .allInklingsIcon {
 	-webkit-mask-box-image: url("../images/icons/allInklings.png");
 }
@@ -153,355 +148,336 @@ $badge-bg-gradient: "matte";
 	-webkit-mask-box-image: url("../images/icons/gear.png");
 }
 
-/***********************/
-/*  ALL INKLINGS VIEW  */
-/***********************/
-
-/* All inklings date picker border */
-#allInklingsDatePickerPanel .x-inner {
-    margin: 0px;
+/**********************/
+/*   LOGIN BUTTONS 	  */
+/**********************/
+.facebookLoginButton {
+	background: url("../images/facebookLogin.png");
 }
 
-/* All inklings list */
-#allInklingsList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
+.facebookLoginDarkButton {
+	background: url("../images/facebookLoginDark.png");
 }
 
-#allInklingsList .numAttendees {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
-	font-weight: bold;
-	text-align: center;
-	padding-top: 5px;
-	height: 50px;
-	width: 50px;
-	margin: 0px 0px 0px 0px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $green5;
-	box-shadow: 0px 0px 10px #888;
+.emailLoginButton {
+	background: url("../images/emailLogin.png");
 }
 
-#allInklingsList .inklingInfo {
-	float: left;
-	margin-left: 10px;
-	vertical-align: top;
+.emailLoginDarkButton {
+	background: url("../images/emailLoginDark.png");
 }
 
-#allInklingsList .name {
-	font-weight: bold;
-	font-size: 20px;
+.buttonTest {
+	background: url("../images/button.png") !important;
+	width: 40px;
+	height: 40px;
+	border: 0px !important;
 }
 
-#allInklingsList .location {
-	color: $green3;
+/*******************/
+/*  LOGIN BUTTONS  */
+/*******************/
+.facebookLoginButton {
+	background: url("../images/facebookLogin.png");
+}
+
+.facebookLoginDarkButton {
+	background: url("../images/facebookLoginDark.png");
+}
+
+.emailLoginButton {
+	background: url("../images/emailLogin.png");
+}
+
+.emailLoginDarkButton {
+	background: url("../images/emailLoginDark.png");
+}
+
+/***********/
+/*  LISTS  */
+/***********/
+/* Inklings list */
+.inklingsList .x-list-item-label {
+	height: 60px !important;
+	padding: 5px !important;
+}
+
+.inklingsList .location {
+	margin-top: -3px;
+	color: $mediumBlue;
 	font-weight: bold;
 	font-size: 24px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
-#allInklingsList .time, #allInklingsList .category {
+.inklingsList .time {
+    float: left;
+    color: $mediumGray;
+    font-size: 18px;
+    max-width: 145px;
+    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingsList .dot {
 	float: left;
-	color: #777;
+	color: $mediumGray;
+	margin: 0px 5px 0px 5px;
 }
 
-/* All inklings groups list */
-#allInklingsGroupsList .selectionButton {
+.inklingsList .attendingMemberThumbnail {
+    float: left;
+    margin: 2px 5px 0px 0px;
+    height: 20px;
+    width: 20px;
+}
+
+.inklingsList .numOtherMembersAttending {
+    float: left;
+    margin-top: 3px;
+    color: $mediumGray;
+    font-size: 14px;
+}
+
+/* Inkling invitations list */
+.inklingInvitationsList .x-list-item-label {
+	height: 90px !important;
+	padding: 5px !important;
+}
+
+.inklingInvitationsList .location {
+	margin-top: -3px;
+	color: $mediumBlue;
+	font-weight: bold;
+	font-size: 24px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .time {
+    float: left;
+    color: $mediumGray;
+    font-size: 18px;
+    max-width: 145px;
+    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .date {
+    float: left;
+    clear: right;
+    color: $mediumGray;
+    font-size: 18px;
+    max-width: 145px;
+    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.inklingInvitationsList .dot {
+	float: left;
+	color: $mediumGray;
+	margin: 0px 5px 0px 5px;
+}
+
+.inklingInvitationsList .attendingMemberThumbnail {
+    float: left;
+    margin: 2px 5px 0px 0px;
+    height: 20px;
+    width: 20px;
+}
+
+.inklingInvitationsList .numOtherMembersAttending {
+    float: left;
+    margin-top: 3px;
+    color: $mediumGray;
+    font-size: 14px;
+}
+
+.inklingInvitationsList input[type="button"] {
+	color: #FFFFFF;
+	border-radius: 3px !important;
+	float: left;
+}
+
+.inklingInvitationsList .acceptInklingInvitationButton {
+	clear: left;
+	margin-right: 10px;
+	background-color: $mediumGreen !important;
+	border: solid 1px $darkestGreen !important;
+}
+
+.inklingInvitationsList .ignoreInklingInvitationButton {
+	background-color: $mediumRed !important;
+	border: solid 1px $darkestRed !important;
+}
+
+.inklingInvitationsList .hideInklingInvitationButton {
+	clear: left;
+	background-color: $mediumBlue !important;
+	border: solid 1px $darkestBlue !important;
+}
+
+.inklingInvitationsList .disclosureArrow {
+	float: right;
+	margin: -17px 3px 0px 0px;
+}
+
+/* Groups list (main content) */
+.groupsListMainContent .x-list-item-label {
+	height: 60px !important;
+	padding: 5px !important;
+	background-color: #FFFFFF;
+}
+
+.groupsListMainContent .groupName {
+	margin-top: -3px;
+	width: 270px;
+	color: $mediumBlue;
+	font-weight: bold;
+	font-size: 24px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.groupsListMainContent .groupMemberThumbnail {
+    float: left;
+    margin: 2px 5px 0px 0px;
+    height: 20px;
+    width: 20px;
+}
+
+.groupsListMainContent .numOtherGroupMembers {
+    float: left;
+    margin-top: 3px;
+    color: $mediumGray;
+    font-size: 14px;
+}
+
+.groupsListMainContent .disclosureArrow {
+	float: right;
+	margin: -10px 3px 0px 0px;
+}
+
+.groupsListMainContent .groupNameInput {
+	margin-top: -3px;
+	width: 270px;
+	color: $mediumBlue;
+	font-weight: bold;
+	font-size: 24px;
+	border-width: 0px;
+	background-color: #FFFFFF;
+}
+
+.groupsListMainContent .groupNameHidden, .groupsListMainContent .groupNameInputHidden {
+	display: none;
+}
+
+/* Groups list (panel) */
+.groupsListPanel .selectionButton {
 	float: left;
 	margin: -4px 5px 0px -10px;
 }
 
-#allInklingsGroupsList .groupName {
-	float: left;
+.groupsListPanel .groupName {
 	font-weight: bold;
-}
-
-
-/******************/
-/*  INKLING VIEW  */
-/******************/
-#inklingView #inklingHeader {
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	box-shadow: 0px 0px 5px #888;
-}
-
-#inklingView .numAttendees {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
+	color: $mediumBlue;
 	font-weight: bold;
-	text-align: center;
-	padding-top: 5px;
-	height: 50px;
-	width: 50px;
-	margin: 5px 10px 5px 5px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $green5;
-	box-shadow: 0px 0px 10px #888;
-}
-
-#inklingView .location {
-	float: left;
-	padding-top: 10px;
-	font-size: 28px;
-	width: 75%;
-}
-
-#inklingView #editInklingButton {
-	margin: 3px 3px 0px -25px;
-	float: right;
-	height: 20px;
-}
-
-.clear
-{
-	clear: both;
-}
-
-#inklingView .infoContainer {
-	padding: 5px;
-}
-
-#inklingView #membersAttendingPictures {
-    float: left;
-    width: 257px;
-}
-
-#inklingView .memberPicture {
-	height: 60px;
-	width: 60px;
-    margin: 5px 5px 0px 0px;
-	float: left;
-}
-
-#inklingView #membersAttendingPictures .memberPicture:nth-child(4n+4) {
-	margin-right: 0px;
-}
-
-#inklingView .disclosureArrow {
-	margin: 50px 0px 0px 0px;
-	padding: 10px 8px 10px 10px;
-}
-
-
-
-
-#inklingMembersAttendingList .image, #inklingMembersAwaitingReplyList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#inklingMembersAttendingList .memberInfo, #inklingMembersAwaitingReplyList .memberInfo {
-	float: left;
-	padding: 11px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#inklingMembersAttendingList .name, #inklingMembersAwaitingReplyList .name {
 	font-size: 20px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
-#inklingMembersAttendingList .lastName, #inklingMembersAwaitingReplyList .lastName {
-	font-weight: bold;
-}
-
-
-
-.view {
-	padding: 5px 10px 1px 10px;
-	background-color: #DDD;
-}
-
-#inklingInfo, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	box-shadow: 0px 0px 5px #888;
+/* Members list */
+.membersList .x-list-item-label {
 	height: 60px;
+	padding: 5px !important;
 }
 
-.noInklings, .noFriends, .noGroups
-{
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	padding: 5px;
-	box-shadow: 0px 0px 5px #888;
+.membersListWithButtons .x-list-item-label {
+    height: 90px;
 }
 
-#myInklingsView .numAttendees, #friendsView .numMembers {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
-	font-weight: bold;
-	text-align: center;
-	padding-top: 15px;
-	height: 70px;
-	width: 70px;
-	margin: -6px 10px 0px 7px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $green5;
-	box-shadow: 0px 0px 10px #888;
-}
-
-#allInklingsView .inklingInfo, #myInklingsView .inklingInfo, #friendsView .friendInfo, #friendsView .groupInfo {
-	float: left;
-	text-align: left;
-	padding-top: 3px;
-}
-
-.location, #friendsView .memberName, #friendsView .groupName {
-	color: $green3;
-	font-weight: bold;
-	font-size: 24px;
-}
-
-.time, .category {
-	float: left;
-}
-
-#inklingView .time, #inlingView .category {
-	float: none;
-}
-
-#inklingView .basicInfoLabel {
-	font-weight: bold;
-}
-
-.x-button .x-badge {
-	margin-top: -3px;
-	margin-right: -8px;
-}
-
-.dot {
-	float: left;
-	margin: 0px 5px 0px 5px;
-}
-
-#inklingView #editInklingButton:hover {
-	box-shadow: 0px 0px 10px #888;
-}
-
-#inklingView #inklingInfo {
-	height: auto;
-}
-
-.banner {
-	color: #EFEFEF;
-	text-align: left;
-	font-size: 16px;
-	font-weight: bold;
-	height: 30px;
-	width: 200px;
-	padding-top: 3px;
-	padding-left: 20px;
-	margin: 5px 0px 0px -15px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $blue5;
-	box-shadow: 0px 0px 10px #888;
-}
-
-/******************/
-/*  INKLING FEED  */
-/******************/
-#inklingFeedList .x-list-item-label {
-	/*height: 60px;*/
-	padding: 10px;
-}
-
-#inklingFeedList img {
-	float: left;
+.membersList .memberImage {
+    float: left;
 	height: 50px;
 	width: 50px;
-	margin-right: 10px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $blue5;
-	box-shadow: 0px 0px 10px #888;
+	margin-right: 5px;
 }
 
-#inklingFeedList .floatRight {
-	float: right;
-	margin-right: 0px;
-	margin-left: 10px;
+.membersList .memberInfo {
+    float: left;
+    margin-top: -3px;
+    width: 200px;
 }
 
-#inklingFeedList .feedcommentInfo {
-	float: left;
+.membersList .memberName {
+	font-size: 24px;
+	color: $mediumBlue;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
-#inklingFeedList .creatorName {
-	font-size: 16px;
+.membersList .lastName {
 	font-weight: bold;
-	color: $green3;
 }
 
-#inklingFeedList .text {
-	font-size: 16px;
+.membersList .numMutualFriends {
+	font-size: 18px;
+	color: $mediumGray;
 }
 
-#inklingFeedList .timestamp {
-	font-size: 12px;
-	color: #AAAAAA;
+/* List section headers */
+.x-list-header
+{
+    border: solid 1px #999 !important;
+    border-width: 1px 0px 1px 0px !important;
+    background-color: $lighterGray !important;
+    color: #FFF !important;
+    text-shadow: $darkerGray 1px 1px 1px !important;
+    padding-left: 10px !important;
 }
 
-
-
-
-
-
-#myInklingsView .banner {
-	margin-bottom: 15px;
-	padding-left: 25px;
+.x-indexbar-pressed {
+    background-color: rgba(27, 88, 152, 0.5) !important;
 }
 
-#profileView #picture {
-	float: left;
-	height: 70px;
-	width: 70px;
-	margin: -6px 10px 0px 7px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	box-shadow: 0px 0px 10px #888;
+.x-indexbar div {
+    color: $mediumBlue !important;
+    opacity: 1 !important;
 }
 
-#profileView #name {
-	color: #288D42;
-	padding-top: 8px;
-	font-weight: bold;
-	font-size: 32px;
+/* Other list items */
+.emptyListText {
+    padding-top: 10px;
+    color: #999;
+    text-align: center;
 }
 
-#friendsView .mutualFriends {
-	float: left;
+.selectionItem {
+    float: left;
+    padding: 8px 4px 0px 0px;
 }
 
-
-.hidden {
-    visibility: "hidden";
-}
-
-
+/*************************/
+/*  LIST DELETION ITEMS  */
+/*************************/
+/* Delete lock */
 .deleteLock {
 	float: left;
 	margin: 8px 5px 0px 0px;
 }
 
 .deleteLockHidden {
-	margin-left: -50px;
+	margin-left: -50px !important;
 }
 
 .deleteLockSlideLeft {
@@ -546,18 +522,20 @@ $badge-bg-gradient: "matte";
 	-webkit-transform:rotate(-90deg);
 }
 
-.deleteButton {
-	float: right;
-	padding: 2px 5px 2px 5px;
-	font-size: 14px;
-	color: #FFFFFF;
-	background-color: $red3;
-	border: solid 1px $red1;
-	border-radius: 5px;
-	margin: 14px 10px 0px 0px;
+/* List delete button */
+.listDeleteButton {
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    border: solid 1px $darkestRed !important;
+    background-color: $mediumRed !important;
+    font-size: 16px;
+    color: #FFFFFF !important;
 }
 
-.deleteButtonHidden {
+/*.deleteButtonHidden {
 	margin-right: -75px;
 }
 
@@ -577,14 +555,10 @@ $badge-bg-gradient: "matte";
 @-webkit-keyframes deleteButtonSlideRightAnimation {
 	0% 	 { opacity: 1; margin-right: 10px; }
 	100% { opacity: 0; margin-right: -75px; }
-}
-
-.disclosureArrow {
-	float: right;
-}
+}*/
 
 .disclosureArrowHidden {
-	margin-right: -150px;
+	margin-right: -150px !important;
 }
 
 .disclosureArrowSlideLeft {
@@ -605,7 +579,162 @@ $badge-bg-gradient: "matte";
 	100% { opacity: 0; margin-right: -75px; }
 }
 
-#friendsViewGroupsList .numMembers {
+/******************/
+/* TOUCH CALENDAR */
+/******************/
+.touch-calendar-view table {
+    width: 100%;
+    border-collapse: separate;
+    table-layout: fixed;
+    font-size: 20px;
+    color: #3F4E5E;
+    background-color: #EEEEEE;
+}
+
+
+.touch-calendar-view table.week td {
+    vertical-align: top;
+}
+
+.touch-calendar-view table.day td.time-block {
+    text-align: left;
+    background-image: none;
+    font-size: 0.7em;
+    height: 30px;
+}
+
+.touch-calendar-view tbody td {
+    border-bottom: 1px solid #A3A7AF;
+    border-left: 1px solid #A3A7AF;
+    border-right: 1px solid #DADBDE;
+    border-top: 1px solid #DADBDE;
+}
+
+.touch-calendar-view td {
+    font-weight: bold;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1.3em;
+    background-color: #CFCED3;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b5b3bb), color-stop(10%, #C2C1C7), color-stop(65%, #CFCED3), color-stop(100%, #D0CFD4));
+    background-image: -webkit-linear-gradient(#B5B3BB, #C2C1C7 10%, #CFCED3 65%, #D0CFD4);
+    background-image: linear-gradient(#B5B3BB, #C2C1C7 10%, #CFCED3 65%, #D0CFD4);
+}
+
+.touch-calendar-view td.today {
+    color: #FFFFFF;
+    text-shadow: $darkestGray 1px 1px 2px;
+    -webkit-box-shadow: inset 0px 0px 8px #000;
+    border: 1px solid black;
+    background: #7188A8;
+    background-color: #44566F;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #313D4F), color-stop(10%, #3A4A5F), color-stop(65%, #44566F), color-stop(100%, #455771));
+    background-image: -webkit-linear-gradient(#313D4F, #3A4A5F 10%, #44566F 65%, #455771);
+    background-image: linear-gradient(#313D4F, #3A4A5F 10%, #44566F 65%, #455771);
+}
+
+.touch-calendar-view td.unselectable {
+    color: #89909A;
+    background-color: #CDA3A8;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #BB8289), color-stop(10%, #C49399), color-stop(65%, #CDA3A8), color-stop(100%, #CEA5AA));
+    background-image: -webkit-linear-gradient(#BB8289, #C49399 10%, #CDA3A8 65%, #CEA5AA);
+    background-image: linear-gradient(#BB8289, #C49399 10%, #CDA3A8 65%, #CEA5AA);
+}
+
+.touch-calendar-view td.selected {
+    color: #FFFFFF;
+    text-shadow: $darkestGray 1px 1px 0px;
+    border: 1px solid black;
+    background: #1980E5;
+    background-color: #4699EB;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8BBFF2), color-stop(50%, #5DA6ED), color-stop(51%, #4699EB), color-stop(100%, #2F8DE8));
+    background-image: -webkit-linear-gradient(#8bbFF2, #5DA6ED 50%, #4699EB 51%, #2F8DE8);
+    background-image: linear-gradient(#8BBFF2, #5DA6ED 50%, #4699EB 51%, #2F8DE8);
+}
+
+.touch-calendar-view td.today.selected {
+    color: #FFFFFF;
+    text-shadow: $darkestGray 1px 1px 2px;
+    border: 1px solid black;
+    background: #1980E5;
+    background-color: #0F4D89;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0A335B), color-stop(10%, #0C4072), color-stop(65%, #0F4D89), color-stop(100%, #0F4E8B));
+    background-image: -webkit-linear-gradient(#0A335B, #0C4072 10%, #0F4D89 65%, #0F4E8B);
+    background-image: linear-gradient(#0A335B, #0C4072 10%, #0F4D89 65%, #0F4E8B);
+}
+
+.touch-calendar-view td.prev-month, .touch-calendar-view td.next-month {
+    color: #89909A;
+}
+
+.touch-calendar-view td.prev-month.selected, .touch-calendar-view td.next-month.selected {
+    color: #FFFFFF;
+}
+
+.touch-calendar-view thead {
+    background-color: #CFCED3;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #FFFFFF), color-stop(2%, #E1E1E4), color-stop(100%, #BDBBC2));
+    background-image: -webkit-linear-gradient(#FFFFFF, #E1E1E4 2%, #BDBBC2);
+    background-image: linear-gradient(#FFFFFF, #E1E1E4 2%, #BDBBC2);
+}
+
+.touch-calendar-view thead th {
+    font-size: 9px;
+    vertical-align: bottom;
+    padding-bottom: 3px;
+    color: #3F4E5E;
+    text-align: center;
+    height: 46px;
+    text-shadow: white 1px 1px 1px;
+    font-weight: bold;
+    border-bottom: 1px solid #A3A7AF;
+}
+
+.touch-calendar-view thead th:first-child {
+    background: url("../images/larr.png") center center no-repeat;
+    cursor: pointer;
+}
+
+.touch-calendar-view thead th:last-child {
+    background: url("../images/rarr.png") center center no-repeat;
+    cursor: pointer;
+}
+
+.touch-calendar-view thead th span {
+    font-size: 20px;
+    font-weight: bold;
+    height: 30px;
+    left: 14.5%;
+    position: absolute;
+    text-align: center;
+    top: 6px;
+    width: 71%;
+    z-index: 999;
+    text-shadow: white 1px 1px 1px;
+}
+
+/***********************/
+/*  ALL INKLINGS VIEW  */
+/***********************/
+/* All inklings date picker border */
+#allInklingsDatePickerPanel .x-inner {
+    margin: 0px;
+}
+
+/******************/
+/*  INKLING VIEW  */
+/******************/
+#inklingView #inklingHeader {
+	color: #888;
+	border: solid 1px #EFEFEF;
+	background-color: #EFEFEF;
+	border-radius: 3px;
+	margin: 10px 0px 20px 0px;
+	box-shadow: 0px 0px 5px #888;
+}
+
+#inklingView .numAttendees {
 	float: left;
 	color: #EFEFEF;
 	font-size: 30px;
@@ -614,31 +743,179 @@ $badge-bg-gradient: "matte";
 	padding-top: 5px;
 	height: 50px;
 	width: 50px;
-	margin: 0px 0px 0px 0px;
+	margin: 5px 10px 5px 5px;
 	border-radius: 3px;
 	border: solid 2px #DDD;
-	background-color: $green5;
+	background-color: $lightestGreen;
 	box-shadow: 0px 0px 10px #888;
 }
 
-#friendsViewGroupsList .groupInfo {
+#inklingView .location {
 	float: left;
-	padding: 12px 0px 0px 10px;
-	vertical-align: top;
+	padding-top: 10px;
+	font-size: 28px;
+	width: 75%;
 }
 
-#friendsViewGroupsList .name {
-	font-size: 20px;
+#inklingView #editInklingButton {
+	margin: 3px 3px 0px -25px;
+	float: right;
+	height: 20px;
+}
+
+.clear
+{
+	clear: both;
+}
+
+#inklingView .infoContainer {
+	padding: 5px;
+}
+
+#inklingView #membersAttendingPictures {
+    float: left;
+    width: 257px;
+}
+
+#inklingView .memberPicture {
+	height: 60px;
+	width: 60px;
+    margin: 5px 5px 0px 0px;
+	float: left;
+}
+
+#inklingView #membersAttendingPictures .memberPicture:nth-child(4n+4) {
+	margin-right: 0px;
+}
+
+#inklingView .disclosureArrow {
+	clear: left;
+	margin: 50px 0px 0px 0px;
+	padding: 10px 8px 10px 10px;
+}
+
+/******************/
+/*  INKLING FEED  */
+/******************/
+#inklingFeedList .x-list-item-label {
+	/*height: 60px;*/
+	padding: 10px;
+}
+
+#inklingFeedList img {
+	float: left;
+	height: 50px;
+	width: 50px;
+	margin-right: 10px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $lightestBlue;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#inklingFeedList .floatRight {
+	float: right;
+	margin-right: 0px;
+	margin-left: 10px;
+}
+
+#inklingFeedList .feedcommentInfo {
+	float: left;
+}
+
+#inklingFeedList .creatorName {
+	font-size: 16px;
+	font-weight: bold;
+	color: $mediumGreen;
+}
+
+#inklingFeedList .text {
+	font-size: 16px;
+}
+
+#inklingFeedList .timestamp {
+	font-size: 12px;
+	color: #AAAAAA;
+}
+
+
+
+#inklingInfo, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {
+	color: #888;
+	border: solid 1px #EFEFEF;
+	background-color: #EFEFEF;
+	border-radius: 3px;
+	margin: 10px 0px 20px 0px;
+	box-shadow: 0px 0px 5px #888;
+	height: 60px;
+}
+
+.noInklings, .noFriends, .noGroups
+{
+	color: #888;
+	border: solid 1px #EFEFEF;
+	background-color: #EFEFEF;
+	border-radius: 3px;
+	margin: 10px 0px 20px 0px;
+	padding: 5px;
+	box-shadow: 0px 0px 5px #888;
+}
+
+#inklingView .time, #inlingView .category {
+	float: none;
+}
+
+#inklingView .basicInfoLabel {
 	font-weight: bold;
 }
+
+.x-button .x-badge {
+	margin-top: -3px;
+	margin-right: -8px;
+}
+
+#inklingView #editInklingButton:hover {
+	box-shadow: 0px 0px 10px #888;
+}
+
+#inklingView #inklingInfo {
+	height: auto;
+}
+
+.banner {
+	color: #EFEFEF;
+	text-align: left;
+	font-size: 16px;
+	font-weight: bold;
+	height: 30px;
+	width: 200px;
+	padding-top: 3px;
+	padding-left: 20px;
+	margin: 5px 0px 0px -15px;
+	border-radius: 3px;
+	border: solid 2px #DDD;
+	background-color: $lightestBlue;
+	box-shadow: 0px 0px 10px #888;
+}
+
+#friendsView .mutualFriends {
+	float: left;
+}
+
+
+.hidden {
+    visibility: "hidden";
+}
+
+
 
 .isFriendButton {
 	float: right;
 	font-size: 14px;
 	padding: 2px 5px 2px 5px;
 	color: #FFFFFF;
-	background-color: $green3;
-	border: solid 1px $green1;
+	background-color: $mediumGreen;
+	border: solid 1px $darkestGreen;
 	border-radius: 5px;
 	margin: 14px 10px 0px 0px;
 }
@@ -648,21 +925,10 @@ $badge-bg-gradient: "matte";
 	font-size: 14px;
 	padding: 2px 5px 2px 5px;
 	color: #FFFFFF;
-	background-color: $blue3;
-	border: solid 1px $blue1;
+	background-color: $mediumBlue;
+	border: solid 1px $darkestBlue;
 	border-radius: 5px;
 	margin: 14px 10px 0px 0px;
-}
-
-.emptyListText {
-	padding-top: 10px;
-	color: #999;
-	text-align: center;
-}
-
-.selectionItem {
-	float: left;
-	padding: 8px 4px 0px 0px;
 }
 
 /* Inkling invitees list */
@@ -679,7 +945,12 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*  NEW INKLING VIEW  */
 /**********************/
+<<<<<<< local
+/* New inkling invitess privacy form */
+#newInklingPrivacyForm #selectedGroupsHeader, #newInklingPrivacyForm #noOne,  #newInklingPrivacyForm #forwarding {
+=======
 #shareSettingsForm #selectedGroupsHeader, #shareSettingsForm #noOne,  #shareSettingsForm #forwarding {
+>>>>>>> other
     clear: both;
 }
 
@@ -700,149 +971,41 @@ $badge-bg-gradient: "matte";
 	margin-left: 25px;
 }
 
-/**************************************/
-/*  NEW INKLING INVITED FRIENDS VIEW  */
-/**************************************/
-
-/* New inkling invited friends list */
-#newInklingInvitedFriendsList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
+/* New inkling invitees button */
+#newInklingViewInvitees {
+    border: solid 1px #DDD;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+    padding: 10px;
+    height: 45px;
 }
 
-#newInklingInvitedFriendsList .selectionButton {
-	float: left;
-	padding: 8px 4px 0px 0px;
+#newInklingViewInvitees p {
+    float: left;
 }
 
-#newInklingInvitedFriendsList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#newInklingInvitedFriendsList .memberInfo {
-	float: left;
-	padding: 11px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#newInklingInvitedFriendsList .name {
-	font-size: 20px;
-}
-
-#newInklingInvitedFriendsList .lastName {
-	font-weight: bold;
-}
-
-/* New inkling invited groups list */
-#newInklingInvitedGroupsList .selectionButton {
-	float: left;
-	margin: -4px 5px 0px -10px;
-}
-
-#newInklingInvitedGroupsList .groupName {
-	float: left;
-	font-weight: bold;
+#newInklingViewInvitees .disclosureArrow {
+    float: right;
+    margin-top: 5px;
 }
 
 /******************/
 /*  FRIENDS VIEW  */
 /******************/
 
-/* Friends list */
-#friendsViewFriendsList .x-list-item-label, #addFriendsSuggestions .x-list-item-label, #friendsViewGroupsList .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
+#addFriendsSuggestions .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
 	height: 60px;
-	padding: 5px;
+	padding: 5px 55px 5px 5px;
+	margin-right: -50px;
+	border: solid red 1px;
 }
 
-#friendsViewFriendsList .image, #addFriendsSuggestions .image, #groupMembersList .image {
+#addFriendsSuggestions .image, #groupMembersList .image {
 	float: left;
 	height: 50px;
 	width: 50px;
-}
-
-#friendsViewFriendsList .memberInfo, #addFriendsSuggestions .memberInfo, #groupMembersList .groupInfo {
-	float: left;
-	padding: 3px 0px 0px 10px;
-}
-
-#friendsViewFriendsList .name, #addFriendsSuggestions .name, #groupMembersList .name {
-	font-size: 20px;
-}
-
-#friendsViewFriendsList .lastName, #addFriendsSuggestions .lastName, #groupMembersList .name {
-	font-weight: bold;
-}
-
-#friendsViewFriendsList .mutualFriends, #addFriendsSuggestions .mutualFriends, #groupMembersList .mutualFriends {
-	font-size: 16px;
-	color: #777;
-	float: left;
-}
-
-/* Groups list */
-#friendsViewGroupsList .groupNameHidden, #friendsViewGroupsList .groupNameInputHidden {
-	display: none;
-}
-
-#friendsViewGroupsList .groupNameInput {
-	font-size: 20px;
-	font-weight: bold;
-	border-width: 0px;
-	width: 220px;
-}
-
-/* Friend requests list */
-#friendsViewRequestsList .x-list-item-label {
-	height: 60px;
-	padding: 5px;
-}
-
-#friendsViewRequestsList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-}
-
-#friendsViewRequestsList .memberInfo {
-	float: left;
-	padding: 3px 0px 0px 10px;
-	vertical-align: top;
-}
-
-#friendsViewRequestsList .name {
-	font-size: 20px;
-}
-
-#friendsViewRequestsList .lastName {
-	font-weight: bold;
-}
-
-#friendsViewRequestsList .mutualFriends {
-	font-size: 16px;
-	color: #777;
-}
-
-/*****************/
-/*  NEW INKLING  */
-/*****************/
-
-#newInklingViewInvitees {
-	border: solid 1px #DDD;
-	background-color: #FFFFFF;
-	border-radius: 7px;
-	padding: 10px;
-	height: 45px;
-}
-
-#newInklingViewInvitees p {
-	float: left;
-}
-
-#newInklingViewInvitees .disclosureArrow {
-	float: right;
-	margin-top: 5px;
+	margin-right: 5px;
+	border: solid green 1px;
 }
 
 /****************/
@@ -863,139 +1026,4 @@ $badge-bg-gradient: "matte";
 #profileViewList .disclosureArrow {
 	float: right;
 	margin-top: 5px;
-}
-
-/******************/
-/* TOUCH CALENDAR */
-/******************/
-/* line 17, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view table {
-  width: 100%;
-  border-collapse: separate;
-  table-layout: fixed;
-  font-size: 20px;
-  color: #3F4E5E;
-  background-color: #EEE;
-}
-/* line 28, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view table.week td {
-  vertical-align: top;
-}
-/* line 38, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view table.day td.time-block {
-  text-align: left;
-  background-image: none;
-  font-size: 0.7em;
-  height: 30px;
-}
-/* line 52, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view tbody td {
-  border-bottom: 1px solid #a3a7af;
-  border-left: 1px solid #a3a7af;
-  border-right: 1px solid #dadbde;
-  border-top: 1px solid #dadbde;
-}
-/* line 62, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td {
-  font-weight: bold;
-  position: relative;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1.3em;
-  background-color: #cfced3;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b5b3bb), color-stop(10%, #c2c1c7), color-stop(65%, #cfced3), color-stop(100%, #d0cfd4));
-  background-image: -webkit-linear-gradient(#b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
-  background-image: linear-gradient(#b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
-}
-/* line 71, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.today {
-  color: #FFFFFF;
-  text-shadow: #333 1px 1px 2px;
-  -webkit-box-shadow: inset 0px 0px 8px #000;
-  border: 1px solid black;
-  background: #7188a8;
-  background-color: #44566f;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #313d4f), color-stop(10%, #3a4a5f), color-stop(65%, #44566f), color-stop(100%, #455771));
-  background-image: -webkit-linear-gradient(#313d4f, #3a4a5f 10%, #44566f 65%, #455771);
-  background-image: linear-gradient(#313d4f, #3a4a5f 10%, #44566f 65%, #455771);
-}
-/* line 82, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.unselectable {
-  color: #89909A;
-  background-color: #cda3a8;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #bb8289), color-stop(10%, #c49399), color-stop(65%, #cda3a8), color-stop(100%, #cea5aa));
-  background-image: -webkit-linear-gradient(#bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
-  background-image: linear-gradient(#bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
-}
-/* line 88, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.selected {
-  color: #FFFFFF;
-  text-shadow: #333 1px 1px 0px;
-  border: 1px solid black;
-  background: #1980e5;
-  background-color: #4699eb;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8bbff2), color-stop(50%, #5da6ed), color-stop(51%, #4699eb), color-stop(100%, #2f8de8));
-  background-image: -webkit-linear-gradient(#8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
-  background-image: linear-gradient(#8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
-}
-/* line 98, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.today.selected {
-  color: #FFFFFF;
-  text-shadow: #333 1px 1px 2px;
-  border: 1px solid black;
-  background: #1980e5;
-  background-color: #0f4d89;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0a335b), color-stop(10%, #0c4072), color-stop(65%, #0f4d89), color-stop(100%, #0f4e8b));
-  background-image: -webkit-linear-gradient(#0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
-  background-image: linear-gradient(#0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
-}
-/* line 108, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.prev-month, .touch-calendar-view td.next-month {
-  color: #89909A;
-}
-/* line 113, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view td.prev-month.selected, .touch-calendar-view td.next-month.selected {
-  color: #FFFFFF;
-}
-/* line 119, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view thead {
-  background-color: #cfced3;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(2%, #e1e1e4), color-stop(100%, #bdbbc2));
-  background-image: -webkit-linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
-  background-image: linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
-}
-/* line 123, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view thead th {
-  font-size: 9px;
-  vertical-align: bottom;
-  padding-bottom: 3px;
-  color: #3F4E5E;
-  text-align: center;
-  height: 46px;
-  text-shadow: white 1px 1px 1px;
-  font-weight: bold;
-  border-bottom: 1px solid #a3a7af;
-}
-/* line 135, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view thead th:first-child {
-  background: url(../images/larr.png) center center no-repeat;
-  cursor: pointer;
-}
-/* line 141, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view thead th:last-child {
-  background: url(../images/rarr.png) center center no-repeat;
-  cursor: pointer;
-}
-/* line 147, ../scss/Ext.ux.TouchCalendar.scss */
-.touch-calendar-view thead th span {
-  font-size: 20px;
-  font-weight: bold;
-  height: 30px;
-  left: 14.5%;
-  position: absolute;
-  text-align: center;
-  top: 6px;
-  width: 71%;
-  z-index: 999;
-  text-shadow: white 1px 1px 1px;
 }

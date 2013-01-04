@@ -118,6 +118,7 @@ Ext.define("inkle.view.MyInklings", {
     		{
     			xtype: "list",
 				id: "myInklingsList",
+                cls: "inklingsList",
 				loadingText: "Loading inklings...",
 				emptyText: "<div class='emptyListText'>No inklings</div>",
 				disableSelection: true,
@@ -161,6 +162,7 @@ Ext.define("inkle.view.MyInklings", {
         	{
         		xtype: "panel",
         		id: "inklingInvitationsPanel",
+                cls: "inklingInvitationsList",
         		hidden: true,
         		top: 0,
         		width: 300,
@@ -176,7 +178,8 @@ Ext.define("inkle.view.MyInklings", {
 						itemTpl: "{ html }",
 						store: {
 							fields: [
-								"id",
+                                "invitationId",
+								"inklingId",
 								"html"
 							],
 							proxy: {
@@ -184,10 +187,6 @@ Ext.define("inkle.view.MyInklings", {
                                 url: "http://127.0.0.1:8000/sencha/inklingInvitations/",
                                 actionMethods: {
                                     read: "POST"
-                                },
-                                reader: {
-                                    type: "json",
-                                    rootProperty: "inklingInvitations"
                                 }
                             },
 							autoLoad: true
@@ -197,52 +196,31 @@ Ext.define("inkle.view.MyInklings", {
 				
 				listeners: [
 					{
-						event: "tap",
-						element: "element",
-						delegate: ".acceptInvitationButton",
-						fn: "onAcceptInvitationButtonTap"
-					},
-					{
-						event: "tap",
-						element: "element",
-						delegate: ".ignoreInvitationButton",
-						fn: "onIgnoreInvitationButtonTap"
-					},
-					{
-						event: "tap",
-						element: "element",
-						delegate: ".hideInvitationButton",
-						fn: "onHideInvitationButtonTap"
-					},
-					{
-                        event: "tap",
-                        element: "element",
-                        delegate: ".inklingInvitation",
-                        fn: "onInklingInvitationTap"
+                        event: "itemtap",
+                        delegate: "#inklingInvitationsList",
+                        fn: "onInklingInvitationItemTap"
                     }
 				],
 				
-				onAcceptInvitationButtonTap: function(event, target) {
-					var tappedInvitationId = target.getAttribute("invitationId");
-					this.fireEvent("invitationButtonTapped", tappedInvitationId, "accepted");
-				},
-				
-				onIgnoreInvitationButtonTap: function(event, target) {
-					var tappedInvitationId = target.getAttribute("invitationId");
-					this.fireEvent("invitationButtonTapped", tappedInvitationId, "ignored");
-				},
-				
-				onHideInvitationButtonTap: function(event, target) {
-					var tappedInvitationId = target.getAttribute("invitationId");
-					this.fireEvent("invitationButtonTapped", tappedInvitationId, "hidden");
-				},
-				
-				onInklingInvitationTap: function(event, target) {
-                    if (!event.getTarget("input")) {
-                        var tappedInklingId = event.getTarget(".inklingInvitation").getAttribute("inklingId");
-                        this.fireEvent("inklingInvitationTapped", tappedInklingId, "invitations");
+                onInklingInvitationItemTap: function(inklingInvitationsList, index, target, record, event, options) {
+                    var buttonTarget = Ext.fly(event.getTarget("input[type='button']"));
+                    if (!buttonTarget) {
+                        var tappedInklingId = record.getData()["inklingId"];
+                        this.fireEvent("inklingInvitationTapped", tappedInklingId, /* source = */ "invitations");
                     }
-                },
+                    else {
+                        var tappedInvitationId = record.getData()["invitationId"];
+                        if (buttonTarget.hasCls("acceptInklingInvitationButton")) {
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "accepted");
+                        }
+                        else if (buttonTarget.hasCls("ignoreInklingInvitationButton")) {
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "ignored");
+                        }
+                        else if (buttonTarget.hasCls("hideInklingInvitationButton")) {
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "hidden");
+                        }
+                    }
+                }
 			}
     	],
     	

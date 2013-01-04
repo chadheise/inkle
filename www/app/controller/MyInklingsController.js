@@ -269,7 +269,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		var selectedGroupIds = "";
 		
 		// If the inputted selection button is selected, deselect it
-		if (selectionButton.getAttribute("src") == "resources/images/selected.png") {
+		if (selectionButton.hasCls("selected")) {
 			selectionButton.set({
 				"src": "resources/images/deselected.png"
 			});
@@ -281,7 +281,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 				var groupSelectionButtons = Ext.query("#newInklingInvitedGroupsList .selectionButton");
 				for (var i = 0; i < groupSelectionButtons.length; i++) {
 					var groupSelectionButton = Ext.fly(groupSelectionButtons[i]);
-					if (groupSelectionButton.getAttribute("src") == "resources/images/selected.png") {
+					if (groupSelectionButton.hasCls("selected")) {
 						selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
 					}
 				}
@@ -289,6 +289,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 			else if (itemType == "Member") {
 				var url = "http://127.0.0.1:8000/sencha/uninviteMember/";
 			}
+
+            selectionButton.removeCls("selected");
 		}
 		
 		// Otherwise, select the inputted selection button
@@ -303,6 +305,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 			else if (itemType == "Member") {
 				var url = "http://127.0.0.1:8000/sencha/inviteMember/";
 			}
+
+            selectionButton.addCls("selected");
 		}
 		
 		var invitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
@@ -340,7 +344,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 			var newInklingInvitedGroupsStore = this.getNewInklingInvitedGroupsList().getStore();
 			newInklingInvitedGroupsStore.setProxy({
 				extraParams: {
-					view: "invites",
+					autoSetGroupsAsSelected: "false",
 					inklingId: this.getNewInklingView().getData()["inklingId"]
 				}
 			});
@@ -463,6 +467,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	respondToInklingInvitation: function(invitationId, invitationResponse) {
+        console.log(invitationId);
+        console.log(invitationResponse);
 	    Ext.Ajax.request({
             url: "http://127.0.0.1:8000/sencha/respondToInklingInvitation/",
             params: {

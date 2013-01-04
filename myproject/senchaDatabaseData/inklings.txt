@@ -1,10 +1,11 @@
 # LOCATION | NUMBER OF DAYS FROM TODAY | TIME | NOTES | MEMBER IDS OF MEMBERS ATTENDING INKLING | MEMBER ID OF INKLING CREATOR
-Brother's Bar & Grill | 0 | 11:00 PM | Half off bud light pitchers | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 22, 28 | 1
+Brother's Bar & Grill | 0 | 11:00 PM | Half off bud light pitchers | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 22, 28, 31 | 1
 Papa Vino's | 0 | 6:30 PM |  | 1, 2, 3, 26 | 1
 Finny's | 0 | Late | Wet t-shirt contest :O | 2, 5, 6, 7, 8, 9, 10, 11, 12, 26, 27, 28  | 9
 Morrissey | 0 | 11:00 PM | Stripper pole party | 3, 5, 7, 11, 12, 16 | 12
 Chipotle | 0 |5:30 PM | I've got a $25 gift card | 1, 5, 6, 11, 12, 13, 29, 30 | 11
 SDH | 0 |  | Let's grab some lunch | 1, 2, 5, 6, 12 | 2
+Really Long Location Name That Overflows | 0 | Really Long Time That Overflows | Really Long Note That Overflows But Shouldn't Matter Since We Allow Multi-line Notes | 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 | 1
 Strikes & Spares | 1 | After dinner | Rock and Bowl | 4, 6, 8, 11 | 4
 Jane & Chrissy's | 1 | 8:00 PM | Family Dinner! Pulled pork! | 1, 2, 3, 6, 8, 9 | 8
 Subway | 1 |  |  | 7, 8 | 7

@@ -268,6 +268,10 @@ class Member(User):
         """String representation for the current member."""
         return "%d: %s" % (self.id, self.get_full_name())
 
+    def is_facebook_member(self):
+        """Returns True if the current member logged in using Facebook or False otherwise."""
+        return (self.facebookId != None)
+
     def get_full_name(self):
         """Returns the current member's full name."""
         return "%s %s" % (self.first_name, self.last_name)
@@ -281,6 +285,9 @@ class Member(User):
         return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))
 
     def get_picture_path(self, m):
-        """Returns the path to the member's picture"""
-        #"file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
-        return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"
+        """Returns the path to the current member's picture."""
+        if (member.is_facebook_member()):
+            return "https://graph.facebook.com/{{ m.facebookId }}/picture"
+        else:
+            return "file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
+            #return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"

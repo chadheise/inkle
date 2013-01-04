@@ -11,6 +11,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
     		{
     			xtype: "list",
 				id: "newInklingInvitedFriendsList",
+                cls: "membersList",
 				flex: 1,
 				loadingText: "Loading friends...",
 				emptyText: "<div class='emptyListText'>No friends to invite</div>",
@@ -48,21 +49,22 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         	{
         		xtype: "panel",
         		id: "newInklingInvitedGroupsPanel",
+                cls: "groupsListPanel",
         		hidden: true,
         		width: 250,
-        		height: 300,
+        		height: 310,
         		layout: "fit",
         		items: [
         			{
 						xtype: "list",
 						id: "newInklingInvitedGroupsList",
+                        cls: "groupListPanel",
 						loadingText: "Loading groups...",
 						emptyText: "<div class='emptyListText'>No groups to invite</div>",
 						disableSelection: true,
 						itemTpl: "{ html }",
 						store: {
 							fields: [
-								"id",
 								"html"
 							],
 							proxy: {
@@ -70,7 +72,11 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/groups/"
+								url: "http://127.0.0.1:8000/sencha/groupsPanel/",
+                                extraParams: {
+                                    autoSetGroupsAsSelected: "false",
+                                    inklingId: "-1"
+                                }
 							},
 							autoLoad: false
 						}
@@ -81,15 +87,15 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 					{
 						event: "tap",
 						element: "element",
-						delegate: ".group .selectionButton",
+						delegate: ".selectionButton",
 						fn: "onGroupSelectionButtonTap"
 					},
 				],
 				
 				// Event firings
 				onGroupSelectionButtonTap: function(event, target) {
-					var groupId = event.getTarget(".selectionButton").getAttribute("groupId");
 					var groupSelectionButton = Ext.fly(target);
+                    var groupId = groupSelectionButton.parent(".group").getAttribute("data-groupId");
 					this.fireEvent("groupSelectionButtonTapped", groupSelectionButton, groupId, "Group");
 				}
         	}
