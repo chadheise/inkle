@@ -28,9 +28,10 @@ Ext.define("inkle.view.GroupMembers", {
     		{
     			xtype: "list",
 				id: "groupMembersList",
+                cls: "membersList",
 				flex: 1,
-				loadingText: "Loading friends...",
-				emptyText: "<div class='emptyListText'>No friends</div>",
+				loadingText: "Loading group members...",
+				emptyText: "<div class='emptyListText'>No group members</div>",
 				grouped: true,
 				disableSelection: true,
 				indexBar: true,
@@ -85,8 +86,7 @@ Ext.define("inkle.view.GroupMembers", {
         this.fireEvent("groupMembersBackButtonTapped");
     },
     
-    onSelectionItemTap: function(event) {
-    	var tappedId = event.getTarget(".selectionItem").getAttribute("memberId");
-    	this.fireEvent("selectionItemTapped", tappedId);
+    onSelectionItemTap: function(event, target) {
+    	this.fireEvent("selectionItemTapped", Ext.fly(target));
     }
 });

@@ -42,8 +42,7 @@ Ext.define("inkle.controller.FriendsController", {
            		friendsViewCreateGroupButtonTapped: "createGroup",
            		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
            		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
-           		deleteLockTapped: "toggleGroupsListDeleteLockRotation",
-           		deleteButtonTapped: "deleteListItem",
+           		deleteLockTapped: "toggleDeleteButtonVisibility",
            		groupNameInputBlurred: "renameGroup",
            		
            		acceptRequestButtonTapped: "respondToRequest",
@@ -101,7 +100,7 @@ Ext.define("inkle.controller.FriendsController", {
         // Hide the delete locks
         var deleteLocks = Ext.query(".deleteLock");
 		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+			var deleteLock = Ext.fly(deleteLocks[i]);
 			deleteLock.removeCls("deleteLockSlideRight");
 			deleteLock.removeCls("deleteLockSlideLeft");
 			deleteLock.addCls("deleteLockHidden");
@@ -110,7 +109,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Hide the delete buttons
 		var deleteButtons = Ext.query(".deleteButton");
 		for (var i = 0; i < deleteButtons.length; i++) {
-			var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+			var deleteButton = Ext.fly(deleteButtons[i]);
 			deleteButton.removeCls("deleteButtonSlideLeft");
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.addCls("deleteButtonHidden");
@@ -151,7 +150,7 @@ Ext.define("inkle.controller.FriendsController", {
 			// Hide the delete locks
 			var deleteLocks = Ext.query(".deleteLock");
 			for (var i = 0; i < deleteLocks.length; i++) {
-				var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+				var deleteLock = Ext.fly(deleteLocks[i]);
 				deleteLock.removeCls("deleteLockSlideRight");
 				deleteLock.removeCls("deleteLockSlideLeft");
 				deleteLock.addCls("deleteLockHidden");
@@ -160,7 +159,7 @@ Ext.define("inkle.controller.FriendsController", {
 			// Hide the delete buttons
 			var deleteButtons = Ext.query(".deleteButton");
 			for (var i = 0; i < deleteButtons.length; i++) {
-				var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+				var deleteButton = Ext.fly(deleteButtons[i]);
 				deleteButton.removeCls("deleteButtonSlideLeft");
 				deleteButton.removeCls("deleteButtonSlideRight");
 				deleteButton.addCls("deleteButtonHidden");
@@ -208,6 +207,7 @@ Ext.define("inkle.controller.FriendsController", {
 		
 		// Show and hide the appropriate buttons
 		if (index == 0) {
+            // Show the friends buttons
 			this.getRemoveFriendsButton().show();
 			this.getAddFriendButton().show();
 			this.getEditGroupsButton().hide();
@@ -220,6 +220,7 @@ Ext.define("inkle.controller.FriendsController", {
 			removeFriendsButton.setText("");
 		}
 		else if (index == 1) {
+            // Show the groups buttons
 			this.getRemoveFriendsButton().hide();
 			this.getAddFriendButton().hide();
 			this.getEditGroupsButton().show();
@@ -230,8 +231,25 @@ Ext.define("inkle.controller.FriendsController", {
 			editGroupsButton.setIconMask(true);
 			editGroupsButton.setIconCls("editIcon");
 			editGroupsButton.setText("");
+
+            // Hide the group name inputs
+            var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
+            for (var i = 0; i < groupNameInputs.length; i++) {
+                var groupNameInput = Ext.fly(groupNameInputs[i]);
+                groupNameInput.addCls("groupNameInputHidden");
+            }
+            
+            // Show the group names
+            var groupNames = Ext.query("#friendsViewGroupsList .groupName");
+            for (var i = 0; i < groupNames.length; i++) {
+                var groupName = Ext.fly(groupNames[i]);
+                if (groupName.parent(".group").getAttribute("data-groupId") != -1) {
+                    groupName.removeCls("groupNameHidden");
+                }
+            }
 		}
 		else {
+            // Show the requests buttons
 			this.getRemoveFriendsButton().hide();
 			this.getAddFriendButton().hide();
 			this.getEditGroupsButton().hide();
@@ -241,7 +259,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Hide the delete locks
 		var deleteLocks = Ext.query(".deleteLock");
 		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
+			var deleteLock = Ext.fly(deleteLocks[i]);
 			deleteLock.removeCls("deleteLockSlideRight");
 			deleteLock.removeCls("deleteLockSlideLeft");
 			deleteLock.addCls("deleteLockHidden");
@@ -250,7 +268,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Hide the delete buttons
 		var deleteButtons = Ext.query(".deleteButton");
 		for (var i = 0; i < deleteButtons.length; i++) {
-			var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+			var deleteButton = Ext.fly(deleteButtons[i]);
 			deleteButton.removeCls("deleteButtonSlideLeft");
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.addCls("deleteButtonHidden");
@@ -259,7 +277,7 @@ Ext.define("inkle.controller.FriendsController", {
 		// Hide the disclosure arrows
 		var disclosureArrows = Ext.query(".disclosureArrow");
 		for (var i = 0; i < disclosureArrows.length; i++) {
-			var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+			var disclosureArrow = Ext.fly(disclosureArrows[i]);
 			
 			if (disclosureArrow) {
 				disclosureArrow.removeCls("disclosureArrowSlideRight");
@@ -269,25 +287,9 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 	},
 	
-	/* Toggles the visibility of the delete locks */
+	/* Toggles the visibility of the delete locks (for the friends and groups lists) */
 	toggleDeleteLocksVisibility: function(listId, buttonIconCls) {
-		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
-		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i].getAttribute("id"));
-			if (deleteLock.hasCls("deleteLockHidden")) {
-				deleteLock.removeCls("deleteLockHidden");
-				deleteLock.removeCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockSlideRight");
-			}
-			else {
-				deleteLock.removeCls("deleteLockSlideRight");
-				deleteLock.addCls("deleteLockHidden");
-				deleteLock.addCls("deleteLockSlideLeft");
-			}
-			deleteLock.removeCls("deleteLockRotateLeft");
-			deleteLock.removeCls("deleteLockRotateRight");
-		}
-		
+		// Get the clicked button
 		var button;
 		if (buttonIconCls == "minusFriendIcon") {
 			button = this.getRemoveFriendsButton();
@@ -296,7 +298,7 @@ Ext.define("inkle.controller.FriendsController", {
 			button = this.getEditGroupsButton();
 		}
 		
-		// If the remove friends or edits groups button (aka not the "Done" button) was pressed 
+		// If the remove friends or edits groups button (aka not the "Done" button) was clicked 
 		if (button.getIconMask()) {
 			// Update the button into a "Done" button
 			button.setIconMask(false);
@@ -311,31 +313,35 @@ Ext.define("inkle.controller.FriendsController", {
 				this.getCreateGroupButton().hide();
 			}		
 			
+			// Hide the disclosure arrows by sliding them to the right
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
-				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+				var disclosureArrow = Ext.fly(disclosureArrows[i]);
 				
 				disclosureArrow.removeCls("disclosureArrowSlideLeft");
 				disclosureArrow.addCls("disclosureArrowSlideRight");
 				disclosureArrow.addCls("disclosureArrowHidden");
 			}
 			
-			var groupNameInputs = Ext.query("#" + listId + " .groupNameInput");
-			for (var i = 0; i < groupNameInputs.length; i++) {
-				var groupNameInput = Ext.fly(groupNameInputs[i].getAttribute("id"));
-				groupNameInput.removeCls("groupNameInputHidden");
-			}
-			
-			var groupNames = Ext.query("#" + listId + " .groupName");
-			for (var i = 0; i < groupNames.length; i++) {
-				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
-				if (groupName.getAttribute("groupId") != -1) {
-                    groupName.addCls("groupNameHidden");
-                }
-			}
+            // Show the group name inputs and hide the group names if this is the groups lists
+            if (buttonIconCls != "minusFriendIcon") {
+    			var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
+    			for (var i = 0; i < groupNameInputs.length; i++) {
+    				var groupNameInput = Ext.fly(groupNameInputs[i]);
+    				groupNameInput.removeCls("groupNameInputHidden");
+    			}
+    			
+    			var groupNames = Ext.query("#friendsViewGroupsList .groupName");
+    			for (var i = 0; i < groupNames.length; i++) {
+    				var groupName = Ext.fly(groupNames[i]);
+    				if (groupName.parent(".group").getAttribute("data-groupId") != -1) {
+                        groupName.addCls("groupNameHidden");
+                    }
+    			}
+            }
 		}
 		
-		// Otherwise, the "Done" button was pressed
+		// Otherwise, the "Done" button was clicked
 		else {
 		    // Update the button from a "Done" button to an icon button
 			button.setText("");
@@ -353,7 +359,7 @@ Ext.define("inkle.controller.FriendsController", {
 			
 			var deleteButtons = Ext.query("#" + listId + " .deleteButton");
 			for (var i = 0; i < deleteButtons.length; i++) {
-				var deleteButton = Ext.fly(deleteButtons[i].getAttribute("id"));
+				var deleteButton = Ext.fly(deleteButtons[i]);
 				
 				if (!deleteButton.hasCls("deleteButtonHidden")) {
 					deleteButton.removeCls("deleteButtonSlideLeft");
@@ -362,87 +368,160 @@ Ext.define("inkle.controller.FriendsController", {
 				}
 			}
 			
+			// Unhide the disclosure arrows by sliding them to the left
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
-				var disclosureArrow = Ext.fly(disclosureArrows[i].getAttribute("id"));
+				var disclosureArrow = Ext.fly(disclosureArrows[i]);
 				
 				disclosureArrow.removeCls("disclosureArrowSlideRight");
 				disclosureArrow.removeCls("disclosureArrowHidden");
 				disclosureArrow.addCls("disclosureArrowSlideLeft");
 			}
 			
-			var groupNameInputs = Ext.query("#" + listId + " .groupNameInput");
-			for (var i = 0; i < groupNameInputs.length; i++) {
-				var groupNameInput = Ext.fly(groupNameInputs[i].getAttribute("id"));
-				groupNameInput.addCls("groupNameInputHidden");
+            // Hide the group name inputs and show the group names if this is the groups lists
+            if (buttonIconCls != "minusFriendIcon") {
+    			// Hide the group name inputs
+    			var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
+    			for (var i = 0; i < groupNameInputs.length; i++) {
+    				var groupNameInput = Ext.fly(groupNameInputs[i]);
+    				groupNameInput.addCls("groupNameInputHidden");
+    			}
+    			
+    			// Unhide the group names
+    			var groupNames = Ext.query("#friendsViewGroupsList .groupName");
+    			for (var i = 0; i < groupNames.length; i++) {
+    				var groupName = Ext.fly(groupNames[i]);
+    				groupName.removeCls("groupNameHidden");
+    			}
+            }
+		}
+
+		// Toggle the visibility of the delete locks
+		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
+		for (var i = 0; i < deleteLocks.length; i++) {
+			var deleteLock = Ext.fly(deleteLocks[i]);
+			if (deleteLock.hasCls("deleteLockHidden")) {
+				deleteLock.removeCls("deleteLockSlideLeft");
+                deleteLock.removeCls("deleteLockHidden");
+                deleteLock.addCls("deleteLockSlideRight");
 			}
-			
-			var groupNames = Ext.query("#" + listId + " .groupName");
-			for (var i = 0; i < groupNames.length; i++) {
-				var groupName = Ext.fly(groupNames[i].getAttribute("id"));
-				groupName.removeCls("groupNameHidden");
+			else {
+				deleteLock.removeCls("deleteLockSlideRight");
+				deleteLock.addCls("deleteLockSlideLeft");
+				deleteLock.addCls("deleteLockHidden");
 			}
+			deleteLock.removeCls("deleteLockRotateLeft");
+			deleteLock.removeCls("deleteLockRotateRight");
 		}
 	},
 	
-	/* Toggles the rotation of the inputted groups list delete lock */
-	toggleGroupsListDeleteLockRotation: function(tappedId) {
-		var deleteLock = Ext.fly(tappedId + "DeleteLock");
-		if (deleteLock.hasCls("deleteLockRotateLeft")) {
-			deleteLock.removeCls("deleteLockRotateLeft");
-			deleteLock.addCls("deleteLockRotateRight");
+	/* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
+	/*toggleDeleteButtonVisibility: function(tappedDeleteLock) {
+		// Get the delete button associated with the tapped delete lock
+        try {
+            var deleteButton = tappedDeleteLock.parent(".group").child(".deleteButton");
+		}
+        catch (error) {
+            var deleteButton = tappedDeleteLock.parent(".member").child(".deleteButton");
+        }
+
+		// Animate the delete lock and button
+		if (tappedDeleteLock.hasCls("deleteLockRotateLeft")) {
+			tappedDeleteLock.removeCls("deleteLockRotateLeft");
+			tappedDeleteLock.addCls("deleteLockRotateRight");
 			
-			var deleteButton = Ext.fly(tappedId + "DeleteButton");
 			deleteButton.removeCls("deleteButtonSlideLeft");
 			deleteButton.addCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideRight");
 		}
 		else {
-			deleteLock.removeCls("deleteLockRotateRight");
-			deleteLock.addCls("deleteLockRotateLeft");
+			tappedDeleteLock.removeCls("deleteLockRotateRight");
+			tappedDeleteLock.addCls("deleteLockRotateLeft");
 			
-			var deleteButton = Ext.fly(tappedId + "DeleteButton");
 			deleteButton.removeCls("deleteButtonSlideRight");
 			deleteButton.removeCls("deleteButtonHidden");
 			deleteButton.addCls("deleteButtonSlideLeft");
         }
+    },*/
+
+    /* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
+    toggleDeleteButtonVisibility: function(list, tappedListItem, tappedDeleteLock, tappedRecord) {
+        // Update variables depending on the list type of the tapped delete lock
+        var tappedId, url;
+        if (tappedDeleteLock.parent(".group")) {
+            tappedId = tappedDeleteLock.parent(".group").getAttribute("data-groupId");
+            url = "http://127.0.0.1:8000/sencha/deleteGroup/";
+        }
+        else {
+            tappedId = tappedDeleteLock.parent(".member").getAttribute("data-memberId");
+            url = "http://127.0.0.1:8000/sencha/removeFriend/";
+        }
+
+        // "Lock" the tapped delete lock if it is already "unlocked"
+        if (tappedDeleteLock.hasCls("deleteLockRotateLeft")) {
+            tappedDeleteLock.removeCls("deleteLockRotateLeft");
+            tappedDeleteLock.addCls("deleteLockRotateRight");
+        }
+
+        // Otherwise, "unlock" the tapped delete lock and create the corresponding delete button
+        else {
+            tappedDeleteLock.removeCls("deleteLockRotateRight");
+            tappedDeleteLock.addCls("deleteLockRotateLeft");
+
+            // Create the corresponding delete button
+            var deleteButton = Ext.create("Ext.Button", {
+                text: "Delete",
+                cls: "listDeleteButton",
+                handler: function() {
+                    // Remove the corresponding item from the logged-in member's friends or groups list
+                    Ext.Ajax.request({
+                        url: url,
+                        params: {
+                            groupId: tappedId,
+                            memberId: tappedId
+                        },
+                        success: function(response) {
+                            // Remove the tapped record from the store
+                            tappedRecord.stores[0].remove(tappedRecord);
+                        },
+                        failure: function(response) {
+                            console.log(response.resonseText);
+                            Ext.Msg.alert("Error", "Unable to delete item at this moment. Please try again later.");
+                        },
+                        scope: this
+                    });
+                }
+            });
+
+            // Add the delete button to the list item
+            deleteButton.renderTo(Ext.DomQuery.selectNode(".deleteButtonPlaceholder", tappedListItem.dom));
+
+            // Add a handler to remove the delete button when a touch event occurs in the corresponding list
+            var removeDeleteButton = function() {
+                /*Ext.Anim.run(deleteButton, "fade", {
+                    after: function() {*/
+                        deleteButton.destroy();
+                        tappedDeleteLock.removeCls("deleteLockRotateLeft");
+                        tappedDeleteLock.addCls("deleteLockRotateRight");
+                    /*},
+                    out: true
+                });*/
+            };
+            
+            list.on({
+                single: true,
+                buffer: 250,
+                itemtouchstart: removeDeleteButton
+            });
+
+            list.element.on({
+                single: true,
+                buffer: 250,
+                touchstart: removeDeleteButton
+            });
+        }
 	},
-	
-	deleteListItem: function(tappedId, idType) {
-		if (idType == "group") {
-			var groupsList = this.getGroupsList();
-			var groupsStore = groupsList.getStore();
-			var record = groupsStore.findRecord("id", tappedId);
-			groupsStore.remove(record);
-						
-			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/deleteGroup/",
-				params: {
-					groupId: tappedId
-				},
-				failure: function(response) {
-					Ext.Msg.alert("Error", response.responseText);
-				}
-			});
-		}
-		else if (idType == "member") {
-			var friendsList = this.getFriendsList();
-			var friendsStore = friendsList.getStore();
-			var record = friendsStore.findRecord("id", tappedId);
-			friendsStore.remove(record);
-			
-			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/removeFriend/",
-				params: {
-					memberId: tappedId
-				},
-				failure: function(response) {
-					Ext.Msg.alert("Error", response.responseText);
-				}
-			});
-		}
-	},
-	
+
 	/* Creates a new group, puts the groups list in edit mode, and sets the focus on the new group */
 	createGroup: function() {
 		Ext.Ajax.request({
@@ -608,44 +687,54 @@ Ext.define("inkle.controller.FriendsController", {
 		});
 	},
 	
-	toggleSelectionItem: function(memberId) {
-		var selectionItem = Ext.fly("member" + memberId + "SelectionItem");
-		var selectionItemSrc = selectionItem.getAttribute("src");
+    /* Toggles the tapped selection item's state and the membership of corresponding member in the current group */
+	toggleSelectionItem: function(tappedSelectionItem) {
+        // Get the member and gropu IDs associate with the tapped selection item 
+		var memberId = tappedSelectionItem.parent(".member").getAttribute("data-memberId");
+		var groupId = this.getGroupMembersView().getData()["groupId"];
 
-		if (selectionItemSrc == "resources/images/selected.png") {
-			selectionItem.set({
-				"src" : "resources/images/deselected.png"
-			});
-			
+        // Toggle the selection item and the memsber's membership in the group
+		if (tappedSelectionItem.hasCls("selected")) {	
 			Ext.Ajax.request({
 				url: "http://127.0.0.1:8000/sencha/removeFromGroup/",
 				params: {
 					memberId: memberId,
-					groupId: this.getGroupMembersView().getData()["groupId"]
+					groupId: groupId
 				},
+                success: function(response) {
+                    tappedSelectionItem.set({
+                        "src" : "resources/images/deselected.png"
+                    });
+                },
 				failure: function(response) {
 					console.log(response.responseText);
-					Ext.Msg.alert("Error", response.responseText);
-	        	}
+					Ext.Msg.alert("Error", "Unable to remove this member from your group. Please try again later.");
+	        	},
+                scope: this
 			});
 		}
 		else {
-			selectionItem.set({
-				"src" : "resources/images/selected.png"
-			});
-			
 			Ext.Ajax.request({
 				url: "http://127.0.0.1:8000/sencha/addToGroup/",
 				params: {
 					memberId: memberId,
-					groupId: this.getGroupMembersView().getData()["groupId"]
+					groupId: groupId
 				},
+                success: function(response) {
+                    tappedSelectionItem.set({
+                        "src" : "resources/images/selected.png"
+                    });
+                },
 				failure: function(response) {
 					console.log(response.responseText);
-					Ext.Msg.alert("Error", response.responseText);
-	        	}
+					Ext.Msg.alert("Error", "Unable to add this member to your group. Please try again later.");
+	        	},
+                scope: this
 			});
 		}
+
+        // Toggle the tapped selection item's state
+        tappedSelectionItem.toggleCls("selected");
 	},
 	
 	respondToRequest: function(memberId, response) {
@@ -666,7 +755,7 @@ Ext.define("inkle.controller.FriendsController", {
 				}
 				
 				this.updateFriendsList();
-				this.updatedRequestsList();
+				this.updateRequestsList();
     		},
         	failure: function(response) {
         		console.log(response.responseText);
@@ -685,6 +774,6 @@ Ext.define("inkle.controller.FriendsController", {
 	},
 	
 	updateRequestsList: function() {
-	    this.getRequestsList().getStore().load();
+        this.getRequestsList().getStore().load();
 	}
 });

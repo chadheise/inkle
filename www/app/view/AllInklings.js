@@ -131,6 +131,7 @@ Ext.define("inkle.view.AllInklings", {
     		{
     			xtype: "list",
 				id: "allInklingsList",
+                cls: "inklingsList",
 				loadingText: "Loading inklings...",
 				emptyText: "<div class='emptyListText'>No inklings</div>",
 				disableSelection: true,
@@ -245,9 +246,10 @@ Ext.define("inkle.view.AllInklings", {
         	{
         		xtype: "panel",
         		id: "allInklingsGroupsListPanel",
+                cls: "groupsListPanel",
         		hidden: true,
         		top: 0,
-        		width: 300,
+        		width: 310,
         		height: 275,
         		layout: "fit",
         		items: [
@@ -260,7 +262,6 @@ Ext.define("inkle.view.AllInklings", {
 						itemTpl: "{ html }",
 						store: {
 							fields: [
-								"id",
 								"html"
 							],
 							proxy: {
@@ -268,9 +269,9 @@ Ext.define("inkle.view.AllInklings", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/groups/",
+								url: "http://127.0.0.1:8000/sencha/groupsPanel/",
 								extraParams: {
-									view: "allInklings"
+									autoSetGroupsAsSelected: "true"
 								}
 							},
 							autoLoad: true
@@ -282,14 +283,13 @@ Ext.define("inkle.view.AllInklings", {
 					{
 						event: "tap",
 						element: "element",
-						delegate: "#allInklingsGroupsList .selectionButton",
+						delegate: ".selectionButton",
 						fn: "onGroupSelectionButtonTap"
 					},
 				],
 				
 				onGroupSelectionButtonTap: function(event, target) {
-					var groupSelectionButton = Ext.fly(target);
-					this.fireEvent("groupSelectionButtonTapped", groupSelectionButton);
+					this.fireEvent("groupSelectionButtonTapped", Ext.fly(target));
 				}
 			}
     	],
@@ -314,7 +314,7 @@ Ext.define("inkle.view.AllInklings", {
         	{
 				event: "tap",
 				element: "element",
-				delegate: ".inkling",
+				delegate: ".inklingListItem",
 				fn: "onInklingTap"
         	},
         	
@@ -371,7 +371,7 @@ Ext.define("inkle.view.AllInklings", {
     },
     
     onInklingTap: function(event) {
-        var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
+        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("inklingId");
         this.fireEvent("inklingTapped", tappedInklingId);
     },
     

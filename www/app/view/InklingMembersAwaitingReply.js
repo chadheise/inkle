@@ -14,6 +14,7 @@ Ext.define("inkle.view.InklingMembersAwaitingReply", {
 	        {
                 xtype: "list",
                 id: "inklingMembersAwaitingReplyList",
+                cls: "membersList",
                 loadingText: "Loading members...",
                 emptyText: "<div class='emptyListText'>No members</div>",
                 grouped: true,

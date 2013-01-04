@@ -110,6 +110,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewFriendsList",
+                        cls: "membersList",
 						loadingText: "Loading friends...",
 						emptyText: "<div class='emptyListText'>No friends</div>",
 						grouped: true,
@@ -155,6 +156,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewGroupsList",
+                        cls: "groupsListMainContent",
 						loadingText: "Loading groups...",
 						emptyText: "<div class='emptyListText'>No groups</div>",
 						disableSelection: true,
@@ -171,10 +173,7 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/groups/",
-        						extraParams: {
-                    				view: "friends"
-								}
+        						url: "http://127.0.0.1:8000/sencha/groupsMainContent/"
         					},
         					autoLoad: true
         				},				
@@ -192,6 +191,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewRequestsList",
+                        cls: "membersList membersListWithButtons",
 						loadingText: "Loading friend requests...",
 						emptyText: "<div class='emptyListText'>No friend requests</div>",
 						disableSelection: true,
@@ -208,12 +208,7 @@ Ext.define("inkle.view.Friends", {
         						actionMethods: {
         							read: "POST"
         						},
-        						url: "http://127.0.0.1:8000/sencha/friendRequests/",
-        	
-        						reader: {
-        							type: "json",
-        							rootProperty: "friendRequests"
-        						}
+        						url: "http://127.0.0.1:8000/sencha/friendRequests/"
         					},
         					autoLoad: true
         				},				
@@ -272,23 +267,16 @@ Ext.define("inkle.view.Friends", {
         	    fn: "onFriendsViewRequestsListRefresh"
         	},
         	{
-				event: "tap",
-				element: "element",
-				delegate: ".deleteLock",
-				fn: "onDeleteLockTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".deleteButton",
-				fn: "onDeleteButtonTap"
-        	},
-        	{
 				event: "blur",
 				element: "element",
 				delegate: ".groupNameInput",
 				fn: "onGroupNameInputBlurred"
         	},
+            {
+                delegate: "#friendsViewFriendsList",
+                event: "itemtap",
+                fn: "onFriendsViewFriendsListItemTap"
+            },
         	{
             	delegate: "#friendsViewGroupsList",
             	event: "itemtap",
@@ -343,47 +331,38 @@ Ext.define("inkle.view.Friends", {
         this.fireEvent("friendsViewRequestsListRefreshed");
     },
     
-    onDeleteLockTap: function(event) {
-		var tappedId = event.getTarget(".deleteLock").getAttribute("groupId");
-        if (tappedId) {
-        	tappedId = "group" + tappedId;
+    onFriendsViewFriendsListItemTap: function(friendsList, index, target, record, event, options) {
+        var deleteLock = Ext.fly(event.getTarget(".deleteLock"));
+        if (deleteLock) {
+            this.fireEvent("deleteLockTapped", friendsList, target, deleteLock, record);
         }
         else {
-        	tappedId = event.getTarget(".deleteLock").getAttribute("memberId");
-        	tappedId = "member" + tappedId;
+            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
         }
-        this.fireEvent("deleteLockTapped", tappedId);
     },
-    
-    onDeleteButtonTap: function(event) {
-		var tappedId = event.getTarget(".deleteButton").getAttribute("groupId");
-		var idType = "group";
-		if (tappedId == null) {
-        	tappedId = event.getTarget(".deleteButton").getAttribute("memberId");
-        	idType = "member"
-        }
-        this.fireEvent("deleteButtonTapped", tappedId, idType);
-    },
-    
+
     onFriendsViewGroupsListItemTap: function(groupsList, index, target, record, event, options) {
-    	if ((!event.getTarget(".deleteLock")) && (!event.getTarget(".deleteButton"))) {
-    		var groupId = record.internalId;
-    		this.fireEvent("friendsViewGroupsListItemTapped", groupId);
+        var deleteLock = Ext.fly(event.getTarget(".deleteLock"));
+    	if (deleteLock) {
+            this.fireEvent("deleteLockTapped", groupsList, target, deleteLock, record);
+        }
+        else {
+    		this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
     	}
     },
     
-    onGroupNameInputBlurred: function(event) {
-    	var groupId = event.getTarget(".groupNameInput").getAttribute("groupId");
+    onGroupNameInputBlurred: function(event, target) {
+    	var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
     	this.fireEvent("groupNameInputBlurred", groupId);
     },
     
-    onAcceptRequestButtonTap: function(event) {
-		var memberId = event.getTarget(".acceptRequestButton").getAttribute("memberId");
+    onAcceptRequestButtonTap: function(event, target) {
+		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
     },
     
-    onIgnoreRequestButtonTap: function(event) {
-		var memberId = event.getTarget(".ignoreRequestButton").getAttribute("memberId");
+    onIgnoreRequestButtonTap: function(event, target) {
+		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("ignoreRequestButtonTapped", memberId, "ignore");
     }
 });

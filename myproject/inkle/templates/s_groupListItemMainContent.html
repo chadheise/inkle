@@ -1,0 +1,28 @@
+<div class="group" data-groupId="{{ g.id }}">
+    <!-- Note: [g.id == -1] represents the "Not Grouped" group -->
+
+    <!-- Delete lock -->
+    {% if g.id != -1 %}
+        <img class="deleteLock deleteLockHidden" src="resources/images/delete.png">
+    {% endif %}
+
+    <!-- Group name -->
+    <p class="groupName">{{ g.name }}</p>
+    {% if g.id != -1 %}
+        <input class="groupNameInput groupNameInputHidden" value="{{ g.name }}" />
+    {% endif %}
+
+    <!-- Members attending -->
+    {% for m in group_members %}
+        <img class="groupMemberThumbnail" src="{{ m.get_picture_path }}" />
+    {% endfor %}
+    {% if num_other_group_members > 0 %}
+        <p class="numOtherGroupMembers">+{{ num_other_group_members }}</p>
+    {% endif %}
+
+    <!-- Disclosure arrow -->
+    <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+
+    <!-- Delete button -->
+    <div class="deleteButtonPlaceholder"></div>
+</div>
