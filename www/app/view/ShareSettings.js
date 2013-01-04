@@ -24,7 +24,7 @@ Ext.define("inkle.view.ShareSettings", {
     	    },
 			{
 			    xtype: "htmlcontainer",
-			    url: "http://127.0.0.1:8000/sencha/shareSettingsForm/"
+			    url: "http://127.0.0.1:8000/shareSettingsForm/"
 			},
 		],
     	

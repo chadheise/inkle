@@ -151,7 +151,7 @@ Ext.define("inkle.view.AllInklings", {
 						extraParams: {
                             onlyIncludeNoDatedInklings: "false"
                         },
-						url: "http://127.0.0.1:8000/sencha/allInklings/"
+						url: "http://127.0.0.1:8000/allInklings/"
 					},
 					autoLoad: true
 				},
@@ -269,7 +269,7 @@ Ext.define("inkle.view.AllInklings", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/sencha/groupsPanel/",
+								url: "http://127.0.0.1:8000/groupsPanel/",
 								extraParams: {
 									autoSetGroupsAsSelected: "true"
 								}

@@ -74,7 +74,7 @@ Ext.define("inkle.controller.SettingsController", {
     
 		Ext.Ajax.request({
 			async: false,
-			url: "http://127.0.0.1:8000/sencha/logout/",
+			url: "http://127.0.0.1:8000/logout/",
 			success: function(response) {
 				console.log("Logged out");
 			},
@@ -161,7 +161,7 @@ Ext.define("inkle.controller.SettingsController", {
                  FB.api("/me", function(response) {
            		   //Log the user in to inkle
                	   Ext.Ajax.request({
-                       url: "http://127.0.0.1:8000/sencha/linkFacebookAccount/",
+                       url: "http://127.0.0.1:8000/linkFacebookAccount/",
                        params: {
                            facebookId: response.id,
                            facebookAccessToken: facebookAccessToken,
@@ -283,7 +283,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    }
 	    
 	    Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/sencha/setShareSetting/shareWithSelectedGroups/true/",
+            url: "http://127.0.0.1:8000/setShareSetting/shareWithSelectedGroups/true/",
             success: function(response) {
                 //Only change selected images if call was a success
             },

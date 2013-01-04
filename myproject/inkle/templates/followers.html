@@ -1,7 +1,0 @@
-<div id="followersContent" class="peopleContent grid_17 alpha omega" context="{{ pageContext }}">
-    {% for m in members %}
-        {% include "memberCard.html" %}
-    {% empty %}
-        <p>No one is following {{ noFollowersText }}.</p>
-    {% endfor %}
-</div>

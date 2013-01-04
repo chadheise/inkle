@@ -1,1830 +1,196 @@
+# HTTP response modules
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
 
-from django.contrib.auth.models import User
-from django.contrib import auth
+# TODO: get rid of the whole csrf_exempt thing
+# CSRF exemple views module
+from django.views.decorators.csrf import csrf_exempt
 
+# JSON module
+from django.utils import simplejson
+# URL module
+import urllib2
+
+# Inkle database models
 from myproject.inkle.models import *
-from myproject.inkle.emails import *
 
+# Regular expression database querying module
 from django.db.models import Q
 
+# Date/time module
 import datetime
+
+# Regular expression module
+import re
+
+import string
+import random
 import shutil
-#from PIL import Image
 
-from databaseViews import *
+# TODO: clean up print statements
 
-from myproject.settings import MEDIA_ROOT
+def is_logged_in(request):
+    """Returns True if a user is logged in or False otherwise."""
+    return HttpResponse("member_id" in request.session)
 
-def home_view(request):
-    """Gets dates objects and others' inkling locations and returns the HTML for the home page."""
-    # Get the member who is logged in (or redirect them to the login page)
+@csrf_exempt
+def is_facebook_user(request):
+    """Returns True if the logged in user is linked to a facebook ID, false otherwise."""
+    # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
-        return HttpResponseRedirect("/login/")
-    
-    # Get date objects
-    today = datetime.date.today()
-    dates = [today + datetime.timedelta(days = x) for x in range(5)] 
-
-    # Get others' dinner inklings for today
-    if member.networks.all():
-        networkList = member.networks.all()
-        locations = get_others_inklings(member, today, "network", networkList[0].id, "all")
-    else:
-        locations = get_others_inklings(member, today, "other", "blots", "all")
-    
-    return render_to_response( "home.html",
-        { "member" : member, "locations" : locations, "dates" : dates, "selectedDate" : today },
-        context_instance = RequestContext(request) )
-
-def manage_view(request, content_type = "blots", date = "today", place_type = "all"):
-    """Returns the HTML for the manage page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/?next=/manage/" + content_type + "/")
-
-    # Get date objects
-    if date == "today":
-        date1 = datetime.date.today()
-    else:
-        try:
-            date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
-        except:
-            date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
-
-    return render_to_response( "manage.html",
-        {"member" : member, "dates" : dates, "selectedDate" : date1, "defaultContentType" : content_type, "place_type" : place_type},
-        context_instance = RequestContext(request) )
-
-def member_view(request, other_member_id = None, content_type = "inklings", date = "today", place_type = "all"):
-    """Returns the HTML for the member page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if (other_member_id):
-            return HttpResponseRedirect("/login/?next=/member/" + other_member_id + "/")
-        else:
-            if content_type == "place":
-                return HttpResponseRedirect("/login/?next=/manage/place/")
-            else:
-                return HttpResponseRedirect("/login/?next=/manage/")
-    
-    # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
-    try:
-        other_member = Member.active.get(pk = other_member_id)
-    except:
         raise Http404()
-
-    # Redirect the logged in member to their profile page if they are the other member
-    if (member == other_member):
-        redirectPath = "/manage/"
-        if (content_type == "place" or content_type == "networks" or content_type == "followers"):
-            redirectPath = redirectPath + content_type + "/"
-            if (date != "today"):
-                redirectPath = redirectPath + date + "/"
-                if (content_type == "place"):
-                    redirectPath = redirectPath + place_type +"/"
-        return HttpResponseRedirect(redirectPath)
-
-    # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-    other_member.privacy = get_privacy(member, other_member)
-    
-    # Create the button lists
-    other_member.button_list = []
-
-    if (member in other_member.followers.all()):
-        other_member.button_list.append(buttonDictionary["blots"])
-        other_member.button_list.append(buttonDictionary["stop"])
-    else:
-        if (member in other_member.requested.all()):
-            other_member.button_list.append(buttonDictionary["revoke"])
-        else:
-            other_member.button_list.append(buttonDictionary["request"])
-
-    if (member in other_member.following.all()):
-        other_member.button_list.append(buttonDictionary["prevent"])
-
-    # Get date objects
-    if date == "today":
-        date1 = datetime.date.today()
-    else:
-        try:
-            date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
-        except:
-            date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
-
-    return render_to_response( "member.html",
-        { "member" : member, "other_member" : other_member, "dates" : dates, "selectedDate" : date1, "content_type" : content_type, "place_type" : place_type },
-        context_instance = RequestContext(request) )
-    
-
-def account_view(request, content_type = "password"):
-    """Returns the HTML for the manage account page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/?next=/account/" + content_type + "/")
-
-    return render_to_response( "account.html",
-        { "member" : member, "contentType" : content_type },
-        context_instance = RequestContext(request) )
-
-
-def reset_account_password_view(request):
-    """Resets the logged in member's password."""
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-   
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "current_password" : "", "new_password" : "", "confirm_new_password" : "" }
-    invalid = { "errors" : [] }
-
-    # Validate the POST data, if there is any
-    if (request.POST):
-        # Get the POST data
-        try:
-            data["current_password"] = request.POST["currentPassword"]
-            data["new_password"] = request.POST["newPassword"]
-            data["confirm_new_password"] = request.POST["confirmNewPassword"]
-        except KeyError:
-            pass
-
-        # Validate the current password
-        if (not data["current_password"]):
-            invalid["current_password"] = True
-            invalid["errors"].append("Current password not specified")
-
-        elif (not member.check_password(data["current_password"])):
-            invalid["current_password"] = True
-            invalid["errors"].append("Current password is incorrect")
-
-        # Validate the new password and confirm new password
-        if ((not data["new_password"]) and (not data["confirm_new_password"])):
-            invalid["new_password"] = True
-            invalid["confirm_new_password"] = True
-            data["new_password"] = ""
-            data["confirm_new_password"] = ""
-            invalid["errors"].append("New password not specified")
-            invalid["errors"].append("Confirm new password not specified")
-
-        elif (len(data["new_password"]) < 8):
-            invalid["new_password"] = True
-            invalid["confirm_new_password"] = True
-            data["new_password"] = ""
-            data["confirm_new_password"] = ""
-            invalid["errors"].append("New password must contain at least eight characters")
-
-        elif (data["new_password"] != data["confirm_new_password"]):
-            invalid["new_password"] = True
-            invalid["confirm_new_password"] = True
-            data["new_password"] = ""
-            data["confirm_new_password"] = ""
-            invalid["errors"].append("New password and confirm new password do not match")
-        
-        # If all the POST data is valid, reset the logged in member's password
-        if (not invalid["errors"]):
-            member.set_password(data["new_password"])
-            member.save()
-            return HttpResponse()
-
-    return render_to_response( "resetAccountPassword.html",
-        { "data" : data, "invalid" : invalid },
-        context_instance = RequestContext(request) )
-
-
-def update_account_email_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "current_password" : "", "new_email" : "", "confirm_new_email" : "" }
-    invalid = { "errors" : [] }
-
-    # If there is POST data, validate it
-    if (request.POST):
-        # Get the POST data
-        try:
-            data["current_password"] = request.POST["currentPassword"]
-            data["new_email"] = request.POST["newEmail"]
-            data["confirm_new_email"] = request.POST["confirmNewEmail"]
-        except KeyError:
-            invalid_confirm_new_email = True
-        
-        # Validate the current password
-        if (not data["current_password"]):
-            invalid["current_password"] = True
-            invalid["errors"].append("Current password not specified")
-
-        elif (not member.check_password(data["current_password"])):
-            invalid["current_password"] = True
-            invalid["errors"].append("Current password is incorrect")
-
-        # Validate the new email
-        if (not data["new_email"]):
-            invalid["new_email"] = True
-            invalid["errors"].append("New email not specified")
-
-        elif (not is_email(data["new_email"])):
-            invalid["new_email"] = True
-            invalid["errors"].append("Invalid new email format")
-
-        elif (Member.objects.filter(email = data["new_email"])):
-            invalid["new_email"] = True
-            invalid["confirm_new_email"] = True
-            invalid["errors"].append("An account already exists for the provided new email")
-
-        #elif (not ((data["new_email"].endswith("@nd.edu")) or (data["new_email"].endswith("@saintmarys.edu")) or (data["new_email"].endswith("@hcc-nd.edu")))):
-        #    invalid["new_email"] = True
-        #    invalid["confirm_new_email"] = True
-        #    invalid["errors"].append("Inkle is currently limited to Notre Dame, Saint Mary's, and Holy Cross email addresses only")
-
-        # Validate the confirm new email
-        if (not data["confirm_new_email"]):
-            invalid["confirm_new_email"] = True
-            invalid["errors"].append("Confirm new email not specified")
-
-        elif (not is_email(data["confirm_new_email"])):
-            invalid["confirm_new_email"] = True
-            invalid["errors"].append("Invalid confirm new email format")
-
-        elif (data["new_email"] != data["confirm_new_email"]):
-            invalid["new_email"] = True
-            invalid["confirm_new_email"] = True
-            invalid["errors"].append("New email and confirm new email do not match")
-
-        # If all the POST data is valid, update the logged in member's email
-        if (not invalid["errors"]):
-            member.email = data["new_email"]
-            if (len(data["new_email"]) > 30):
-                data["new_email"] = data["new_email"][0:30]
-            member.username = data["new_email"]
-            member.verified = False
-            member.save()
-            return HttpResponse()
-
-    return render_to_response( "updateAccountEmail.html",
-        { "data" : data, "invalid" : invalid },
-        context_instance = RequestContext(request) )
-
-
-def deactivate_account_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "password" : "" }
-    invalid = { "errors" : [] }
-
-    if (request.POST):
-        # Get the POST data
-        try:
-            data["password"] = request.POST["password"]
-        except KeyError:
-            invalid_password = True
-
-        # Validate the password
-        if (not data["password"]):
-            invalid["password"] = True
-            invalid["errors"].append("Password not specified")
-
-        elif (not member.check_password(data["password"])):
-            invalid["password"] = True
-            invalid["errors"].append("Password is incorrect")
-
-        # If the password is correct, deactivate the logged in member's account
-        if (not invalid["errors"]):
-            # If the deactivate flag is set, deactivate the logged in member's account
-            try:
-                if (request.POST["deactivate"]):
-                    member.is_active = False
-                    member.save()
-                    return HttpResponse()
-
-            # Otherwise, do nothing
-            except KeyError:
-                return HttpResponse()
-
-    return render_to_response( "deactivateAccount.html",
-        { "data" : data, "invalid" : invalid },
-        context_instance = RequestContext(request) )
-
-
-def edit_profile_view(request, content_type = "information"):
-    """Returns the HTML for the edit profile page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/?next=/editProfile/" + content_type + "/")
-
-    return render_to_response( "editProfile.html",
-        { "member" : member, "contentType" : content_type },
-        context_instance = RequestContext(request) )
-
-
-def edit_profile_information_view(request):
-    """Updates the logged in member's profile information."""
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "first_name" : member.first_name, "last_name" : member.last_name, "phone1" : member.phone[0:3], "phone2" : member.phone[3:6], "phone3" : member.phone[6:10], "street" : member.street, "city" : member.city, "state" : member.state, "zip_code" : member.zip_code, "month" : member.birthday.month, "day" : member.birthday.day, "year" : member.birthday.year, "gender" : member.gender }
-    invalid = { "errors" : [] }
-
-    if (request.POST):
-        # Get the POST data
-        try:
-            data["first_name"] = request.POST["firstName"]
-            data["last_name"] = request.POST["lastName"]
-            data["phone1"] = request.POST["phone1"]
-            data["phone2"] = request.POST["phone2"]
-            data["phone3"] = request.POST["phone3"]
-            data["street"] = request.POST["street"]
-            data["city"] = request.POST["city"]
-            data["state"] = request.POST["state"]
-            data["zip_code"] = request.POST["zipCode"]
-            data["month"] = request.POST["month"]
-            data["day"] = request.POST["day"]
-            data["year"] = request.POST["year"]
-            data["gender"] = request.POST["gender"]
-        except KeyError:
-            pass
-
-        # Validate the first name
-        if (not data["first_name"]):
-            invalid["first_name"] = True
-            invalid["errors"].append("First name not specified")
-
-        # Validate the last name
-        if (not data["last_name"]):
-            invalid["last_name"] = True
-            invalid["errors"].append("Last name not specified")
-
-        # Validate the phone number
-        if (data["phone1"]):
-            if (len(data["phone1"]) != 3):
-                invalid["phone1"] = True
-                invalid["errors"].append("Phone number section one must contain three digits")
-            elif ([x for x in data["phone1"] if x not in "0123456789"]):
-                invalid["phone1"] = True
-                invalid["errors"].append("Phone number section one can only contain digits")
-
-        if (data["phone2"]):
-            if (len(data["phone2"]) != 3):
-                invalid["phone2"] = True
-                invalid["errors"].append("Phone number section two must contain three digits")
-            elif ([x for x in data["phone2"] if x not in "0123456789"]):
-                invalid["phone2"] = True
-                invalid["errors"].append("Phone number section two can only contain digits")
-        
-        if (data["phone3"]):
-            if (len(data["phone3"]) != 4):
-                invalid["phone3"] = True
-                invalid["errors"].append("Phone number section three must contain four digits")
-            elif ([x for x in data["phone3"] if x not in "0123456789"]):
-                invalid["phone3"] = True
-                invalid["errors"].append("Phone number section three can only contain digits")
-
-        if (data["phone1"] or data["phone2"] or data["phone3"]):
-            if (not data["phone1"]):
-                invalid["phone1"] = True
-                invalid["errors"].append("Phone number section one not specified")
-            if (not data["phone2"]):
-                invalid["phone2"] = True
-                invalid["errors"].append("Phone number section two not specified")
-            if (not data["phone3"]):
-                invalid["phone3"] = True
-                invalid["errors"].append("Phone number section three not specified")
-
-        # Validate the address
-        if (data["street"] or data["city"] or data["state"] or data["zip_code"]):
-            if (not data["city"]):
-                invalid["city"] = True
-                invalid["errors"].append("City not specified")
-            if (not data["state"]):
-                invalid["state"] = True
-                invalid["errors"].append("State not specified")
-            if (not data["zip_code"]):
-                invalid["zip_code"] = True
-                invalid["errors"].append("Zip code not specified")
-
-        if (data["zip_code"]):
-            if (len(data["zip_code"]) != 5):
-                invalid["zip_code"] = True
-                invalid["errors"].append("Zip code must contain five digits")
-            elif ([x for x in data["zip_code"] if x not in "0123456789"]):
-                invalid["zip_code"] = True
-                invalid["errors"].append("Zip code can only contain digits")
-
-        # Validate the birthday month
-        if (not data["month"]):
-            data["month"] = 0
-            invalid["month"] = True
-            invalid["errors"].append("Birthday month not specified")
-        else:
-            data["month"] = int(data["month"])
-
-        # Validate the birthday day
-        if (not data["day"]):
-            data["day"] = 0
-            invalid["day"] = True
-            invalid["errors"].append("Birthday day not specified")
-        else:
-            data["day"] = int(data["day"])
-
-        # Validate the birthday year
-        if (not data["year"]):
-            data["year"] = 0
-            invalid["year"] = True
-            invalid["errors"].append("Birthday year not specified")
-        else:
-            data["year"] = int(data["year"])
-
-        # Validate the member is at least sixteen years old
-        if (("month" not in invalid) and ("day" not in invalid) and ("year" not in invalid)):
-            if (not is_sixteen(data["month"], data["day"], data["year"])):
-                invalid["month"] = True
-                invalid["day"] = True
-                invalid["year"] = True
-                invalid["errors"].append("You must be at least sixteen years old to use Inkle")
-
-        # Validate the gender
-        if (data["gender"] not in ["Male", "Female"]):
-            invalid["gender"] = True
-            invalid["errors"].append("Gender not specified")
-
-        # If there are no errors, update the logged in member's profile information
-        if (not invalid["errors"]):
-            phone = data["phone1"] + data["phone2"] + data["phone3"]
-            birthday = datetime.date(day = int(data["day"]), month = int(data["month"]), year = int(data["year"]))
-
-            # If the user has not changed their profile picture and they switch their gender, change their profile picture to reflect the correct gender
-            if ((member.changed_image == 0) and (data["gender"] != member.gender)):
-                if (data["gender"] == "Male"):
-                    shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-                else:
-                    shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-
-            member.update_profile_information(data["first_name"], data["last_name"], phone, data["street"], data["city"], data["state"], data["zip_code"], birthday, data["gender"])
-            member.save()
-            return HttpResponse()
-
-    return render_to_response( "editProfileInformation.html",
-        { "data" : data, "invalid" : invalid },
-        context_instance = RequestContext(request) )
-
-def get_new_profile_picture_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-    
-    return render_to_response( "newProfilePicture.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
-
-
-def edit_profile_picture_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    if (request.FILES):
-        # Open the uploaded image
-        image = Image.open(request.FILES["newProfilePicture"])
-
-        # Get the uploaded image's size
-        width, height = image.size
-
-        # Resize the uploaded image
-        max_height = 450.0
-        max_width = 675.0
-        if (width > max_width):
-            height = (max_width / width) * height
-            width = max_width
-        if (height > max_height):
-            width = (max_height / height) * width
-            height = max_height
-        image = image.resize((int(width), int(height)))
-
-        # Save the uploaded image
-        image.save(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
-
-        # Update the number of times the logged in member has changed their profile image
-        member.changed_image += 1
-        member.save()
-
-        return HttpResponse()
-    else:
-        if (request.POST):
-            return HttpResponseRedirect("/editProfile/picture/")
-        else:
-            return render_to_response( "editProfilePicture.html",
-                { "member" : member },
-                context_instance = RequestContext(request) )
-
-
-def crop_profile_picture_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    try:
-        x = int(request.POST["x"])
-        y = int(request.POST["y"])
-        x2 = int(request.POST["x2"])
-        y2 = int(request.POST["y2"])
-        width = int(request.POST["width"])
-        height = int(request.POST["height"])
-    except KeyError:
-        raise Http404()
-
-    try:
-        open(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
-    except IOError:
-        raise Http404()
-
-    image = Image.open(MEDIA_ROOT + "tmp/" + str(member.id) + "_upload.jpg")
-    image = image.crop((x, y, x2, y2))
-    image = image.resize((1000, 1000))
-    image.save(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
-
-    return HttpResponse()
-
-def save_profile_picture_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    try:
-        open(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
-    except IOError:
-        raise Http404()
-
-    image = Image.open(MEDIA_ROOT + "tmp/" + str(member.id) + "_crop.jpg")
-    image.save(MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-
-    return HttpResponse()
-
-
-def edit_profile_privacy_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    try:
-        location_privacy = int(request.POST["locationPrivacy"])
-        email_privacy = int(request.POST["emailPrivacy"])
-        phone_privacy = int(request.POST["phonePrivacy"])
-        birthday_privacy = int(request.POST["birthdayPrivacy"])
-        followers_privacy = int(request.POST["followersPrivacy"])
-        following_privacy = int(request.POST["followingsPrivacy"])
-        networks_privacy = int(request.POST["networksPrivacy"])
-        place_privacy = int(request.POST["placePrivacy"])
-        inklings_privacy = int(request.POST["inklingsPrivacy"])
-    
-        member.update_privacy_settings(location_privacy, email_privacy, phone_privacy, birthday_privacy, followers_privacy, following_privacy, networks_privacy, place_privacy, inklings_privacy)
-        member.save()
-    except KeyError:
-        pass
-
-    return render_to_response( "editProfilePrivacy.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
-
-def edit_profile_email_preferences_view(request):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    try:
-        requested_preference = (request.POST["requestedPreference"] == "true")
-        accepted_preference = (request.POST["acceptedPreference"] == "true")
-        invited_preference = (request.POST["invitedPreference"] == "true")
-        response_preference = (request.POST["invitationResponsePreference"] == "true")
-        general_preference = (request.POST["generalPreference"] == "true")
-
-        member.update_email_preferences(requested_preference, accepted_preference, invited_preference, response_preference, general_preference)
-        member.save()
-    except KeyError:
-        pass
-
-    return render_to_response( "editProfileEmailPreferences.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
-
-def diagnostic_view(request, content_type = "members"):
-    # Get the member who is logged in (or raise a 404 error)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    # Throw an error if the member is not a staff member
-    if (not member.is_staff):
-        raise Http404()
-
-    else:
-        try:
-            time_range = request.POST["timeRange"]
-            first_load = request.POST["firstLoad"]
-            first_load = False
-        except KeyError:
-            time_range = "all"
-            first_load = True
-
-        # Determine the date from which to limit the results
-        today = datetime.date.today()
-        if (time_range == "all"):
-            date = datetime.date(month = 2, day = 7, year = 2012)
-        elif (time_range == "today"):
-            date = today
-        elif (time_range == "week"):
-            date = today - datetime.timedelta(days = 7)
-        elif (time_range == "month"):
-            date = today
-            current_month = date.month
-            if (current_month != 1):
-                date = date.replace(month = current_month - 1)
-            else:
-                current_year = date.year
-                date = date.replace(month = 12, year = current_year - 1)
-        elif (time_range == "year"):
-            date = today
-            current_year = date.year
-            date = date.replace(year = current_year - 1)
-
-        data = {}
-        data["total_members"] = Member.objects.count()
-        if (content_type == "members"):
-            data["num_members"] = Member.objects.filter(date_joined__gte = date).count()
-            data["num_verified"] = Member.objects.filter(verified = True).filter(date_joined__gte = date).count()
-            data["num_deactived"] = Member.objects.filter(is_active = False).filter(date_joined__gte = date).count()
-            data["num_male"] = Member.objects.filter(gender = "Male").filter(date_joined__gte = date).count()
-            data["num_updated_profile_picture"] = Member.objects.filter(changed_image__gte = 1).filter(date_joined__gte = date).count()
-            data["num_updated_phone"] = Member.objects.exclude(phone__exact = "").filter(date_joined__gte = date).count()
-            data["num_updated_street"] = Member.objects.exclude(street__exact = "").filter(date_joined__gte = date).count()
-            data["num_updated_location"] = Member.objects.exclude(city__exact = "").filter(date_joined__gte = date).count()
-            data["num_updated_email_privacy"] = Member.objects.exclude(email_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_phone_privacy"] = Member.objects.exclude(phone_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_location_privacy"] = Member.objects.exclude(location_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_birthday_privacy"] = Member.objects.exclude(birthday_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_followers_privacy"] = Member.objects.exclude(followers_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_followings_privacy"] = Member.objects.exclude(following_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_networks_privacy"] = Member.objects.exclude(networks_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_place_privacy"] = Member.objects.exclude(place_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_inklings_privacy"] = Member.objects.exclude(inklings_privacy__exact = 1).filter(date_joined__gte = date).count()
-            data["num_updated_requested_email_preference"] = Member.objects.exclude(requested_email_preference__exact = True).filter(date_joined__gte = date).count()
-            data["num_updated_accepted_email_preference"] = Member.objects.exclude(accepted_email_preference__exact = True).filter(date_joined__gte = date).count()
-            data["num_updated_invited_email_preference"] = Member.objects.exclude(invited_email_preference__exact = True).filter(date_joined__gte = date).count()
-            data["num_updated_general_email_preference"] = Member.objects.exclude(general_email_preference__exact = True).filter(date_joined__gte = date).count()
-        elif (content_type == "inklings"):
-            data["num_inklings"] = Inkling.objects.filter(date_created__gte = date).count()
-            data["num_members_inkled"] = len([m for m in Member.objects.all() if (m.inklings.filter(date_created__gte = date))])
-        elif (content_type == "blots"):
-            data["num_blots"] = Blot.objects.count()
-            data["num_some_blots"] = len([m for m in Member.objects.all() if (m.blots.all())])
-        elif (content_type == "networks"):
-            data["num_networks"] = Network.objects.count()
-            data["num_network_members"] = sum([m.networks.count() for m in Member.objects.all()])
-            data["num_some_networks"] = len([m for m in Member.objects.all() if (m.networks.all())])
-        elif (content_type == "invitations"):
-            data["num_invitations"] = Invitation.objects.filter(inkling__date__gte = date).count()
-            data["num_some_invitations_sent"] = len(set([inv.from_member for inv in Invitation.objects.filter(inkling__date__gte = date).all()]))
-        elif (content_type == "followers"):
-            data["num_followers"] = sum([m.following.count() for m in Member.objects.all()])
-            data["num_some_following"] = len([m for m in Member.objects.all() if (m.following.all())])
-            data["num_some_followers"] = len([m for m in Member.objects.all() if (m.followers.all())])
-
-    if (first_load):
-        return render_to_response( "diagnostic.html",
-            { "member" : member, "contentType" : content_type, "timeRange" : time_range, "data" : data },
-            context_instance = RequestContext(request) )
-    else:
-        return render_to_response( "diagnostic" + content_type[0].upper() + content_type[1:] + ".html",
-            { "member" : member, "contentType" : content_type, "timeRange" : time_range, "data" : data },
-            context_instance = RequestContext(request) )
-        
-
-def network_view(request, network_id = None):
-    """Returns the HTML for the network page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if (network_id):
-            return HttpResponseRedirect("/login/?next=/network/" + network_id + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    
-    # Get the network corresponding to the inputted ID (or throw a 404 error if it is invalid)
-    try:
-        network = Network.objects.get(pk = network_id)
-    except:
-        raise Http404()
-
-    # Get the network's members
-    network.members = network.member_set.filter(is_active = True)
-    network.num_members = len(network.members)
-
-    # Determine the mutual following for each member in the network
-    for m in network.members:
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-        m.privacy = get_privacy(member, m)
-
-    if (member in network.members):
-        network.button_list = [buttonDictionary["leave"]]
-    else:
-        network.button_list = [buttonDictionary["join"]]
-
-    return render_to_response( "network.html",
-        { "member" : member, "network" : network },
-        context_instance = RequestContext(request) )
-
-
-def about_view(request):
-    """Returns the HTML for the about page."""
-    # Get the member who is logged in (or set that member to None)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        member = None
-
-    return render_to_response( "about.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
-
-def terms_view(request):
-    """Returns the HTML for the terms page."""
-    # Get the member who is logged in (or set that member to None)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        member = None
-
-    return render_to_response( "terms.html",
-        { "member" : member },
-        context_instance = RequestContext(request) )
-
-
-def contact_view(request):
-    """Returns the HTML for the contact page."""
-    # Get the member who is logged in (or set that member to None)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        member = None
-
-    # Create dictionaries to hold the POST data and the invalid errors
-    if (member):
-        data = { "name" : member.get_full_name(), "email" : member.email, "subject" : "", "message" : "" }
-    else:
-        data = { "name" : "", "email" : "", "subject" : "", "message" : "" }
-    invalid = { "errors" : [] }
-
-    if (request.POST):
-        # Get the POST data
-        try:
-            data["name"] = request.POST["name"]
-            data["email"] = request.POST["email"]
-            data["subject"] = request.POST["subject"]
-            data["message"] = request.POST["message"]
-        except KeyError:
-            pass
-
-        # Validate the name
-        if (not data["name"]):
-            invalid["name"] = True
-            invalid["errors"].append("Name not specified")
-
-        # Validate the email
-        if (not data["email"]):
-            invalid["email"] = True
-            invalid["errors"].append("Email not specified")
-
-        elif (not is_email(data["email"])):
-            invalid["email"] = True
-            invalid["errors"].append("Invalid email format")
-
-        # Validate the subject
-        if (not data["subject"]):
-            invalid["subject"] = True
-            invalid["errors"].append("Subject not specified")
-
-        # Validate the message
-        if (not data["message"]):
-            invalid["message"] = True
-            invalid["errors"].append("Message not specified")
-        
-        return render_to_response( "contactForm.html",
-            { "member" : member, "data" : data, "invalid" : invalid },
-            context_instance = RequestContext(request) )
-
-    return render_to_response( "contact.html",
-        { "member" : member, "data" : data, "invalid" : invalid },
-        context_instance = RequestContext(request) )
-
-
-def location_view(request, location_id = None, content_type = "all", date = "today"):
-    """Gets the members who are going to the inputted location today and returns the HTML for the location page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if (location_id):
-            return HttpResponseRedirect("/login/?next=/location/" + location_id + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    
-    # Get the location corresponding to the inputted ID (or throw a 404 error if it is invalid)
-    try:
-        location = Location.objects.get(pk = location_id)
-    except:
-        raise Http404()
-
-    # Get date objects
-    if date == "today":
-        date1 = datetime.date.today()
-    else:
-        try:
-            date1 = datetime.date(int(date.split("_")[2]), int(date.split("_")[0]), int(date.split("_")[1]) )
-        except:
-            date1 = datetime.date.today()
-    dates = [date1 + datetime.timedelta(days = x) for x in range(4)]
-    
-    member = get_location_inklings(request.session["member_id"], location_id, None, date1)
-
-    return render_to_response( "location.html",
-        { "member" : member, "location" : location, "dates" : dates, "selectedDate" : date1, "content_type" : content_type },
-        context_instance = RequestContext(request) )
-
-
-def get_edit_location_html_view(request):
-    """Returns the edit location HTML."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-    
-    # Make sure the logged in member can update the location
-    if (not member.is_staff):
-        raise Http404()
-    
-    # Get the location (or throw a 404 error if the location ID is invalid)
-    try:
-        location = Location.objects.get(pk = request.POST["locationID"])
-    except:
-        raise Http404()
-  
-    return render_to_response( "editLocationInfo.html",
-        { "member" : member, "location" : location },
-        context_instance = RequestContext(request) )
-
-
-def get_search_content_view(request):
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if "query" in request.POST:
-            return HttpResponseRedirect("/login/?next=/search/" + request.POST["query"] + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    
-    if "query" in request.POST:
-       # Strip the whitespace off the ends of the query
-       query = request.POST["query"].strip()
-    else:
-        raise Http404()
-    if "numDisplayed" in request.POST:
-        numDisplayed = int(request.POST["numDisplayed"])
-    else:
-        numDisplayed = 0
-    if ( ("contentType" not in request.POST) or (request.POST["contentType"] not in ["members", "locations", "networks"]) ):
-        if "query" in request.POST:
-            return HttpResponseRedirect("/login/?next=/search/" + request.POST["query"] + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    elif request.POST["contentType"] == "members":
-        # Get the members who match the search query
-        members = members_search_query(query, Member.active.all(), numDisplayed)
-
-        # Initialize member variables
-        member.num_following = 0
-        member.num_followers = 0
-        member.num_other_people = 0
-
-        # Determine each member's people type and button list
-        for m in members:
-            # Case 1: The logged in member is following and is being followed by the current member
-            if ((m in member.following.filter(is_active = True)) and (member in m.following.filter(is_active = True))):
-                m.people_type = "following follower"
-                member.num_following += 1
-                member.num_followers += 1
-                m.show_contact_info = True
-                #m.button_list = [buttonDictionary["prevent"], buttonDictionary["stop"], buttonDictionary["blots"]]
-                m.button_list = [buttonDictionary["blots"]]
-
-            # Case 2: The logged member is following the current member
-            elif (m in member.following.filter(is_active = True)):
-                m.people_type = "following"
-                member.num_following += 1
-                m.show_contact_info = True
-                #m.button_list = [buttonDictionary["stop"], buttonDictionary["blots"]]
-                m.button_list = [buttonDictionary["blots"]]
-
-            # Case 3: The logged member is being followed by the current member
-            elif (member in m.following.filter(is_active = True)):
-                m.people_type = "follower"
-                member.num_followers += 1
-                m.show_contact_info = False
-                if (m in member.pending.all()):
-                    #m.button_list = [buttonDictionary["prevent"], buttonDictionary["revoke"]]
-                    m.button_list = [buttonDictionary["revoke"]]
-                else:
-                    #m.button_list = [buttonDictionary["prevent"], buttonDictionary["request"]]
-                    m.button_list = [buttonDictionary["request"]]
-
-            # Case 4: Neither the logged in member nor the current member are following each other
-            else:
-                m.people_type = "other"
-                member.num_other_people += 1
-                m.show_contact_info = False
-                if (m in member.pending.all()):
-                    m.button_list = [buttonDictionary["revoke"]]
-                else:
-                    m.button_list = [buttonDictionary["request"]]
-
-            # Determine the members who are being followed by both the logged in member and the current member
-            m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-        
-        return render_to_response( "searchMembers.html",
-            {"member" : member, "members" : members},
-            context_instance = RequestContext(request) )
-            
-    elif request.POST["contentType"] == "locations":
-        # Get the locations which match the search query
-        locations = locations_search_query(query, numDisplayed)
-        
-        return render_to_response( "searchLocations.html",
-            {"locations" : locations},
-            context_instance = RequestContext(request) )
-        
-    elif request.POST["contentType"] == "networks": 
-        # Get the networks which match the search query
-        networks = networks_search_query(query, numDisplayed)
-
-        # Initialize member variables
-        member.num_my_networks = 0
-        member.num_other_networks = 0
-
-        # Determine which networks the logged in member has joined and set their button lists accordingly
-        for network in networks:
-            if (network in member.networks.all()):
-                network.network_type = "myNetworks"
-                member.num_my_networks += 1
-                network.button_list = [buttonDictionary["leave"]]
-            else:
-                network.network_type = "otherNetworks"
-                member.num_other_networks += 1
-                network.button_list = [buttonDictionary["join"]]
-
-            # Determine the number of members in the current network
-            network.num_members = len(network.member_set.filter(is_active = True))
-        
-        return render_to_response( "searchNetworks.html",
-            {"networks" : networks},
-            context_instance = RequestContext(request) )
-
-def members_search_query(query, members, queryIndex = "all"):
-    """Returns the members who match the inputted query."""
-    # Split the query into words
-    query_split = query.split()
-
-    # If the query is only one word long, match the members' first or last names alone
-    if (len(query_split) == 1):
-        members = members.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
-
-    # If the query is two words long, match the members' first and last names
-    elif (len(query_split) == 2):
-        members = members.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
-
-    # if the query is more than two words long, return no results
-    else:
-        members = []
-
-    if queryIndex == "all":
-        return members
-    elif len(members) <= queryIndex: #If the number of members is <= the number of members already displayed, return nothing
-        return []
-    else:
-        i = 0
-        returnList = []
-        while (i < 5 and (queryIndex + i) < len(members)):
-            returnList.append(members[(queryIndex + i)])
-            i += 1
-        return returnList   
-
-def locations_search_query(query, queryIndex = "all"):
-    """Returns the locations which match the inputted query."""
-    locations = Location.objects.filter(Q(name__icontains = query))
-    if queryIndex == "all":
-        return locations
-    elif len(locations) <= queryIndex: #If the number of members is <= the number of members already displayed, return nothing
-        return []
-    else:
-        i = 0
-        returnList = []
-        while (i < 5 and (queryIndex + i) < len(locations)):
-            returnList.append(locations[(queryIndex + i)])
-            i += 1
-        return returnList
-        
-
-def networks_search_query(query, queryIndex = "all"):
-    """Returns the networks which match the inputted query."""
-    networks = Network.objects.filter(Q(name__icontains = query))
-    if queryIndex == "all":
-        return networks
-    elif len(networks) <= queryIndex: #If the number of members is <= the number of members already displayed, return nothing
-        return []
-    else:
-        i = 0
-        returnList = []
-        while (i < 5 and (queryIndex + i) < len(networks)):
-            returnList.append( networks[(queryIndex + i)])
-            i += 1
-        return returnList
-
-def blots_search_query(query, member):
-    """Returns the blots which match the inputted query."""
-    blots = member.blots.filter(Q(name__icontains = query))
-    return blots
-
-
-def search_view(request, query = ""):
-    """Gets the members, locations, and networks which match the inputted query and returns the HTML for the search page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if (query):
-            return HttpResponseRedirect("/login/?next=/search/" + query + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    
-    # Strip the whitespace off the ends of the query
-    query = query.strip()
-
-    # Get the members who match the search query
-    members = members_search_query(query, Member.active.all(), "all")
-
-    # Initialize member variables
-    member.num_following = 0
-    member.num_followers = 0
-    member.num_other_people = 0
-    numMembers = len(members)
-
-    # Determine each member's people type and button list
-    for m in members:
-        # Case 1: The logged in member is following and is being followed by the current member
-        if ((m in member.following.filter(is_active = True)) and (member in m.following.filter(is_active = True))):
-            m.people_type = "following follower"
-            member.num_following += 1
-            member.num_followers += 1
-            m.show_contact_info = True
-            #m.button_list = [buttonDictionary["prevent"], buttonDictionary["stop"], buttonDictionary["blots"]]
-            m.button_list = [buttonDictionary["blots"]]
-
-        # Case 2: The logged member is following the current member
-        elif (m in member.following.filter(is_active = True)):
-            m.people_type = "following"
-            member.num_following += 1
-            m.show_contact_info = True
-            #m.button_list = [buttonDictionary["stop"], buttonDictionary["blots"]]
-            m.button_list = [buttonDictionary["blots"]]
-
-        # Case 3: The logged member is being followed by the current member
-        elif (member in m.following.filter(is_active = True)):
-            m.people_type = "follower"
-            member.num_followers += 1
-            m.show_contact_info = False
-            if (m in member.pending.all()):
-                #m.button_list = [buttonDictionary["prevent"], buttonDictionary["revoke"]]
-                m.button_list = [buttonDictionary["revoke"]]
-            else:
-                #m.button_list = [buttonDictionary["prevent"], buttonDictionary["request"]]
-                m.button_list = [buttonDictionary["request"]]
-
-        # Case 4: Neither the logged in member nor the current member are following each other
-        else:
-            m.people_type = "other"
-            member.num_other_people += 1
-            m.show_contact_info = False
-            if (m in member.pending.all()):
-                m.button_list = [buttonDictionary["revoke"]]
-            else:
-                m.button_list = [buttonDictionary["request"]]
-
-        # Determine the members who are being followed by both the logged in member and the current member
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-            
-        # Determine the privacy rating for the logged in member and the current member
-        m.privacy = get_privacy(member, m)
-
-    # Get the locations which match the search query
-    locations = locations_search_query(query, "all")
-    numLocations = len(locations)
-    
-    # Get the networks which match the search query
-    networks = networks_search_query(query, "all")
-    numNetworks = len(networks)
-    
-    # Initialize member variables
-    member.num_my_networks = 0
-    member.num_other_networks = 0
-
-    # Determine which networks the logged in member has joined and set their button lists accordingly
-    for network in networks:
-        if (network in member.networks.all()):
-            network.network_type = "myNetworks"
-            member.num_my_networks += 1
-            network.button_list = [buttonDictionary["leave"]]
-        else:
-            network.network_type = "otherNetworks"
-            member.num_other_networks += 1
-            network.button_list = [buttonDictionary["join"]]
-
-        # Determine the number of members in the current network
-        network.num_members = len(network.member_set.filter(is_active = True))
-
-    return render_to_response( "search.html",
-        {"member" : member, "query" : query, "members" : members[0:5], "numMembers" : numMembers, "locations" : locations[0:5], "numLocations" : numLocations, "networks" : networks[0:5], "numNetworks" : numNetworks},
-        context_instance = RequestContext(request) )
-
-
-def suggestions_view(request):
-    """Returns suggestions for the inputted query."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/")
-    
-    # Get the POST data
-    query = request.POST["query"].strip()
-    query_type = request.POST["type"]
-
-    # Initialize the list of suggestion categories
-    categories = []
-    
-    # Case 1: Location suggestions for an inkling
-    if (query_type == "inkling"):
-        # Get the location suggestions (and add them to the categories list if there are any)
-        locations = locations_search_query(query)[0:5]
-        member_place = members_search_query(query, Member.active.filter(pk = request.session["member_id"]))
-        if (member_place):
-            member_place.suggestionType = "members"
-            categories.append((member_place,))
-        if (locations):
-            locations.suggestionType = "locations"
-            categories.append((locations,))
-      
-        # Set the number of characters to show for each suggestion
-        num_chars = 23
-
-        return render_to_response( "inklingSuggestions.html",
-            { "member" : member, "categories" : categories, "queryType" : query_type, "numChars" : num_chars },
-            context_instance = RequestContext(request) )
-       
-    # Case 2: Member, location, and network suggestions for the main header search
-    elif (query_type == "search"):
-        # Get the member suggestions (and add them to the categories list if there are any)
-        members = members_search_query(query, Member.active.all())[0:3]
-        if (members):
-            members.suggestionType = "members"
-            for m in members:
-                m.name = m.first_name + " " + m.last_name
-            categories.append((members, "People"))
-        
-        # Get the location suggestions (and add them to the categories list if there are any)
-        locations = locations_search_query(query)[0:3]
-        if (locations):
-            locations.suggestionType = "locations"
-            categories.append((locations, "Locations"))
-
-        # Get the network suggestions (and add them to the categories list if there are any)
-        networks = networks_search_query(query)[0:3]
-        if (networks):
-            networks.suggestionType = "networks"
-            categories.append((networks, "Networks"))
-
-        # Set the number of characters to show for each suggestion
-        num_chars = 45
-
-    # Case 3: Member suggestions for adding members to blots
-    elif (query_type == "addToBlot"):
-        # Get the requested blot (or throw a 404 error if the blot ID is invalid)
-        try:
-            blot = Blot.objects.get(pk = request.POST["blotID"])
-        except:
-            raise Http404()
-            
-        # Get the members who match the search query and who are not already in the requested blot (and add them to the categories list if there are any)
-        members = members_search_query(query, member.following.all())
-        members = members.exclude(pk__in = blot.members.all())[0:5]
-        if (members):
-            members.suggestionType = "members"
-            for m in members:
-                m.name = m.first_name + " " + m.last_name
-            categories.append((members,))
-
-        # Set the number of characters to show for each suggestion
-        num_chars = 20
-
-    # Case 4: Member and blot suggestions for inkling invites
-    elif (query_type == "inklingInvite"):
-        # Get the member suggestions (and add them to the categories list if there are any)
-        members = members_search_query(query, Member.active.filter(Q(id__in = member.following.filter(is_active=True)) | Q(id__in = member.followers.filter(is_active = True))))[0:5]
-        members = list(members)
-
-        # Get the blots
-        blots = blots_search_query(query, member)[0:5]
-        blots = list(blots)
-
-        # Remove members who have already been invited 
-        try:
-            invites = request.POST["invitees"].split("|<|>|")
-        except KeyError:
-            raise Http404()
-
-        i = 0
-        while (i < len(invites)):
-            if (invites[i] == "people"):
-                try:
-                    m = Member.active.get(pk = int(invites[i + 1]))
-                    if (m in members):
-                        members.remove(m)
-                except Member.DoesNotExist:
-                    pass
-            elif (invites[i] == "blots"):
-                try:
-                    blot = Blot.objects.get(pk = int(invites[i + 1]))
-                    if (blot in blots):
-                        blots.remove(blot)
-                except Member.DoesNotExist:
-                    pass
-            i += 1
-
-        if (members):
-            for m in members:
-                m.name = m.first_name + " " + m.last_name
-            categories.append((members, "People", "members"))
-
-        # Get the blots suggestions (and add them to the categories list if there are any)
-        if (blots):
-            categories.append((blots, "Blots", "blots"))
-        
-        # Set the number of characters to show for each suggestion
-        num_chars = 20
-
-    return render_to_response( "suggestions.html",
-        { "categories" : categories, "queryType" : query_type, "numChars" : num_chars },
-        context_instance = RequestContext(request) )
-
-
-def notifications_view(request):
-    """Gets the logged in member's request and returns the HTML for the notifications page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/?next=/manage/notifications/")
-
-    # Get the members who have requested to follow the logged in member
-    requested_members = member.requested.all()
-
-    # For each requested member, determine their networks, mutual followings, and button list and allow their contact info to be seen
-    for m in requested_members:
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-        m.button_list = [buttonDictionary["reject"], buttonDictionary["accept"]]
-        # Determine the privacy rating for the logged in member and the current member
-        m.privacy = get_privacy(member, m)
-        
-    return render_to_response( "notifications.html",
-        { "member" : member, "requestedMembers" : requested_members },
-        context_instance = RequestContext(request) )
-
-
-def followers_view(request):
-    """Gets the logged in member's or other member's followers and returns the HTML for the followers page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if "other_member_id" in request.POST:
-            return HttpResponseRedirect("/login/?next=/member/" + request.POST["other_member_id"] + "/")
-        else:
-            return HttpResponseRedirect("/login/?next=/manage/followers/")
-            
-    # If we are viewing another member's page, get the members who are following them
-    if "other_member_id" in request.POST:
-        # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
-        try:
-            other_member = Member.active.get(pk = request.POST["other_member_id"])
-        except Member.DoesNotExist:
-            raise Http404()
-
-        # Get the members who are following the member whose page we are on and set the appropriate page context and no followers text
-        members = other_member.followers.filter(is_active = True)
-        page_context = "otherFollowers"
-        no_followers_text = other_member.first_name + " " + other_member.last_name
-
-        # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-        other_member.privacy = get_privacy(member, other_member)
-
-        if (other_member.privacy < other_member.followers_privacy):
-            return render_to_response( "noPermission.html",
-                {},
-                context_instance = RequestContext(request) )
-
-    # Otherwise, get the members who are following the logged in member and set the appropriate page context and no followers text
-    else:
-        members = member.followers.filter(is_active = True)
-        other_member = None
-        page_context = "myFollowers"
-        no_followers_text = "you"
-
-    # Get the necessary information for each member's member card
-    for m in members:
-        # Case 1: The logged in member is the current member (or we are on someone else's profile page)
-        if ((m == member) or (other_member)):
-            m.button_list = []
-            m.show_contact_info = True
-
-        # Case 2: The logged in member has a pending request to follow the current member
-        elif (m in member.pending.all()):
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["revoke"]]
-            m.show_contact_info = False
-
-        # Case 3: The logged in member is following the current member
-        elif (m in member.following.filter(is_active = True)):
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["blots"]]
-            m.show_contact_info = True
-
-        # Case 4: The logged in member is not following and has not requested to follow the current member
-        else:
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["request"]]
-            m.show_contact_info = False
-            
-        # Determine the members who are being followed by both the logged in member and the current member
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-
-        # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-        m.privacy = get_privacy(member, m)
-
-    return render_to_response( "followers.html",
-        { "member" : member, "members" : members, "pageContext" : page_context, "noFollowersText" : no_followers_text },
-        context_instance = RequestContext(request) )
-
-
-def get_member_following_view(request):
-    """Gets the logged in member's or other member's following and returns the HTML for the following page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if (request.POST["other_member_id"]):
-            return HttpResponseRedirect("/login/?next=/member/" + request.POST["other_member_id"] + "/")
-        else:
-            return HttpResponseRedirect("/login/")
-    
-    # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
-    try:
-        other_member = Member.active.get(pk = request.POST["other_member_id"])
-    except Member.DoesNotExist:
-        raise Http404()
-
-    # Get the members whom the other member is following
-    members = [m for m in other_member.following.filter(is_active = True)]
-
-    # Get the necessary information for each member's member card
-    for m in members:
-        # Case 1: The logged in member is the current member
-        if ((m == member) or (other_member)):
-            m.button_list = []
-            m.show_contact_info = True
-
-        # Case 2: The logged in member has a pending request to follow the current member
-        elif (m in member.pending.all()):
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["revoke"]]
-            m.show_contact_info = False
-
-        # Case 3: The logged in member is following the current member
-        elif (m in member.following.filter(is_active = True)):
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["blots"]]
-            m.show_contact_info = True
-
-        # Case 4: The logged in member is not following and has not requested to follow the current member
-        else:
-            m.button_list = [buttonDictionary["prevent"], buttonDictionary["request"]]
-            m.show_contact_info = False
-            
-        # Determine the members who are being followed by both the logged in member and the current member
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-        
-        # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-        m.privacy = get_privacy(member, m)
-
-    # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-    other_member.privacy = get_privacy(member, other_member)
-
-    if (other_member.privacy < other_member.followers_privacy):
-        return render_to_response( "noPermission.html",
-            {},
-            context_instance = RequestContext(request) )
-    else:
-        return render_to_response( "following.html",
-            { "member" : member, "otherMember" : other_member, "members" : members },
-            context_instance = RequestContext(request) )
-    
-def blots_view(request, blot_id = None):
-    """Gets the logged in member's blots returns the HTML for the blots page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        return HttpResponseRedirect("/login/?next=/manage/blots/")
-
-    # If a blot ID is specified, get the members in that blot (otherwise, get the members in the logged in member's accepted blot)
-    try:
-        blot = Blot.objects.get(pk = blot_id)
-        members = blot.members.filter(is_active = True)
-    except Blot.DoesNotExist:
-        blot = None
-        members = member.accepted.filter(is_active = True)
-
-    # Get the necessary information for each member's member card
-    for m in members:
-        # Show the logged in member's contact information
-        m.show_contact_info = True
-
-        # Show the "Stop following" and "Blots" buttons
-        m.button_list = [buttonDictionary["stop"], buttonDictionary["blots"]]
-
-        # Determine the members who are being followed by both the logged in member and the current member
-        m.mutual_followings = member.following.filter(is_active = True) & m.following.filter(is_active = True)
-
-        # Determine the privacy rating for the logged in member and the current member
-        m.privacy = get_privacy(member, m)
-
-    # If a blot ID is specified, return only the blot content (otherwise, return the entire HTML for the blots page)
-    try:
-        content = request.POST["content"]
-        html = "blotContent.html"
-    except KeyError:
-        html = "blots.html"
-
-    return render_to_response( html, 
-        { "member" : member, "members" : members, "blot" : blot},
-        context_instance = RequestContext(request) )
-
-
-def networks_view(request):
-    """Gets the logged in member's or other member's networks and returns the HTML for the network page."""
-    # Get the member who is logged in (or redirect them to the login page)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        if "other_member_id" in request.POST:
-            return HttpResponseRedirect("/login/?next=/member/" + request.POST["other_member_id"] + "/")
-        else:
-            return HttpResponseRedirect("/login/?next=/manage/networks/")
-
-    # If we are viewing another member's page, get the members who are following them
-    if "other_member_id" in request.POST:
-        # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
-        
-        try:
-            other_member = Member.active.get(pk = request.POST["other_member_id"])
-        except Member.DoesNotExist:
-            raise Http404()
-            
-        # Get the other member's networks
-        networks = other_member.networks.all()
-        
-        # Determine the number of members in the current network
-        for network in networks:
-            network.num_members = len(network.member_set.filter(is_active = True))
-            
-        # Specify the page context
-        page_context = "member"
-        
-        # Specify the text if the other member is not in any networks
-        no_networks_text = other_member.first_name + " " + other_member.last_name + " is"
-        
-        # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-        other_member.privacy = get_privacy(member, other_member)
-            
-        if (other_member.privacy < other_member.networks_privacy):
-            return render_to_response( "noPermission.html",
-                {},
-                context_instance = RequestContext(request) )
-    
-    # Otherwise, if no member ID is inputted, get the networks corresponding to the logged in member
-    else:
-        # Get the logged in member's networks
-        networks = member.networks.all()
-        
-        # Give each network the "Leave network" button
-        for network in networks:
-            network.button_list = [buttonDictionary["leave"]]
-            
-            # Determine the number of members in the current network
-            network.num_members = len(network.member_set.filter(is_active = True))
-            
-        # Specify the page context
-        page_context = "manage"
-        
-        # Specify the text if the logged in member is not in any networks
-        no_networks_text = "You are"
-        
-    return render_to_response( "networks.html",
-        { "networks" : networks, "pageContext" : page_context, "noNetworksText" : no_networks_text },
-        context_instance = RequestContext(request) )
-
-
-def get_others_inklings_view(request):
-    # If a user is not logged in, redirect them to the login page
-    if ("member_id" not in request.session):
-           return HttpResponseRedirect("/login")
-     
-    # Get the logged in member
-    member = Member.active.get(pk = request.session["member_id"])
-
-    # Get the POST data
-    try:
-        date = request.POST["date"].split("/")
-        date = datetime.date(day = int(date[1]), month = int(date[0]), year = int(date[2]))
-        people_type = request.POST["peopleType"]
-        people_id = request.POST["peopleID"]
-        if people_type == "none": #Set default people_type value
-            people_type = "network" #Will only work if user belongs to at least one network
-        if people_id == "none":
-            networkList = member.networks.all()
-            if networkList[0]: #If the user is in at least one network
-                people_id = networkList[0].id #Set the peopleID to the id of their first network
-            else: # If the user is not in a network
-                people_type = "other" #Default to "All Blots"
-                people_id = "blots" #Default to "All Blots"
-        inkling_type = request.POST["inklingType"]
-        include_member = request.POST["includeMember"]
-    except KeyError:
-        raise Http404()
-
-    # Get others' inklings
-    locations = get_others_inklings(member, date, people_type, people_id, inkling_type)
-
-    # Get date objects
-    dates = [date + datetime.timedelta(days = x) for x in range(5)] 
-
-    if (include_member == "true"):
-        return render_to_response( "othersInklings.html",
-            { "member" : member, "locations" : locations, "dates" : dates, "selectedDate" : date },
-            context_instance = RequestContext(request) )
-    else:
-        return render_to_response( "locationBoard.html",
-            { "locations" : locations },
-            context_instance = RequestContext(request) )
-
-
-def get_others_inklings(member, date, people_type, people_id, inkling_type):
-    """Returns the others' inklings for the inputted date."""
-    # Determine the members whose inklings we are retrieving
-    people = []
-    if (people_type == "other"):
-        people = member.following.filter(is_active = True)
-
-    elif (people_type == "network"):
-        network = Network.objects.get(pk = people_id)
-        people = network.member_set.filter(is_active = True)
-    
-    elif (people_type == "blot"):
-        blot = Blot.objects.get(pk = people_id)
-        people = blot.members.filter(is_active = True)
-    # Get the locations which match the inputted criteria
-    locations = []
-    for p in people:
-        # Get the inklings according to category type
-        if (inkling_type == "all"):
-            inklings = p.inklings.filter(date = date)
-        else:
-            inklings = p.inklings.filter(date = date, category = inkling_type)
-
-        # If there is an inkling which matches the criteria
-        for inkling in inklings:
-            # Location inkling
-            if inkling.location:
-                location = inkling.location
-                if (location in locations):
-                    for l in locations:
-                        if (l == location):
-                            l.count += 1
-                else:
-                    location.count = 1
-                    locations.append(location)
-
-            # Member place inkling
-            elif ((inkling.member_place in member.following.filter(is_active = True)) or (inkling.member_place in member.followers.filter(is_active = True)) or (inkling.member_place == member)):
-                member_place = inkling.member_place
-                if (member_place in locations):
-                    for l in locations:
-                        if (l == member_place):
-                            l.count += 1
-                else:
-                    member_place.count = 1
-                    locations.append(member_place)
-
-    # Sort the locations from most members to least
-    locations.sort(key = lambda l:-l.count)
-
-    return locations
-
-
-def get_member_inklings_view(request):
-    # Get the member who is logged in (or throw a 404 error if their member ID is invalid)
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except:
-        raise Http404()
-
-    # Get the member whose page is being viewed (or throw a 404 error if their member ID is invalid)
-    try:
-        other_member = Member.active.get(pk = request.POST["other_member_id"])
-    except Member.DoesNotExist:
-        raise Http404()
-
-    try:
-        date = request.POST["date"].split("/")
-        date = datetime.date(int(date[2]), int(date[0]), int(date[1]))
-    except KeyError:
-        raise Http404()
-
-    # Determine the privacy rating for the logged in member and the current member whose page is being viewed
-    other_member.privacy = get_privacy(member, other_member)
-
-    inklings = {}
-    if (other_member.privacy >= other_member.inklings_privacy):
-        try:
-            inklings["dinner"] = other_member.inklings.get(date = date, category = "dinner")
-        except:
-            pass
-        try:
-            inklings["pregame"] = other_member.inklings.get(date = date, category = "pregame")
-        except:
-            pass
-        try:
-            inklings["mainEvent"] = other_member.inklings.get(date = date, category = "mainEvent")
-        except:
-            pass
-
-        # Get date objects
-        dates = [date + datetime.timedelta(days = x) for x in range(4)]
-        
-        return render_to_response( "memberInklings.html",
-            { "inklings" : inklings, "dates" : dates, "selectedDate" : date },
-            context_instance = RequestContext(request) )
-    else:
-        return render_to_response( "noPermission.html",
-            {},
-            context_instance = RequestContext(request) )
-
-
+    if member.facebookId:
+        return HttpResponse(True)
+    return HttpResponse(False)
+
+@csrf_exempt
 def login_view(request):
-    """Either logs in a member or returns the login error."""
-    # If a member is already logged in, redirect them to the home page
-    if ("member_id" in request.session):
-        return HttpResponseRedirect("/")
-
-    # Create dictionaries to hold the POST data and the invalid errors
-    data = { "email" : "", "password" : "", "month" : 0, "year" : 0 }
-    invalid = { "errors" : [] }
-
-    # Get the next location after the login is successful (or set it to the home page if it is not set)
+    """Logs a member in or returns the login error."""
+    # Get the inputted email and password
     try:
-        next_location = request.GET["next"]
-    except:
-        next_location = "/"
+        if ("facebookId" in request.POST):
+            facebookId = request.POST["facebookId"]
+            facebookAccessToken = request.POST["facebookAccessToken"]
+            # Create random password 32 chars long
+            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            day = int(request.POST["birthday"].split('/')[1])
+            month = int(request.POST["birthday"].split('/')[0])
+            year = int(request.POST["birthday"].split('/')[2])
+            birthday = datetime.date(day = day, month = month, year = year)
+            gender = request.POST["gender"][0]
+        else:
+            email = request.POST["email"]
+            password = request.POST["password"]
+            facebookId = False
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+    
+    # Create a string to hold the login error
+    response_error = ""
 
-    # If POST data is present, validate the username and password combination
-    if (request.POST):
-        # Get the POST data
+    # Validate the email and password
+    if (not facebookId):
+        if ((not email) and (not password)):
+            response_error = "Email and password not specified"
+        elif (not email):
+            response_error = "Email not specified"
+        elif (not password):
+            response_error = "Password not specified"
+
+    # Log in the member if their email and password are correct
+    if (not response_error):
         try:
-            data["email"] = request.POST["email"].lower()
-            data["password"] = request.POST["password"]
-        except KeyError:
-            pass
-
-        # Validate the email
-        if (not data["email"]):
-            invalid["email"] = True
-            invalid["errors"].append("Email not specified")
-
-        elif (not is_email(data["email"])):
-            invalid["email"] = True
-            invalid["errors"].append("Invalid email format")
-
-        # Validate the password
-        if (not data["password"]):
-            invalid["password"] = True
-            invalid["errors"].append("Password not specified")
-            
-        # If an email and password are provided, the member is verified and active, and their password is correct, log them in (or set the login as invalid)
-        if (not invalid["errors"]):
+            # Get the member by facebookId
+            if (facebookId):
+                member = Member.active.get(facebookId = facebookId)
+                #Should allow user to update their email if their facebook email doesn't match the one in inkle
             # Get the member according to the provided email
+            else:
+                member = Member.active.get(email = email)
+        except:
+            member = []
+            
+        if (facebookId and not member): #A new member registering facebook (the facebookId was sent but no member object exists for that facebookId)
+            print "facebookId and not member"
             try:
-                member = Member.active.get(email = data["email"])
+                #If the user has not logged in with facebook before but they registered with their email
+                member = Member.active.get(email = email)
+                if member:
+                    print "found member by email"
+                    response_error = "A user with that email address already exists. "
+                    response_error += "You can link your account to facebook by logging in with your email and going to the settings tab."
+                    # Create and return a JSON object
+                    response = simplejson.dumps({
+                        "success" : False,
+                        "error" : response_error
+                    })
+                    print response
+                    return HttpResponse(response, mimetype = "application/json")
             except:
-                member = []
+                print "except"
+                # Create the new member
+                member = Member(
+                    facebookId = facebookId,
+                    first_name = first_name,
+                    last_name = last_name,
+                    username = email,
+                    email = email,
+                    birthday = birthday,
+                    gender = gender
+                )
+                # Set the new member's password
+                member.set_password(password)
+                member.save() # Save the new member
 
-            # Confirm the username and password combination
-            if (member and (member.verified) and (member.is_active) and (member.check_password(data["password"]))):
+        # If the user is logging in with facebook, validate their authentication token or log them out
+        if (facebookId):
+            # Confirm the user is active and log them in
+            try:
+                if (member and member.is_active):
+                    request.session["member_id"] = member.id
+                    fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
+                    fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+                    request.session["facebook_access_token"] = facebookAccessToken
+                    fbData = simplejson.loads(fbResponse)
+                    member.last_login = datetime.datetime.now()
+                    member.save()
+                # Otherwise, add to the errors list
+                else:
+                    response_error = "Could not login using Facebook"
+            except Exception, e:
+                response_error = "Could not login using Facebook"
+        else:
+            # Confirm the username and password combination and log the member in
+            if (member and member.is_active and member.check_password(password)):
                 request.session["member_id"] = member.id
                 member.last_login = datetime.datetime.now()
                 member.save()
-                return HttpResponseRedirect(next_location)
-            
-            # Otherwise, set the invalid dictionary
+            # Otherwise, add to the errors list
             else:
-                invalid["email"] = True
-                invalid["password"] = True
-                invalid["errors"].append("Invalid email/password combination")
+                response_error = "Invalid login combination"
 
-    return render_to_response( "login.html",
-        {"selectedContentLink" : "login", "loginData" : data, "loginInvalid" : invalid, "next" : next_location },
-        context_instance = RequestContext(request) )
-
-
-def reset_password_view(request, email = None, verification_hash = None):
-    """Verifies a member's email address using the inputted verification hash."""
-    # Get the member corresponding to the provided email (or raise a 404 error)
-    try:
-        member = Member.active.get(email = email)
-    except Member.DoesNotExist:
-        raise Http404()
-
-    # If the verification hash is correct update the member's verification and let them reset their password (otherwise, raise a 404 error)
-    if (member.verification_hash == verification_hash):
-        member.update_verification_hash()
-        member.save()
+    # Determine if the login was successful
+    if (response_error):
+        success = False
     else:
-        raise Http404()
-        
-    return render_to_response( "login.html",
-        { "selectedContentLink" : "login", "loginContent" : "resetPassword", "m" : member },
-        context_instance = RequestContext(request) )
+        success = True
 
-def is_sixteen(month, day, year):
-    """Returns true if the inputted date represents a birthday of someone who is at least sixteen; otherwise, returns False."""
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
+    # TODO: Do we need this modified thing anymore?
+    request.session.modified = True
+    return HttpResponse(response, mimetype = "application/json")
+
+def logout_view(request):
+    """Logs out the logged-in member."""
+    try:
+        del request.session["member_id"]
+        if ("facebook_access_token" in request.session):
+            del request.session["facebook_access_token"]
+    except KeyError:
+        pass
+
+    return HttpResponse()
+
+def is_email(email):
+    """Returns True if the inputted email is a valid email address format; otherwise, returns False."""
+    if (re.search(r"[a-zA-Z0-9+_\-\.]+@[0-9a-zA-Z][\.-0-9a-zA-Z]*\.[a-zA-Z]+", email)):
+        return True
+    else:
+        return False
+
+def is_thirteen(month, day, year):
+    """Returns True if the inputted date represents a birthday of someone who is at least thirteen; otherwise, returns False."""
     born = datetime.date(day = int(day), month = int(month), year = int(year))
     today = datetime.date.today()
     
@@ -1838,283 +204,1949 @@ def is_sixteen(month, day, year):
     else:
         age = today.year - born.year
 
-    if (age < 16):
+    if (age < 13):
         return False
     else:
         return True
 
-
-def register_view(request):
-    """User login."""
-    # If a member is already logged in, redirect them to the home page
-    if ("member_id" in request.session):
-        return HttpResponseRedirect("/")
-    
-    # If no POST data is present, redirect the member to the login view
-    if (not request.POST):
-        return HttpResponseRedirect("/login/")
-    
-    # Create a new user and log them in if they provided valid form data
-    else:
-        # Create dictionaries to hold the POST data and the invalid errors
-        data = { "first_name" : "", "last_name" : "", "email" : "", "confirm_email" : "", "password" : "", "confirm_password" : "", "month" : 0, "day" : 0, "year" : 0, "gender" : "" }
-        invalid = { "errors" : [] }
-
-        # Get the POST data
-        try:
-            data["first_name"] = request.POST["firstName"]
-            data["last_name"] = request.POST["lastName"]
-            data["email"] = request.POST["email"].lower()
-            data["confirm_email"] = request.POST["confirmEmail"].lower()
-            data["password"] = request.POST["password"]
-            data["confirm_password"] = request.POST["confirmPassword"]
-            data["month"] = int(request.POST["month"])
-            data["day"] = int(request.POST["day"])
-            data["year"] = int(request.POST["year"])
-            data["gender"] = request.POST["gender"]
-        except KeyError:
-            pass
-
-        # Validate the first name
-        if (not data["first_name"]):
-            invalid["first_name"] = True
-            invalid["errors"].append("First name not specified")
-
-        # Validate the last name
-        if (not data["last_name"]):
-            invalid["last_name"] = True
-            invalid["errors"].append("Last name not specified")
-
-        # Validate the email
-        if (not data["email"]):
-            invalid["email"] = True
-            invalid["errors"].append("Email not specified")
-
-        elif (not is_email(data["email"])):
-            invalid["email"] = True
-            invalid["errors"].append("Invalid email format")
-
-        elif (Member.objects.filter(email = data["email"])):
-            invalid["email"] = True
-            invalid["confirm_email"] = True
-            invalid["errors"].append("An account already exists for the provided email")
-
-        # Validate the confirm email
-        if (not data["confirm_email"]):
-            invalid["confirm_email"] = True
-            invalid["errors"].append("Confirm email not specified")
-
-        elif (not is_email(data["confirm_email"])):
-            invalid["confirm_email"] = True
-            invalid["errors"].append("Invalid confirm email format")
-
-        elif (data["email"] != data["confirm_email"]):
-            invalid["email"] = True
-            invalid["confirm_email"] = True
-            invalid["errors"].append("Email and confirm email do not match")
-            
-        elif (not ((data["email"].endswith("@nd.edu")) or (data["email"].endswith("@saintmarys.edu")) or (data["email"].endswith("@hcc-nd.edu")) or (data["email"].endswith("@heise.org") or (data["email"] in ["aaron.m.wenger@gmail.com", "hcwenger@gmail.com", "rew5003@gmail.com", "christopher.patrick.kelly@gmail.com"])))):
-            invalid["email"] = True
-            invalid["confirm_email"] = True
-            invalid["errors"].append("Inkle is currently limited to Notre Dame, Saint Mary's, and Holy Cross email addresses only")
-        
-        #elif (data["email"] == "mrobert7@nd.edu"):
-        #    invalid["email"] = True
-        #    invalid["confirm_email"] = True
-        #    invalid["errors"].append("Mason, you can't sign up for Inkle because we don't have enough space (i.e. jiggabytes) for you. Lose some weight and we'll see what we can do.")
-            
-        # Validate the password and confirm password
-        if ((not data["password"]) and (not data["confirm_password"])):
-            invalid["password"] = True
-            invalid["confirm_password"] = True
-            data["password"] = ""
-            data["confirm_password"] = ""
-            invalid["errors"].append("Password not specified")
-            invalid["errors"].append("Confirm password not specified")
-
-        elif (len(data["password"]) < 8):
-            invalid["password"] = True
-            invalid["confirm_password"] = True
-            data["password"] = ""
-            data["confirm_password"] = ""
-            invalid["errors"].append("Password must contain at least eight characters")
-
-        elif (data["password"] != data["confirm_password"]):
-            invalid["password"] = True
-            invalid["confirm_password"] = True
-            data["password"] = ""
-            data["confirm_password"] = ""
-            invalid["errors"].append("Password and confirm password do not match")
-
-        # Validate the birthday month
-        if (not data["month"]):
-            invalid["month"] = True
-            invalid["errors"].append("Birthday month not specified")
-
-        # Validate the birthday day
-        if (not data["day"]):
-            invalid["day"] = True
-            invalid["errors"].append("Birthday day not specified")
-
-        # Validate the birthday year
-        if (not data["year"]):
-            invalid["year"] = True
-            invalid["errors"].append("Birthday year not specified")
-
-        # Validate the member is at least sixteen years old
-        if (("month" not in invalid) and ("day" not in invalid) and ("year" not in invalid)):
-            if (not is_sixteen(data["month"], data["day"], data["year"])):
-                invalid["month"] = True
-                invalid["day"] = True
-                invalid["year"] = True
-                invalid["errors"].append("You must be at least sixteen years old to use Inkle")
-
-        # Validate the gender
-        if (data["gender"] not in ["Male", "Female"]):
-            invalid["gender"] = True
-            invalid["errors"].append("Gender not specified")
-
-        # If the registration form is valid, create a new member with the provided POST data
-        if (not invalid["errors"]):
-            if (len(data["email"]) > 30):
-                data["email"] = data["email"][0:30]
-            # Create the new member
-            member = Member(
-                first_name = data["first_name"],
-                last_name = data["last_name"],
-                username = data["email"],
-                email = data["email"],
-                birthday = datetime.date(day = data["day"], month = data["month"], year = data["year"]),
-                gender = data["gender"]
-            )
-            
-            # Set the new member's password
-            member.set_password(data["password"])
-        
-            # Set the new member's verification hash
-            member.update_verification_hash()
-
-            # Save the new member
-            member.save()
-
-            # Create default image for the new member
-            if (member.gender == "Male"):
-                shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-            else:
-                shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-
-            # Add the member to a network according to their email address
-            if (member.email.endswith("@nd.edu")):
-                try:
-                    network = Network.objects.get(name = "University of Notre Dame")
-                    member.networks.add(network)
-                except:
-                    pass
-            elif (member.email.endswith("@saintmarys.edu")):
-                try:
-                    network = Network.objects.get(name = "Saint Mary's College")
-                    member.networks.add(network)
-                except:
-                    pass
-            elif (member.email.endswith("@hcc-nd.edu")):
-                try:
-                    network = Network.objects.get(name = "Holy Cross College")
-                    member.networks.add(network)
-                except:
-                    pass
-
-            # Send the member to the successful account creation page
-            return render_to_response( "registrationConfirmation.html",
-                { "email" : data["email"] },
-                context_instance = RequestContext(request) )
-
-    return render_to_response( "registrationForm.html",
-        { "selectedContentLink" : "registration", "registrationData" : data, "registrationInvalid" : invalid },
-        context_instance = RequestContext(request) )
-
-
-def verify_email_view(request, email = None, verification_hash = None):
-    """Verifies a member's email address using the inputted verification hash."""
-    # Get the member corresponding to the provided email (otherwise, throw a 404 error)
+@csrf_exempt
+def registration_view(request):
+    """Registers a new member."""
+    # Get the POST data
     try:
-        member = Member.objects.get(email = email)
-    except Member.DoesNotExist:
-        raise Http404()
-
-    # If the member has not yet been verified and the verification hash is correct, verify the member and give them a new verification hash (otherwise, throw a 404 error)
-    if ((not member.verified) and (member.verification_hash == verification_hash)):
-        member.update_verification_hash()
-        member.verified = True
-        member.save()
-    else:
-        raise Http404()
-
-    # Send the welcome email
-    send_welcome_email(member)
-
-    return render_to_response( "login.html",
-        { "selectedContentLink" : "registration", "registrationContent" : "verifyEmail", "m" : member },
-        context_instance = RequestContext(request) )
-
-def update_email_view(request, email = None, verification_hash = None):
-    """Verifies a member's email address using the inputted verification hash."""
-    # Get the member corresponding to the provided email (otherwise, throw a 404 error)
-    try:
-        member = Member.objects.get(email = email)
-    except Member.DoesNotExist:
-        raise Http404()
-
-    # If the member has not yet been verified and the verification hash is correct, verify the member and give them a new verification hash (otherwise, throw a 404 error)
-    if ((not member.verified) and (member.verification_hash == verification_hash)):
-        member.update_verification_hash()
-        member.verified = True
-        member.save()
-    else:
-        raise Http404()
-
-    return render_to_response( "login.html",
-        { "selectedContentLink" : "registration", "registrationContent" : "verifyEmail", "m" : member },
-        context_instance = RequestContext(request) )
-
-
-def logout_view(request):
-    """Logs out the logged in member."""
-    try:
-        del request.session["member_id"]
+        first_name = request.POST["firstName"]
+        last_name = request.POST["lastName"]
+        gender = request.POST["gender"]
+        birthday = request.POST["birthday"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirmPassword"]
     except KeyError:
-        pass
+        raise Http404()
 
-    return HttpResponseRedirect("/login/")
+    # Parse the birthday (format: YYYY-MM-DDT00:00:00)
+    if birthday:
+        birthday = birthday.split("T")[0].split("-")
+        year = int(birthday[0])
+        month = int(birthday[1])
+        day = int(birthday[2])
 
-def getting_started_view(request):
-    # Get the member who is logged in (or redirect them to the login page)
+    # Create a string to hold the registration error
+    response_error = ""
+
+    # Validate the first name
+    if (not first_name):
+        response_error = "First name not specified"
+
+    # Validate the last name
+    elif (not last_name):
+        response_error = "Last name not specified"
+
+    # Validate the gender
+    elif (gender not in ["Male", "Female"]):
+        response_error = "Gender not specified"
+
+    # Validate the birthday
+    elif (not birthday):
+        response_error = "Birthday not specified"
+    elif (not is_thirteen(month, day, year)):
+        response_error = "You must be at least thirteen years old to use Inkle"
+
+    # Validate the email
+    elif (not email):
+        response_error = "Email not specified"
+    elif (not is_email(email)):
+        response_error = "Invalid email format"
+    elif (Member.objects.filter(email = email)):
+        response_error = "An account already exists for that email."
+
+    # Validate the password and confirm password
+    elif (not password):
+        response_error = "Password not specified"
+    elif (len(password) < 8):
+        response_error = "Password must contain at least eight characters"
+    elif (not confirm_password):
+        response_error = "Confirm password not specified"
+    elif (password != confirm_password):
+        response_error = "Password and confirm password do not match"
+
+    # If the registration form is valid, create a new member with the provided POST data
+    if (not response_error):
+        # TODO: fix this shit
+        if (len(email) > 30):
+            email = email[0:30]
+
+        birthday = datetime.date(day = day, month = month, year = year)
+
+        # Create the new member
+        member = Member(
+            first_name = first_name,
+            last_name = last_name,
+            username = email,
+            email = email,
+            birthday = datetime.date(day = day, month = month, year = year),
+            gender = gender
+        )
+            
+        # Set the new member's password
+        member.set_password(password)
+        #print member
+        
+        # Save the new member
+        member.save()
+
+        # Create the default image for the new member
+        #if (member.gender == "Male"):
+        #    shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+        #else:
+        #    shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
+
+        # Log the member in
+        request.session["member_id"] = member.id
+
+    # Determine if the login was successful
+    if (response_error):
+        success = False
+    else:
+        success = True
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
+
+def get_members_from_groups(member, group_ids):
+    members = []
+
+    for group_id in group_ids:
+        # If the group ID is -1, add all the members who are in none of the logged-in member's groups
+        if (group_id == "-1"):
+            not_grouped_members = list(member.friends.all())
+            for g in member.group_set.all():
+                for m in g.members.all():
+                    if (m in not_grouped_members):
+                        not_grouped_members.remove(m)
+
+            members.extend(not_grouped_members)
+
+        # Otherwise, add each member from the group corresponding to the current group ID
+        else:
+            group = Group.objects.get(pk = group_id)
+            if (group.creator == member):
+                for m in group.members.all():
+                    if (m not in members):
+                        members.append(m)
+
+    return members
+
+def get_inkling_list_item_html(inkling):
+    """Returns the HTML for an inkling list item."""
+    # Get the member thumbnails for those attending the inputted inkling
+    num_members_attending = inkling.get_num_members_attending()
+    num_members_attending_thumbnails = min(num_members_attending, 5)   # TODO: make 7 a global variable
+    members_attending = list(inkling.get_members_attending())[0 : num_members_attending_thumbnails]
+    
+    # Get the HTML for the inkling list item
+    html = render_to_string( "inklingListItem.html", {
+        "i" : inkling,
+        "members_attending" : members_attending,
+        "num_other_members_attending" : num_members_attending - num_members_attending_thumbnails
+    })
+    
+    return html
+
+def get_group_list_item_main_content_html(group, group_members = None):
+    """Returns the HTML for a group list item (in the main content)."""
+    # Get the group members if this is not the "Not Grouped" group
+    if (not group_members):
+        group_members = list(group.members.all())
+
+    # Get the member thumbnails for those a part of the inputted group
+    num_group_members = len(group_members)
+    num_group_member_thumbnails = min(num_group_members, 10)   # TODO: make 7 a global variable
+    group_members = group_members[0 : num_group_member_thumbnails]
+
+    # Get the HTML for the group list item
+    html = render_to_string( "groupListItemMainContent.html", {
+        "g" : group,
+        "group_members" : group_members,
+        "num_other_group_members" : num_group_members - num_group_member_thumbnails
+    })
+
+    return html
+
+def get_group_list_item_panel_html(group, group_members = None):
+    """Returns the HTML for a group list item (in a panel)."""
+    # Get the group members if this is not the "Not Grouped" group
+    if (not group_members):
+        group_members = list(group.members.all())
+
+    # Get the HTML for the group list item
+    html = render_to_string( "groupListItemPanel.html", {
+        "g" : group
+    })
+
+    return html
+
+@csrf_exempt
+def link_facebook_account_view(request):
+    """Links an existing user account to a facebook account."""
+    # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Create a string to hold the login error
+    response_error = ""
+    
+    # Get the facebook credentials
+    try:
+        if ("facebookId" in request.POST):
+            facebookId = request.POST["facebookId"]
+            facebookAccessToken = request.POST["facebookAccessToken"]
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            email = request.POST["email"]
+            day = int(request.POST["birthday"].split('/')[1])
+            month = int(request.POST["birthday"].split('/')[0])
+            year = int(request.POST["birthday"].split('/')[2])
+            birthday = datetime.date(day = day, month = month, year = year)
+            gender = request.POST["gender"][0]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+
+    # Check for existing member with the facebook ID
+    try:
+        fbMember = Member.active.get(facebookId = facebookId)
+        #NEED TO DECIDE WHAT TO DO IN THIS CASE
+    except:
+        #There is no existing member with the provided facebook ID
+        fbMember = None
+
+    if fbMember is not None:
+        response = simplejson.dumps({
+            "success" : False,
+            "error" : "An inkle account already exists for that facebook user"
+        })
+        return HttpResponse(response, mimetype = "application/json")
+
+    if (email != member.email):
+        # User will need to update their inkle email to match the one in their facebook account
+        response_error = "The email address for the facebook account does not match your inkle account email. "
+        response_error += "Please update your email in the settings before linking your account to facebook."
+
+    if (fbMember is None):
+        try:
+            member.facebookId = facebookId #Store their facebookId for future use
+            #Replace the users password with a random one - they must login with facebook now
+            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
+            member.set_password(password)
+            member.save()
+        except:
+            # Error saving member
+            HttpResponse("Error saving member object")
+
+    # Validate facebook authentication token or log them out
+    # Confirm the user is active and log them in
+    try:
+        fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
+        fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+        request.session["facebook_access_token"] = facebookAccessToken
+        fbData = simplejson.loads(fbResponse)
+    except Exception, e:
+        response_error = "Could not authenticate with facebook"
+
+    # Determine if the link was successful
+    if (response_error):
+        success = False
+    else:
+        success = True
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success" : success,
+        "error" : response_error
+    })
+    return HttpResponse(response, mimetype = "application/json")
+
+@csrf_exempt
+def all_inklings_view(request):
+    """Returns a list of the inklings which the logged-in member's friends are attending."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Determine if we should return dated or no-dated inklings
+    try:
+        onlyIncludeNoDatedInklings = request.POST["onlyIncludeNoDatedInklings"]
+    except:
+        onlyIncludeNoDatedInklings = "false"
+    
+    # If necessary, get the date, or set it to today if no date is specified
+    if (onlyIncludeNoDatedInklings == "false"):
+        try:
+            day = int(request.POST["day"])
+            month = int(request.POST["month"])
+            year = int(request.POST["year"])
+            date = datetime.date(year, month, day)
+        except KeyError:
+            date = datetime.date.today()
+    else:
+        date = None
+    
+    # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
+    if ("selectedGroupIds" in request.POST):
+        selected_group_ids = request.POST["selectedGroupIds"]
+        if (selected_group_ids):
+            selected_group_ids = selected_group_ids.split(",")[:-1]
+        members = get_members_from_groups(member, selected_group_ids)
+    else:
+        members = list(member.friends.filter(is_active = True))
+    
+    # Append the logged-in member to the members list
+    members.append(member)
+    
+    # Get the inklings the members are attending on the specified date
+    inklings = []
+    for m in members:
+        for i in m.inklings.filter(date = date):
+            if i not in inklings:
+                if (m == member):
+                    inklings.append(i)
+                else:
+                    try:
+                        sp = SharingPermission.objects.get(creator = m, inkling = i)
+                    except:
+                        raise Http404()
+
+                    if (member in list(sp.members.all())):  # TODO: change to a "_contains" query if we can?
+                        inklings.append(i)
+
+    # Get the HTML for every inkling
+    response_inklings = []
+    for i in inklings:
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending()
+        })
+    
+    # Sort the inklings according to their number of attendees
+    response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_inklings)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def groups_panel_view(request):
+    """Returns a list of the logged-in member's groups (with HTML for the panel)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get whether or not the groups should automatically be set as selected
+    try:
+        auto_set_groups_as_selected = (request.POST["autoSetGroupsAsSelected"] == "true")
+    except:
+        raise Http404()
+    
+    # Get the current inkling if we are in the invites view
+    if (not auto_set_groups_as_selected):
+        try:
+            inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        except:
+            raise Http404()
+    
+    # Create a list to hold the response data
+    response_groups = []
+    
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
+    
+    # Get a list of the logged-in member's not grouped friends
+    not_grouped_members = get_not_grouped_members(member, groups)
+    
+    # Create the "Not Grouped" group
+    not_grouped_group = {
+        "id" : -1,
+        "name" : "Not Grouped"
+    }
+    
+    # Determine if the "Not Grouped" group should be selected
+    not_grouped_group["selected"] = True
+    if (not auto_set_groups_as_selected):
+        for m in not_grouped_members:
+            if (not inkling.member_has_pending_invitation(m)):
+                not_grouped_group["selected"] = False
+                break
+    
+    # Add the "Not Grouped" group to the response list
+    response_groups.append({
+        "html" : get_group_list_item_panel_html(not_grouped_group, not_grouped_members)
+    })
+    
+    # Get the HTML for the logged-in member's groups
+    for g in groups:
+        
+        g.selected = True
+        if (not auto_set_groups_as_selected):
+            for m in g.members.all():
+                if (not inkling.member_has_pending_invitation(m)):
+                    g.selected = False
+                    break
+        
+        response_groups.append({
+            "id" : g.id,
+            "html" : get_group_list_item_panel_html(g)
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_groups)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+def get_not_grouped_members(member, groups = None):
+    if (not groups):
+        groups = member.group_set.all()
+
+    not_grouped_members = list(member.friends.all())
+    for g in groups:
+        for m in g.members.all():
+            if (m in not_grouped_members):
+                not_grouped_members.remove(m)
+
+    return not_grouped_members
+
+
+@csrf_exempt
+def groups_main_content_view(request):
+    """Returns a list of the logged-in member's groups (with HTML for the main content window)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Create a list to hold the response data
+    response_groups = []
+
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
+
+    # Get a list of the logged-in member's not grouped friends
+    not_grouped_members = get_not_grouped_members(member, groups)
+    
+    # Create the "Not Grouped" group
+    not_grouped_group = {
+        "id" : -1,
+        "name" : "Not Grouped"
+    }
+
+    # Add the "Not Grouped" group to the response list
+    response_groups.append({
+        "id" : not_grouped_group["id"],
+        "html" : get_group_list_item_main_content_html(not_grouped_group, not_grouped_members)
+    })
+
+    # Get the HTML for the logged-in member's groups
+    for g in groups:
+        response_groups.append({
+            "id" : g.id,
+            "html" : get_group_list_item_main_content_html(g)
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_groups)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def is_member_inkling_view(request):
+    """Returns True if the logged-in memeber is attending the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling
+    try:
+        inkling_id = request.POST["inklingId"]
     except:
         raise Http404()
 
-    return render_to_response( "gettingStarted.html",
+    # Return True if the logged-in member is attending the inkling or False otherwise
+    if (member.inklings.filter(pk = inkling_id)):
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
+
+
+# TODO: either delete this if it is not being used or update the function comment for it
+@csrf_exempt
+def inkling_view(request):
+    """Returns the HTML for a single inkling"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Set the number of member pictures to show for each section
+    num_member_pics = 8
+
+    # Get the members who are attending the inkling
+    i = 0
+    members_attending = []
+    if (inkling in member.inklings.all()):
+        members_attending.append(member)
+        i = 1
+    
+    for m in inkling.get_members_attending():
+        if (i == num_member_pics):
+            break
+        elif (m != member):
+            members_attending.append(m)
+            i = i + 1
+
+    num_other_members_attending = inkling.get_num_members_attending() - i
+
+    # Get the members who are awaiting reply to the inkling
+    i = 0
+    members_awaiting_reply = []
+    if (inkling.member_has_pending_invitation(member)):
+        members_awaiting_reply.append(member)
+        i = 1
+    
+    for m in inkling.get_members_awaiting_reply():
+        if (i == num_member_pics):
+            break
+        elif (m != member):
+            members_awaiting_reply.append(m)
+            i = i + 1
+
+    num_other_members_awaiting_reply = inkling.get_num_members_awaiting_reply() - i
+
+    # Return the HTML for the current inkling
+    return render_to_response( "inkling.html",
+        { "member" : member, "inkling" : inkling, "members_attending" : members_attending, "num_other_members_attending" : num_other_members_attending, "members_awaiting_reply" : members_awaiting_reply, "num_other_members_awaiting_reply" : num_other_members_awaiting_reply },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
+def share_settings_form_view(request):
+    """Returns the HTML for a single inkling"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Return the HTML for the current inkling
+    return render_to_response( "shareSettingsForm.html",
         { "member" : member },
         context_instance = RequestContext(request) )
 
-def help_view(request, content_type = "overview"):
-    # Get the member who is logged in (or redirect them to the login page)
+@csrf_exempt
+def set_share_setting_view(request, setting = None, value = None, group_id = None):
+    """Sets a users share settings"""
+    print "setting share settings"
+    if ((setting is None) or (value is None)):
+        raise Http404()
+    if ((setting == "shareGroupByDefault") and (group_id == None)):
+        raise Http404()
+
+    # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
-    except:
-        member = None
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    if (setting == "shareWithSelectedGroups"):
+        if (value == "true"):
+            member.shareWithSelectedGroups = True
+            member.save()
+        elif (value == "false"):
+            member.shareWithSelectedGroups = False
+            member.save()
+        else:
+            raise Http404()
+    elif (setting == "allowInklingAttendeesToShare"):
+        if (value == "true"):
+            member.allowInklingAttendeesToShare = True
+            member.save()
+        elif (value == "false"):
+            member.allowInklingAttendeesToShare = False
+            member.save()
+        else:
+            raise Http404()
+    elif (setting == "shareGroupByDefault"):
+        #Ensure the group belongs to the logged in member
+        try:
+            group = Group.objects.get(pk=group_id)
+            groupCreator = group.creator
+        except:
+            raise Http404()
+        if member != groupCreator:
+            raise Http404()
+        if (value == "true"):
+           group.shareByDefault = True
+           group.save()
+        elif (value == "false"):
+            group.shareByDefault = False
+            group.save()
+        else:
+           raise Http404()
+    return HttpResponse("True")
 
+@csrf_exempt
+def respond_to_inkling_invitation_view(request):
+    """Responds the logged-in member to the an inkling invitation."""
+    # Get the logged-in member
     try:
-        first_load = request.POST["firstLoad"]
-        first_load = False
-    except KeyError:
-        first_load = True
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get the inputted inkling and the response
+    try:
+        invitation = member.inkling_invitations_received.get(pk = request.POST["invitationId"])
+        response = request.POST["response"]
+    except (InklingInvitation.DoesNotExist, KeyError) as e:
+        raise Http404()
 
-    if (first_load):
-        return render_to_response( "help.html",
-            { "member" : member, "contentType" : content_type },
-            context_instance = RequestContext(request) )
+    # Update the invitation's status
+    invitation.status = response
+    invitation.save()
+
+    # Add the inkling corresponding to the current invitation to the logged-in member's inklings if they accepted it
+    if (response == "accepted"):
+        member.inklings.add(invitation.inkling)
+
+    # Return the number of pending inkling invitations for the logged-in member
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count() + member.inkling_invitations_received.filter(status = "missed").count())
+
+
+# TODO: possible get rid of this
+@csrf_exempt
+def edit_inkling_view(request):
+    """Returns the HTML for editing an inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Return the HTML for editing the current inkling
+    return render_to_response( "editInkling.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def save_inkling_view(request):
+    """Saves any changes to an inkling and returns the HTML for that inkling's page."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling's new information
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        # TODO: date = request.POST["date"]
+        location = request.POST["location"]
+        time = request.POST["time"]
+        notes = request.POST["notes"]
+    except:
+        raise Http404()
+
+    # TODO: create date object
+
+    # Create a feed update for everything that changed and update the inkling
+    # TODO: uncomment
+    if (location != inkling.location):
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "location", updated_to = inkling.location)
+        inkling.location = location
+    #if (date != inkling.date):
+    #    feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "date", update_to = inkling.date) # TODO: convert to string Day of Week, Month Day
+    #    inkling.date = date
+    #    inkling.save()
+    if (time != inkling.time):
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "time", updated_to = inkling.time)
+        inkling.time = time
+    if (notes != inkling.notes):
+        feed_update = FeedUpdate.objects.create(creator = member, inkling = inkling, update_type = "notes", updated_to = inkling.notes)
+        inkling.notes = notes
+
+    # Save the inkling
+    inkling.save()
+
+    # Return the updated HTML for the inputted inkling
+    return render_to_response( "inkling.html",
+        { "member" : member, "inkling" : inkling },
+        context_instance = RequestContext(request) )
+
+
+@csrf_exempt
+def join_inkling_view(request):
+    """Adds the logged in member to an inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Add the inkling to the logged-in member's inklings
+    member.inklings.add(inkling)
+    
+    return HttpResponse()
+
+
+@csrf_exempt
+def inkling_feed_view(request):
+    """Returns a list of the feed updates and comments for the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a list to hold all the feed items (comments and updates)
+    response_feed_items = []
+
+    # Add the inkling creation feed update to the response list
+    html = render_to_string( "inklingFeedUpdateListItem.html", {
+        "inkling" : inkling,
+        "member" : member
+    })
+
+    response_feed_items.append({
+        "html" : html,
+        "date" : inkling.date_created
+    })
+
+    # Add the feed comments to the response list
+    for feed_comment in inkling.feedcomment_set.all():
+        html = render_to_string( "inklingFeedCommentListItem.html", {
+            "feed_comment" : feed_comment,
+            "member" : member
+        })
+
+        response_feed_items.append({
+            "html" : html,
+            "date" : feed_comment.date_created
+        })
+
+    # Add the feed updates to the response list
+    for feed_update in inkling.feedupdate_set.all():
+        html = render_to_string( "inklingFeedUpdateListItem.html", {
+            "feed_update" : feed_update,
+            "member" : member
+        })
+
+        response_feed_items.append({
+            "html" : html,
+            "date" : feed_update.date_created
+        })
+
+
+    # Sort the feed items chronologically
+    response_feed_items.sort(key = lambda feed_item : feed_item["date"])
+    for feed_item in response_feed_items:
+        del feed_item["date"]
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_feed_items)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def inkling_members_attending_view(request):
+    """Returns a list of the members who are attending the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a list to hold all the members attending the current inkling
+    response_members_attending = []
+    for m in inkling.get_members_attending():
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+
+        html = render_to_string( "memberListItem.html", {
+            "m" : m
+        })
+        
+        response_members_attending.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_members_attending)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def inkling_members_awaiting_reply_view(request):
+    """Returns a list of the members who have been invited to the inputted inkling but have not responded yet."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Create a list to hold all the members awaiting reply to the current inkling
+    response_members_awaiting_reply = []
+    for m in inkling.get_members_awaiting_reply():
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
+        html = render_to_string( "memberListItem.html", {
+            "m" : m
+        })
+        
+        response_members_awaiting_reply.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_members_awaiting_reply)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def add_feed_comment_view(request):
+    """Adds a new comment to the inputted inkling's feed."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling and the new comment's text
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        text = request.POST["text"]
+    except:
+        raise Http404()
+
+    # Create the new comment
+    FeedComment.objects.create(creator = member, inkling = inkling, text = text)
+
+    return HttpResponse()
+
+
+# TODO: remove csrf_exempt?
+@csrf_exempt
+def my_inklings_view(request):
+    """Returns a list of the inklings which the logged-in member is attending."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Create several date objects
+    today = datetime.date.today()
+    tomorrow = today + datetime.timedelta(days = 1)
+    this_week = today + datetime.timedelta(days = 6)
+
+    # Get a list of all the inklings the logged-in member is attending today
+    response_inklings = []
+    for i in member.inklings.filter(date = today):
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
+            "group" : "Today",
+            "groupIndex" : 0
+        })
+
+    # Get a list of all the inklings the logged-in member is attending tomorrow
+    for i in member.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
+            "group" : "Tomorrow",
+            "groupIndex" : 1
+        })
+
+    # Get a list of all the inklings the logged-in member is attending this week
+    for i in member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
+            "group" : "This Week",
+            "groupIndex" : 2
+        })
+
+    # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
+    future_inklings = list(member.inklings.filter(date__gte = this_week))
+    future_inklings.sort(key = lambda i : i.date)
+    for i in future_inklings:
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
+            "group" : "Future",
+            "groupIndex" : 3
+        })
+
+    # Get a list of all the inklings the logged-in member is attending which do not have a date
+    for i in member.inklings.filter(date__exact = None):
+        response_inklings.append({
+            "id" : i.id,
+            "html" : get_inkling_list_item_html(i),
+            "numMembersAttending" : i.get_num_members_attending(),
+            "group" : "Future",
+            "groupIndex" : 3
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_inklings)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+def num_inkling_invitations_view(request):
+    """Returns the number of inklings to which the logged-in member has pending invitations."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Return the number of inklings to which the logged-in member has pending invitations
+    return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count() + member.inkling_invitations_received.filter(status = "missed").count())
+
+
+@csrf_exempt
+def inkling_invitations_view(request):
+    """Returns a list of the inkling invitations to which the logged-in member has not yet responded."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get a list of the inklings to which the logged-in member has pending invitations
+    response_invitations = []
+    for invitation in member.inkling_invitations_received.filter(status = "pending"):
+        html = render_to_string( "inklingInvitationListItem.html", {
+            "invitation" : invitation
+        })
+        
+        response_invitations.append({
+            "invitationId" : invitation.id,
+            "inklingId" : invitation.inkling.id,
+            "html": html
+        })
+
+    # Add the inklings to which the logged-in members has missed invitations
+    for invitation in member.inkling_invitations_received.filter(status = "missed"):
+        html = render_to_string( "inklingInvitationListItem.html", {
+            "invitation" : invitation
+        })
+        
+        response_invitations.append({
+            "invitationId" : invitation.id,
+            "inklingId" : invitation.inkling.id,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_invitations)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+# TODO: I think this can now be removed since invitations have been modeled differently
+@csrf_exempt
+def create_inkling_view(request):
+    """Creates an empty inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Create a new inkling
+    inkling = Inkling.objects.create(creator = member)
+
+    # Return the new inkling's ID
+    return HttpResponse(inkling.id)
+
+
+@csrf_exempt
+def update_inkling_view(request):
+    """Updates the inputted inklings details."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling and its details
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        location = request.POST["location"]
+        date = request.POST["date"]
+        time = request.POST["time"]
+        # TODO: remove this from ever being sent
+        #category = request.POST["category"]
+        notes = request.POST["notes"]
+        # TODO: remove this from ever being sent
+        #is_private = request.POST["isPrivate"]
+        # TODO: add shared_with permissions
+    except:
+        raise Http404()
+        
+    # Update the inkling
+    if (location):
+        inkling.location = location
+    if (date):
+        date_split = date.split("T")[0].split("-")
+        date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
+        inkling.date = date
+    if (time):
+        inkling.time = time
+    if (notes):
+        inkling.notes = notes
+
+    # Save the inkling
+    inkling.save()
+
+    # Add the inkling to the logged-in member's inklings
+    member.inklings.add(inkling)
+
+    return HttpResponse()
+
+
+# TODO: fix this; invites should not occur until the inkling is actually created; therefore, this should no longer work...
+@csrf_exempt
+def num_invited_friends_view(request):
+    """Returns the number of friends who have been invited to the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Get the number of friends who have been invited to this inkling by the logged-in member
+    num_invited_friends = InklingInvitation.objects.filter(sender = member, inkling = inkling).count()
+    
+    return HttpResponse(num_invited_friends)
+
+
+@csrf_exempt
+def inkling_invited_friends_view(request):
+    """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except:
+        raise Http404()
+
+    # Get the logged-in member's friends
+    friends = list(member.friends.all())
+
+    # Get a list of the logged-in member's friends
+    response_friends = []
+    for m in friends:
+        m.selected = inkling.member_has_pending_invitation(m)
+
+        html = render_to_string( "memberListItem.html", {
+            "m" : m,
+            "include_selection_item" : True
+        })
+        
+        response_friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friends)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def inkling_invited_groups_view(request):
+    """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the current inkling
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+    except (Inkling.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get an alphabetical list of the logged-in member's groups
+    groups = list(member.group_set.all())
+    groups.sort(key = lambda g : g.name)
+
+    # Get a list of the logged-in member's groups
+    response_groups = []
+    for g in groups:
+        g.selected = True
+        for m in g.members.all():
+            if (not inkling.member_has_pending_invitation(m)):
+                g.selected = False
+                break
+
+        html = render_to_string( "groupListItem.html", {
+            "g" : g
+        })
+
+        response_groups.append({
+            "id" : g.id,
+            "html" : html
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_groups)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def invite_group_view(request):
+    """Invites everyone in the inputted group to the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and group
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        group = Group.objects.get(pk = request.POST["itemId"])
+    except:
+        raise Http404()
+
+    # Make sure the group belongs to the logged-in member
+    if (group.creator != member):
+        raise Http404()
+
+    # Invite everyone in the inputted group to the inputted inkling if they have not yet been invited
+    for m in group.members.all():
+        if (not inkling.member_has_pending_invitation(m)):
+            InklingInvitation.objects.create(sender = member, receiver = m, inkling = inkling)
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def uninvite_group_view(request):
+    """Uninvites everyone in the inputted group from the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and group and the groups which are currently selected by the logged-in member
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        group = Group.objects.get(pk = request.POST["itemId"])
+        selected_group_ids = request.POST["selectedGroupIds"]
+    except:
+        raise Http404()
+
+    # Get a list of the groups which are currently selected by the logged-in member
+    selected_groups = []
+    if (selected_group_ids):
+        for group_id in selected_group_ids.split(",")[:-1]:
+            try:
+                g = Group.objects.get(pk = int(group_id))
+            except:
+                raise Http404()
+            if (g.creator != member):
+                raise Http404()
+            selected_groups.append(g)
+
+    # Loop through each member in the inputted group and remove their invitation if they are not part of any selected group
+    for m in group.members.all():
+        if (inkling.member_has_pending_invitation(m)):
+            remove = True
+            for b in selected_groups:
+                if (m in b.members.all()):
+                    remove = False
+                    break
+
+            if (remove):
+                try:
+                    invitation = InklingInvitation.objects.get(sender = member, receiver = m, inkling = inkling)
+                    invitation.delete()
+                except:
+                    raise Http404()
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def invite_member_view(request):
+    """Invites the inputted member to the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and member
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
+    except:
+        raise Http404()
+
+    # Make sure the inputted member is a friend of the logged-in member
+    if (m not in member.friends.all()):
+        raise Http404()
+    
+    # Invite the inputted member to the inputted inkling if they have not already been invited
+    if (not inkling.member_has_pending_invitation(m)):
+        InklingInvitation.objects.create(sender = member, receiver = m, inkling = inkling)
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def uninvite_member_view(request):
+    """Uninvites the inputted member from the inputted inkling."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted inkling and member
+    try:
+        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        m = Member.objects.get(pk = request.POST["itemId"])
+    except:
+        raise Http404()
+
+    # Make sure the inputted member is a friend of the logged-in member
+    if (m not in member.friends.all()):
+        raise Http404()
+    
+    # Uninvite the inputted member from the inputted inkling
+    try:
+        invitation = InklingInvitation.objects.get(sender = member, receiver = m, inkling = inkling)
+        invitation.delete()
+    except:
+        raise Http404()
+
+    return HttpResponse()
+
+
+# TODO: combine this with the other functions which do nearly the same thing...
+@csrf_exempt
+def friends_view(request):
+    """Returns a list of the logged-in member's friends."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    
+    # Get the mode
+    try:
+        mode = request.POST["mode"]
+    except:
+        raise Http404()
+    
+    # Get the list of the logged-in member's friends
+    friends = list(member.friends.all())
+    
+    # Determine what items to include in the member list item
+    include_delete_items = (mode == "friends")
+    include_selection_item = (mode == "invite")
+    
+    # Get the HTML for each of the logged-in member's friends
+    response_friends = []
+    for m in friends:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+
+        html = render_to_string( "memberListItem.html", {
+            "m" : m,
+            "include_delete_items" : include_delete_items,
+            "include_selection_item" : include_selection_item
+        })
+        
+        response_friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friends)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def friend_requests_view(request):
+    """Returns a list of the logged-in member's friend requests."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get an alphabetical list of the logged-in member's friend requests
+    friend_requests = list(member.friend_requests_received.filter(status = "pending"))
+    friend_requests.sort(key = lambda r : r.sender.last_name)
+
+    # Get the HTML for the logged-in member's friends requests list items
+    response_friend_requests = []
+    for request in friend_requests:
+        m = request.sender
+        m.num_mutual_friends = m.get_num_mutual_friends(m)
+        
+        html = render_to_string( "memberListItem.html", {
+            "m" : m,
+            "include_friend_request_buttons" : True
+        })
+        
+        response_friend_requests.append({
+            "id" : m.id,
+            "html": html
+        })
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friend_requests)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def num_friend_requests_view(request):
+    """Returns the number of pending friend requests the logged-in member has."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Return the number of pending friend requests the logged-in member has
+    return HttpResponse(member.friend_requests_received.filter(status = "pending").count())
+
+
+# TODO: definitely delete this
+@csrf_exempt
+def profile_view(request):
+    """Returns the HTML for the profile page."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Return the HTML for the profile page
+    return render_to_response( "profile.html",
+        { "member" : member },
+        context_instance = RequestContext(request) )
+
+@csrf_exempt
+def invite_facebook_friends_view(request):
+    """Returns a list of a member's facebook friends so they can invite or add them"""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    # Get the search query
+    try:
+        fbAccessToken = request.POST["fbAccessToken"]
+    except:
+        raise Http404()
+
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        fbUrl = "https://graph.facebook.com/fql?q="
+        fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
+        fbQuery += "FROM user WHERE uid IN "
+        fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
+        if fbQuery:
+            fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
+            try:
+                fbResponse = urllib2.urlopen(fbRequest).read()
+            except Exception, e:
+                print "except: " + str(e)
+            fbData = simplejson.loads(fbResponse)
+
+    facebookInkleFriends = [] #List of facebook friends who are also on inkle
+    facebookOnlyFriends = [] #List of facebook friends who are not on inkle
+    for fbFriend in fbData["data"]:
+        if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
+            #Get inkle user from facebook user id
+            inkleUser = Member.objects.get(facebookId = fbFriend["uid"]) #Will throw error if no member object exists with the given facebookId
+            if inkleUser not in member.friends.all(): #If the facebook friend is not an inkle friend
+                inkleUser.is_friend = False
+                inkleUser.is_pending = member.has_pending_friend_request_to(inkleFriend)
+            else: #If the facebook friend is an inkle friend
+                inkleUser.is_friend = True
+            inkleUser.num_mutual_friends = member.get_num_mutual_friends(inkleFriend)
+            facebookInkleFriends.append(inkleUser)
+        else: #If the facebook friend is not an inkle member
+            personData = {} #Create dictionary for facebook friend data
+            personData["first_name"] = fbFriend["first_name"]
+            personData["last_name"] = fbFriend["last_name"]
+            personData["facebookId"] = fbFriend["uid"]
+            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
+            personData["id"] = "fb" + str(fbFriend["uid"])
+            personData["num_mutual_friends"] = 0
+            personData["is_friend"] = False
+            personData["is_pending"] = False
+            personData["get_picture_path"] = fbFriend["pic_square"]
+            facebookOnlyFriends.append(personData)
+    #Sort each individual list of friends
+    facebookInkleFriends = sorted(facebookInkleFriends, key = lambda m : m.last_name)
+    facebookOnlyFriends = sorted(facebookOnlyFriends, key = lambda m : m["last_name"])
+    #Merge the two lists into one
+    facebookFriends = []
+    inkleIndex = 0
+    facebookIndex = 0
+    while (inkleIndex < len(facebookInkleFriends) and facebookIndex < len(facebookOnlyFriends)):
+        if facebookOnlyFriends[facebookIndex]["last_name"] < facebookInkleFriends[inkleIndex].last_name:
+            facebookFriends.append(facebookOnlyFriends[facebookIndex])
+            facebookIndex += 1
+        else:
+            facebookFriends.append(facebookInkleFriends[inkleIndex])
+            inkleIndex += 1
+    if inkleIndex < len(facebookInkleFriends):
+        facebookFriends += facebookInkleFriends[inkleIndex:]
+    if facebookIndex < len(facebookOnlyFriends):
+        facebookFriends += facebookOnlyFriends[facebookIndex:]
+    # Get the HTML for each of the logged-in member's facebook friends
+    response_friends = []
+    for m in facebookFriends:
+        html = render_to_string( "addFriendItem.html", {
+            "m" : m,
+        })
+        try:
+            personId = m.id
+            lastName = m.last_name
+        except:
+            personId = m["id"]
+            lastName = m["last_name"]
+        response_friends.append({
+            "id" : personId,
+            "lastName" : lastName,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friends)
+    return HttpResponse(response, mimetype = "application/json")
+
+@csrf_exempt
+def people_search_view(request):
+    """Returns a list of member's who match the inputted query."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+    # Get the search query
+    try:
+        query = request.POST["query"]
+        fbAccessToken = request.POST["fbAccessToken"]
+    except:
+        print "except1: " + str(e)
+        raise Http404()
+
+    # Split the query into words
+    query_split = query.split()
+
+    # If the query is only one word long, match the members' first or last names alone
+    if (len(query_split) == 1):
+        members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
+    # If the query is two words long, match the members' first and last names
+    elif (len(query_split) == 2):
+        members = Member.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
+    # If the query is more than two words long, return no results
     else:
-        return render_to_response( "help" + content_type[0].upper() + content_type[1:] + ".html",
-            { "member" : member, "contentType" : content_type },
-            context_instance = RequestContext(request) )
+        members = []
+
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        fbUrl = "https://graph.facebook.com/fql?q="
+        fbQuery = "SELECT uid, name, first_name, last_name, is_app_user, pic_square "
+        fbQuery += "FROM user WHERE uid IN "
+        fbQuery += "(SELECT uid2 FROM friend WHERE uid1=me()) "
+        #fbQuery += "AND is_app_user=0" #Use this to only return non-inkle users or set to 1 to return only inkle users
+        if (len(query_split) == 1):
+            fbQuery += str("AND (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+            fbQuery += str("OR strpos(lower(last_name), '" + query_split[0] + "') == 0)")
+        elif (len(query_split) == 2):
+            fbQuery += str("AND ( (strpos(lower(first_name),'" + query_split[0] + "') == 0 ")
+            fbQuery += str("AND strpos(lower(last_name), '" + query_split[1] + "') == 0 )")
+            fbQuery += str("OR (strpos(lower(first_name), '" + query_split[1] + "') == 0 ")
+            fbQuery += str("AND strpos(lower(last_name), '" + query_split[0] + "') == 0))")
+        else:
+            fbQuery = ""
+        if fbQuery:
+            fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
+            try:
+                fbResponse = urllib2.urlopen(fbRequest).read()
+            except Exception, e:
+                print "except2: " + str(e)
+            fbData = simplejson.loads(fbResponse)      
+
+    # Create lists for storing member objects or dictionaries for each type
+    # of connection a member can have to the user
+    inkleFriends = [] #Members of inkle who are friends on inkle with the user
+    inklePending = [] #Members of inkle who have a pending request from the user
+    inkleOther = [] #Members of inkle who are are not friends with the user and do not have a pending request
+    facebookInkle = [] #Members of inkle who are facebook friends with the user
+    facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
+
+    for m in members:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        if m in member.friends.all(): #If the member is a friend of the user
+            m.is_friend = True
+            m.is_pending = False
+            inkleFriends.append(m)
+        elif member.has_pending_friend_request_to(m):
+            m.is_friend = False
+            m.is_pending = True
+            inklePending.append(m)
+        else: #If the member matches the search query but is not friends with the user and a request is not pending
+            m.is_friend = False
+            m.is_pending = False
+            inkleOther.append(m)
+
+    for fbFriend in fbData["data"]:
+        if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
+            #Get inkle user from facebook user id
+            inkleFriend = Member.objects.get(facebookId = fbFriend["uid"])
+            if inkleFriend not in inkleFriends: #If the facebook friend is not an inkle friend
+                inkleFriend.num_mutual_friends = member.get_num_mutual_friends(inkleFriend)
+                inkleFriend.is_friend = False
+                inkleFriend.is_pending = member.has_pending_friend_request_to(inkleFriend)
+                facebookInkle.append(personData)
+        else: #If the facebook friend is not an inkle member
+            personData = {} #Create dictionary for facebook friend data
+            personData["first_name"] = fbFriend["first_name"]
+            personData["last_name"] = fbFriend["last_name"]
+            personData["facebookId"] = fbFriend["uid"]
+            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
+            personData["id"] = "fb" + str(fbFriend["uid"])
+            personData["num_mutual_friends"] = 0
+            personData["is_friend"] = False
+            personData["is_pending"] = False
+            personData["get_picture_path"] = fbFriend["pic_square"]
+            facebookNotInkle.append(personData)
+    
+    searchResults = []
+    if inkleFriends:
+        searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
+    if inklePending:
+        searchResults += sorted(inklePending, key = lambda m : m.last_name)
+    if facebookInkle:
+        searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
+    if facebookNotInkle:
+        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
+    if inkleOther:
+        searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
+    
+    response_members = []
+    for m in searchResults:
+        try:
+            html = render_to_string( "addFriendItem.html", {
+            "m" : m,
+            "member" : member,
+            })
+        except:
+            raise Http404()
+
+        try:
+            memberId = m.id
+        except:
+            memberId = m["id"]
+        response_members.append({
+            "id" : memberId,
+            "html": html
+        })
+        
+    # Create and return a JSON object
+    response = simplejson.dumps(response_members)
+    return HttpResponse(response, mimetype = "application/json")
+
+@csrf_exempt
+def facebook_post(request):
+    """Posts an invitation message on a users facebook feed"""
+
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the search query
+    try:
+        fbId = request.POST["fbId"]
+        fbId = fbId.strip('f').strip('b')
+        fbAccessToken = request.POST["fbAccessToken"]
+    except:
+        print "except1: " + str(e)
+        raise Http404()
+
+    fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
+    if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
+        postInfo = "https://graph.facebook.com/" + fbId + "/feed?"
+        postInfo += "link=https://developers.facebook.com/docs/reference/dialogs/&"
+        postInfo += "picture=http://fbrell.com/f8.jpg&"
+        postInfo += "name=Facebook%20Dialogs&"
+        postInfo += "caption=Reference%20Documentation&"
+        postInfo += "description=Using%20Dialogs%20to%20interact%20with%20users.&"
+        postInfo += "access_token=" + fbAccessToken
+        try:
+            #req = urllib2.Request(postInfo)
+            #return urllib2.urlopen(req)
+            fbResponse = urllib2.urlopen(postInfo).read()
+        except Exception, e:
+            print "except2: " + str(e)
+        fbData = simplejson.loads(fbResponse)
+        print fbData
+    return HttpResponse()
+
+# TODO: rename as send_friend_request_view
+@csrf_exempt
+def add_friend_view(request):
+    """Sends a friend request from the logged-in member to the inputted member."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the member to whom the logged-in member is sending the friend request
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    # Make sure the two members are not already friends and no friend request already exists
+    if ((m in member.friends.all()) or (member.has_pending_friend_request_to(m))):
+        raise Http404()
+
+    # Send a friend request from the logged-in member
+    FriendRequest.objects.create(sender = member, receiver = m)
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def respond_to_request_view(request):
+    """Implements the logged-in member's response to a friend request from the inputted memeber."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the member who sent the request and the logged-in member's response to it
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+        response = request.POST["response"]
+    except:
+        raise Http404()
+
+    # Make sure the two members are not already friends and that the friend request actually exists
+    if ((m in member.friends.all()) or (member.has_pending_friend_request_to(m))):
+        raise Http404()
+
+    # Get the friend request
+    friend_request = FriendRequest.objects.get(sender = m, receiver = member)
+
+    # Add the friendship if the logged in member accepted the request
+    if (response == "accept"):
+        member.friends.add(m)
+        friend_request.status = "accepted"
+    else:
+        friend_request.status = "declined"
+    
+    # Save the updated friend request
+    friend_request.save()
+
+    # Return the number of pending friend requests for the logged-in member
+    return HttpResponse(FriendRequest.objects.filter(receiver = member, status = "pending").count())
+
+
+@csrf_exempt
+def remove_friend_view(request):
+    """Removes a friend from the logged-in member's friends list."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the member who is to be removed from the logged-in member's friends list
+    try:
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    # Make sure the two members are actually friends
+    if (m not in member.friends.all()):
+        raise Http404()
+
+    # Remove the inputted member from the logged-in member's groups
+    for group in member.group_set.all():
+        if (m in group.members.all()):
+            group.members.remove(m)
+
+    # Remove the inputted member from the logged-in member's friends list
+    member.friends.remove(m)
+
+    return HttpResponse()
+
+
+@csrf_exempt
+def delete_group_view(request):
+    """Deletes one of the logged-in member's groups."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted group
+    try:
+        group = Group.objects.get(pk = request.POST["groupId"])
+    except:
+        raise Http404()
+
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
+        raise Http404()
+
+    # Delete the inputted group
+    group.delete()
+    
+    return HttpResponse()
+
+
+@csrf_exempt
+def group_members_view(request):
+    """Returns a list of the logged-in member's friends and if they are in the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted group or set the group to None if we are getting the "Not Grouped" members
+    try:
+        group = Group.objects.get(pk = request.POST["groupId"])
+    except:
+        group = None
+
+    # Make sure the inputted group is one of the logged-in member's groups
+    if ((group) and (group.creator != member)):
+        raise Http404()
+
+    # Get a list of the logged-in members friends
+    friends = list(member.friends.all())
+    friends.sort(key = lambda m : m.last_name) # TODO: try to remove this and just use a sencha sorter
+
+    # Get only the "Not Grouped" members if necessary
+    if (not group):
+        for g in member.group_set.all():
+            for m in g.members.all():
+                if (m in friends):
+                    friends.remove(m)
+
+    # Get the HTML for each of the logged-in member's friends' list item (and whether or not they are in the inputted group)
+    response_friends = []
+    for m in friends:
+        m.num_mutual_friends = member.get_num_mutual_friends(m)
+        
+        m.selected = (m in group.members.all())
+
+        html = render_to_string( "memberListItem.html", {
+            "m" : m,
+            "include_selection_item" : True
+        })
+        
+        response_friends.append({
+            "id" : m.id,
+            "lastName" : m.last_name,
+            "html": html
+        })
+    
+    # Create and return a JSON object
+    response = simplejson.dumps(response_friends)
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def add_to_group_view(request):
+    """Adds the inputted member to the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted group and the member to add to it
+    try:
+        group = Group.objects.get(pk = request.POST["groupId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
+        raise Http404()
+
+    # Add the inputted member to the inputted group
+    group.members.add(m)
+    
+    return HttpResponse()
+
+
+@csrf_exempt
+def remove_from_group_view(request):
+    """Removes the inputted member from the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted group and the member to remove from it
+    try:
+        group = Group.objects.get(pk = request.POST["groupId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
+    except:
+        raise Http404()
+
+    # Make sure the inputted group is one of the logged-in member's groups
+    if (group.creator != member):
+        raise Http404()
+
+    # Remove the inputted member from the inputted group
+    group.members.remove(m)
+    
+    return HttpResponse()
+
+
+# TODO: Remove csrf_exempt
+@csrf_exempt
+def create_group_view(request):
+    """Creates a new group and adds it to the logged-in member's groups."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Create a new group with no name
+    group = Group.objects.create(creator = member, name = "")
+    
+    # Return the new group's ID
+    return HttpResponse(group.id)
+
+
+@csrf_exempt
+def rename_group_view(request):
+    """Renames the inputted group."""
+    # Get the logged-in member
+    try:
+        member = Member.active.get(pk = request.session["member_id"])
+    except (Member.DoesNotExist, KeyError) as e:
+        raise Http404()
+
+    # Get the inputted group and the name to change it to
+    try:
+        group = Group.objects.get(pk = request.POST["groupId"])
+        name = request.POST["name"]
+    except:
+        raise Http404()
+
+    # Make sure the group belongs to the logged-in member
+    if (group.creator != member):
+        raise Http404()
+
+    # Update and save the inputted group's name
+    group.name = name
+    group.save()
+    
+    # Return the new group's ID
+    # TODO: get rid of this?
+    return HttpResponse(group.id)

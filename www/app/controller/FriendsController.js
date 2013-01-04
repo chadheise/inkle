@@ -182,7 +182,7 @@ Ext.define("inkle.controller.FriendsController", {
 	
 	showFriendsTabBadge: function() {
         Ext.Ajax.request({
-			url: "http://127.0.0.1:8000/sencha/numFriendRequests/",
+			url: "http://127.0.0.1:8000/numFriendRequests/",
 			
 			success: function(response) {
 				numFriendRequests = response.responseText;
@@ -450,11 +450,11 @@ Ext.define("inkle.controller.FriendsController", {
         var tappedId, url;
         if (tappedDeleteLock.parent(".group")) {
             tappedId = tappedDeleteLock.parent(".group").getAttribute("data-groupId");
-            url = "http://127.0.0.1:8000/sencha/deleteGroup/";
+            url = "http://127.0.0.1:8000/deleteGroup/";
         }
         else {
             tappedId = tappedDeleteLock.parent(".member").getAttribute("data-memberId");
-            url = "http://127.0.0.1:8000/sencha/removeFriend/";
+            url = "http://127.0.0.1:8000/removeFriend/";
         }
 
         // "Lock" the tapped delete lock if it is already "unlocked"
@@ -525,7 +525,7 @@ Ext.define("inkle.controller.FriendsController", {
 	/* Creates a new group, puts the groups list in edit mode, and sets the focus on the new group */
 	createGroup: function() {
 		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/createGroup/",
+    		url: "http://127.0.0.1:8000/createGroup/",
 		    success: function(response) {
         		groupId = response.responseText;
         		
@@ -558,7 +558,7 @@ Ext.define("inkle.controller.FriendsController", {
 			groupName.setHtml(groupNameInputValue);
 			
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/renameGroup/",
+				url: "http://127.0.0.1:8000/renameGroup/",
 				params: {
 					groupId: groupId,
 					name: groupNameInputValue
@@ -613,7 +613,7 @@ Ext.define("inkle.controller.FriendsController", {
 		});
 		
 		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/addFriend/",
+    		url: "http://127.0.0.1:8000/addFriend/",
     		params: {
     			memberId: memberId
     		},
@@ -696,7 +696,7 @@ Ext.define("inkle.controller.FriendsController", {
         // Toggle the selection item and the memsber's membership in the group
 		if (tappedSelectionItem.hasCls("selected")) {	
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/removeFromGroup/",
+				url: "http://127.0.0.1:8000/removeFromGroup/",
 				params: {
 					memberId: memberId,
 					groupId: groupId
@@ -715,7 +715,7 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 		else {
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/sencha/addToGroup/",
+				url: "http://127.0.0.1:8000/addToGroup/",
 				params: {
 					memberId: memberId,
 					groupId: groupId
@@ -739,7 +739,7 @@ Ext.define("inkle.controller.FriendsController", {
 	
 	respondToRequest: function(memberId, response) {
 		Ext.Ajax.request({
-			url: "http://127.0.0.1:8000/sencha/respondToRequest/",
+			url: "http://127.0.0.1:8000/respondToRequest/",
     		params: {
     			memberId: memberId,
     			response: response

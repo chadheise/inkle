@@ -46,7 +46,7 @@ Ext.define("inkle.view.GroupMembers", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/groupMembers/",
+						url: "http://127.0.0.1:8000/groupMembers/",
 						actionMethods: {
 							read: "POST"
 						},

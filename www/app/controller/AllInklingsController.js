@@ -74,7 +74,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 		
 		// Determine if the current member is attending the clicked inkling
 		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/isMemberInkling/",
+    		url: "http://127.0.0.1:8000/isMemberInkling/",
     		params: {
     			inklingId: inklingId
     		},

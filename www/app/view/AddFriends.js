@@ -55,7 +55,7 @@ Ext.define("inkle.view.AddFriends", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/peopleSearch/",
+						url: "http://127.0.0.1:8000/peopleSearch/",
 						actionMethods: {
 							read: "POST"
 						},

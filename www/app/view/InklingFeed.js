@@ -26,7 +26,7 @@ Ext.define("inkle.view.InklingFeed", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/inklingFeed/",
+						url: "http://127.0.0.1:8000/inklingFeed/",
 						actionMethods: {
 							read: "POST"
 						}

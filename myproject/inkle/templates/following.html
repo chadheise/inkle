@@ -1,7 +1,0 @@
-<div id ="followingContent" class="peopleContent grid_17 alpha omega" context="following">
-    {% for m in members %}
-        {% include "memberCard.html" %}
-    {% empty %}
-        <p>{{ otherMember.get_full_name }} is not following anyone.</p>
-    {% endfor %}
-</div>
