@@ -267,7 +267,7 @@ Ext.define("inkle.controller.SettingsController", {
 	        selectedGroupsShareSetting.set({
     	       "src": "resources/images/selected.png" 
     	    });
-    	    
+
     	    Ext.select('img.groupShareSetting').each(function() {
                 if (this.getAttribute("src") == "resources/images/fadedselected.png") {
                     this.set({
@@ -275,12 +275,23 @@ Ext.define("inkle.controller.SettingsController", {
                     });
                 }
             });
-    	    
+
     	    var noOneShareSetting = Ext.fly("noOneShareSetting");
             noOneShareSetting.set({
     			"src": "resources/images/deselected.png"
     		});
 	    }
+	    
+	    Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/sencha/setShareSetting/shareWithSelectedGroups/true/",
+            success: function(response) {
+                //Only change selected images if call was a success
+            },
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            scope: this
+        });
 	},
 	
 	toggleGroupShareSetting: function(groupShareSetting) {
