@@ -100,6 +100,8 @@
 }
 */
 
+//The below commented section eliminates invokeString deprectation warnings
+/*
 #pragma UIWebDelegate implementation
 
 - (void) webViewDidFinishLoad:(UIWebView*) theWebView 
@@ -118,6 +120,7 @@
 
 	return [super webViewDidFinishLoad:theWebView];
 }
+*/
 
 /* Comment out the block below to over-ride */
 /*
