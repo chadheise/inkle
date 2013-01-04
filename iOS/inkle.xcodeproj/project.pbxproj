@@ -43,6 +43,7 @@
 		8D24037E15F43893000090AA /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24037B15F43893000090AA /* icon.png */; };
 		8D24037F15F43893000090AA /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24037C15F43893000090AA /* icon-72.png */; };
 		8D24038115F43B3C000090AA /* Default~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24038015F43B3C000090AA /* Default~iphone.png */; };
+		8D35156E1696AFE400088C0B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D35156D1696AFE400088C0B /* Default-568h@2x.png */; };
 		8D352BA015EAF5250012E542 /* FacebookConnectPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D352B9F15EAF5250012E542 /* FacebookConnectPlugin.m */; };
 		8D352BBC15EAFA950012E542 /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D352BA315EAFA950012E542 /* Facebook.m */; };
 		8D352BBD15EAFA950012E542 /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8D352BA515EAFA950012E542 /* FBDialog.bundle */; };
@@ -132,6 +133,7 @@
 		8D24037B15F43893000090AA /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8D24037C15F43893000090AA /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
 		8D24038015F43B3C000090AA /* Default~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default~iphone.png"; sourceTree = "<group>"; };
+		8D35156D1696AFE400088C0B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8D352B9E15EAF5250012E542 /* FacebookConnectPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookConnectPlugin.h; sourceTree = "<group>"; };
 		8D352B9F15EAF5250012E542 /* FacebookConnectPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookConnectPlugin.m; sourceTree = "<group>"; };
 		8D352BA215EAFA950012E542 /* Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Facebook.h; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 		308D05311370CCF300D202BF /* splash */ = {
 			isa = PBXGroup;
 			children = (
+				8D35156D1696AFE400088C0B /* Default-568h@2x.png */,
 				8D24038015F43B3C000090AA /* Default~iphone.png */,
 				8D24037615F43366000090AA /* Default@2x~iphone.png */,
 				3088BBB7154F3926009F9C59 /* Default-Landscape@2x~ipad.png */,
@@ -496,6 +499,7 @@
 				8D24037E15F43893000090AA /* icon.png in Resources */,
 				8D24037F15F43893000090AA /* icon-72.png in Resources */,
 				8D24038115F43B3C000090AA /* Default~iphone.png in Resources */,
+				8D35156E1696AFE400088C0B /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
