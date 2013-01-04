@@ -44,6 +44,8 @@ urlpatterns = patterns(
     (r"^numInklingInvitations/$", "s_num_inkling_invitations_view"),
     (r"^inklingInvitations/$", "s_inkling_invitations_view"),
     (r"^shareSettingsForm/$", "s_share_settings_form_view"),
+    (r"^sencha/setShareSetting(?P<setting>shareWithSelectedGroups|allowInklingAttendeesToShare)/(?P<value>true|false)/$", "s_set_share_setting_view"),
+    (r"^sencha/setShareSetting(?P<setting>shareGroupByDefault)/(?P<value>true|false)/(?P<group_id>\d+)/$", "s_set_share_setting_view"),
     (r"^respondToInklingInvitation/$", "s_respond_to_inkling_invitation_view"),
 
     (r"^friends/$", "s_friends_view"),
