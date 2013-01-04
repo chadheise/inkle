@@ -138,7 +138,7 @@ Ext.define("inkle.view.MyInklings", {
 						actionMethods: {
 							read: "POST"
 						},
-						url: "http://127.0.0.1:8000/sencha/myInklings/"
+						url: "http://127.0.0.1:8000/myInklings/"
 					},
 					grouper: {
 					    sortProperty: "groupIndex",
@@ -184,7 +184,7 @@ Ext.define("inkle.view.MyInklings", {
 							],
 							proxy: {
                                 type: "ajax",
-                                url: "http://127.0.0.1:8000/sencha/inklingInvitations/",
+                                url: "http://127.0.0.1:8000/inklingInvitations/",
                                 actionMethods: {
                                     read: "POST"
                                 }

@@ -55,7 +55,7 @@ Ext.application({
 		var isLoggedIn;
 		Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/sencha/isLoggedIn/",
+    		url: "http://127.0.0.1:8000/isLoggedIn/",
 		    success: function(response) {
         		isLoggedIn = response.responseText;
         	},

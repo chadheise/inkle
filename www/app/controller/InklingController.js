@@ -238,7 +238,7 @@ Ext.define("inkle.controller.InklingController", {
     	// Specify in the database that the current member is joining the current inkling
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/sencha/joinInkling/",
+    		url: "http://127.0.0.1:8000/joinInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -261,7 +261,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;   	
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/sencha/editInkling/",
+    		url: "http://127.0.0.1:8000/editInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -290,7 +290,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/sencha/saveInkling/",
+    		url: "http://127.0.0.1:8000/saveInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"],
     			location: Ext.get("location").getValue(),
@@ -322,7 +322,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/sencha/inkling/",
+    		url: "http://127.0.0.1:8000/inkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -378,7 +378,7 @@ Ext.define("inkle.controller.InklingController", {
     addComment: function() {
   		// Add the new comment to the inkling feed
     	Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/sencha/addFeedComment/",
+    		url: "http://127.0.0.1:8000/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
     			text: this.getAddCommentTextField().getValue()

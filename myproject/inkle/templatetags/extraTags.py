@@ -18,6 +18,9 @@ register = Library()
 def is_false(arg): 
     return arg is False
 
+
+# TODO: get rid of rest of template tags if they are still unused
+
 @register.filter()
 @stringfilter
 def truncate_characters(value, arg):

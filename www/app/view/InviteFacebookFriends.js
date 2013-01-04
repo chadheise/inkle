@@ -32,7 +32,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/sencha/inviteFacebookFriendsView/",
+						url: "http://127.0.0.1:8000/inviteFacebookFriendsView/",
 						actionMethods: {
 							read: "POST"
 						}

@@ -7,7 +7,7 @@ echo "no" | python manage.py syncdb
 
 echo
 echo "*** Populating new database ***"
-echo "import populateDatabase" | python manage.py shell
+echo "import populateDatabase; populateDatabase.populate_database(); exit()" | python manage.py shell
 
 echo
 echo
