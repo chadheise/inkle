@@ -299,18 +299,39 @@ Ext.define("inkle.controller.SettingsController", {
 	},
 	
 	toggleGroupShareSetting: function(groupShareSetting) {
+    	var value = "true";
+    	if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+            value = "false";
+        }
+        var group_id = groupShareSetting.getAttribute("groupId");
     	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	        if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	            groupShareSetting.set({
-	                "src": "resources/images/deselected.png"
-	            });
-	        }
-	        else {
-	            groupShareSetting.set({
-	                "src": "resources/images/selected.png"
-	            });
-	        }
+            //Only make ajax call if the selectedGroupsShareSetting is selected
+    	    Ext.Ajax.request({
+                url: "http://127.0.0.1:8000/setShareSetting/",
+                params: {
+                    setting: "shareGroupByDefault",
+                    value: value,
+                    group_id: group_id
+               	},
+                success: function(response) {
+                    //Only change selection images if call was a success
+                    if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+            			groupShareSetting.set({
+            				"src": "resources/images/deselected.png"
+            			});
+            	    }
+            	    else {
+            	        groupShareSetting.set({
+            				"src": "resources/images/selected.png"
+            			});
+            	    }
+                },
+                failure: function(response) {
+                    console.log(response.responseText);
+                },
+                scope: this
+            });
 	    }
 	},
 	
@@ -351,17 +372,37 @@ Ext.define("inkle.controller.SettingsController", {
 	},
 	
 	toggleForwardingShareSetting: function(forwardingShareSetting) {
-	    	    
+	    var value = "true";
 	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
-			forwardingShareSetting.set({
-				"src": "resources/images/deselected.png"
-			});
+			value = "false";
 	    }
-	    else {
-	        forwardingShareSetting.set({
-				"src": "resources/images/selected.png"
-			});
-	    }
+	    
+	    //Only make ajax call if the item was not selected
+	    Ext.Ajax.request({
+            url: "http://127.0.0.1:8000/setShareSetting/",
+            params: {
+                setting: "allowInklingAttendeesToShare",
+                value: value
+           	},
+            success: function(response) {
+                alert("success");
+                //Only change selection images if call was a success
+                if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
+        			forwardingShareSetting.set({
+        				"src": "resources/images/deselected.png"
+        			});
+        	    }
+        	    else {
+        	        forwardingShareSetting.set({
+        				"src": "resources/images/selected.png"
+        			});
+        	    }
+            },
+            failure: function(response) {
+                console.log(response.responseText);
+            },
+            scope: this
+        });
 	},
     
 });

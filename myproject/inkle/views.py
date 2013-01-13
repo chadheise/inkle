@@ -790,14 +790,8 @@ def set_share_setting_view(request):
     elif value == validValues[1]:
         value = False
     
-    print setting
-    print value
-    print group_id
-    print member
-    
     print "-----------Before------------"
     groups = list(member.group_set.all())
-    groups.sort(key = lambda g : g.name)
     print "shareWithSelectedGroups: " + str(member.shareWithSelectedGroups)
     for g in groups:
         print "    " + str(g.name) + ": " + str(g.shareByDefault)
@@ -824,7 +818,6 @@ def set_share_setting_view(request):
     
     print "-----------After------------"
     groups = list(member.group_set.all())
-    groups.sort(key = lambda g : g.name)
     print "shareWithSelectedGroups: " + str(member.shareWithSelectedGroups)
     for g in groups:
         print "    " + str(g.name) + ": " + str(g.shareByDefault)
