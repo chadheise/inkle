@@ -267,6 +267,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
                 url: "http://127.0.0.1:8000/setShareSetting/",
+                headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
                     value: "true"
@@ -309,6 +310,7 @@ Ext.define("inkle.controller.SettingsController", {
             //Only make ajax call if the selectedGroupsShareSetting is selected
     	    Ext.Ajax.request({
                 url: "http://127.0.0.1:8000/setShareSetting/",
+                headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareGroupByDefault",
                     value: value,
@@ -340,6 +342,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
                 url: "http://127.0.0.1:8000/setShareSetting/",
+                headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
                     value: "false"
@@ -380,12 +383,12 @@ Ext.define("inkle.controller.SettingsController", {
 	    //Only make ajax call if the item was not selected
 	    Ext.Ajax.request({
             url: "http://127.0.0.1:8000/setShareSetting/",
+            headers : { "cache-control": "no-cache" },
             params: {
                 setting: "allowInklingAttendeesToShare",
                 value: value
            	},
             success: function(response) {
-                alert("success");
                 //Only change selection images if call was a success
                 if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
         			forwardingShareSetting.set({
