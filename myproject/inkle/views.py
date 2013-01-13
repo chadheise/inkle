@@ -767,7 +767,6 @@ def share_settings_form_view(request):
 @csrf_exempt
 def set_share_setting_view(request):
     """Sets a users share settings"""
-    
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
