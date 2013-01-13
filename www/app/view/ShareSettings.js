@@ -102,7 +102,7 @@ Ext.define("inkle.view.ShareSettings", {
     onNewInklingViewInviteesTap: function() {
         this.fireEvent("newInklingInviteesTapped");
     },
-    
+    /*
     onIsPrivateCheckboxCheck: function() {
     	this.fireEvent("isPrivateCheckboxChecked");
     },
@@ -129,7 +129,7 @@ Ext.define("inkle.view.ShareSettings", {
     onSelectedGroupsGroupSelectionItemTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
-    },
+    },*/
     
     /*Share Settings Event Firings*/
     onSelectedGroupsShareSettingTap: function(event, target) {

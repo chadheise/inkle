@@ -263,35 +263,39 @@ Ext.define("inkle.controller.SettingsController", {
     
     /*Share Settings */
     selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
+        //Only make ajax call if the item was not selected
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
-	        selectedGroupsShareSetting.set({
-    	       "src": "resources/images/selected.png" 
-    	    });
+    	    Ext.Ajax.request({
+                url: "http://127.0.0.1:8000/setShareSetting/",
+                params: {
+                    setting: "shareWithSelectedGroups",
+                    value: "true"
+               	},
+                success: function(response) {
+                    //Only change selection images if call was a success
+                    selectedGroupsShareSetting.set({
+            	       "src": "resources/images/selected.png" 
+            	    });
 
-    	    Ext.select('img.groupShareSetting').each(function() {
-                if (this.getAttribute("src") == "resources/images/fadedselected.png") {
-                    this.set({
-                        "src": "resources/images/selected.png"
+            	    Ext.select('img.groupShareSetting').each(function() {
+                        if (this.getAttribute("src") == "resources/images/fadedselected.png") {
+                            this.set({
+                                "src": "resources/images/selected.png"
+                            });
+                        }
                     });
-                }
-            });
 
-    	    var noOneShareSetting = Ext.fly("noOneShareSetting");
-            noOneShareSetting.set({
-    			"src": "resources/images/deselected.png"
-    		});
-	    }
-	    
-	    Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/setShareSetting/shareWithSelectedGroups/true/",
-            success: function(response) {
-                //Only change selected images if call was a success
-            },
-            failure: function(response) {
-                console.log(response.responseText);
-            },
-            scope: this
-        });
+            	    var noOneShareSetting = Ext.fly("noOneShareSetting");
+                    noOneShareSetting.set({
+            			"src": "resources/images/deselected.png"
+            		});
+                },
+                failure: function(response) {
+                    console.log(response.responseText);
+                },
+                scope: this
+            });
+        }
 	},
 	
 	toggleGroupShareSetting: function(groupShareSetting) {
@@ -311,27 +315,43 @@ Ext.define("inkle.controller.SettingsController", {
 	},
 	
 	selectNoOneShareSetting: function(noOneShareSetting) {
+	    //Only make ajax call if the item was not selected
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
-	        noOneShareSetting.set({
-    	       "src": "resources/images/selected.png" 
-    	    });
-    	    
-    	    var selectedGroupsShareSetting = Ext.fly("selectedGroupsShareSetting");
-            selectedGroupsShareSetting.set({
-    			"src": "resources/images/deselected.png"
-    		});
-    		
-            Ext.select('img.groupShareSetting').each(function() {
-                if (this.getAttribute("src") == "resources/images/selected.png") {
-                    this.set({
-                        "src": "resources/images/fadedselected.png"
+    	    Ext.Ajax.request({
+                url: "http://127.0.0.1:8000/setShareSetting/",
+                params: {
+                    setting: "shareWithSelectedGroups",
+                    value: "false"
+               	},
+                success: function(response) {
+                    //Only change selection images if call was a success
+                    noOneShareSetting.set({
+            	       "src": "resources/images/selected.png" 
+            	    });
+
+            	    Ext.select('img.groupShareSetting').each(function() {
+                        if (this.getAttribute("src") == "resources/images/selected.png") {
+                            this.set({
+                                "src": "resources/images/fadedselected.png"
+                            });
+                        }
                     });
-                }
+
+            	    var selectedGroupsShareSetting = Ext.fly("selectedGroupsShareSetting");
+                    selectedGroupsShareSetting.set({
+            			"src": "resources/images/deselected.png"
+            		});
+                },
+                failure: function(response) {
+                    console.log(response.responseText);
+                },
+                scope: this
             });
-	    }
+        }
 	},
 	
 	toggleForwardingShareSetting: function(forwardingShareSetting) {
+	    	    
 	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
 			forwardingShareSetting.set({
 				"src": "resources/images/deselected.png"

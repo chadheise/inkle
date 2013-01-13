@@ -46,8 +46,7 @@ urlpatterns = patterns(
     (r"^numInklingInvitations/$", "num_inkling_invitations_view"),
     (r"^inklingInvitations/$", "inkling_invitations_view"),
     (r"^shareSettingsForm/$", "share_settings_form_view"),
-    (r"^setShareSetting(?P<setting>shareWithSelectedGroups|allowInklingAttendeesToShare)/(?P<value>true|false)/$", "set_share_setting_view"),
-    (r"^setShareSetting(?P<setting>shareGroupByDefault)/(?P<value>true|false)/(?P<group_id>\d+)/$", "set_share_setting_view"),
+    (r"^setShareSetting/$", "set_share_setting_view"),
     (r"^respondToInklingInvitation/$", "respond_to_inkling_invitation_view"),
 
     (r"^friends/$", "friends_view"),
