@@ -102,34 +102,6 @@ Ext.define("inkle.view.ShareSettings", {
     onNewInklingViewInviteesTap: function() {
         this.fireEvent("newInklingInviteesTapped");
     },
-    /*
-    onIsPrivateCheckboxCheck: function() {
-    	this.fireEvent("isPrivateCheckboxChecked");
-    },
-    
-    onIsPrivateCheckboxUncheck: function() {
-    	this.fireEvent("isPrivateCheckboxUnchecked");
-    },
-    
-    onForwardingSelectionItemTap: function(event, target) {
-    	var selectionButton = Ext.fly(target);
-    	this.fireEvent("forwardingSelectionItemTapped", selectionButton);
-    },
-    
-    onSelectedGroupsSelectionItemTap: function(event, target) {
-    	var selectionButton = Ext.fly(target);
-    	this.fireEvent("selectedGroupsSelectionItemTapped", selectionButton);
-    },
-    
-    onNoOneSelectionItemTap: function(event, target) {
-    	var selectionButton = Ext.fly(target);
-    	this.fireEvent("noOneSelectionItemTapped", selectionButton);
-    },
-    
-    onSelectedGroupsGroupSelectionItemTap: function(event, target) {
-    	var selectionButton = Ext.fly(target);
-    	this.fireEvent("selectedGroupsGroupSelectionItemTapped", selectionButton);
-    },*/
     
     /*Share Settings Event Firings*/
     onSelectedGroupsShareSettingTap: function(event, target) {
