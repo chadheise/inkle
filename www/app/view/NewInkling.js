@@ -73,6 +73,7 @@ Ext.define("inkle.view.NewInkling", {
     	    },
 			{
 			    xtype: "htmlcontainer",
+			    id: "newInklingShareOptions",
 			    url: "http://127.0.0.1:8000/shareSettingsForm/"
 			},
 		],
@@ -85,28 +86,29 @@ Ext.define("inkle.view.NewInkling", {
             	delegate: "#newInklingViewInvitees",
             	fn: "onNewInklingViewInviteesTap"
         	},
+        	/*Share Settings*/
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#forwardingShareSetting",
+            	delegate: "#newInklingShareOptions .forwardingShareSetting",
             	fn: "onForwardingShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#selectedGroupsShareSetting",
+            	delegate: "#newInklingShareOptions .selectedGroupsShareSetting",
             	fn: "onSelectedGroupsShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: ".groupShareSetting",
+            	delegate: "#newInklingShareOptions .groupShareSetting",
             	fn: "onGroupShareSettingTap"
         	},
         	{
 				event: "tap",
 				element: "element",
-            	delegate: "#noOneShareSetting",
+            	delegate: "#newInklingShareOptions .noOneShareSetting",
             	fn: "onNoOneShareSettingTap"
         	}
         ]

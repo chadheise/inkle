@@ -278,7 +278,7 @@ Ext.define("inkle.controller.SettingsController", {
             	       "src": "resources/images/selected.png" 
             	    });
 
-            	    Ext.select('img.groupShareSetting').each(function() {
+            	    Ext.get('shareSettingsOptions').select('img.groupShareSetting').each(function() {
                         if (this.getAttribute("src") == "resources/images/fadedselected.png") {
                             this.set({
                                 "src": "resources/images/selected.png"
@@ -286,7 +286,7 @@ Ext.define("inkle.controller.SettingsController", {
                         }
                     });
 
-            	    var noOneShareSetting = Ext.fly("noOneShareSetting");
+            	    var noOneShareSetting = Ext.get('shareSettingsOptions').select(".noOneShareSetting");
                     noOneShareSetting.set({
             			"src": "resources/images/deselected.png"
             		});
@@ -305,7 +305,8 @@ Ext.define("inkle.controller.SettingsController", {
             value = "false";
         }
         var group_id = groupShareSetting.getAttribute("groupId");
-    	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
+        //Select query returns a set of objects, there should only be one so we get it with elements[0]
+    	var selectedGroupsShareSetting = Ext.get("shareSettingsOptions").select(".selectedGroupsShareSetting").elements[0];
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
             //Only make ajax call if the selectedGroupsShareSetting is selected
     	    Ext.Ajax.request({
@@ -353,7 +354,7 @@ Ext.define("inkle.controller.SettingsController", {
             	       "src": "resources/images/selected.png" 
             	    });
 
-            	    Ext.select('img.groupShareSetting').each(function() {
+            	    Ext.get('shareSettingsOptions').select('img.groupShareSetting').each(function() {
                         if (this.getAttribute("src") == "resources/images/selected.png") {
                             this.set({
                                 "src": "resources/images/fadedselected.png"
@@ -361,7 +362,7 @@ Ext.define("inkle.controller.SettingsController", {
                         }
                     });
 
-            	    var selectedGroupsShareSetting = Ext.fly("selectedGroupsShareSetting");
+            	    var selectedGroupsShareSetting = Ext.get("shareSettingsOptions").select(".selectedGroupsShareSetting");
                     selectedGroupsShareSetting.set({
             			"src": "resources/images/deselected.png"
             		});

@@ -395,65 +395,73 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    this.getMainTabView().getTabBar().getAt(1).setBadgeText("");
 	},
 	
-	selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
+	/*Share Settings */
+    selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
-	        selectedGroupsShareSetting.set({
+    	    selectedGroupsShareSetting.set({
     	       "src": "resources/images/selected.png" 
     	    });
-    	    
-    	    Ext.select('img.groupShareSetting').each(function() {
+
+    	    Ext.get('newInklingShareOptions').select('img.groupShareSetting').each(function() {
                 if (this.getAttribute("src") == "resources/images/fadedselected.png") {
                     this.set({
                         "src": "resources/images/selected.png"
                     });
                 }
             });
-    	    
-    	    var noOneShareSetting = Ext.fly("noOneShareSetting");
+
+    	    var noOneShareSetting = Ext.get('newInklingShareOptions').select(".noOneShareSetting");
             noOneShareSetting.set({
     			"src": "resources/images/deselected.png"
     		});
-	    }
+        }
 	},
 	
 	toggleGroupShareSetting: function(groupShareSetting) {
-    	var selectedGroupsShareSetting = Ext.get("selectedGroupsShareSetting");
+    	var value = "true";
+    	if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+            value = "false";
+        }
+        var group_id = groupShareSetting.getAttribute("groupId");
+        //Select query returns a set of objects, there should only be one so we get it with elements[0]
+    	var selectedGroupsShareSetting = Ext.get("newInklingShareOptions").select(".selectedGroupsShareSetting").elements[0];
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	        if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
-	            groupShareSetting.set({
-	                "src": "resources/images/deselected.png"
-	            });
-	        }
-	        else {
-	            groupShareSetting.set({
-	                "src": "resources/images/selected.png"
-	            });
-	        }
+            if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
+    			groupShareSetting.set({
+    				"src": "resources/images/deselected.png"
+    			});
+    	    }
+    	    else {
+    	        groupShareSetting.set({
+    				"src": "resources/images/selected.png"
+    			});
+    	    }
 	    }
 	},
 	
 	selectNoOneShareSetting: function(noOneShareSetting) {
+	    //Only make ajax call if the item was not selected
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
-	        noOneShareSetting.set({
+    	    noOneShareSetting.set({
     	       "src": "resources/images/selected.png" 
     	    });
-    	    
-    	    var selectedGroupsShareSetting = Ext.fly("selectedGroupsShareSetting");
-            selectedGroupsShareSetting.set({
-    			"src": "resources/images/deselected.png"
-    		});
-    		
-            Ext.select('img.groupShareSetting').each(function() {
+
+    	    Ext.get('newInklingShareOptions').select('img.groupShareSetting').each(function() {
                 if (this.getAttribute("src") == "resources/images/selected.png") {
                     this.set({
                         "src": "resources/images/fadedselected.png"
                     });
                 }
             });
-	    }
+
+    	    var selectedGroupsShareSetting = Ext.get("newInklingShareOptions").select(".selectedGroupsShareSetting");
+            selectedGroupsShareSetting.set({
+    			"src": "resources/images/deselected.png"
+    		});
+        }
 	},
 	
-	toggleForwardingShareSetting: function(forwardingShareSetting) {
+	toggleForwardingShareSetting: function(forwardingShareSetting) {	    
 	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
 			forwardingShareSetting.set({
 				"src": "resources/images/deselected.png"
