@@ -13,7 +13,7 @@ class Group(models.Model):
     members = models.ManyToManyField("Member", related_name = "groups_member_of")
 
     # Share with this group by default
-    shareByDefault = models.BooleanField(default=False)
+    shareByDefault = models.BooleanField(default=True)
 
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
