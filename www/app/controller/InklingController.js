@@ -41,7 +41,6 @@ Ext.define("inkle.controller.InklingController", {
             	// View transitions
             	inklingFeedButtonTapped: "activateInklingFeedView",
             	allInklingsInklingBackButtonTapped: "activateAllInklingsView",
-
             	inklingFeedBackButtonTapped: "backToInklingView",
             	
             	// Commands
@@ -171,14 +170,14 @@ Ext.define("inkle.controller.InklingController", {
 		this.getAllInklingsInklingBackButton().hide();
 		this.getInklingFeedBackButton().show();
 		this.getInklingFeedButton().hide();
-
+        
 		// Push the inkling members attending view onto the inkling view
     	this.getAllInklingsView().push({
         	xtype: "inklingMembersAwaitingReply"
         });
-
+        
         // Update the inkling members awaiting reply list
-        this.updateInklingMembersAwaitingRelpyList();
+        this.updateInklingMembersAwaitingReplyList();
 	},
 	
     /**************/
@@ -347,11 +346,32 @@ Ext.define("inkle.controller.InklingController", {
     
     showMemberName: function(memberName, target) {
         target = Ext.fly(target);
-        var panel = Ext.create("Ext.Panel", {
+        var namePanel = Ext.create("Ext.Panel", {
              html: memberName,
              left: 0,
              padding: 10
         }).showBy(target);
+
+        console.log("a");
+        // Add a handler to remove the name panel when a touch event occurs in the inkling view
+        var removeNamePanel = function() {
+            /*Ext.Anim.run(deleteButton, "fade", {
+                after: function() {*/
+                    console.log("what");
+                    namePanel.destroy();
+                    console.log("doublewhat");
+                /*},
+                out: true
+            });*/
+        };
+        console.log("b");
+
+        this.getInklingView().on({
+            single: true,
+            buffer: 250,
+            touchstart: removeNamePanel
+        });
+        console.log("c");
     },
     
     toggleAddCommentPanelVisibility: function() {
