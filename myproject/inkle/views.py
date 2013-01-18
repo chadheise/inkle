@@ -481,13 +481,13 @@ def all_inklings_view(request):
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-    
+
     # Determine if we should return dated or no-dated inklings
     try:
         onlyIncludeNoDatedInklings = request.POST["onlyIncludeNoDatedInklings"]
     except:
         onlyIncludeNoDatedInklings = "false"
-    
+
     # If necessary, get the date, or set it to today if no date is specified
     if (onlyIncludeNoDatedInklings == "false"):
         try:
@@ -499,7 +499,7 @@ def all_inklings_view(request):
             date = datetime.date.today()
     else:
         date = None
-    
+
     # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
     if ("selectedGroupIds" in request.POST):
         selected_group_ids = request.POST["selectedGroupIds"]
@@ -536,7 +536,7 @@ def all_inklings_view(request):
             "html" : get_inkling_list_item_html(i),
             "numMembersAttending" : i.get_num_members_attending()
         })
-    
+
     # Sort the inklings according to their number of attendees
     response_inklings.sort(key = lambda i : i["numMembersAttending"], reverse = True)
 
@@ -1018,7 +1018,8 @@ def inkling_members_attending_view(request):
         m.num_mutual_friends = member.get_num_mutual_friends(m)
 
         html = render_to_string( "memberListItem.html", {
-            "m" : m
+            "m" : m,
+            "member" : member
         })
         
         response_members_attending.append({
@@ -1035,25 +1036,27 @@ def inkling_members_attending_view(request):
 @csrf_exempt
 def inkling_members_awaiting_reply_view(request):
     """Returns a list of the members who have been invited to the inputted inkling but have not responded yet."""
+    print "a"
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-
+    print "b"
     # Get the current inkling
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
         raise Http404()
-
+    print "c"
     # Create a list to hold all the members awaiting reply to the current inkling
     response_members_awaiting_reply = []
     for m in inkling.get_members_awaiting_reply():
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         
         html = render_to_string( "memberListItem.html", {
-            "m" : m
+            "m" : m,
+            "member" : member
         })
         
         response_members_awaiting_reply.append({
@@ -1061,7 +1064,7 @@ def inkling_members_awaiting_reply_view(request):
             "lastName" : m.last_name,
             "html": html
         })
-
+    print "d"
     # Create and return a JSON object
     response = simplejson.dumps(response_members_awaiting_reply)
     return HttpResponse(response, mimetype = "application/json")
@@ -1322,6 +1325,7 @@ def inkling_invited_friends_view(request):
 
         html = render_to_string( "memberListItem.html", {
             "m" : m,
+            "member" : member,
             "include_selection_item" : True
         })
         
@@ -1541,6 +1545,7 @@ def friends_view(request):
 
         html = render_to_string( "memberListItem.html", {
             "m" : m,
+            "member" : member,
             "include_delete_items" : include_delete_items,
             "include_selection_item" : include_selection_item
         })
@@ -1577,6 +1582,7 @@ def friend_requests_view(request):
         
         html = render_to_string( "memberListItem.html", {
             "m" : m,
+            "member" : member,
             "include_friend_request_buttons" : True
         })
         
@@ -2040,6 +2046,7 @@ def group_members_view(request):
 
         html = render_to_string( "memberListItem.html", {
             "m" : m,
+            "member" : member,
             "include_selection_item" : True
         })
         

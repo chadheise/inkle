@@ -176,24 +176,10 @@ Ext.define("inkle.view.AllInklings", {
         		height: 275,
         		layout: "fit",
         		items: [
-        			/*{
-						xtype: "datepicker",
-						itemId: "allInklingsDatePicker",
-						showAnimation: "fadeIn",
-						hideAnimation: "fadeOut",
-						yearFrom: 2012,
-						yearTo: 2012,
-						toolbar: false,
-						doneButton: false,
-						cancelButton: false,
-						value: new Date(),
-						top: 0,
-						height: 220
-					},*/
 					{
 					    xtype: "calendar",
 					    itemId: "allInklingsDatePicker",
-                        height: 220,
+                        height: 221,
                         viewConfig: {
                             viewMode: "month",
                             weekStart: 0,
@@ -204,7 +190,7 @@ Ext.define("inkle.view.AllInklings", {
 					    xtype: "checkboxfield",
 					    id: "noDatedInklingsCheckbox",
                         label: "Include inklings with no date",
-                        top: 221,
+                        top: 222,
                         width: 300,
                         labelWidth: 250,
                         checked: false

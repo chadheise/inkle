@@ -105,16 +105,7 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteLock.removeCls("deleteLockSlideLeft");
 			deleteLock.addCls("deleteLockHidden");
 		}
-		
-		// Hide the delete buttons
-		var deleteButtons = Ext.query(".deleteButton");
-		for (var i = 0; i < deleteButtons.length; i++) {
-			var deleteButton = Ext.fly(deleteButtons[i]);
-			deleteButton.removeCls("deleteButtonSlideLeft");
-			deleteButton.removeCls("deleteButtonSlideRight");
-			deleteButton.addCls("deleteButtonHidden");
-		}
-		
+				
 		// Reset the remove friends button
 		var removeFriendsButton = this.getRemoveFriendsButton();
 		removeFriendsButton.setText("");
@@ -154,15 +145,6 @@ Ext.define("inkle.controller.FriendsController", {
 				deleteLock.removeCls("deleteLockSlideRight");
 				deleteLock.removeCls("deleteLockSlideLeft");
 				deleteLock.addCls("deleteLockHidden");
-			}
-			
-			// Hide the delete buttons
-			var deleteButtons = Ext.query(".deleteButton");
-			for (var i = 0; i < deleteButtons.length; i++) {
-				var deleteButton = Ext.fly(deleteButtons[i]);
-				deleteButton.removeCls("deleteButtonSlideLeft");
-				deleteButton.removeCls("deleteButtonSlideRight");
-				deleteButton.addCls("deleteButtonHidden");
 			}
 			
 			// Reset the text for the edit groups button
@@ -265,15 +247,6 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteLock.addCls("deleteLockHidden");
 		}
 		
-		// Hide the delete buttons
-		var deleteButtons = Ext.query(".deleteButton");
-		for (var i = 0; i < deleteButtons.length; i++) {
-			var deleteButton = Ext.fly(deleteButtons[i]);
-			deleteButton.removeCls("deleteButtonSlideLeft");
-			deleteButton.removeCls("deleteButtonSlideRight");
-			deleteButton.addCls("deleteButtonHidden");
-		}
-		
 		// Hide the disclosure arrows
 		var disclosureArrows = Ext.query(".disclosureArrow");
 		for (var i = 0; i < disclosureArrows.length; i++) {
@@ -357,17 +330,6 @@ Ext.define("inkle.controller.FriendsController", {
 				this.getCreateGroupButton().show();
 			}
 			
-			var deleteButtons = Ext.query("#" + listId + " .deleteButton");
-			for (var i = 0; i < deleteButtons.length; i++) {
-				var deleteButton = Ext.fly(deleteButtons[i]);
-				
-				if (!deleteButton.hasCls("deleteButtonHidden")) {
-					deleteButton.removeCls("deleteButtonSlideLeft");
-					deleteButton.addCls("deleteButtonSlideRight");
-					deleteButton.addCls("deleteButtonHidden");
-				}
-			}
-			
 			// Unhide the disclosure arrows by sliding them to the left
 			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
 			for (var i = 0; i < disclosureArrows.length; i++) {
@@ -414,35 +376,6 @@ Ext.define("inkle.controller.FriendsController", {
 			deleteLock.removeCls("deleteLockRotateRight");
 		}
 	},
-	
-	/* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
-	/*toggleDeleteButtonVisibility: function(tappedDeleteLock) {
-		// Get the delete button associated with the tapped delete lock
-        try {
-            var deleteButton = tappedDeleteLock.parent(".group").child(".deleteButton");
-		}
-        catch (error) {
-            var deleteButton = tappedDeleteLock.parent(".member").child(".deleteButton");
-        }
-
-		// Animate the delete lock and button
-		if (tappedDeleteLock.hasCls("deleteLockRotateLeft")) {
-			tappedDeleteLock.removeCls("deleteLockRotateLeft");
-			tappedDeleteLock.addCls("deleteLockRotateRight");
-			
-			deleteButton.removeCls("deleteButtonSlideLeft");
-			deleteButton.addCls("deleteButtonHidden");
-			deleteButton.addCls("deleteButtonSlideRight");
-		}
-		else {
-			tappedDeleteLock.removeCls("deleteLockRotateRight");
-			tappedDeleteLock.addCls("deleteLockRotateLeft");
-			
-			deleteButton.removeCls("deleteButtonSlideRight");
-			deleteButton.removeCls("deleteButtonHidden");
-			deleteButton.addCls("deleteButtonSlideLeft");
-        }
-    },*/
 
     /* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
     toggleDeleteButtonVisibility: function(list, tappedListItem, tappedDeleteLock, tappedRecord) {

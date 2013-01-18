@@ -26,7 +26,7 @@
         <div class="banner">Attendees</div>
         <div class="infoContainer">
             {% for attendee in inkling.get_attendees %}
-                <img class="attendeePicture" src="{{ STATIC_URL }}/media/images/members/{{ attendee.id }}.jpg" />
+                <img class="attendeePicture" src="{{ attendee.get_picture_path }}" />
             {% empty %}
                 <div>No attendees</div>
             {% endfor %}
