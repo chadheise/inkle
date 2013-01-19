@@ -1243,6 +1243,7 @@ def update_inkling_view(request):
     """Updates the inputted inklings details."""
     # Get the logged-in member
     try:
+        # TODO: make sure the logged in member is attending the inkling before allowing updates
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
