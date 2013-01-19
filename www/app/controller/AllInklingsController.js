@@ -131,8 +131,8 @@ Ext.define("inkle.controller.AllInklingsController", {
 	    var dayOfWeek = date.getDay();
 	    var day = date.getDate();
 	    var month = date.getMonth();
-	    var year = 2012;
-	    
+	    var year = date.getFullYear();
+
 	    // Update the all inklings date button text
 	    this.getAllInklingsDateButton().setText(this.getDayString(dayOfWeek) + ", " + this.getMonthString(month) + " " + day);
     

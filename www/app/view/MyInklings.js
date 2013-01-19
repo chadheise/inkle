@@ -196,8 +196,8 @@ Ext.define("inkle.view.MyInklings", {
 				
 				listeners: [
 					{
-                        event: "itemtap",
                         delegate: "#inklingInvitationsList",
+                        event: "itemtap",
                         fn: "onInklingInvitationItemTap"
                     }
 				],
@@ -281,10 +281,9 @@ Ext.define("inkle.view.MyInklings", {
             	fn: "onNewInklingInvitedGroupsButtonTap"
         	},
         	{
-				event: "tap",
-				element: "element",
-				delegate: ".inkling",
-				fn: "onInklingTap"
+                delegate: "#myInklingsList",
+                event: "itemtap",
+                fn: "onMyInklingsInklingItemTap"
         	}
         ]
 	},
@@ -310,10 +309,9 @@ Ext.define("inkle.view.MyInklings", {
         this.fireEvent("myInklingsInklingBackButtonTapped");
     },
     
-    onInklingTap: function(event, target) {
-        var tappedInklingId = event.getTarget(".inkling").getAttribute("inklingId");
-        
-        this.fireEvent("inklingTapped", tappedInklingId, "myInklings");
+    onMyInklingsInklingItemTap: function(myInklingsList, index, target, record, event, options) {
+        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("data-inklingId");
+        this.fireEvent("inklingTapped", tappedInklingId, /* source = */ "myInklings");
     },
     
     onNewInklingCancelButtonTap: function() {

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+#from myproject.settings import STATIC_URL
+
 #from django_facebook.models import FacebookProfileModel
 
 from datetime import date
@@ -284,10 +286,9 @@ class Member(User):
         """Returns True if the current memeber has a pending friend request to the inputted member."""
         return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))
 
-    def get_picture_path(self, m):
+    def get_picture_path(self):
         """Returns the path to the current member's picture."""
-        if (member.is_facebook_member()):
-            return "https://graph.facebook.com/{{ m.facebookId }}/picture"
+        if (self.is_facebook_member()):
+            return "https://graph.facebook.com/" + str(self.facebookId) + "/picture"
         else:
-            return "file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/media/images/members/{{ m.id }}.jpg"
-            #return "file:///Users/chadheise/Sites/inkle/www/resources/images/feed/man.jpg"
+            return "http://127.0.0.1:8000/static/media/images/members/" + str(self.id) + ".jpg"

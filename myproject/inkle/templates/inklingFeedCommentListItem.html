@@ -2,9 +2,9 @@
 
 <div class="feedComment">
     {% if member == feed_comment.creator %}
-        <img class="floatRight" src="{{ STATIC_URL }}/media/images/members/{{ feed_comment.creator.id }}.jpg" />
+        <img class="floatRight" src="{{ feed_comment.creator.get_picture_path }}" />
     {% else %}
-        <img src="{{ STATIC_URL }}/media/images/members/{{ feed_comment.creator.id }}.jpg" />
+        <img src="{{ feed_comment.creator.get_picture_path }}" />
     {% endif %}
     
     <div class="feedCommentInfo">
