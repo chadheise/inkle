@@ -24,6 +24,7 @@ Ext.define("Ext.HTMLContainer", {
         Ext.Ajax.request({
             // Use the getter for our new "url" config
             url: this.getUrl(),
+            headers : { "cache-control": "no-cache" },
             method: "POST",
             params: me.getData(),
             success: function(response, request) {

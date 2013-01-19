@@ -765,55 +765,63 @@ def share_settings_form_view(request):
         context_instance = RequestContext(request) )
 
 @csrf_exempt
-def set_share_setting_view(request, setting = None, value = None, group_id = None):
+def set_share_setting_view(request):
     """Sets a users share settings"""
-    print "setting share settings"
-    if ((setting is None) or (value is None)):
-        raise Http404()
-    if ((setting == "shareGroupByDefault") and (group_id == None)):
-        raise Http404()
-
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
     
-    if (setting == "shareWithSelectedGroups"):
-        if (value == "true"):
-            member.shareWithSelectedGroups = True
-            member.save()
-        elif (value == "false"):
-            member.shareWithSelectedGroups = False
-            member.save()
-        else:
-            raise Http404()
-    elif (setting == "allowInklingAttendeesToShare"):
-        if (value == "true"):
-            member.allowInklingAttendeesToShare = True
-            member.save()
-        elif (value == "false"):
-            member.allowInklingAttendeesToShare = False
-            member.save()
-        else:
-            raise Http404()
-    elif (setting == "shareGroupByDefault"):
+    validSettings = ["shareWithSelectedGroups", "allowInklingAttendeesToShare", "shareGroupByDefault"]
+    validValues = ["true", "false"]
+    
+    setting = request.POST["setting"]
+    value = request.POST["value"].lower()
+    group_id = None
+
+    if setting not in validSettings:
+        raise Http404()
+    if value not in validValues:
+        raise Http404()
+    if value == validValues[0]:
+        value = True
+    elif value == validValues[1]:
+        value = False
+    
+    print "-----------Before------------"
+    groups = list(member.group_set.all())
+    print "shareWithSelectedGroups: " + str(member.shareWithSelectedGroups)
+    for g in groups:
+        print "    " + str(g.name) + ": " + str(g.shareByDefault)
+    print "allowInklingAttendeesToShare: " + str(member.allowInklingAttendeesToShare)
+    
+    if (setting == validSettings[0]):
+        member.shareWithSelectedGroups = value
+        member.save()
+    elif (setting == validSettings[1]):
+        member.allowInklingAttendeesToShare = value
+        member.save()
+    elif (setting == validSettings[2]):
         #Ensure the group belongs to the logged in member
         try:
+            group_id = request.POST["group_id"]
             group = Group.objects.get(pk=group_id)
             groupCreator = group.creator
         except:
             raise Http404()
         if member != groupCreator:
             raise Http404()
-        if (value == "true"):
-           group.shareByDefault = True
-           group.save()
-        elif (value == "false"):
-            group.shareByDefault = False
-            group.save()
-        else:
-           raise Http404()
+        group.shareByDefault = value
+        group.save()
+    
+    print "-----------After------------"
+    groups = list(member.group_set.all())
+    print "shareWithSelectedGroups: " + str(member.shareWithSelectedGroups)
+    for g in groups:
+        print "    " + str(g.name) + ": " + str(g.shareByDefault)
+    print "allowInklingAttendeesToShare: " + str(member.allowInklingAttendeesToShare)
+    
     return HttpResponse("True")
 
 @csrf_exempt
