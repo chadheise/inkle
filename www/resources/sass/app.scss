@@ -65,6 +65,11 @@ $badge-radius: .2em;
 $badge-bg-color: $mediumRed;
 $badge-bg-gradient: "matte";
 
+/* Pull to refresh */
+.x-list-pullrefresh-message, .x-list-pullrefresh-updated {
+    color: $mediumGray;
+}
+
 /********************/
 /*  Sencha modules  */
 /********************/
@@ -210,13 +215,14 @@ $badge-bg-gradient: "matte";
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+    width: 95%;
 }
 
 .inklingsList .time {
     float: left;
     color: $mediumGray;
     font-size: 18px;
-    max-width: 145px;
+    max-width: 135px;
     overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -240,6 +246,11 @@ $badge-bg-gradient: "matte";
     margin-top: 3px;
     color: $mediumGray;
     font-size: 14px;
+}
+
+.inklingsList .disclosureArrow {
+    float: right;
+    margin-top: -10px;
 }
 
 /* Inkling invitations list */
@@ -587,8 +598,8 @@ $badge-bg-gradient: "matte";
     border-collapse: separate;
     table-layout: fixed;
     font-size: 20px;
-    color: #3F4E5E;
-    background-color: #EEEEEE;
+    color: $darkestGray;
+    background-color: $lightestGray;
 }
 
 
@@ -604,10 +615,14 @@ $badge-bg-gradient: "matte";
 }
 
 .touch-calendar-view tbody td {
-    border-bottom: 1px solid #A3A7AF;
-    border-left: 1px solid #A3A7AF;
-    border-right: 1px solid #DADBDE;
-    border-top: 1px solid #DADBDE;
+    border: 1px solid $mediumGray;
+    border-left: 1px solid $mediumGray;
+    border-right-color: $lighterGray;
+    border-top-color: $lightestGray;
+}
+
+.touch-calendar-view tbody td:nth-child(7n) {
+    border-right-color: $mediumGray;
 }
 
 .touch-calendar-view td {
@@ -616,56 +631,25 @@ $badge-bg-gradient: "matte";
     text-align: center;
     vertical-align: middle;
     font-size: 1.3em;
-    background-color: #CFCED3;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b5b3bb), color-stop(10%, #C2C1C7), color-stop(65%, #CFCED3), color-stop(100%, #D0CFD4));
-    background-image: -webkit-linear-gradient(#B5B3BB, #C2C1C7 10%, #CFCED3 65%, #D0CFD4);
-    background-image: linear-gradient(#B5B3BB, #C2C1C7 10%, #CFCED3 65%, #D0CFD4);
+    background-color: $lightestGray;
 }
 
 .touch-calendar-view td.today {
     color: #FFFFFF;
-    text-shadow: $darkestGray 1px 1px 2px;
-    -webkit-box-shadow: inset 0px 0px 8px #000;
-    border: 1px solid black;
-    background: #7188A8;
-    background-color: #44566F;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #313D4F), color-stop(10%, #3A4A5F), color-stop(65%, #44566F), color-stop(100%, #455771));
-    background-image: -webkit-linear-gradient(#313D4F, #3A4A5F 10%, #44566F 65%, #455771);
-    background-image: linear-gradient(#313D4F, #3A4A5F 10%, #44566F 65%, #455771);
-}
-
-.touch-calendar-view td.unselectable {
-    color: #89909A;
-    background-color: #CDA3A8;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #BB8289), color-stop(10%, #C49399), color-stop(65%, #CDA3A8), color-stop(100%, #CEA5AA));
-    background-image: -webkit-linear-gradient(#BB8289, #C49399 10%, #CDA3A8 65%, #CEA5AA);
-    background-image: linear-gradient(#BB8289, #C49399 10%, #CDA3A8 65%, #CEA5AA);
+    -webkit-box-shadow: inset 0px 0px 8px $darkestGray;
+    border: 1px solid $darkestGray;
+    background: $lighterGray;
 }
 
 .touch-calendar-view td.selected {
     color: #FFFFFF;
     text-shadow: $darkestGray 1px 1px 0px;
     border: 1px solid black;
-    background: #1980E5;
-    background-color: #4699EB;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8BBFF2), color-stop(50%, #5DA6ED), color-stop(51%, #4699EB), color-stop(100%, #2F8DE8));
-    background-image: -webkit-linear-gradient(#8bbFF2, #5DA6ED 50%, #4699EB 51%, #2F8DE8);
-    background-image: linear-gradient(#8BBFF2, #5DA6ED 50%, #4699EB 51%, #2F8DE8);
-}
-
-.touch-calendar-view td.today.selected {
-    color: #FFFFFF;
-    text-shadow: $darkestGray 1px 1px 2px;
-    border: 1px solid black;
-    background: #1980E5;
-    background-color: #0F4D89;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0A335B), color-stop(10%, #0C4072), color-stop(65%, #0F4D89), color-stop(100%, #0F4E8B));
-    background-image: -webkit-linear-gradient(#0A335B, #0C4072 10%, #0F4D89 65%, #0F4E8B);
-    background-image: linear-gradient(#0A335B, #0C4072 10%, #0F4D89 65%, #0F4E8B);
+    background: $mediumBlue;
 }
 
 .touch-calendar-view td.prev-month, .touch-calendar-view td.next-month {
-    color: #89909A;
+    color: $mediumGray;
 }
 
 .touch-calendar-view td.prev-month.selected, .touch-calendar-view td.next-month.selected {
@@ -673,32 +657,20 @@ $badge-bg-gradient: "matte";
 }
 
 .touch-calendar-view thead {
-    background-color: #CFCED3;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #FFFFFF), color-stop(2%, #E1E1E4), color-stop(100%, #BDBBC2));
-    background-image: -webkit-linear-gradient(#FFFFFF, #E1E1E4 2%, #BDBBC2);
-    background-image: linear-gradient(#FFFFFF, #E1E1E4 2%, #BDBBC2);
+    background-color: $lightestGray;
 }
 
 .touch-calendar-view thead th {
     font-size: 9px;
     vertical-align: bottom;
     padding-bottom: 3px;
-    color: #3F4E5E;
+    color: $darkestGray;
     text-align: center;
     height: 46px;
     text-shadow: white 1px 1px 1px;
     font-weight: bold;
-    border-bottom: 1px solid #A3A7AF;
-}
-
-.touch-calendar-view thead th:first-child {
-    background: url("../images/larr.png") center center no-repeat;
-    cursor: pointer;
-}
-
-.touch-calendar-view thead th:last-child {
-    background: url("../images/rarr.png") center center no-repeat;
-    cursor: pointer;
+    //border-bottom: 1px solid #A3A7AF;
+    border-bottom: 1px solid $mediumGray;
 }
 
 .touch-calendar-view thead th span {
@@ -708,7 +680,7 @@ $badge-bg-gradient: "matte";
     left: 14.5%;
     position: absolute;
     text-align: center;
-    top: 6px;
+    top: 4px;
     width: 71%;
     z-index: 999;
     text-shadow: white 1px 1px 1px;

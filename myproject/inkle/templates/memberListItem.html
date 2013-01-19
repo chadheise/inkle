@@ -25,7 +25,9 @@
         </div>
 
         <!-- Mutual friends -->
-        <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+        {% if m != member %}
+            <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+        {% endif %}
     </div>
 
     <!-- Delete button -->

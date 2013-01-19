@@ -1,22 +1,26 @@
-# Django settings for final project
-
+# DEBUG and TEMPLATE_DEBUG are True if in devlopment; False if in production
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
+# People who receive error reports when a view raises an exception
+if (not DEBUG):
+    ADMINS = (
+        ("Inkle Errors", "errors@inkleit.com"),
+    )
 
-MANAGERS = ADMINS
+# People who receive broken link notifications
+if (not DEBUG):
+    MANAGERS = ADMINS
 
+# Databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'inkle_db',         # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",     # Add "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle"
+        "NAME": "inkle_db",                         # Or path to database file if using sqlite3
+        "USER": "",                                 # Not used with sqlite3
+        "PASSWORD": "",                             # Not used with sqlite3
+        "HOST": "",                                 # Set to empty string for localhost; not used with sqlite3
+        "PORT": "",                                 # Set to empty string for default; not used with sqlite3
     }
 }
 
@@ -27,45 +31,40 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = "America/New_York"
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+# Language
+# All choices here: http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = "en-us"
 
 SITE_ID = 1
 
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
+# If you set this to False, Django will make some optimizations so as not to load the internationalization machinery
 USE_I18N = True
 
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale
+# If you set this to False, Django will not format dates, numbers and calendars according to the current locale
 USE_L10N = True
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Absolute filesystem path to the directory that will hold user-uploaded files
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = 'static/media/'
+MEDIA_ROOT = "/Users/wengrfam/Desktop/inkle/myproject/static/media/"
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
+# URL that handles the media served from MEDIA_ROOT; make sure to use a trailing slash
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'static/media/'
+MEDIA_URL = "http://127.0.0.1:8000/static/media/"
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Absolute path to the directory static files should be collected to
+# Don't put anything in this directory yourself; store your static files in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = 'inkle/static/'
+STATIC_ROOT = "/Users/wengrfam/Desktop/inkle/myproject/static/"
 
-# URL prefix for static files.
+# URL prefix for static files
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = 'file:///Users/wengrfam/Desktop/inkle/myproject/inkle/static/'
+STATIC_URL = "/static/"
 
-# URL prefix for admin static files -- CSS, JavaScript and images.
-# Make sure to use a trailing slash.
-# Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+# URL prefix for admin static files -- CSS, JavaScript and images; make sure to use a trailing slash.
+# Examples: "http://foo.com/static/admin/", "/static/admin/"
+ADMIN_MEDIA_PREFIX = "/static/admin/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -83,7 +82,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = ')a+75+hlc(&i6^r1io!nd@)r_5+f)c*^ba5-wxu==3t1oy*d9o'
+SECRET_KEY = ')a+75+hlc}&i6^r1ip!nd@)r_5+f)c-^ba5-wxu-=3t5oy*d9o'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -100,7 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'myproject.urls'
+ROOT_URLCONF = "myproject.urls"
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -133,25 +132,24 @@ INSTALLED_APPS = (
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler"
         }
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
+    "loggers": {
+        "django.request": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
         },
     }
 }
 
-#AUTH_PROFILE_MODULE = 'inkle.Member'
-
+# TODO: get rid of this?
 #Added for Django_facebook integration
 """
 FACEBOOK_APP_ID = 355653434520396
