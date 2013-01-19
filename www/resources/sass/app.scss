@@ -65,6 +65,11 @@ $badge-radius: .2em;
 $badge-bg-color: $mediumRed;
 $badge-bg-gradient: "matte";
 
+/* Pull to refresh */
+.x-list-pullrefresh-message, .x-list-pullrefresh-updated {
+    color: $mediumGray;
+}
+
 /********************/
 /*  Sencha modules  */
 /********************/

@@ -356,8 +356,8 @@ Ext.define("inkle.view.AllInklings", {
         this.fireEvent("allInklingsListRefreshed");
     },
     
-    onInklingTap: function(event) {
-        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("inklingId");
+    onInklingTap: function(event, target) {
+        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("data-inklingId");
         this.fireEvent("inklingTapped", tappedInklingId);
     },
     

@@ -56,19 +56,19 @@ Ext.define('Ext.plugin.PullRefresh', {
          * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
          * @accessor
          */
-        pullRefreshText: 'Pull down to refresh...',
+        pullRefreshText: 'Pull down to refresh',
 
         /*
          * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
          * @accessor
          */
-        releaseRefreshText: 'Release to refresh...',
+        releaseRefreshText: 'Release to refresh',
 
         /*
          * @cfg {String} loadingText The text that will be shown while the list is refreshing.
          * @accessor
          */
-        loadingText: 'Loading...',
+        loadingText: 'Refreshing...',
 
         /*
          * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
