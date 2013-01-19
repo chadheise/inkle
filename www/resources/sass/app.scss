@@ -959,6 +959,16 @@ $badge-bg-gradient: "matte";
     clear: both;
 }
 
+.noGroupsShareSetting {
+	clear: both;
+	color: $mediumGray;
+}
+
+.noGroupsShareSetting p {
+	margin-left: 40px;
+	font-size: 16px;
+}
+
 .shareSettingsForm .selectionItem {
 	float: left;
 	padding: 0px;

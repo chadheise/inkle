@@ -21,6 +21,11 @@
 			>
             <p>{{ g.name }}</p>
         </div>
+	{% empty %}
+		<div class="noGroupsShareSetting">
+			<p>You do not have any groups.</p>
+			<p>You can create them from the friends tab.</p>
+		</div>	
     {% endfor %}
 
     <!-- No one -->
