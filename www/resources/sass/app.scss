@@ -424,9 +424,7 @@ $badge-bg-gradient: "matte";
 }
 
 .membersList .memberInfo {
-    float: left;
     margin-top: -3px;
-    width: 200px;
 }
 
 .membersList .memberName {
@@ -761,9 +759,13 @@ $badge-bg-gradient: "matte";
 }
 
 #inklingView .disclosureArrow {
-	clear: left;
-	margin: 50px 0px 0px 0px;
-	padding: 10px 8px 10px 10px;
+    float: right;
+	margin: 18px 9px 0px 0px;
+	padding: 10px;
+}
+
+#inklingView .lowerDisclosureArrow {
+    margin-top: 50px;
 }
 
 /******************/
