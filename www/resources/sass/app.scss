@@ -70,6 +70,10 @@ $badge-bg-gradient: "matte";
     color: $mediumGray;
 }
 
+.x-list-pullrefresh-arrow {
+    background: center center theme_image("default", "refreshArrow.png") no-repeat !important; 
+}
+
 /********************/
 /*  Sencha modules  */
 /********************/
