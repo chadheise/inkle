@@ -36,7 +36,7 @@ Ext.define("inkle.view.MyInklings", {
                 		xtype: "button",
                 		ui: "back",
                 		text: "Inkling",
-                		itemId: "inklingFeedBackButton",
+                		itemId: "backToInklingButton",
                 		hidden: true
                 	},
                 	{
@@ -79,7 +79,8 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        text: "Feed",
+                        iconMask: true,
+                        iconCls: "feedIcon",
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
@@ -110,7 +111,15 @@ Ext.define("inkle.view.MyInklings", {
                 		text: "Groups",
                 		itemId: "newInklingInvitedGroupsButton",
                 		hidden: true
-                	}
+                	},
+                    {
+                        xtype: "button",
+                        ui: "action",
+                        iconMask: true,
+                        iconCls: "plusIcon",
+                        itemId: "addCommentButton",
+                        hidden: true
+                    }
                 ]
     		},
     		
@@ -284,7 +293,17 @@ Ext.define("inkle.view.MyInklings", {
                 delegate: "#myInklingsList",
                 event: "itemtap",
                 fn: "onMyInklingsInklingItemTap"
-        	}
+        	},
+            {
+                delegate: "#backToInklingButton",
+                event: "tap",
+                fn: "onBackToInklingButtonTap"
+            },
+            {
+                delegate: "#inklingFeedButton",
+                event: "tap",
+                fn: "onInklingFeedButtonTap"
+            }
         ]
 	},
 	
@@ -314,6 +333,10 @@ Ext.define("inkle.view.MyInklings", {
         this.fireEvent("inklingTapped", tappedInklingId, /* source = */ "myInklings");
     },
     
+    onBackToInklingButtonTap: function() {
+        this.fireEvent("backToInklingButtonTapped");
+    },
+
     onNewInklingCancelButtonTap: function() {
         this.fireEvent("newInklingCancelButtonTapped");
     },
@@ -336,5 +359,9 @@ Ext.define("inkle.view.MyInklings", {
     
     onNewInklingInvitedGroupsButtonTap: function() {
     	this.fireEvent("newInklingInvitedGroupsButtonTapped");
+    },
+
+    onInklingFeedButtonTap: function() {
+        this.fireEvent("inklingFeedButtonTapped");
     }
 });
