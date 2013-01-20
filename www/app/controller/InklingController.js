@@ -12,24 +12,42 @@ Ext.define("inkle.controller.InklingController", {
             
             inklingFeedList: "#inklingFeedList",
             
+            // Toolbars
+            allInklingsViewToolbar: "#allInklingsViewToolbar",
+            myInklingsViewToolbar: "#myInklingsViewToolbar",
+
+            // "All Inklings" view toolbar buttons
+            allInklingsInklingBackButton: "#allInklingsInklingBackButton",
+            allInklingsInklingFeedButton: "allInklingsView #inklingFeedButton",
+            allInklingsBackToInklingButton: "allInklingsView #backToInklingButton",
+            allInklingsJoinInklingButton: "allInklingsView #joinInklingButton",
+            allInklingsSaveInklingButton: "allInklingsView #saveInklingButton",
+            allInklingsCancelEditInklingButton: "allInklingsView #cancelEditInklingButton",
+            allInklingsAddCommentTextField: "allInklingsView #addCommentTextField",
+            allInklingsAddCommentSendButton: "allInklingsView #addCommentSendButton",
+            allInklingsAddCommentButton: "allInklingsView #addCommentButton",
+            allInklingsAddCommentPanel: "allInklingsView #addCommentPanel",
+
+            // "My Inklings" view toolbar buttons
+            myInklingsInklingBackButton: "#myInklingsInklingBackButton",
+            myInklingsInklingFeedButton: "myInklingsView #inklingFeedButton",
+            myInklingsBackToInklingButton: "myInklingsView #backToInklingButton",
+            myInklingsSaveInklingButton: "myInklingsView #saveInklingButton",
+            myInklingsCancelEditInklingButton: "myInklingsView #cancelEditInklingButton",
+            myInklingsAddCommentTextField: "myInklingsView #addCommentTextField",
+            myInklingsAddCommentSendButton: "myInklingsView #addCommentSendButton",
+            myInklingsAddCommentButton: "myInklingsView #addCommentButton",
+            myInklingsAddCommentPanel: "myInklingsView #addCommentPanel",
+
+
+
             // Elements
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
-            allInklingsInklingBackButton: "#allInklingsInklingBackButton",
-            myInklingsInklingBackButton: "#myInklingsInklingBackButton",
             inklingInvitationsButton: "#inklingInvitationsButton",
-            inklingFeedBackButton: "#inklingFeedBackButton",
-            inklingFeedButton: "#inklingFeedButton",
-            joinInklingButton: "#joinInklingButton",
-            saveInklingButton: "#saveInklingButton",
-            cancelEditInklingButton: "#cancelEditInklingButton",
-            addCommentTextField: "#addCommentTextField",
-            addCommentSendButton: "#addCommentSendButton",
+            
+            
             newInklingButton: "#newInklingButton",
-            
-            addCommentButton: "#addCommentButton",
-            
-            addCommentPanel: "#addCommentPanel",
             
             
             inklingMembersAttendingList: "#inklingMembersAttendingList",
@@ -41,7 +59,7 @@ Ext.define("inkle.controller.InklingController", {
             	// View transitions
             	inklingFeedButtonTapped: "activateInklingFeedView",
             	allInklingsInklingBackButtonTapped: "activateAllInklingsView",
-            	inklingFeedBackButtonTapped: "backToInklingView",
+            	backToInklingButtonTapped: "backToInklingView",
             	
             	// Commands
             	joinInklingButtonTapped: "joinInkling",
@@ -51,7 +69,9 @@ Ext.define("inkle.controller.InklingController", {
             },
             myInklingsView: {
             	// View transitions
-            	myInklingsInklingBackButtonTapped: "activateMyInklingsView"
+                inklingFeedButtonTapped: "activateInklingFeedView",
+            	myInklingsInklingBackButtonTapped: "activateMyInklingsView",
+                backToInklingButtonTapped: "backToInklingView"
             },
             inklingView: {
             	// Commands
@@ -75,47 +95,81 @@ Ext.define("inkle.controller.InklingController", {
 	
     /* Activates the inkling feed view from the inkling view */
     activateInklingFeedView: function() {
-		// Display the appropriate top toolbar buttons
-		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsGroupsButton().hide();
-		this.getAllInklingsInklingBackButton().hide();
-		this.getInklingFeedBackButton().show();
-		this.getInklingFeedButton().hide();
-		this.getAddCommentButton().show();
-		
-		// Push the inkling feed view onto the all inklings view
-    	this.getAllInklingsView().push({
-        	xtype: "inklingFeedView",
-        	data: {
-        		inklingId: this.getInklingView().getData()["inklingId"]
-        	}
-        });
-        
-        // Update the inkling feed list
-        this.updateInklingFeedList();
+        // If we are in the "All Inklings" view
+        if (!this.getAllInklingsView().isHidden()) {
+    		// Display the appropriate top toolbar buttons
+    		this.getAllInklingsInklingBackButton().hide();
+            this.getAllInklingsInklingFeedButton().hide();
+    		this.getAllInklingsBackToInklingButton().show();
+    		this.getAllInklingsAddCommentButton().show();
+    		
+    		// Push the inkling feed view onto the all inklings view
+        	this.getAllInklingsView().push({
+            	xtype: "inklingFeedView",
+            	data: {
+            		inklingId: this.getInklingView().getData()["inklingId"]
+            	}
+            });
+            
+            this.getAllInklingsViewToolbar().setTitle("Feed");
+
+            // Update the inkling feed list
+            this.updateInklingFeedList();
+        }
+
+        // If we are in the "My Inklings" view
+        else if (!this.getMyInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getMyInklingsInklingBackButton().hide();
+            this.getMyInklingsInklingFeedButton().hide();
+            this.getMyInklingsBackToInklingButton().show();
+            this.getMyInklingsAddCommentButton().show();
+            
+            // Push the inkling feed view onto the all inklings view
+            this.getMyInklingsView().push({
+                xtype: "inklingFeedView",
+                data: {
+                    inklingId: this.getInklingView().getData()["inklingId"]
+                }
+            });
+            
+            this.getMyInklingsViewToolbar().setTitle("Feed");
+
+            // Update the inkling feed list
+            this.updateInklingFeedList();
+        }
 	},
     
     /* Activates the all inklings view from the inkling view */
 	activateAllInklingsView: function() {
+        console.log("1");
 		// Display the appropriate top toolbar buttons
-    	this.getAllInklingsDateButton().show();
-		this.getAllInklingsGroupsButton().show();
 		this.getAllInklingsInklingBackButton().hide();
-		this.getInklingFeedButton().hide();
-		this.getJoinInklingButton().hide();
+        console.log("2");
+		this.getAllInklingsInklingFeedButton().hide();
+        console.log("3");
+		this.getAllInklingsJoinInklingButton().hide();
+        console.log("4");
+        this.getAllInklingsDateButton().show();
+        console.log("5");
+        this.getAllInklingsGroupsButton().show();
+        console.log("6");
     	
     	// Pop the inkling view off of the all inklings view
         this.getAllInklingsView().pop();
+        console.log("7");
+
+        this.getAllInklingsViewToolbar().setTitle("Inklings");
+        console.log("8");
     },
     
     /* Activates the my inklings view from the inkling view */
 	activateMyInklingsView: function() {
 		// Display the appropriate top toolbar buttons
-		this.getNewInklingButton().show();
-		this.getInklingInvitationsButton().show();
     	this.getMyInklingsInklingBackButton().hide();
-		this.getInklingFeedButton().hide();
-		this.getJoinInklingButton().hide();
+		this.getMyInklingsInklingFeedButton().hide();
+        this.getNewInklingButton().show();
+        this.getInklingInvitationsButton().show();
     	
     	// Pop the inkling view off of the all inklings view
     	var source = this.getMyInklingsView().getActiveItem().getData()["source"];
@@ -132,49 +186,94 @@ Ext.define("inkle.controller.InklingController", {
 	
 	/* Activates the inkling view from the inkling feed view */
 	backToInklingView: function() {
-		// Display the appropriate top toolbar buttons
-    	this.getAllInklingsDateButton().hide();
-		this.getAllInklingsGroupsButton().hide();
-		this.getAllInklingsInklingBackButton().show();
-		this.getInklingFeedBackButton().hide();
-		this.getInklingFeedButton().show();
-		this.getAddCommentButton().hide();
-    	
-    	// Pop the inkling feed view off of the all inklings view
-        this.getAllInklingsView().pop();
+        // Pop off the inkling feed, members attening, or awaiting reply view
+        if (!this.getAllInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getAllInklingsAddCommentButton().hide();
+            this.getAllInklingsBackToInklingButton().hide();
+            if (this.getInklingView().getData()["isJoined"] === "True") {
+                this.getAllInklingsInklingFeedButton().show();
+            }
+            else {
+                this.getAllInklingsJoinInklingButton().show();
+            }
+            this.getAllInklingsInklingBackButton().show();
+
+            this.getAllInklingsView().pop();
+            this.getAllInklingsViewToolbar().setTitle("Inkling");
+        }
+        else if (!this.getMyInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getMyInklingsAddCommentButton().hide();
+            this.getMyInklingsBackToInklingButton().hide();
+            this.getMyInklingsInklingFeedButton().show();
+            this.getMyInklingsInklingBackButton().show();
+            
+            this.getMyInklingsView().pop();
+            this.getMyInklingsViewToolbar().setTitle("Inkling");
+        }
         
         this.getAddCommentPanel().destroy();
     },
 	
 	activateInklingMembersAttendingView: function() {
-	    // Display the appropriate top toolbar buttons
-		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsGroupsButton().hide();
-		this.getAllInklingsInklingBackButton().hide();
-		this.getInklingFeedBackButton().show();
-		this.getInklingFeedButton().hide();
-		
-		// Push the inkling members attending view onto the inkling view
-    	this.getAllInklingsView().push({
-        	xtype: "inklingMembersAttending"
-        });
-        
+        // Push the inkling members attending view onto the inkling view
+        if (!this.getAllInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getAllInklingsInklingBackButton().hide();
+            this.getAllInklingsInklingFeedButton().hide();
+            this.getAllInklingsJoinInklingButton().hide();
+            this.getAllInklingsBackToInklingButton().show();
+
+			this.getAllInklingsView().push({
+            	xtype: "inklingMembersAttending"
+            });
+            this.getAllInklingsViewToolbar().setTitle("Attending");
+        }
+        else if (!this.getMyInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getMyInklingsInklingBackButton().hide();
+            this.getMyInklingsInklingFeedButton().hide();
+            this.getMyInklingsBackToInklingButton().show();
+
+            this.getMyInklingsView().push({
+                xtype: "inklingMembersAttending"
+            });
+
+            this.getMyInklingsViewToolbar().setTitle("Attending");
+        }
+
         // Update the inkling members attending list
         this.updateInklingMembersAttendingList();
 	},
 	
 	activateInklingMembersAwaitingReplyView: function() {
-	    // Display the appropriate top toolbar buttons
-		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsGroupsButton().hide();
-		this.getAllInklingsInklingBackButton().hide();
-		this.getInklingFeedBackButton().show();
-		this.getInklingFeedButton().hide();
-        
-		// Push the inkling members attending view onto the inkling view
-    	this.getAllInklingsView().push({
-        	xtype: "inklingMembersAwaitingReply"
-        });
+        // Push the inkling members awaiting reply view onto the inkling view
+        if (!this.getAllInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getAllInklingsInklingBackButton().hide();
+            this.getAllInklingsInklingFeedButton().hide();
+            this.getAllInklingsJoinInklingButton().hide();
+            this.getAllInklingsBackToInklingButton().show();
+
+            this.getAllInklingsView().push({
+                xtype: "inklingMembersAwaitingReply"
+            });
+
+            this.getAllInklingsViewToolbar().setTitle("Awaiting");
+        }
+        else if (!this.getMyInklingsView().isHidden()) {
+            // Display the appropriate top toolbar buttons
+            this.getMyInklingsInklingBackButton().hide();
+            this.getMyInklingsInklingFeedButton().hide();
+            this.getMyInklingsBackToInklingButton().show();
+
+            this.getMyInklingsView().push({
+                xtype: "inklingMembersAwaitingReply"
+            });
+
+            this.getMyInklingsViewToolbar().setTitle("Awaiting");
+        }
         
         // Update the inkling members awaiting reply list
         this.updateInklingMembersAwaitingReplyList();

@@ -40,7 +40,11 @@
 
             {% if members_attending %}
                 <!-- Disclosure arrow -->
-                <img id="membersAttendingDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% if members_attending|length <= 4 %}
+                    <img id="membersAttendingDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% else %}
+                    <img id="membersAttendingDisclosureArrow" class="disclosureArrow lowerDisclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% endif %}
 
                 <div class="clear"></div>
 
@@ -57,15 +61,18 @@
         <div class="banner">Awaiting</div>
         <div class="infoContainer">
             {% for m in members_awaiting_reply %}
-                <img class="memberPicture" src="{{ STATIC_URL }}/media/images/members/{{ m.id }}.jpg" memberName="{{ m.get_full_name }}" />
+                <img class="memberPicture" src="{{ m.get_picture_path }}" memberName="{{ m.get_full_name }}" />
             {% empty %}
                 <div>No pending invitations</div>
-            {% endfor %}            
-            <div class="clear"></div>
+            {% endfor %}
         
             {% if members_awaiting_reply %}
                 <!-- Disclosure arrow -->
-                <img id="membersAwaitingReplyDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% if members_awaiting_reply|length <= 4 %}
+                    <img id="membersAwaitingReplyDisclosureArrow" class="disclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% else %}
+                    <img id="membersAwaitingReplyDisclosureArrow" class="disclosureArrow lowerDisclosureArrow" src="resources/images/disclosureArrow.png" />
+                {% endif %}
 
                 <div class="clear"></div>
 
