@@ -71,7 +71,8 @@ $badge-bg-gradient: "matte";
 }
 
 .x-list-pullrefresh-arrow {
-    background: center center theme_image("default", "refreshArrow.png") no-repeat !important; 
+    /*background: center center theme_image("default", "refreshArrow.png") no-repeat !important;*/
+	background: center center url("../images/refreshArrow.png") no-repeat !important;
 }
 
 /********************/
