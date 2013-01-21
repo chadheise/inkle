@@ -48,8 +48,9 @@ Ext.define("inkle.view.AllInklings", {
     	items: [
 			// Top toolbar
     		{
+                title: "Inklings",
     			xtype: "toolbar",
-    			id: "allInklingsTopToolbar",
+    			id: "allInklingsViewToolbar",
                 docked: "top",
                 ui: "customToolbar",
                 items: [
@@ -70,7 +71,7 @@ Ext.define("inkle.view.AllInklings", {
                 		xtype: "button",
                 		ui: "back",
                 		text: "Inkling",
-                		itemId: "inklingFeedBackButton",
+                		itemId: "backToInklingButton",
                 		hidden: true
                 	},
                 	{
@@ -81,11 +82,11 @@ Ext.define("inkle.view.AllInklings", {
                 		hidden: true
                 	},
                     { xtype: "spacer" },
-                    {
+                    /*{
                     	xtype: "container",
                     	html: "<img style='padding-top:2px; height: 46px;' src='resources/images/icons/inkleIcon.png' />",
                     	centered: true
-                    },
+                    },*/
                     { xtype: "spacer" },
                     {
                         xtype: "button",
@@ -311,9 +312,9 @@ Ext.define("inkle.view.AllInklings", {
             	fn: "onAllInklingsInklingBackButtonTap"
         	},
         	{
-            	delegate: "#inklingFeedBackButton",
+            	delegate: "#backToInklingButton",
             	event: "tap",
-            	fn: "onInklingFeedBackButtonTap"
+            	fn: "onBackToInklingButtonTap"
         	},
         	{
             	delegate: "#joinInklingButton",
@@ -365,8 +366,8 @@ Ext.define("inkle.view.AllInklings", {
         this.fireEvent("allInklingsInklingBackButtonTapped");
     },
     
-    onInklingFeedBackButtonTap: function() {
-        this.fireEvent("inklingFeedBackButtonTapped");
+    onBackToInklingButtonTap: function() {
+        this.fireEvent("backToInklingButtonTapped");
     },
     
     onInklingFeedButtonTap: function() {

@@ -20,7 +20,7 @@ Ext.define("inkle.controller.AllInklingsController", {
             allInklingsDatePicker: "#allInklingsDatePicker",
             noDatedInklingsCheckbox: "#noDatedInklingsCheckbox",
             
-            allInklingsTopToolbar: "#allInklingsTopToolbar",
+            allInklingsViewToolbar: "#allInklingsViewToolbar",
             inklingTopToolbar: "#inklingTopToolbar",
             
             
@@ -92,7 +92,8 @@ Ext.define("inkle.controller.AllInklingsController", {
 					xtype: "inklingView",
 					data: {
 						inklingId: inklingId,
-						source: "allInklings"
+						source: "allInklings",
+                        isJoined: response.responseText
 					}
 				});
         	},
@@ -102,6 +103,8 @@ Ext.define("inkle.controller.AllInklingsController", {
         	},
         	scope: this
 		});
+
+        this.getAllInklingsViewToolbar().setTitle("Inkling");
     },
 
     /**********************/
