@@ -178,10 +178,22 @@ $badge-bg-gradient: "matte";
 }
 
 .buttonTest {
-	background: url("../images/button.png") !important;
-	width: 40px;
-	height: 40px;
+	background: url("../images/button4.png") !important;
+	width: 36px;
+	height: 36px;
 	border: 0px !important;
+}
+
+.buttonTestPressed {
+	background: url("../images/button4pressed.png") !important;
+}
+
+.segmentedButton {
+	color: #ffffff;
+}
+
+.segmentedButtonPressed .x-button-pressed{ {
+	color: #ffffff !important;
 }
 
 /*******************/

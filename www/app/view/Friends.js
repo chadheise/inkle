@@ -21,6 +21,7 @@ Ext.define("inkle.view.Friends", {
     		{
     			xtype: "toolbar",
     			id: "friendsViewToolbar",
+    			ui: "customToolbar",
                 docked: "top",
                 items: [
                 	{
@@ -44,6 +45,7 @@ Ext.define("inkle.view.Friends", {
                     {
                     	xtype: "segmentedbutton",
                     	id: "friendsViewSegmentedButton",
+                    	pressedCls : "segmentedButtonPressed",
                     	allowDepress: false,
                     	allowMultiple: false,
                     	centered: true,
@@ -83,8 +85,9 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		ui: "action",
                 		iconMask: true,
-                		iconCls: "plusFriendIcon",
-                		//cls: "buttonTest",
+                		//iconCls: "plusFriendIcon",
+                		cls: "buttonTest",
+                		pressedCls: "buttonTestPressed",
                 		itemId: "friendsViewAddFriendsButton",
                 		padding: 5,
                 	},
