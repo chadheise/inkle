@@ -13,7 +13,7 @@ Ext.define("inkle.view.Main", {
         
         items: [
             {
-            	xtype: "allInklingsView"
+            	xtype: "allInklingsView",
             },
             {
             	xtype: "myInklingsView"
