@@ -17,8 +17,8 @@ Ext.define("inkle.view.ShareSettings", {
     	        id: "shareSettingsHeader",
     	        html: [
     	            "<div>",
-    	                "<span><p>Select who you would like to share your inklings with by default.</p></span>",
-    	                "<span><p>You can always adjust who a specific inkling is visible to when you create the inkling.</p></span>",
+    	                "<p>Select who you would like to share your inklings with by default.</p>",
+    	                "<p>You can always adjust who a specific inkling is visible to when you create the inkling.</p>",
     	            "</div>",
     	        ].join("")
     	    },
