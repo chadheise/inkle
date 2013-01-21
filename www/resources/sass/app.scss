@@ -109,6 +109,24 @@ $badge-bg-gradient: "matte";
 	color: #FFF;
 }
 
+.buttonTest {
+	background: url("../images/button4.png") !important;
+	width: 36px;
+	height: 36px;
+	border: 0px !important;
+}
+
+.buttonTestPressed {
+	background: url("../images/button4pressed.png") !important;
+}
+
+.segmentedButton {
+	color: #ffffff;
+}
+
+.segmentedButtonPressed .x-button-pressed{ {
+	color: #ffffff !important;
+}
 
 /***************/
 /*  TAB ICONS  */
@@ -161,44 +179,6 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*   LOGIN BUTTONS 	  */
 /**********************/
-.facebookLoginButton {
-	background: url("../images/facebookLogin.png");
-}
-
-.facebookLoginDarkButton {
-	background: url("../images/facebookLoginDark.png");
-}
-
-.emailLoginButton {
-	background: url("../images/emailLogin.png");
-}
-
-.emailLoginDarkButton {
-	background: url("../images/emailLoginDark.png");
-}
-
-.buttonTest {
-	background: url("../images/button4.png") !important;
-	width: 36px;
-	height: 36px;
-	border: 0px !important;
-}
-
-.buttonTestPressed {
-	background: url("../images/button4pressed.png") !important;
-}
-
-.segmentedButton {
-	color: #ffffff;
-}
-
-.segmentedButtonPressed .x-button-pressed{ {
-	color: #ffffff !important;
-}
-
-/*******************/
-/*  LOGIN BUTTONS  */
-/*******************/
 .facebookLoginButton {
 	background: url("../images/facebookLogin.png");
 }
