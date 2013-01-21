@@ -52,8 +52,8 @@ Ext.define("inkle.view.Settings", {
     			xtype: "list",
     			id: "settingsViewList",
 				disableSelection: true,
-				scrollable: false,
-				height: 236,
+				scrollable: true,
+				//height: 236,
 				itemTpl: [
 					"<p>{ text }</p>",
 					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
