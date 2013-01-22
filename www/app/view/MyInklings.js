@@ -16,7 +16,6 @@ Ext.define("inkle.view.MyInklings", {
     			id: "myInklingsViewToolbar",
                 docked: "top",
                 title: "My Inklings",
-                ui: "customToolbar",
                 items: [
                 	{
                         xtype: "button",

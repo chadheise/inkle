@@ -34,30 +34,10 @@ $lightestGray: #DDDDDD;
 /*******************************/
 /* General */
 $base-gradient: "flat";
-$body-bg-color: #000;
 $base-color: $mediumGreen;
-$active-color: $mediumGreen;
-$bright-color: $mediumGreen;
-$alert-color: $lightestRed;
 
 /* Buttons */
-$button-gradient: "flat";
 $button-radius: .2em;
-//$button-stroke-weight: 0em;
-
-/* Toolbars */
-//$toolbar-gradient: "flat";
-//$toolbar-base-color: $mediumGreen;
-//$toolbar-spacing: 1em;
-$bar-color: $darkerGreen;
-
-/* Tabs */
-$tabs-bar-gradient: "flat";
-$tabs-bottom-gradient: "flat";
-$tabs-bottom-active-gradient: "flat";
-$tabs-bottom-radius: .2em;
-$tabs-dark: $mediumGreen;
-$tabs-dark-active-color: #FFFFFF;
 
 /* Badges */
 $badge-size: 1em;
@@ -96,37 +76,7 @@ $badge-bg-gradient: "matte";
 @include sencha-msgbox;
 @include sencha-list-pullrefresh;
 
-/* Toolbars */
-/* TODO: can we move this before all the [@include module] calls? */
-@include sencha-toolbar-ui("customToolbar", $mediumGreen, "none");
-.customButton {
-	background-color: $mediumRed;
-}
 
-.customPressedCls {
-	@include background-gradient(#1A492B, recessed); //Added by Chad
-    @include bevel-by-background(#6ABB6A); //Added by Chad
-	color: #FFF;
-}
-
-.buttonTest {
-	background: url("../images/button4.png") !important;
-	width: 36px;
-	height: 36px;
-	border: 0px !important;
-}
-
-.buttonTestPressed {
-	background: url("../images/button4pressed.png") !important;
-}
-
-.segmentedButton {
-	color: #ffffff;
-}
-
-.segmentedButtonPressed .x-button-pressed {
-	color: #ffffff !important;
-}
 
 /***************/
 /*  TAB ICONS  */
@@ -176,23 +126,120 @@ $badge-bg-gradient: "matte";
 	-webkit-mask-box-image: url("../images/icons/gear.png");
 }
 
+/*************/
+/*  TOOLBAR  */
+/*************/
+
+.x-toolbar {
+	background: $mediumGreen !important;
+	border-bottom: 1px solid $darkestGreen !important;
+}
+
+/*************/
+/*  TAB BAR  */
+/*************/
+
+.x-tabbar {
+	background: $mediumGreen !important;
+	border-top: 1px solid $darkestGreen !important;
+}
+
+.x-tabbar .x-tab {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	width: 25% !important;
+}
+
+.x-tabbar .x-tab-active {
+	background: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
+}
+
+.x-tabbar .x-button-icon {
+	background-color: $darkestGreen !important;
+}
+
+.x-tabbar .x-tab-active .x-button-icon {
+	background-color: #FFFFFF !important;
+}
+
+.x-tabbar .x-button-label {
+	color: $darkestGreen !important;
+	font-size: 11px !important;
+}
+
+.x-tabbar .x-tab-active .x-button-label {
+	color: #FFFFFF !important;
+}
+
+/*************/
+/*  BUTTONS  */
+/*************/
+
+.x-button {
+	color: $darkestGreen !important;
+	border-color: $darkestGreen !important;
+	background: $mediumGreen !important;
+}
+
+.x-button-pressed, .x-button-pressing {
+	color: #FFFFFF !important;
+	background: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
+}
+
+.x-button-back::before {
+	margin-left: 4px !important;
+	background: $darkestGreen !important;
+}
+
+.x-button-back::after {
+	margin-left: 4px !important;
+	background: $mediumGreen !important;
+}
+
+.x-button-back {
+	z-index: 3 !important;
+}
+
+.x-button-pressing.x-button-back::after {
+	background: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
+}
+
 /**********************/
 /*   LOGIN BUTTONS 	  */
 /**********************/
 .facebookLoginButton {
-	background: url("../images/facebookLogin.png");
+	background: url("../images/facebookLogin.png") !important;
 }
 
 .facebookLoginDarkButton {
-	background: url("../images/facebookLoginDark.png");
+	background: url("../images/facebookLoginDark.png") !important;
 }
 
 .emailLoginButton {
-	background: url("../images/emailLogin.png");
+	background: url("../images/emailLogin.png") !important;
 }
 
 .emailLoginDarkButton {
-	background: url("../images/emailLoginDark.png");
+	background: url("../images/emailLoginDark.png") !important;
+}
+
+/**************************/
+/*   TOOLBAR BUTTONS 	  */
+/**************************/
+
+.buttonTest {
+	background: url("../images/button4.png") !important;
+	width: 33px;
+	height: 33px;
+}
+
+.buttonTestPressed {
+	background: url("../images/button4pressed.png") !important;
+	background-color: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 /***********/

@@ -52,7 +52,6 @@ Ext.define("inkle.view.AllInklings", {
     			xtype: "toolbar",
     			id: "allInklingsViewToolbar",
                 docked: "top",
-                ui: "customToolbar",
                 items: [
                 	{
                 		xtype: "button",

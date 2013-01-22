@@ -21,7 +21,6 @@ Ext.define("inkle.view.Friends", {
     		{
     			xtype: "toolbar",
     			id: "friendsViewToolbar",
-    			ui: "customToolbar",
                 docked: "top",
                 items: [
                 	{
@@ -45,7 +44,6 @@ Ext.define("inkle.view.Friends", {
                     {
                     	xtype: "segmentedbutton",
                     	id: "friendsViewSegmentedButton",
-                    	pressedCls : "segmentedButtonPressed",
                     	allowDepress: false,
                     	allowMultiple: false,
                     	centered: true,
