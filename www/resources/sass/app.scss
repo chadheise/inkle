@@ -230,14 +230,83 @@ $badge-bg-gradient: "matte";
 /*   TOOLBAR BUTTONS 	  */
 /**************************/
 
-.buttonTest {
-	background: url("../images/button4.png") !important;
+.toolbarButtonGear {
+	background: url("../images/toolbarButtons/gear.png") !important;
+}
+
+.toolbarButtonGearPressed {
+	background: url("../images/toolbarButtons/gearPressed.png") !important;
+}
+
+.toolbarButtonGears {
+	background: url("../images/toolbarButtons/gears.png") !important;
+}
+
+.toolbarButtonGearsPressed {
+	background: url("../images/toolbarButtons/gearsPressed.png") !important;
+}
+
+.toolbarButtonMinus {
+	background: url("../images/toolbarButtons/minus.png") !important;
+}
+
+.toolbarButtonMinusPressed {
+	background: url("../images/toolbarButtons/minusPressed.png") !important;
+}
+
+.toolbarButtonMinusFriend {
+	background: url("../images/toolbarButtons/minusFriend.png") !important;
+}
+
+.toolbarButtonMinusFriendPressed {
+	background: url("../images/toolbarButtons/minusFriendPressed.png") !important;
+}
+
+.toolbarButtonPlus {
+	background: url("../images/toolbarButtons/plus.png") !important;
+}
+
+.toolbarButtonPlusPressed {
+	background: url("../images/toolbarButtons/plusPressed.png") !important;
+}
+
+.toolbarButtonPlusFriend {
+	background: url("../images/toolbarButtons/plusFriend.png") !important;
+}
+
+.toolbarButtonPlusFriendPressed {
+	background: url("../images/toolbarButtons/plusFriendPressed.png") !important;
+}
+
+.toolbarButtonEnvelope {
+	background: url("../images/toolbarButtons/envelope.png") !important;
+	width: 45px !important;
+}
+
+.toolbarButtonEnvelopePressed {
+	background: url("../images/toolbarButtons/envelopePressed.png") !important;
+	background-color: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
+}
+
+.toolbarButtonFeed {
+	background: url("../images/toolbarButtons/feed.png") !important;
+	width: 45px !important;
+}
+
+.toolbarButtonFeedPressed {
+	background: url("../images/toolbarButtons/feedPressed.png") !important;
+	background-color: $darkestGreen !important;
+	box-shadow: inset 0px 5px 5px #002200 !important;
+}
+
+//The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect
+.toolbarButton {
 	width: 33px;
 	height: 33px;
 }
 
-.buttonTestPressed {
-	background: url("../images/button4pressed.png") !important;
+.toolbarButtonPressed {
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
 }

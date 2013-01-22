@@ -27,16 +27,20 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		id: "friendsViewRemoveFriendsButton",
                 		ui: "action",
-                		iconMask: true,
-                		iconCls: "minusFriendIcon",
+                		//iconMask: true,
+                		//iconCls: "minusFriendIcon",
+                		cls: ["toolbarButton", "toolbarButtonMinusFriend"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonMinusFriendPressed"],
                 		padding: 5
                 	},
                 	{
                 		xtype: "button",
                 		itemId: "friendsViewEditGroupsButton",
                 		ui: "action",
-                        iconMask: true,
-                        iconCls: "editIcon",
+                        //iconMask: true,
+                        //iconCls: "editIcon",
+                        cls: ["toolbarButton", "toolbarButtonGear"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonGearPressed"],
                 		hidden: true,
                 		padding: 5
                 	},
@@ -70,22 +74,13 @@ Ext.define("inkle.view.Friends", {
 						]
                     },
                     { xtype: "spacer" },
-                    /*{
-                        xtype: "button",
-                        id: "testButton",
-                        cls: "buttonTest",
-                        pressedCls: "buttonTest",
-                        margin: 0,
-                    	height: 40,
-                    	width: 40,
-                    },*/
                     {
                 		xtype: "button",
                 		ui: "action",
-                		iconMask: true,
+                		//iconMask: true,
                 		//iconCls: "plusFriendIcon",
-                		cls: "buttonTest",
-                		pressedCls: "buttonTestPressed",
+                		cls: ["toolbarButton", "toolbarButtonPlusFriend"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusFriendPressed"],
                 		itemId: "friendsViewAddFriendsButton",
                 		padding: 5,
                 	},
@@ -93,8 +88,10 @@ Ext.define("inkle.view.Friends", {
                 		xtype: "button",
                 		itemId: "friendsViewCreateGroupButton",
                 		ui: "action",
-                		iconMask: true,
-                		iconCls: "plusIcon",
+                		//iconMask: true,
+                		//iconCls: "plusIcon",
+                		cls: ["toolbarButton", "toolbarButtonPlus"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                 		hidden: true,
                 		padding: 5
                 	}

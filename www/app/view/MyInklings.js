@@ -21,8 +21,10 @@ Ext.define("inkle.view.MyInklings", {
                         xtype: "button",
                         itemId: "inklingInvitationsButton",
                         ui: "action",
-                		iconMask: true,
-                		iconCls: "inklingInvitationsIcon"
+                		//iconMask: true,
+                		//iconCls: "inklingInvitationsIcon"
+                		cls: ["toolbarButton", "toolbarButtonEnvelope"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonEnvelopePressed"],
                     },
                     {
                 		xtype: "button",
@@ -64,8 +66,10 @@ Ext.define("inkle.view.MyInklings", {
                         xtype: "button",
                         ui: "action",
                         itemId: "newInklingButton",
-                        iconMask: true,
-                		iconCls: "plusIcon",
+                        //iconMask: true,
+                		//iconCls: "plusIcon",
+                		cls: ["toolbarButton", "toolbarButtonPlus"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                 		padding: 5
                     },
                     {
@@ -78,8 +82,10 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        iconMask: true,
-                        iconCls: "feedIcon",
+                        //iconMask: true,
+                        //iconCls: "feedIcon",
+                        cls: ["toolbarButton", "toolbarButtonFeed"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
@@ -114,8 +120,10 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        iconMask: true,
-                        iconCls: "plusIcon",
+                        //iconMask: true,
+                        //iconCls: "plusIcon",
+                        cls: ["toolbarButton", "toolbarButtonPlus"],
+                		pressedCls: ["toolbarButton", "toolbarButtonPlusPressed"],
                         itemId: "addCommentButton",
                         hidden: true
                     }

@@ -61,7 +61,6 @@ Ext.define("inkle.view.AllInklings", {
                 	{
                 		xtype: "button",
                 		ui: "back",
-                		//ui: "customPressedCls",
                 		text: "All Inklings",
                 		itemId: "allInklingsInklingBackButton",
                 		hidden: true
@@ -90,7 +89,6 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        //pressedCls: 'customPressedCls',
                         text: "Groups",
                         itemId: "allInklingsGroupsButton"
                     },
@@ -104,8 +102,10 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        iconMask: true,
-                		iconCls: "feedIcon",
+                        //iconMask: true,
+                		//iconCls: "feedIcon",
+                		cls: ["toolbarButton", "toolbarButtonFeed"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
@@ -119,8 +119,10 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        iconMask: true,
-                        iconCls: "plusIcon",
+                        //iconMask: true,
+                        //iconCls: "plusIcon",
+                        cls: ["toolbarButton", "toolbarButtonPlus"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                         itemId: "addCommentButton",
                         hidden: true
                     }
