@@ -9,7 +9,6 @@ Ext.define("inkle.view.Main", {
     
     config: {
         tabBarPosition: "bottom",
-        //ui: "customTabBar",
         
         items: [
             {

@@ -22,7 +22,6 @@ Ext.define("inkle.view.LoginForm", {
     			id: "loginFormToolbar",
     			title: "Inkle Login",
                 docked: "top",
-                ui: "customToolbar",
                 items: [
                 	{
                 		xtype: "button",
