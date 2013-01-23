@@ -449,7 +449,7 @@ $badge-bg-gradient: "matte";
 
 .inklingInvitationsList .disclosureArrow {
 	float: right;
-	margin: -17px 3px 0px 0px;
+	margin: -17px 0px 0px 0px;
 }
 
 /* Groups list (main content) */
@@ -559,13 +559,16 @@ $badge-bg-gradient: "matte";
 
 /* Settings list */
 .settingsList .settingName {
-    font-size: 24px;
+    float: left;
+    margin-left: -5px;
+    font-size: 18px;
+    font-weight: bold;
     color: $mediumBlue;
 }
 
 .settingsList .disclosureArrow {
     float: right;
-    margin: 10px;
+    margin: 5px -7px 0px 0px;
 }
 
 /* List section headers */
