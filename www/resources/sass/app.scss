@@ -557,6 +557,17 @@ $badge-bg-gradient: "matte";
 	color: $mediumGray;
 }
 
+/* Settings list */
+.settingsList .settingName {
+    font-size: 24px;
+    color: $mediumBlue;
+}
+
+.settingsList .disclosureArrow {
+    float: right;
+    margin: 10px;
+}
+
 /* List section headers */
 .x-list-header
 {
@@ -577,7 +588,7 @@ $badge-bg-gradient: "matte";
     opacity: 1 !important;
 }
 
-/* Other list items */
+/* Miscellaneous list items */
 .emptyListText {
     padding-top: 10px;
     color: #999;

@@ -51,11 +51,12 @@ Ext.define("inkle.view.Settings", {
     		{
     			xtype: "list",
     			id: "settingsViewList",
+                cls: "settingsList",
 				disableSelection: true,
 				scrollable: true,
 				//height: 236,
 				itemTpl: [
-					"<p>{ text }</p>",
+					"<p class='settingName'>{ text }</p>",
 					"<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />"
 				],
 				store: {
