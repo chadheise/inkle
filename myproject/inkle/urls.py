@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 #from django.contrib.auth.views import login, logout
 
 # Uncomment the next two lines to enable the admin:
@@ -21,7 +20,7 @@ urlpatterns = patterns(
     (r"^groups/$", "groups_view"),
     (r"^groupsMainContent/$", "groups_main_content_view"),
     (r"^groupsPanel/$", "groups_panel_view"),
-    
+
     # All Inklings
     (r"^allInklings/$", "all_inklings_view"),
     (r"^isMemberInkling/$", "is_member_inkling_view"),
@@ -33,7 +32,7 @@ urlpatterns = patterns(
     (r"^inklingMembersAttending/$", "inkling_members_attending_view"),
     (r"^inklingMembersAwaitingReply/$", "inkling_members_awaiting_reply_view"),
     (r"^addFeedComment/$", "add_feed_comment_view"),
-    
+
     (r"^myInklings/$", "my_inklings_view"),
     (r"^createInkling/$", "create_inkling_view"),
     (r"^updateInkling/$", "update_inkling_view"),
@@ -62,9 +61,9 @@ urlpatterns = patterns(
     (r"^removeFromGroup/$", "remove_from_group_view"),
     (r"^createGroup/$", "create_group_view"),
     (r"^renameGroup/$", "rename_group_view"),
-    
+
     (r"^inviteFacebookFriendsView/$", "invite_facebook_friends_view"),
-    
+
     (r"^facebookPost/$", "facebook_post"),
 
     (r"^profile/$", "profile_view"),

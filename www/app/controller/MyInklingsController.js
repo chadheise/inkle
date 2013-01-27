@@ -3,26 +3,27 @@ Ext.define("inkle.controller.MyInklingsController", {
     
     config: {
         refs: {
-        	// Views
-        	mainTabView: "mainTabView",
+            // Views
+            mainTabView: "mainTabView",
             myInklingsView: "myInklingsView",
             newInklingView: "newInklingView",
-            newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
+            //newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
+            newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
-            
+
             myInklingsViewToolbar: "#myInklingsViewToolbar",
-            
-        	newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
+
+            newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
 
             inklingInvitationsList: "#inklingInvitationsList",
 
-        	shareWithSelect: "#shareWithSelect",
+            shareWithSelect: "#shareWithSelect",
 
-        	newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
-        	newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",        
-        	
-        	myInklingsList: "#myInklingsList",
-        	
+            
+            newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",
+
+            myInklingsList: "#myInklingsList",
+
             // Toolbar buttons
             inklingInvitationsButton: "#inklingInvitationsButton",
             newInklingButton: "#newInklingButton",

@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 from datetime import date
 
+
 class Group(models.Model):
     """Group class definition."""
     # General information
@@ -21,7 +22,7 @@ class Group(models.Model):
     date_created = models.DateTimeField(auto_now_add = True)
     date_name_last_modified = models.DateTimeField(blank = True, null = True)
     date_members_last_modified = models.DateTimeField(blank = True, null = True)
-    
+
     # Class methods
     def __unicode__(self):
         """String representation for the current group."""
@@ -35,7 +36,7 @@ class FeedUpdate(models.Model):
     inkling = models.ForeignKey("Inkling")
     update_type = models.CharField(max_length = 10)
     updated_to = models.CharField(max_length = 200)
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
 
@@ -49,7 +50,7 @@ class FeedUpdate(models.Model):
         if (self.update_type == "location"):
             return "/feed/location.jpg"
         elif (self.update_type == "date"):
-            dateNum = self.updated_to.split()[-1] #Get the last part of the update which contains the date number
+            dateNum = self.updated_to.split()[-1]  #Get the last part of the update which contains the date number
             return "/feed/date" + dateNum + ".jpg"
         elif (self.update_type == "time"):
             return "/feed/clock.jpg"
@@ -68,14 +69,13 @@ class FeedUpdate(models.Model):
             return "updated the notes."
 
 
-
 class FeedComment(models.Model):
     """FeedComment class definition."""
     # General information
     creator = models.ForeignKey("Member")
     inkling = models.ForeignKey("Inkling")
     text = models.CharField(max_length = 150)
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
 
@@ -95,7 +95,7 @@ class InklingInvitation(models.Model):
     receiver = models.ForeignKey("Member", related_name = "inkling_invitations_received")
     inkling = models.ForeignKey("Inkling")
     status = models.CharField(max_length = 10, default = "pending")
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
     date_responded = models.DateTimeField(blank = True, null = True)
@@ -112,7 +112,7 @@ class SharingPermission(models.Model):
     creator = models.ForeignKey("Member", related_name = "sharing_permissions_created")
     members = models.ManyToManyField("Member", related_name = "sharing_permissions_allowed", blank = True)
     inkling = models.ForeignKey("Inkling")
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
 
@@ -146,7 +146,7 @@ class Inkling(models.Model):
     # Sharing
     allow_sharing = models.BooleanField()
     shared_with = models.ManyToManyField("Member", related_name = "inklings_shared_with")
-    
+
     # Managers
     objects = models.Manager()
     past = PastInklingManager()
@@ -219,7 +219,7 @@ class FriendRequest(models.Model):
     sender = models.ForeignKey("Member", related_name = "friend_requests_sent")
     receiver = models.ForeignKey("Member", related_name = "friend_requests_received")
     status = models.CharField(max_length = 10, default = "pending")
-    
+
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
     date_responded = models.DateTimeField(blank = True, null = True)
@@ -241,15 +241,15 @@ class Member(User):
     """Member class definition. Uses the following from the built-in Django User class:
        id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined"""
     #user = models.OneToOneField(User)
-    
+
     # General information
     gender = models.CharField(max_length = 1, choices=(('m', 'Male'), ('f', 'Female')), blank = True, null = True)
     birthday = models.DateField()
     facebookId = models.BigIntegerField(blank = True, null = True, unique = True)
-    
+
     # Friends
     friends = models.ManyToManyField("self")
-    
+
     # Inklings
     inklings = models.ManyToManyField(Inkling)
 

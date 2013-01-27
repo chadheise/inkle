@@ -3,21 +3,24 @@ Ext.define("inkle.controller.FriendsController", {
     
     config: {
         refs: {
-        	// Views
-        	mainTabView: "mainTabView",
+            // Views
+            mainTabView: "mainTabView",
             friendsView: "friendsView",
             addFriendsView: "addFriendsView",
             groupMembersView: "groupMembersView",
             
-            // Toolbars
-            friendsViewToolbar: "#friendsViewToolbar",
-            addFriendsViewToolbar: "#addFriendsViewToolbar",
-            
-            // Toolbar buttons
+            // Top toolbar segmented buttons
+            requestsButton: "#friendsViewRequestsButton",
+
+            // Top toolbar buttons
             removeFriendsButton: "#friendsViewRemoveFriendsButton",
-            addFriendButton: "#friendsViewAddFriendsButton",
+            removeFriendsDoneButton: "#friendsViewRemoveFriendsDoneButton",
+            addFriendsButton: "#friendsViewAddFriendsButton",
             editGroupsButton: "#friendsViewEditGroupsButton",
+            editGroupsDoneButton: "#friendsViewEditGroupsDoneButton",
             createGroupButton: "#friendsViewCreateGroupButton",
+            addFriendsViewDoneButton: "#addFriendsViewDoneButton",
+            groupMembersViewDoneButton: "#groupMembersViewDoneButton",
             
             // Lists
             friendsList: "#friendsViewFriendsList",
@@ -25,50 +28,57 @@ Ext.define("inkle.controller.FriendsController", {
             groupMembersList: "#groupMembersList",
             requestsList: "#friendsViewRequestsList",
             
-            // Segmented buttons
-            requestsButton: "#friendsViewRequestsButton",
-            
             // Elements
             addFriendsSearchField: "#addFriendsSearchField",
             addFriendsSuggestions: "#addFriendsSuggestions",
-            friendsViewContainer: "#friendsViewContainer"
-    	},
+            friendsViewMainContent: "#friendsViewMainContent"
+        },
         control: {
             friendsView: {
-            	// Commands
-            	friendsViewSegmentedButtonToggled: "updateFriendsViewActiveItem",
-            	
-           		friendsViewEditGroupsButtonTapped: "toggleDeleteLocksVisibility",
-           		friendsViewCreateGroupButtonTapped: "createGroup",
-           		friendsViewRemoveFriendsButtonTapped: "toggleDeleteLocksVisibility",
-           		friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
-           		deleteLockTapped: "toggleDeleteButtonVisibility",
-           		groupNameInputBlurred: "renameGroup",
-           		
-           		acceptRequestButtonTapped: "respondToRequest",
-           		ignoreRequestButtonTapped: "respondToRequest",
-           		
-           		friendsViewGroupsListItemTapped: "activateGroupMembersView",
-           		
-           		friendsViewFriendsListRefreshed: "updateFriendsList",
-           		friendsViewGroupsListRefreshed: "updateGroupsList",
-           		friendsViewRequestsListRefreshed: "updateRequestsList",
-           		
-           		activate: "hideFriendsTabBadge",
-           		deactivate: "showFriendsTabBadge"
-           	},
-           	
-           	addFriendsView: {
-           		addFriendsDoneButtonTapped: "activateFriendsView",
-           		addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
-           		addFriendButtonTapped: "addFriend",
-           		inviteFriendButtonTapped: "inviteFriend"
-           	},
-           	
-           	groupMembersView: {
-           		groupMembersBackButtonTapped: "activateFriendsView",
-           		selectionItemTapped: "toggleSelectionItem"
-           	}
+                // Segmented button toggling
+                friendsViewSegmentedButtonToggled: "updateFriendsViewActiveItem",
+
+                // Toolbar buttons
+                friendsViewRemoveFriendsButtonTapped: "toggleEditFriendsList",
+                friendsViewRemoveFriendsDoneButtonTapped: "toggleEditFriendsList",
+                friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
+                friendsViewEditGroupsButtonTapped: "toggleEditGroupsList",
+                friendsViewEditGroupsDoneButtonTapped: "toggleEditGroupsList",
+                friendsViewCreateGroupButtonTapped: "createGroup",
+                addFriendsViewDoneButtonTapped: "activateFriendsView",
+                groupMembersViewDoneButtonTapped: "activateFriendsView",
+
+                // Requests accept/ignore buttons
+                acceptRequestButtonTapped: "respondToRequest",
+                ignoreRequestButtonTapped: "respondToRequest",
+
+                // Pull to refresh
+                friendsViewFriendsListRefreshed: "updateFriendsList",
+                friendsViewGroupsListRefreshed: "updateGroupsList",
+                friendsViewRequestsListRefreshed: "updateRequestsList",
+
+                // View activation
+                activate: "hideFriendsTabBadge",
+                deactivate: "showFriendsTabBadge",
+
+
+
+
+
+                deleteLockTapped: "toggleDeleteButtonVisibility",
+                groupNameInputBlurred: "renameGroup",
+                friendsViewGroupsListItemTapped: "activateGroupMembersView"
+            },
+
+            addFriendsView: {
+                addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
+                addFriendButtonTapped: "addFriend",
+                inviteFriendButtonTapped: "inviteFriend"
+            },
+
+            groupMembersView: {
+                selectionItemTapped: "toggleSelectionItem"
+            }
         }
     },
 
@@ -76,81 +86,56 @@ Ext.define("inkle.controller.FriendsController", {
 	/*  VIEW TRANSITIONS  */
 	/**********************/
 	
-	/* Activates the friends view from the add friends view */
-	activateFriendsView: function() {
-    	// Pop the add friends view from the friends view
-    	this.getFriendsView().pop();
+	/* Activates the friends view */
+	activateFriendsView: function(source) {
+        console.log("in");
+        this.getFriendsView().pop();
 		
-		// Show the friends view toolbar
-        this.getFriendsViewToolbar().show();
-        
-        this.updateGroupsList();
+        // Display the appropriate toolbar buttons
+        if (source == "addFriendsView") {
+            this.getAddFriendsViewDoneButton().hide();
+            this.getRemoveFriendsButton().show();
+            this.getAddFriendsButton().show();
+        }
+        else if (source == "groupMembersView") {
+            this.getGroupMembersViewDoneButton().hide();
+            this.getEditGroupsButton().show();
+            this.getCreateGroupButton().show();
+
+            // Update the groups list
+            this.updateGroupsList();
+        }
     },
 	
-	/* Activates the add friends view from the friends view friends list */
+	/* Activates the add friends view */
 	activateAddFriendsView: function() {
-    	// Push the add friends view onto the friends view
-    	this.getFriendsView().push({
-        	xtype: "addFriendsView"
+        this.getFriendsView().push({
+            xtype: "addFriendsView"
         });
 
-		// Hide the friends view toolbar        
-        this.getFriendsViewToolbar().hide();
-        
-        // Hide the delete locks
-        var deleteLocks = Ext.query(".deleteLock");
-		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i]);
-			deleteLock.removeCls("deleteLockSlideRight");
-			deleteLock.removeCls("deleteLockSlideLeft");
-			deleteLock.addCls("deleteLockHidden");
-		}
-				
-		// Reset the remove friends button
-		var removeFriendsButton = this.getRemoveFriendsButton();
-		removeFriendsButton.setText("");
-		removeFriendsButton.setIconMask(true);
-		removeFriendsButton.setIconCls("minusFriendIcon");
-		
-		//Get facebook friends here
+        // Display the appropriate toolbar buttons
+        this.getRemoveFriendsButton().hide();
+        this.getAddFriendsButton().hide();
+        this.getAddFriendsViewDoneButton().show();
     },
 	
-	/* Activates the group members view from the friends view groups list */
+	/* Activates the group members */
 	activateGroupMembersView: function(groupId) {
-		if (this.getEditGroupsButton().getIconCls() == "editIcon") {
-			// Push the group members view onto the friends view
+		if (!this.getEditGroupsButton().isHidden()) {
 			this.getFriendsView().push({
 				xtype: "groupMembersView",
 				data: {
 					groupId: groupId
 				}
 			});
-	
-			var groupMembersStore = this.getGroupMembersList().getStore();
-			
-			groupMembersStore.setProxy({
-				extraParams: {
-					groupId: groupId
-				}
-			});
-			groupMembersStore.load();
-	
-			// Hide the friends view toolbar        
-			this.getFriendsViewToolbar().hide();
-			
-			// Hide the delete locks
-			var deleteLocks = Ext.query(".deleteLock");
-			for (var i = 0; i < deleteLocks.length; i++) {
-				var deleteLock = Ext.fly(deleteLocks[i]);
-				deleteLock.removeCls("deleteLockSlideRight");
-				deleteLock.removeCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockHidden");
-			}
-			
-			// Reset the text for the edit groups button
-			this.getEditGroupsButton().setText("");
-			this.getEditGroupsButton().setIconMask(true);
-			this.getEditGroupsButton().setIconCls("editIcon");
+
+            // Display the appropriate toolbar buttons
+            this.getEditGroupsButton().hide();
+            this.getCreateGroupButton().hide();
+            this.getGroupMembersViewDoneButton().show();
+
+            // Update the group members list
+            this.updateGroupMembersList(groupId);
 		}
     },
 
@@ -159,7 +144,7 @@ Ext.define("inkle.controller.FriendsController", {
 	/**************/
 	
 	hideFriendsTabBadge: function() {
-	    this.getMainTabView().getTabBar().getAt(2).setBadgeText("");
+        this.getMainTabView().getTabBar().getAt(2).setBadgeText("");
 	},
 	
 	showFriendsTabBadge: function() {
@@ -168,51 +153,50 @@ Ext.define("inkle.controller.FriendsController", {
 			
 			success: function(response) {
 				numFriendRequests = response.responseText;
-				if (numFriendRequests != 0) {
-				    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
+                if (numFriendRequests !== 0) {
+                    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
 					this.getRequestsButton().setBadgeText(numFriendRequests);
 				}
 			},
 			
 			failure: function(response) {
 				console.log(response.responseText);
-	       	},
-	       	
-	       	scope: this
+            },
+            scope: this
 		});
 	},
 	
 	/* Updates the active item for the friends view */
 	updateFriendsViewActiveItem: function(index) {
-		// Update the active friends view item
-		this.getFriendsViewContainer().setActiveItem(index);
+        // Update the active friends view item
+		this.getFriendsViewMainContent().setActiveItem(index);
 		
-		// Show and hide the appropriate buttons
-		if (index == 0) {
-            // Show the friends buttons
-			this.getRemoveFriendsButton().show();
-			this.getAddFriendButton().show();
+		// Friends list
+		if (index === 0) {
+            // Display the appropriate buttons
 			this.getEditGroupsButton().hide();
-			this.getCreateGroupButton().hide();
-			
-			// Reset the remove friends button
-			var removeFriendsButton = this.getRemoveFriendsButton();
-			removeFriendsButton.setIconMask(true);
-			removeFriendsButton.setIconCls("minusFriendIcon");
-			removeFriendsButton.setText("");
+            this.getEditGroupsDoneButton().hide();
+            this.getCreateGroupButton().hide();
+            this.getRemoveFriendsButton().show();
+            this.getAddFriendsButton().show();
+
+            // Reset the friends list's delete locks and disclosure arrows
+            this.updateDeleteLocksState("friendsViewFriendsList", "reset");
+            this.updateDisclosureArrowsState("friendsViewFriendsList", "reset");
 		}
+
+        // Groups list
 		else if (index == 1) {
-            // Show the groups buttons
-			this.getRemoveFriendsButton().hide();
-			this.getAddFriendButton().hide();
-			this.getEditGroupsButton().show();
-			this.getCreateGroupButton().show();
-			
-			// Reset the edit groups button
-			var editGroupsButton = this.getEditGroupsButton();
-			editGroupsButton.setIconMask(true);
-			editGroupsButton.setIconCls("editIcon");
-			editGroupsButton.setText("");
+            // Display the appropriate buttons
+            this.getRemoveFriendsButton().hide();
+            this.getRemoveFriendsDoneButton().hide();
+            this.getAddFriendsButton().hide();
+            this.getEditGroupsButton().show();
+            this.getCreateGroupButton().show();
+
+            // Reset the groups list's delete locks and disclosure arrows
+            this.updateDeleteLocksState("friendsViewGroupsList", "reset");
+            this.updateDisclosureArrowsState("friendsViewGroupsList", "reset");
 
             // Hide the group name inputs
             var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
@@ -230,152 +214,138 @@ Ext.define("inkle.controller.FriendsController", {
                 }
             }
 		}
-		else {
-            // Show the requests buttons
+
+        // Requests list
+		else if (index == 2) {
+            // Display the appropriate buttons
 			this.getRemoveFriendsButton().hide();
-			this.getAddFriendButton().hide();
-			this.getEditGroupsButton().hide();
-			this.getCreateGroupButton().hide();
-		}
-		
-		// Hide the delete locks
-		var deleteLocks = Ext.query(".deleteLock");
-		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i]);
-			deleteLock.removeCls("deleteLockSlideRight");
-			deleteLock.removeCls("deleteLockSlideLeft");
-			deleteLock.addCls("deleteLockHidden");
-		}
-		
-		// Hide the disclosure arrows
-		var disclosureArrows = Ext.query(".disclosureArrow");
-		for (var i = 0; i < disclosureArrows.length; i++) {
-			var disclosureArrow = Ext.fly(disclosureArrows[i]);
-			
-			if (disclosureArrow) {
-				disclosureArrow.removeCls("disclosureArrowSlideRight");
-				disclosureArrow.removeCls("disclosureArrowSlideLeft");
-				disclosureArrow.removeCls("disclosureArrowHidden");
-			}
+            this.getRemoveFriendsDoneButton().hide();
+            this.getAddFriendsButton().hide();
+            this.getEditGroupsButton().hide();
+            this.getEditGroupsDoneButton().hide();
+            this.getCreateGroupButton().hide();
 		}
 	},
-	
-	/* Toggles the visibility of the delete locks (for the friends and groups lists) */
-	toggleDeleteLocksVisibility: function(listId, buttonIconCls) {
-		// Get the clicked button
-		var button;
-		if (buttonIconCls == "minusFriendIcon") {
-			button = this.getRemoveFriendsButton();
-		}
-		else {
-			button = this.getEditGroupsButton();
-		}
-		
-		// If the remove friends or edits groups button (aka not the "Done" button) was clicked 
-		if (button.getIconMask()) {
-			// Update the button into a "Done" button
-			button.setIconMask(false);
-			button.setIconCls("");
-			button.setText("Done");
-			
-			// Hide the other toolbar button
-			if (buttonIconCls == "minusFriendIcon") {
-				this.getAddFriendButton().hide();
-			}
-			else {
-				this.getCreateGroupButton().hide();
-			}		
-			
-			// Hide the disclosure arrows by sliding them to the right
-			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
-			for (var i = 0; i < disclosureArrows.length; i++) {
-				var disclosureArrow = Ext.fly(disclosureArrows[i]);
-				
-				disclosureArrow.removeCls("disclosureArrowSlideLeft");
-				disclosureArrow.addCls("disclosureArrowSlideRight");
-				disclosureArrow.addCls("disclosureArrowHidden");
-			}
-			
-            // Show the group name inputs and hide the group names if this is the groups lists
-            if (buttonIconCls != "minusFriendIcon") {
-    			var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
-    			for (var i = 0; i < groupNameInputs.length; i++) {
-    				var groupNameInput = Ext.fly(groupNameInputs[i]);
-    				groupNameInput.removeCls("groupNameInputHidden");
-    			}
-    			
-    			var groupNames = Ext.query("#friendsViewGroupsList .groupName");
-    			for (var i = 0; i < groupNames.length; i++) {
-    				var groupName = Ext.fly(groupNames[i]);
-    				if (groupName.parent(".group").getAttribute("data-groupId") != -1) {
-                        groupName.addCls("groupNameHidden");
-                    }
-    			}
-            }
-		}
-		
-		// Otherwise, the "Done" button was clicked
-		else {
-		    // Update the button from a "Done" button to an icon button
-			button.setText("");
-			button.setIconMask(true);
-		   	
-		   	// Unhide the other toolbar button
-			if (buttonIconCls == "minusFriendIcon") {
-				button.setIconCls("minusFriendIcon");
-				this.getAddFriendButton().show();
-			}
-			else {
-			    button.setIconCls("editIcon");
-				this.getCreateGroupButton().show();
-			}
-			
-			// Unhide the disclosure arrows by sliding them to the left
-			var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
-			for (var i = 0; i < disclosureArrows.length; i++) {
-				var disclosureArrow = Ext.fly(disclosureArrows[i]);
-				
-				disclosureArrow.removeCls("disclosureArrowSlideRight");
-				disclosureArrow.removeCls("disclosureArrowHidden");
-				disclosureArrow.addCls("disclosureArrowSlideLeft");
-			}
-			
-            // Hide the group name inputs and show the group names if this is the groups lists
-            if (buttonIconCls != "minusFriendIcon") {
-    			// Hide the group name inputs
-    			var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
-    			for (var i = 0; i < groupNameInputs.length; i++) {
-    				var groupNameInput = Ext.fly(groupNameInputs[i]);
-    				groupNameInput.addCls("groupNameInputHidden");
-    			}
-    			
-    			// Unhide the group names
-    			var groupNames = Ext.query("#friendsViewGroupsList .groupName");
-    			for (var i = 0; i < groupNames.length; i++) {
-    				var groupName = Ext.fly(groupNames[i]);
-    				groupName.removeCls("groupNameHidden");
-    			}
-            }
-		}
 
-		// Toggle the visibility of the delete locks
-		var deleteLocks = Ext.query("#" + listId + " .deleteLock");
-		for (var i = 0; i < deleteLocks.length; i++) {
-			var deleteLock = Ext.fly(deleteLocks[i]);
-			if (deleteLock.hasCls("deleteLockHidden")) {
-				deleteLock.removeCls("deleteLockSlideLeft");
+    /* Updates the state of the inputted list's delete locks */
+    updateDeleteLocksState: function(listId, newState) {
+        var deleteLocks = Ext.query("#" + listId + " .deleteLock");
+        for (var i = 0; i < deleteLocks.length; i++) {
+            var deleteLock = Ext.fly(deleteLocks[i]);
+            deleteLock.removeCls("deleteLockRotateLeft");
+            deleteLock.removeCls("deleteLockRotateRight");
+            if (newState == "editable") {
+                deleteLock.removeCls("deleteLockSlideLeft");
                 deleteLock.removeCls("deleteLockHidden");
                 deleteLock.addCls("deleteLockSlideRight");
-			}
-			else {
-				deleteLock.removeCls("deleteLockSlideRight");
-				deleteLock.addCls("deleteLockSlideLeft");
-				deleteLock.addCls("deleteLockHidden");
-			}
-			deleteLock.removeCls("deleteLockRotateLeft");
-			deleteLock.removeCls("deleteLockRotateRight");
-		}
-	},
+            }
+            else if (newState == "uneditable") {
+                deleteLock.removeCls("deleteLockSlideRight");
+                deleteLock.addCls("deleteLockSlideLeft");
+                deleteLock.addCls("deleteLockHidden");
+            }
+            else if (newState == "reset") {
+                deleteLock.removeCls("deleteLockSlideRight");
+                deleteLock.removeCls("deleteLockSlideLeft");
+                deleteLock.addCls("deleteLockHidden");
+            }
+        }
+    },
+
+    /* Updates the state of the inputted list's disclosure arrows */
+    updateDisclosureArrowsState: function(listId, newState) {
+        var disclosureArrows = Ext.query("#" + listId + " .disclosureArrow");
+        for (var i = 0; i < disclosureArrows.length; i++) {
+            var disclosureArrow = Ext.fly(disclosureArrows[i]);
+            
+            if (newState == "editable") {
+                disclosureArrow.removeCls("disclosureArrowSlideRight");
+                disclosureArrow.removeCls("disclosureArrowHidden");
+                disclosureArrow.addCls("disclosureArrowSlideLeft");
+            }
+            else if (newState == "uneditable") {
+                disclosureArrow.removeCls("disclosureArrowSlideLeft");
+                disclosureArrow.addCls("disclosureArrowSlideRight");
+                disclosureArrow.addCls("disclosureArrowHidden");
+            }
+            else if (newState == "reset") {
+                disclosureArrow.removeCls("disclosureArrowSlideLeft");
+                disclosureArrow.removeCls("disclosureArrowSlideRight");
+                disclosureArrow.removeCls("disclosureArrowHidden");
+            }
+        }
+    },
+
+    /* Toggles whether or not the friends list is editable */
+    toggleEditFriendsList: function(newState) {
+        // Show the appropriate toolbar buttons according to the new state
+        if (newState == "editable") {
+            this.getAddFriendsButton().hide();
+            this.getRemoveFriendsButton().hide();
+            this.getRemoveFriendsDoneButton().show();
+        }
+        else if (newState == "uneditable") {
+            this.getRemoveFriendsDoneButton().hide();
+            this.getAddFriendsButton().show();
+            this.getRemoveFriendsButton().show();
+        }
+
+        // Update the states of the friends list's delete locks and disclosure arrows
+        this.updateDeleteLocksState("friendsViewFriendsList", newState);
+        this.updateDisclosureArrowsState("friendsViewFriendsList", newState);
+    },
+
+    /* Toggles whether or not the groups list is editable */
+    toggleEditGroupsList: function(newState) {
+        // Show the appropriate toolbar buttons according to the new state
+        if (newState == "editable") {
+            this.getEditGroupsButton().hide();
+            this.getCreateGroupButton().hide();
+            this.getEditGroupsDoneButton().show();
+
+            var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
+            for (var i = 0; i < groupNameInputs.length; i++) {
+                var groupNameInput = Ext.fly(groupNameInputs[i]);
+                groupNameInput.removeCls("groupNameInputHidden");
+            }
+            
+            var groupNames = Ext.query("#friendsViewGroupsList .groupName");
+            for (var i = 0; i < groupNames.length; i++) {
+                var groupName = Ext.fly(groupNames[i]);
+                if (groupName.parent(".group").getAttribute("data-groupId") != -1) {
+                    groupName.addCls("groupNameHidden");
+                }
+            }
+        }
+        else if (newState == "uneditable") {
+            this.getEditGroupsDoneButton().hide();
+            this.getEditGroupsButton().show();
+            this.getCreateGroupButton().show();
+
+            // Hide the group name inputs
+            var groupNameInputs = Ext.query("#friendsViewGroupsList .groupNameInput");
+            for (var i = 0; i < groupNameInputs.length; i++) {
+                var groupNameInput = Ext.fly(groupNameInputs[i]);
+                groupNameInput.addCls("groupNameInputHidden");
+            }
+            
+            // Unhide the group names
+            var groupNames = Ext.query("#friendsViewGroupsList .groupName");
+            for (var i = 0; i < groupNames.length; i++) {
+                var groupName = Ext.fly(groupNames[i]);
+                groupName.removeCls("groupNameHidden");
+            }
+        }
+
+        // Update the states of the groups list's delete locks and disclosure arrows
+        this.updateDeleteLocksState("friendsViewGroupsList", newState);
+        if (newState == "editable") {
+            this.updateDisclosureArrowsState("friendsViewGroupsList", "uneditable");
+        }
+        else if (newState == "uneditable") {
+            this.updateDisclosureArrowsState("friendsViewGroupsList", "editable");
+        }
+    },
 
     /* Toggles the visibility of a delete button and the rotation of the delete corresponding delete lock */
     toggleDeleteButtonVisibility: function(list, tappedListItem, tappedDeleteLock, tappedRecord) {
@@ -465,7 +435,7 @@ Ext.define("inkle.controller.FriendsController", {
 				// Re-load the groups list, put it in edit mode, and set the focus on the new group's input field
 				this.getGroupsList().getStore().load({
 					callback: function(records, operation, success) {
-						this.toggleDeleteLocksVisibility("friendsViewGroupsList", "Edit");
+						this.toggleEditGroupsList("editable");
 						Ext.fly("group" + groupId + "NameInput").dom.focus();
 					},
 					scope: this
@@ -702,9 +672,22 @@ Ext.define("inkle.controller.FriendsController", {
 	    this.getFriendsList().getStore().load();
 	},
 	
-	updateGroupsList: function() {
-	    this.getGroupsList().getStore().load();
+    /* Updates the groups list */
+	updateGroupsList: function(groupId) {
+        this.getGroupsList().getStore().load();
 	},
+
+    /* Updates the group members list corresponding to the inputted group ID */
+    updateGroupMembersList: function(groupId) {
+        var groupMembersStore = this.getGroupMembersList().getStore();
+        
+        groupMembersStore.setProxy({
+            extraParams: {
+                groupId: groupId
+            }
+        });
+        groupMembersStore.load();
+    },
 	
 	updateRequestsList: function() {
         this.getRequestsList().getStore().load();

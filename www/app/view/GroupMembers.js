@@ -6,27 +6,11 @@ Ext.define("inkle.view.GroupMembers", {
 	config: {
 		layout: "vbox",
 		scrollable: false,
-		    	
-    	items: [
-    		// Top toolbar
-    		{
-    			xtype: "toolbar",
-    			id: "groupMembersViewToolbar",
-                docked: "top",
-                title: "Group Members",
-                items: [
-                	{
-                		xtype: "button",
-                		itemId: "groupMembersBackButton",
-                		ui: "back",
-                		text: "Groups"
-                	}
-                ]
-    		},
-    		
-    		// Friends list
-    		{
-    			xtype: "list",
+
+        items: [
+            // Friends list
+            {
+                xtype: "list",
 				id: "groupMembersList",
                 cls: "membersList",
 				flex: 1,
@@ -63,30 +47,26 @@ Ext.define("inkle.view.GroupMembers", {
 					},
 					autoLoad: false
 				}
-    		}
-    	],
-    	
-    	listeners: [
-    		{
-            	delegate: "#groupMembersBackButton",
-            	event: "tap",
-            	fn: "onGroupMembersBackButtonTapped"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".selectionItem",
-				fn: "onSelectionItemTap"
-        	}
+            }
+        ],
+
+        listeners: [
+            {
+                delegate: "#groupMembersBackButton",
+                event: "tap",
+                fn: "onGroupMembersBackButtonTapped"
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: ".selectionItem",
+                fn: "onSelectionItemTap"
+            }
         ]
     },
     
     // Event firings
-	onGroupMembersBackButtonTapped: function() {
-        this.fireEvent("groupMembersBackButtonTapped");
-    },
-    
     onSelectionItemTap: function(event, target) {
-    	this.fireEvent("selectionItemTapped", Ext.fly(target));
+        this.fireEvent("selectionItemTapped", Ext.fly(target));
     }
 });
