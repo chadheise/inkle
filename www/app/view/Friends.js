@@ -4,107 +4,135 @@ Ext.define("inkle.view.Friends", {
 	xtype: "friendsView",
 	
     requires: [
-    	"Ext.SegmentedButton",
-    	"Ext.dataview.List"
+        "Ext.SegmentedButton",
+        "Ext.dataview.List"
     ],
 	
 	config: {
-	    // Tab information
+        // Tab information
 		title: "Friends",
 		iconCls: "friendsIcon",
-    	
-    	// Layout information
-    	navigationBar: false,
-    	
-    	items: [
-    		// Top toolbar
-    		{
-    			xtype: "toolbar",
-    			id: "friendsViewToolbar",
+
+        // Layout information
+        navigationBar: false,
+
+        items: [
+            // Top toolbar
+            {
+                xtype: "toolbar",
+                id: "friendsViewToolbar",
                 docked: "top",
                 items: [
-                	{
-                		xtype: "button",
-                		id: "friendsViewRemoveFriendsButton",
-                		ui: "action",
-                		//iconMask: true,
-                		//iconCls: "minusFriendIcon",
-                		cls: ["toolbarButton", "toolbarButtonMinusFriend"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonMinusFriendPressed"],
-                		padding: 5
-                	},
-                	{
-                		xtype: "button",
-                		itemId: "friendsViewEditGroupsButton",
-                		ui: "action",
-                        //iconMask: true,
-                        //iconCls: "editIcon",
-                        cls: ["toolbarButton", "toolbarButtonGear"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonGearPressed"],
-                		hidden: true,
-                		padding: 5
-                	},
-                	{ xtype: "spacer" },
+                    // Remove friends buttons
                     {
-                    	xtype: "segmentedbutton",
-                    	id: "friendsViewSegmentedButton",
-                    	allowDepress: false,
-                    	allowMultiple: false,
-                    	centered: true,
-                    	items: [
-                    		{
+                        xtype: "button",
+                        id: "friendsViewRemoveFriendsButton",
+                        cls: ["toolbarButton", "toolbarButtonMinusFriend"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonMinusFriendPressed"]
+                    },
+                    {
+                        xtype: "button",
+                        id: "friendsViewRemoveFriendsDoneButton",
+                        text: "Done",
+                        pressedCls: ["toolbarButtonPressed"],
+                        hidden: true
+                    },
+
+                    // Edit groups buttons
+                    {
+                        xtype: "button",
+                        id: "friendsViewEditGroupsButton",
+                        cls: ["toolbarButton", "toolbarButtonGear"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonGearPressed"],
+                        hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        id: "friendsViewEditGroupsDoneButton",
+                        text: "Done",
+                        pressedCls: ["toolbarButtonPressed"],
+                        hidden: true
+                    },
+
+                    // Add friends button
+                    {
+                        xtype: "button",
+                        id: "addFriendsViewDoneButton",
+                        text: "Done",
+                        ressedCls: ["toolbarButtonPressed"],
+                        hidden: true
+                    },
+
+                    // Group members button
+                    {
+                        xtype: "button",
+                        id: "groupMembersViewDoneButton",
+                        text: "Done",
+                        ressedCls: ["toolbarButtonPressed"],
+                        hidden: true
+                    },
+
+                    // Spacer
+                    { xtype: "spacer" },
+
+                    // Segmented button
+                    {
+                        xtype: "segmentedbutton",
+                        id: "friendsViewSegmentedButton",
+                        allowDepress: false,
+                        allowMultiple: false,
+                        centered: true,
+                        items: [
+                            {
 								text: "Friends",
 								id: "friendsViewFriendsButton",
-								width: 70,
-								pressed: true,
-								padding: 0
+								width: 68,
+								pressed: true
 							},
 							{
 								text: "Groups",
 								id: "friendsViewGroupsButton",
-								width: 70,
+								width: 68,
 								padding: 0
 							},
 							{
 								text: "Requests",
 								id: "friendsViewRequestsButton",
-								width: 70,
+								width: 68,
 								padding: 0
 							}
 						]
                     },
+
+                    // Spacer
                     { xtype: "spacer" },
+
+                    // Add friends button
                     {
-                		xtype: "button",
-                		ui: "action",
-                		//iconMask: true,
-                		//iconCls: "plusFriendIcon",
-                		cls: ["toolbarButton", "toolbarButtonPlusFriend"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusFriendPressed"],
-                		itemId: "friendsViewAddFriendsButton",
-                		padding: 5,
-                	},
-                	{
-                		xtype: "button",
-                		itemId: "friendsViewCreateGroupButton",
-                		ui: "action",
-                		//iconMask: true,
-                		//iconCls: "plusIcon",
-                		cls: ["toolbarButton", "toolbarButtonPlus"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
-                		hidden: true,
-                		padding: 5
-                	}
+                        xtype: "button",
+                        id: "friendsViewAddFriendsButton",
+                        cls: ["toolbarButton", "toolbarButtonPlusFriend"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusFriendPressed"]
+                    },
+
+                    // Create group button
+                    {
+                        xtype: "button",
+                        id: "friendsViewCreateGroupButton",
+                        cls: ["toolbarButton", "toolbarButtonPlus"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
+                        hidden: true
+                    }
                 ]
-    		},
-    		
-    		// Main content
-    		{
-    			xtype: "container",
-    			itemId: "friendsViewContainer",
-    			layout: "card",
-    			items: [
-    				// Friends list
+            },
+
+            // Main content lists
+            {
+                xtype: "container",
+                itemId: "friendsViewMainContent",
+                layout: "card",
+                items: [
+                    // Friends list
 					{
 						xtype: "list",
 						id: "friendsViewFriendsList",
@@ -118,29 +146,29 @@ Ext.define("inkle.view.Friends", {
 							"{ html }"
 						],
 						store: {
-        					fields: [
-        						"id",
-        						"lastName",
-        						"html"
-        					],
-        					proxy: {
-        						type: "ajax",
-        						url: "http://127.0.0.1:8000/friends/",
-        						actionMethods: {
-        							read: "POST"
-        						},
-								extraParams: {
+                            fields: [
+                                "id",
+                                "lastName",
+                                "html"
+                            ],
+                            proxy: {
+                                type: "ajax",
+                                url: "http://127.0.0.1:8000/friends/",
+                                actionMethods: {
+                                    read: "POST"
+                                },
+                                extraParams: {
 									mode: "friends"
 								}
-        					},
-        					grouper: {
+                            },
+                            grouper: {
 								groupFn: function(record) {
 									return record.get("lastName").substr(0, 1);
 								}
 							},
-        					autoLoad: true
-        				},				
-                        plugins: [
+                            autoLoad: true
+                            },
+                            plugins: [
                             {
                                 xclass: "Ext.plugin.PullRefresh",
                                 refreshFn: function(plugin) {
@@ -162,19 +190,19 @@ Ext.define("inkle.view.Friends", {
 							"{ html }"
 						],
 						store: {
-        					fields: [
-        						"id",
-        						"html"
-        					],
-        					proxy: {
-        						type: "ajax",
-        						actionMethods: {
-        							read: "POST"
-        						},
-        						url: "http://127.0.0.1:8000/groupsMainContent/"
-        					},
-        					autoLoad: true
-        				},				
+                            fields: [
+                                "id",
+                                "html"
+                            ],
+                            proxy: {
+                                type: "ajax",
+                                actionMethods: {
+                                    read: "POST"
+                                },
+                                url: "http://127.0.0.1:8000/groupsMainContent/"
+                            },
+                            autoLoad: true
+                        },
                         plugins: [
                             {
                                 xclass: "Ext.plugin.PullRefresh",
@@ -197,19 +225,19 @@ Ext.define("inkle.view.Friends", {
 							"{ html }"
 						],
 						store: {
-        					fields: [
-        						"id",
-        						"html"
-        					],
-        					proxy: {
-        						type: "ajax",
-        						actionMethods: {
-        							read: "POST"
-        						},
-        						url: "http://127.0.0.1:8000/friendRequests/"
-        					},
-        					autoLoad: true
-        				},				
+                            fields: [
+                                "id",
+                                "html"
+                            ],
+                            proxy: {
+                                type: "ajax",
+                                actionMethods: {
+                                    read: "POST"
+                                },
+                                url: "http://127.0.0.1:8000/friendRequests/"
+                            },
+                            autoLoad: true
+                        },
                         plugins: [
                             {
                                 xclass: "Ext.plugin.PullRefresh",
@@ -218,117 +246,155 @@ Ext.define("inkle.view.Friends", {
                                 }
                             }
                         ]
-					}
-				]
-    		}
-    	],
-    	
-    	listeners: [
-    		{
-    			delegate: "#friendsViewSegmentedButton",
-    			event: "toggle",
-    			fn: "onFriendsViewSegmentedButtonToggle"
-    		},
-        	{
-            	delegate: "#friendsViewRemoveFriendsButton",
-            	event: "tap",
-            	fn: "onFriendsViewRemoveFriendsButtonTap"
-        	},
-        	{
-            	delegate: "#friendsViewAddFriendsButton",
-            	event: "tap",
-            	fn: "onFriendsViewAddFriendsButtonTap"
-        	},
-        	{
-            	delegate: "#friendsViewEditGroupsButton",
-            	event: "tap",
-            	fn: "onFriendsViewEditGroupsButtonTap"
-        	},
-        	{
-            	delegate: "#friendsViewCreateGroupButton",
-            	event: "tap",
-            	fn: "onFriendsViewCreateGroupButtonTap"
-        	},
-        	{
-        	    delegate: "#friendsViewFriendsList",
-        	    event: "pullToRefresh",
-        	    fn: "onFriendsViewFriendsListRefresh"
-        	},
-        	{
-        	    delegate: "#friendsViewGroupsList",
-        	    event: "pullToRefresh",
-        	    fn: "onFriendsViewGroupsListRefresh"
-        	},
-        	{
-        	    delegate: "#friendsViewRequestsList",
-        	    event: "pullToRefresh",
-        	    fn: "onFriendsViewRequestsListRefresh"
-        	},
-        	{
-				event: "blur",
-				element: "element",
-				delegate: ".groupNameInput",
-				fn: "onGroupNameInputBlurred"
-        	},
+                    }
+                ]
+            }
+        ],
+
+        listeners: [
+            // Top toolbar segmented button
+            {
+                delegate: "#friendsViewSegmentedButton",
+                event: "toggle",
+                fn: "onFriendsViewSegmentedButtonToggle"
+            },
+
+            // Top toolbar buttons
+            {
+                delegate: "#friendsViewRemoveFriendsButton",
+                event: "tap",
+                fn: "onFriendsViewRemoveFriendsButtonTap"
+            },
+            {
+                delegate: "#friendsViewRemoveFriendsDoneButton",
+                event: "tap",
+                fn: "onFriendsViewRemoveFriendsDoneButtonTap"
+            },
+            {
+                delegate: "#friendsViewAddFriendsButton",
+                event: "tap",
+                fn: "onFriendsViewAddFriendsButtonTap"
+            },
+            {
+                delegate: "#friendsViewEditGroupsButton",
+                event: "tap",
+                fn: "onFriendsViewEditGroupsButtonTap"
+            },
+            {
+                delegate: "#friendsViewEditGroupsDoneButton",
+                event: "tap",
+                fn: "onFriendsViewEditGroupsDoneButtonTap"
+            },
+            {
+                delegate: "#friendsViewCreateGroupButton",
+                event: "tap",
+                fn: "onFriendsViewCreateGroupButtonTap"
+            },
+            {
+                delegate: "#addFriendsViewDoneButton",
+                event: "tap",
+                fn: "onAddFriendsViewDoneButtonTap"
+            },
+            {
+                delegate: "#groupMembersViewDoneButton",
+                event: "tap",
+                fn: "onGroupMembersViewDoneButtonTap"
+            },
+
+            // List disclosure/itemtap
             {
                 delegate: "#friendsViewFriendsList",
                 event: "itemtap",
                 fn: "onFriendsViewFriendsListItemTap"
             },
-        	{
-            	delegate: "#friendsViewGroupsList",
-            	event: "itemtap",
-            	fn: "onFriendsViewGroupsListItemTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".acceptRequestButton",
-				fn: "onAcceptRequestButtonTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".ignoreRequestButton",
-				fn: "onIgnoreRequestButtonTap"
-        	}
+            {
+                delegate: "#friendsViewGroupsList",
+                event: "itemtap",
+                fn: "onFriendsViewGroupsListItemTap"
+            },
+
+            // Groups list name input blur
+            {
+                event: "blur",
+                element: "element",
+                delegate: ".groupNameInput",
+                fn: "onGroupNameInputBlurred"
+            },
+
+            // Requests list accept/ignore buttons
+            {
+                event: "tap",
+                element: "element",
+                delegate: ".acceptRequestButton",
+                fn: "onAcceptRequestButtonTap"
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: ".ignoreRequestButton",
+                fn: "onIgnoreRequestButtonTap"
+            },
+
+            // Pull to refresh
+            {
+                delegate: "#friendsViewFriendsList",
+                event: "pullToRefresh",
+                fn: "onFriendsViewFriendsListRefresh"
+            },
+            {
+                delegate: "#friendsViewGroupsList",
+                event: "pullToRefresh",
+                fn: "onFriendsViewGroupsListRefresh"
+            },
+            {
+                delegate: "#friendsViewRequestsList",
+                event: "pullToRefresh",
+                fn: "onFriendsViewRequestsListRefresh"
+            }
         ]
 	},
 	
-	// Event firings
+	/* Event firings */
+    // Top toolbar segmented button
 	onFriendsViewSegmentedButtonToggle: function(segmentedButton, button, isPressed, options) {
 		var tappedId = segmentedButton.getItems().indexOf(button);
 		this.fireEvent("friendsViewSegmentedButtonToggled", tappedId);
 	},
     
+    // Top toolbar buttons
     onFriendsViewRemoveFriendsButtonTap: function() {
-		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "friendsViewFriendsList", "minusFriendIcon");
+		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "editable");
     },
     
+    onFriendsViewRemoveFriendsDoneButtonTap: function() {
+        this.fireEvent("friendsViewRemoveFriendsDoneButtonTapped", "uneditable");
+    },
+
     onFriendsViewAddFriendsButtonTap: function() {
 		this.fireEvent("friendsViewAddFriendsButtonTapped");
     },
     
     onFriendsViewEditGroupsButtonTap: function() {
-		this.fireEvent("friendsViewEditGroupsButtonTapped", "friendsViewGroupsList", "Edit");
+		this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
     },
     
+    onFriendsViewEditGroupsDoneButtonTap: function() {
+        this.fireEvent("friendsViewEditGroupsDoneButtonTapped", "uneditable");
+    },
+
     onFriendsViewCreateGroupButtonTap: function() {
 		this.fireEvent("friendsViewCreateGroupButtonTapped");
     },
-    
-    onFriendsViewFriendsListRefresh: function() {
-        this.fireEvent("friendsViewFriendsListRefreshed");
+
+    onAddFriendsViewDoneButtonTap: function() {
+        this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
+    },
+
+    onGroupMembersViewDoneButtonTap: function() {
+        this.fireEvent("groupMembersViewDoneButtonTapped", /* source = */ "groupMembersView");
     },
     
-    onFriendsViewGroupsListRefresh: function() {
-        this.fireEvent("friendsViewGroupsListRefreshed");
-    },
-    
-    onFriendsViewRequestsListRefresh: function() {
-        this.fireEvent("friendsViewRequestsListRefreshed");
-    },
-    
+    // List disclosure/itemtap
     onFriendsViewFriendsListItemTap: function(friendsList, index, target, record, event, options) {
         var deleteLock = Ext.fly(event.getTarget(".deleteLock"));
         if (deleteLock) {
@@ -341,19 +407,21 @@ Ext.define("inkle.view.Friends", {
 
     onFriendsViewGroupsListItemTap: function(groupsList, index, target, record, event, options) {
         var deleteLock = Ext.fly(event.getTarget(".deleteLock"));
-    	if (deleteLock) {
+        if (deleteLock) {
             this.fireEvent("deleteLockTapped", groupsList, target, deleteLock, record);
         }
         else {
-    		this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
-    	}
+            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
+        }
     },
     
+    // Groups list name input blur
     onGroupNameInputBlurred: function(event, target) {
-    	var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
-    	this.fireEvent("groupNameInputBlurred", groupId);
+        var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
+        this.fireEvent("groupNameInputBlurred", groupId);
     },
     
+    // Requests list accept/ignore buttons
     onAcceptRequestButtonTap: function(event, target) {
 		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
@@ -362,5 +430,18 @@ Ext.define("inkle.view.Friends", {
     onIgnoreRequestButtonTap: function(event, target) {
 		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("ignoreRequestButtonTapped", memberId, "ignore");
-    }
+    },
+
+    // Pull to refresh
+    onFriendsViewFriendsListRefresh: function() {
+        this.fireEvent("friendsViewFriendsListRefreshed");
+    },
+    
+    onFriendsViewGroupsListRefresh: function() {
+        this.fireEvent("friendsViewGroupsListRefreshed");
+    },
+    
+    onFriendsViewRequestsListRefresh: function() {
+        this.fireEvent("friendsViewRequestsListRefreshed");
+    },
 });

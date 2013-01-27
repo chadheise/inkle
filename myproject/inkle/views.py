@@ -1,6 +1,6 @@
 # HTTP response modules
 from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 
@@ -27,13 +27,16 @@ import re
 
 import string
 import random
-import shutil
+# TODO: get rid of shutil?
+#import shutil
 
 # TODO: clean up print statements
+
 
 def is_logged_in(request):
     """Returns True if a user is logged in or False otherwise."""
     return HttpResponse("member_id" in request.session)
+
 
 @csrf_exempt
 def is_facebook_user(request):
@@ -46,6 +49,7 @@ def is_facebook_user(request):
     if member.facebookId:
         return HttpResponse(True)
     return HttpResponse(False)
+
 
 @csrf_exempt
 def login_view(request):
@@ -71,7 +75,7 @@ def login_view(request):
             facebookId = False
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
-    
+
     # Create a string to hold the login error
     response_error = ""
 
@@ -96,8 +100,8 @@ def login_view(request):
                 member = Member.active.get(email = email)
         except:
             member = []
-            
-        if (facebookId and not member): #A new member registering facebook (the facebookId was sent but no member object exists for that facebookId)
+
+        if (facebookId and not member):  #A new member registering facebook (the facebookId was sent but no member object exists for that facebookId)
             print "facebookId and not member"
             try:
                 #If the user has not logged in with facebook before but they registered with their email
@@ -108,8 +112,8 @@ def login_view(request):
                     response_error += "You can link your account to facebook by logging in with your email and going to the settings tab."
                     # Create and return a JSON object
                     response = simplejson.dumps({
-                        "success" : False,
-                        "error" : response_error
+                        "success": False,
+                        "error": response_error
                     })
                     print response
                     return HttpResponse(response, mimetype = "application/json")
@@ -127,7 +131,7 @@ def login_view(request):
                 )
                 # Set the new member's password
                 member.set_password(password)
-                member.save() # Save the new member
+                member.save()  # Save the new member
 
         # If the user is logging in with facebook, validate their authentication token or log them out
         if (facebookId):
@@ -136,7 +140,7 @@ def login_view(request):
                 if (member and member.is_active):
                     request.session["member_id"] = member.id
                     fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
-                    fbResponse = urllib2.urlopen(fbRequest).read() # Will throw an exception if access token can't be validated
+                    fbResponse = urllib2.urlopen(fbRequest).read()  # Will throw an exception if access token can't be validated
                     request.session["facebook_access_token"] = facebookAccessToken
                     fbData = simplejson.loads(fbResponse)
                     member.last_login = datetime.datetime.now()
@@ -164,8 +168,8 @@ def login_view(request):
 
     # Create and return a JSON object
     response = simplejson.dumps({
-        "success" : success,
-        "error" : response_error
+        "success": success,
+        "error": response_error
     })
     # TODO: Do we need this modified thing anymore?
     request.session.modified = True
@@ -2019,25 +2023,31 @@ def delete_group_view(request):
 @csrf_exempt
 def group_members_view(request):
     """Returns a list of the logged-in member's friends and if they are in the inputted group."""
+    print "a"
     # Get the logged-in member
     try:
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-
+    print member
     # Get the inputted group or set the group to None if we are getting the "Not Grouped" members
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
     except:
         group = None
 
+    print group
     # Make sure the inputted group is one of the logged-in member's groups
     if ((group) and (group.creator != member)):
         raise Http404()
 
+    print "b"
+
     # Get a list of the logged-in members friends
     friends = list(member.friends.all())
     friends.sort(key = lambda m : m.last_name) # TODO: try to remove this and just use a sencha sorter
+
+    print friends
 
     # Get only the "Not Grouped" members if necessary
     if (not group):
@@ -2046,24 +2056,29 @@ def group_members_view(request):
                 if (m in friends):
                     friends.remove(m)
 
+    print friends
+
     # Get the HTML for each of the logged-in member's friends' list item (and whether or not they are in the inputted group)
     response_friends = []
     for m in friends:
+        print "1"
         m.num_mutual_friends = member.get_num_mutual_friends(m)
-        
-        m.selected = (m in group.members.all())
+        print "2"
 
+        m.selected = (group != None) and (m in group.members.all())
+        print "3"
         html = render_to_string( "memberListItem.html", {
             "m" : m,
             "member" : member,
-            "include_selection_item" : True
+            "include_selection_item" : (group != None)
         })
-        
+        print "4"
         response_friends.append({
             "id" : m.id,
             "lastName" : m.last_name,
             "html": html
         })
+        print "5"
     
     # Create and return a JSON object
     response = simplejson.dumps(response_friends)
