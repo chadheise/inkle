@@ -87,7 +87,6 @@ class FeedComment(models.Model):
         else:
             return "%d: %d - %s... (%s)" % (self.id, self.inkling.id, self.text[:17].strip(), self.creator.get_full_name())
 
-
 class InklingInvitation(models.Model):
     """InklingInvitation class definition."""
     # General information

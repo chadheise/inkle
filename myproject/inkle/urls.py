@@ -23,7 +23,6 @@ urlpatterns = patterns(
 
     # All Inklings
     (r"^allInklings/$", "all_inklings_view"),
-    (r"^isMemberInkling/$", "is_member_inkling_view"),
     (r"^inkling/$", "inkling_view"),
     (r"^editInkling/$", "edit_inkling_view"),
     (r"^saveInkling/$", "save_inkling_view"),

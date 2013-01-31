@@ -41,41 +41,44 @@ Ext.define("inkle.controller.MyInklingsController", {
         },
         control: {
             myInklingsView: {
-            	inklingTapped: "activateInklingView",
-            	inklingInvitationsButtonTapped: "toggleInklingInvitationsVisibility",
-            	onInviteResponseBackButtonTapped: "activateMyInklingsView",
-            	newInklingButtonTapped: "activateNewInklingView",
-            	newInklingCancelButtonTapped: "activateMyInklingsView",
-            	newInklingDoneButtonTapped: "createInkling",
-            	inklingInviteesDoneButtonTapped: "activateNewInklingViewPop",
-            	allFriendsInviteesDoneButtonTapped: "activateInklingInviteesViewPop",
-            	newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
-            	newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
-            	activate: "hideMyInklingsTabBadge",
-            	deactivate: "hideMyInklingsPanels",
-            	activeitemchange: "hideMyInklingsPanels",
-            	myInklingsListRefreshed: "updateMyInklingsList"
+                inklingTapped: "activateInklingView",
+                inklingInvitationsButtonTapped: "toggleInklingInvitationsVisibility",
+                onInviteResponseBackButtonTapped: "activateMyInklingsView",
+                newInklingButtonTapped: "activateNewInklingView",
+                newInklingCancelButtonTapped: "activateMyInklingsView",
+                newInklingDoneButtonTapped: "createInkling",
+                inklingInviteesDoneButtonTapped: "activateNewInklingViewPop",
+                allFriendsInviteesDoneButtonTapped: "activateInklingInviteesViewPop",
+                newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
+                newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
+                activate: "hideMyInklingsTabBadge",
+                deactivate: "hideMyInklingsPanels",
+                activeitemchange: "hideMyInklingsPanels",
+                myInklingsListRefreshed: "updateMyInklingsList",
+                initialize: "updateMyInklingsList"
             },
             
             newInklingView: {
-            	newInklingInviteesTapped: "activateInklingInviteesView",	
-            	selectedGroupsShareSettingTapped: "selectSelectedGroupsShareSetting",
-            	groupShareSettingTapped: "toggleGroupShareSetting",
-            	noOneShareSettingTapped: "selectNoOneShareSetting",
-            	forwardingShareSettingTapped: "toggleForwardingShareSetting",
+                newInklingInviteesTapped: "activateInklingInviteesView",
+                selectedGroupsShareSettingTapped: "selectSelectedGroupsShareSetting",
+                groupShareSettingTapped: "toggleGroupShareSetting",
+                noOneShareSettingTapped: "selectNoOneShareSetting",
+                forwardingShareSettingTapped: "toggleForwardingShareSetting"
             },
             
             newInklingInvitedFriendsView: {
-            	memberSelectionButtonTapped: "toggleSelectionButton"
+                memberSelectionButtonTapped: "toggleSelectionButton"
             },
             
             inklingInvitationsPanel: {
                 invitationButtonTapped: "respondToInklingInvitation",
-                inklingInvitationTapped: "activateInklingView"
+                inklingInvitationTapped: "activateInklingView",
+                inklingInvitationsListRefreshed: "updateInklingInvitationsList",
+                initialize: "updateInklingInvitationsList"
             },
             
             newInklingInvitedGroupsPanel: {
-            	groupSelectionButtonTapped: "toggleSelectionButton"
+                groupSelectionButtonTapped: "toggleSelectionButton"
             }
         }
     },
@@ -83,10 +86,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 	/* Transitions*/
 	/* Activates the my inklings view from the new inkling view */
 	activateMyInklingsView: function() {
-    	// Pop the new inkling view from the my inklings view
-    	this.getMyInklingsView().pop();
-    	
-    	// Show appropriate buttons
+        // Pop the new inkling view from the my inklings view
+        this.getMyInklingsView().pop();
+
+        // Show appropriate buttons
 		this.getMyInklingsInklingBackButton().hide();
 		this.getInklingFeedButton().hide();
 		this.getNewInklingCancelButton().hide();
@@ -94,8 +97,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getInviteResponseBackButton().hide();
 		this.getInklingInvitationsButton().show();
 		this.getNewInklingButton().show();
-    	
-    	// Update the toolbar title
+
+        // Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("My Inklings");
 		
         //this.getGroupsList().getStore().load();
@@ -109,24 +112,30 @@ Ext.define("inkle.controller.MyInklingsController", {
 		this.getMyInklingsInklingBackButton().show();
 		this.getInklingFeedButton().show();
 		
-		// Update the toolbar title
-		this.getMyInklingsViewToolbar().setTitle("Inkling");
-		
-		// Update the back button text
-		if (source == "myInklings") {
-		    this.getMyInklingsInklingBackButton().setText("My Inklings");
-		}
-		else if (source == "invitations") {
-		    this.getMyInklingsInklingBackButton().setText("Invitations");
-		}
-		
-    	this.getMyInklingsView().push({
-        	xtype: "inklingView",
-        	data: {
-        		inklingId: inklingId,
-        		source: source
-        	}
+        // Update the back button text
+        if (source == "myInklings") {
+            this.getMyInklingsInklingBackButton().setText("My Inklings");
+        }
+        else if (source == "invitations") {
+            this.getMyInklingsInklingBackButton().setText("Invitations");
+        }
+
+        // Get today's date
+        var today = new Date();
+
+        // Push the inkling view onto the all inklings view
+        this.getMyInklingsView().push({
+            xtype: "inklingView",
+            data: {
+                inklingId: inklingId,
+                timezoneOffset: today.getTimezoneOffset(),
+                source: source,
+                isMemberAttending: "True"
+            }
         });
+
+        // Update the top toolbar's title
+        this.getMyInklingsViewToolbar().setTitle("Inkling");
     },
     
     // Activates the new inkling view
@@ -139,7 +148,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		
 		// Update the toolbar title
 		this.getMyInklingsViewToolbar().setTitle("New Inkling");
-		    
+
         // Initialize a new inkling
         var inklingId;
         Ext.Ajax.request({
@@ -393,7 +402,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	hideMyInklingsTabBadge: function() {
-	    this.getMainTabView().getTabBar().getAt(1).setBadgeText("");
+        this.getMainTabView().getTabBar().getAt(1).setBadgeText("");
 	},
 	
 	/*Share Settings */
@@ -507,6 +516,30 @@ Ext.define("inkle.controller.MyInklingsController", {
 	},
 	
 	updateMyInklingsList: function() {
-	    this.getMyInklingsList().getStore().load();
-	}
+        // Get today's date
+        var today = new Date();
+
+        // Update the my inklings list
+        var myInklingsListStore = this.getMyInklingsList().getStore();
+        myInklingsListStore.setProxy({
+            extraParams: {
+                timezoneOffset: today.getTimezoneOffset()
+            }
+        });
+        myInklingsListStore.load();
+	},
+
+    updateInklingInvitationsList: function() {
+        // Get today's date
+        var today = new Date();
+    
+        // Update the my inklings list
+        var inklingsInvitationsListStore = this.getInklingInvitationsList().getStore();
+        inklingsInvitationsListStore.setProxy({
+            extraParams: {
+                timezoneOffset: today.getTimezoneOffset()
+            }
+        });
+        inklingsInvitationsListStore.load();
+    }
 });

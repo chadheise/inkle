@@ -6,34 +6,34 @@ Ext.define("inkle.view.Inkling", {
 	config: {
 		scrollable: true,
 		
-    	url: "http://127.0.0.1:8000/inkling/",
-    	
-    	listeners: [
-        	{
+        url: "http://127.0.0.1:8000/inkling/",
+
+        listeners: [
+            {
 				event: "tap",
 				element: "element",
 				delegate: "#editInklingButton",
 				fn: "onEditInklingButtonTap"
-        	},
-        	{
-        	    event: "tap",
-        	    element: "element",
-        	    delegate: ".memberPicture",
-        	    fn: "onMemberPictureTap"
-        	},
-        	{
-        	    event: "tap",
-        	    element: "element",
-        	    delegate: "#membersAttendingDisclosureArrow",
-        	    fn: "onMembersAttendingDisclosureArrowTap"
-        	},
-        	{
-        	    event: "tap",
-        	    element: "element",
-        	    delegate: "#membersAwaitingReplyDisclosureArrow",
-        	    fn: "onMembersAwaitingReplyDisclosureArrowTap"
-        	}
-    	]
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: ".memberPicture",
+                fn: "onMemberPictureTap"
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: "#membersAttendingDisclosureArrow",
+                fn: "onMembersAttendingDisclosureArrowTap"
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: "#membersAwaitingReplyDisclosureArrow",
+                fn: "onMembersAwaitingReplyDisclosureArrowTap"
+            }
+        ]
     },
     
     // Event firings

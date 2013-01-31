@@ -97,18 +97,18 @@ Ext.define("inkle.controller.InklingController", {
     activateInklingFeedView: function() {
         // If we are in the "All Inklings" view
         if (!this.getAllInklingsView().isHidden()) {
-    		// Display the appropriate top toolbar buttons
-    		this.getAllInklingsInklingBackButton().hide();
+            // Display the appropriate top toolbar buttons
+            this.getAllInklingsInklingBackButton().hide();
             this.getAllInklingsInklingFeedButton().hide();
-    		this.getAllInklingsBackToInklingButton().show();
-    		this.getAllInklingsAddCommentButton().show();
-    		
-    		// Push the inkling feed view onto the all inklings view
-        	this.getAllInklingsView().push({
-            	xtype: "inklingFeedView",
-            	data: {
-            		inklingId: this.getInklingView().getData()["inklingId"]
-            	}
+            this.getAllInklingsBackToInklingButton().show();
+            this.getAllInklingsAddCommentButton().show();
+
+            // Push the inkling feed view onto the all inklings view
+            this.getAllInklingsView().push({
+                xtype: "inklingFeedView",
+                data: {
+                    inklingId: this.getInklingView().getData()["inklingId"]
+                }
             });
             
             this.getAllInklingsViewToolbar().setTitle("Feed");
@@ -124,7 +124,7 @@ Ext.define("inkle.controller.InklingController", {
             this.getMyInklingsInklingFeedButton().hide();
             this.getMyInklingsBackToInklingButton().show();
             this.getMyInklingsAddCommentButton().show();
-            
+
             // Push the inkling feed view onto the all inklings view
             this.getMyInklingsView().push({
                 xtype: "inklingFeedView",
@@ -142,25 +142,17 @@ Ext.define("inkle.controller.InklingController", {
     
     /* Activates the all inklings view from the inkling view */
 	activateAllInklingsView: function() {
-        console.log("1");
 		// Display the appropriate top toolbar buttons
 		this.getAllInklingsInklingBackButton().hide();
-        console.log("2");
 		this.getAllInklingsInklingFeedButton().hide();
-        console.log("3");
 		this.getAllInklingsJoinInklingButton().hide();
-        console.log("4");
         this.getAllInklingsDateButton().show();
-        console.log("5");
         this.getAllInklingsGroupsButton().show();
-        console.log("6");
-    	
+
     	// Pop the inkling view off of the all inklings view
         this.getAllInklingsView().pop();
-        console.log("7");
 
         this.getAllInklingsViewToolbar().setTitle("Inklings");
-        console.log("8");
     },
     
     /* Activates the my inklings view from the inkling view */
@@ -191,7 +183,7 @@ Ext.define("inkle.controller.InklingController", {
             // Display the appropriate top toolbar buttons
             this.getAllInklingsAddCommentButton().hide();
             this.getAllInklingsBackToInklingButton().hide();
-            if (this.getInklingView().getData()["isJoined"] === "True") {
+            if (this.getInklingView().getData()["isMemberAttending"] === "True") {
                 this.getAllInklingsInklingFeedButton().show();
             }
             else {
@@ -282,12 +274,11 @@ Ext.define("inkle.controller.InklingController", {
     /**************/
 	/*  COMMANDS  */
 	/**************/
-	
 	/* Updates the inkling feed list */
 	updateInklingFeedList: function() {
         // Get the inkling feed list's store
         var inklingFeedListStore = this.getInklingFeedList().getStore();
-		
+
 		// Update the inkling feed list's store
 		inklingFeedListStore.setProxy({
 			extraParams: {

@@ -72,10 +72,13 @@ Ext.define("inkle.view.Registration", {
                         ]
 					},
 					{
-					    xtype: "datepickerfield",
-					    id: "registrationFormBirthday",
-					    name: "birthday",
-					    placeHolder: "Birthday"
+                        xtype: "datepickerfield",
+                        id: "registrationFormBirthday",
+                        name: "birthday",
+                        placeHolder: "Birthday",
+                        picker: {
+                            yearFrom: 1900
+                        }
 					},
 					{
 						xtype: "emailfield",

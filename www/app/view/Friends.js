@@ -54,21 +54,12 @@ Ext.define("inkle.view.Friends", {
                         hidden: true
                     },
 
-                    // Add friends button
-                    {
-                        xtype: "button",
-                        id: "addFriendsViewDoneButton",
-                        text: "Done",
-                        ressedCls: ["toolbarButtonPressed"],
-                        hidden: true
-                    },
-
                     // Group members button
                     {
                         xtype: "button",
                         id: "groupMembersViewDoneButton",
                         text: "Done",
-                        ressedCls: ["toolbarButtonPressed"],
+                        pressedCls: ["toolbarButtonPressed"],
                         hidden: true
                     },
 
@@ -291,11 +282,6 @@ Ext.define("inkle.view.Friends", {
                 fn: "onFriendsViewCreateGroupButtonTap"
             },
             {
-                delegate: "#addFriendsViewDoneButton",
-                event: "tap",
-                fn: "onAddFriendsViewDoneButtonTap"
-            },
-            {
                 delegate: "#groupMembersViewDoneButton",
                 event: "tap",
                 fn: "onGroupMembersViewDoneButtonTap"
@@ -384,10 +370,6 @@ Ext.define("inkle.view.Friends", {
 
     onFriendsViewCreateGroupButtonTap: function() {
 		this.fireEvent("friendsViewCreateGroupButtonTapped");
-    },
-
-    onAddFriendsViewDoneButtonTap: function() {
-        this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
     },
 
     onGroupMembersViewDoneButtonTap: function() {

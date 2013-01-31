@@ -66,11 +66,9 @@ Ext.define("inkle.view.MyInklings", {
                         xtype: "button",
                         ui: "action",
                         itemId: "newInklingButton",
-                        //iconMask: true,
-                		//iconCls: "plusIcon",
-                		cls: ["toolbarButton", "toolbarButtonPlus"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
-                		padding: 5
+                        cls: ["toolbarButton", "toolbarButtonPlus"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
+                        padding: 5
                     },
                     {
                         xtype: "button",
@@ -82,19 +80,17 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        //iconMask: true,
-                        //iconCls: "feedIcon",
                         cls: ["toolbarButton", "toolbarButtonFeed"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
                     {
-                		xtype: "button",
-                		ui: "action",
-                		text: "Done",
-                		itemId: "newInklingDoneButton",
-                		hidden: true
+                        xtype: "button",
+                        ui: "action",
+                        text: "Done",
+                        itemId: "newInklingDoneButton",
+                        hidden: true
                 	},
                 	{
                 		xtype: "button",
@@ -162,8 +158,8 @@ Ext.define("inkle.view.MyInklings", {
                             return record.get("group");
                         }
                     },
-					autoLoad: true
-				},				
+					autoLoad: false
+				},
                 plugins: [
                     {
                         xclass: "Ext.plugin.PullRefresh",
@@ -205,8 +201,16 @@ Ext.define("inkle.view.MyInklings", {
                                     read: "POST"
                                 }
                             },
-							autoLoad: true
-						}
+							autoLoad: false
+						},
+                        plugins: [
+                            {
+                                xclass: "Ext.plugin.PullRefresh",
+                                refreshFn: function(plugin) {
+                                    plugin.up().fireEvent("pullToRefresh");
+                                }
+                            }
+                        ]
 					}
 				],
 				
@@ -246,6 +250,11 @@ Ext.define("inkle.view.MyInklings", {
         	    event: "pullToRefresh",
         	    fn: "onMyInklingsListRefresh"
         	},
+            {
+                delegate: "#inklingInvitationsList",
+                event: "pullToRefresh",
+                fn: "onInklingInvitationsListRefresh"
+            },
     		{
     			delegate: "#inklingInvitationsButton",
             	event: "tap",
@@ -317,6 +326,10 @@ Ext.define("inkle.view.MyInklings", {
 	// Event firings
 	onMyInklingsListRefresh: function() {
         this.fireEvent("myInklingsListRefreshed");
+    },
+
+    onInklingInvitationsListRefresh: function() {
+        this.fireEvent("inklingInvitationsListRefreshed");
     },
 	
 	onInklingInvitationsButtonTap: function() {
