@@ -8,28 +8,45 @@ Ext.define("inkle.view.AddFriends", {
 	],
 	
 	config: {
+        // Layout information
 		layout: "vbox",
 		scrollable: false,
 
-    	items: [
-    		// Search bar
-    		{
-    			xtype: "searchfield",
-    			id: "addFriendsSearchField",
+        items: [
+            // Top toolbar
+            {
+                xtype: "toolbar",
+                id: "addFriendsViewToolbar",
+                title: "Add Friends",
+                docked: "top",
+                items: [
+                    {
+                        xtype: "button",
+                        itemId: "addFriendsViewDoneButton",
+                        text: "Done",
+                        pressedCls: ["toolbarButtonPressed"]
+                    }
+                ]
+            },
+
+            // Search bar
+            {
+                xtype: "searchfield",
+                id: "addFriendsSearchField",
                 name: "query",
                 placeHolder: "Search for new friends",
                 height: 20
-    		},
-    		
-    		// Suggestions list
-    		{
-    			xtype: "list",
-    			id: "addFriendsSuggestions",
-    			flex: 1,
-    			loadingText: "Loading suggestions...",
-				emptyText: "<p class='emptyListText'>No matches</p>",
-				disableSelection: true,
-				itemTpl: [
+            },
+
+            // Suggestions list
+            {
+                xtype: "list",
+                id: "addFriendsSuggestions",
+                flex: 1,
+                loadingText: "Loading suggestions...",
+                emptyText: "<p class='emptyListText'>No matches</p>",
+                disableSelection: true,
+                itemTpl: [
 					'{ html }'
 				],
 				store: {
@@ -60,27 +77,36 @@ Ext.define("inkle.view.AddFriends", {
         ],
 
         listeners: [
-            {
-                delegate: "#addFriendsSearchField",
-                event: "keyup",
-                fn: "onAddFriendsSearchFieldKeyUp"
-            },
-            {
-                event: "tap",
-                element: "element",
-                delegate: ".addFriendButton",
-                fn: "onAddFriendButtonTap"
-            },
-            {
-                event: "tap",
-                element: "element",
-                delegate: ".inviteFriendButton",
-                fn: "onInviteFriendButtonTap"
-            }
+        {
+            delegate: "#addFriendsViewDoneButton",
+            event: "tap",
+            fn: "onAddFriendsViewDoneButtonTapped"
+        },
+        {
+            delegate: "#addFriendsSearchField",
+            event: "keyup",
+            fn: "onAddFriendsSearchFieldKeyUp"
+        },
+        {
+            event: "tap",
+            element: "element",
+            delegate: ".addFriendButton",
+            fn: "onAddFriendButtonTap"
+        },
+        {
+            event: "tap",
+            element: "element",
+            delegate: ".inviteFriendButton",
+            fn: "onInviteFriendButtonTap"
+        }
         ]
     },
     
     // Event firings
+	onAddFriendsViewDoneButtonTapped: function() {
+        this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
+    },
+	
 	onAddFriendsSearchFieldKeyUp: function() {
         this.fireEvent("addFriendsSearchFieldKeyedUp");
     },

@@ -36,23 +36,23 @@ Ext.define("inkle.view.InklingFeed", {
 			},
             
             // Add comment panel
-        	{
-        		xtype: "panel",
-        		id: "addCommentPanel",
-        		hidden: true,
-        		top: 0,
-        		width: 300,
-        		height: 220,
-        		layout: "vbox",
-        		items: [
-        			{
+            {
+                xtype: "panel",
+                id: "addCommentPanel",
+                hidden: true,
+                top: 0,
+                width: 300,
+                height: 220,
+                layout: "vbox",
+                items: [
+                    {
                         xtype: "textareafield",
                         itemId: "addCommentTextField",
                         placeHolder: "Add a comment...",
                         width: "100%",
                         height: 175,
                         maxLength: 150
-                    },	
+                    },
                     {
                         xtype: "button",
                         itemId: "addCommentSendButton",

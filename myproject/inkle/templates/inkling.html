@@ -5,7 +5,7 @@
     <div id="inklingHeader">
         <div class="numAttendees">{{ inkling.get_num_members_attending }}</div>
         <div class="location">{{ inkling.location|default:"Location TBD" }}</div>
-        {% if inkling in member.inklings.all %}
+        {% if inkling in member.inklings.all and not inkling.is_frozen %}
             <img id="editInklingButton" src="resources/images/icons/gear.png" />
         {% endif %}
         <div class="clear"></div>

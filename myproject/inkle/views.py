@@ -346,20 +346,22 @@ def get_members_from_groups(member, group_ids):
 
     return members
 
-def get_inkling_list_item_html(inkling):
+def get_inkling_list_item_html(inkling, member):
     """Returns the HTML for an inkling list item."""
     # Get the member thumbnails for those attending the inputted inkling
-    num_members_attending = inkling.get_num_members_attending()
-    num_members_attending_thumbnails = min(num_members_attending, 5)   # TODO: make 7 a global variable
+    num_members_attending = inkling.get_num_members_attending() # TODO: make this into a template tag
+    num_members_attending_thumbnails = min(num_members_attending, 5)   # TODO: make 5 a global variable
     members_attending = list(inkling.get_members_attending())[0 : num_members_attending_thumbnails]
-    
+
+    inkling.is_member_attending = inkling in member.inklings.all()
+
     # Get the HTML for the inkling list item
     html = render_to_string( "inklingListItem.html", {
         "i" : inkling,
         "members_attending" : members_attending,
         "num_other_members_attending" : num_members_attending - num_members_attending_thumbnails
     })
-    
+
     return html
 
 def get_group_list_item_main_content_html(group, group_members = None):
@@ -488,21 +490,24 @@ def all_inklings_view(request):
 
     # Determine if we should return dated or no-dated inklings
     try:
-        onlyIncludeNoDatedInklings = request.POST["onlyIncludeNoDatedInklings"]
+        onlyIncludeUndatedInklings = request.POST["onlyIncludeUndatedInklings"]
     except:
-        onlyIncludeNoDatedInklings = "false"
+        onlyIncludeUndatedInklings = "false"
 
-    # If necessary, get the date, or set it to today if no date is specified
-    if (onlyIncludeNoDatedInklings == "false"):
+    # If necessary, get the UTC date, or set it to today if no date is specified
+    if (onlyIncludeUndatedInklings == "false"):
         try:
             day = int(request.POST["day"])
             month = int(request.POST["month"])
             year = int(request.POST["year"])
             date = datetime.date(year, month, day)
         except KeyError:
-            date = datetime.date.today()
+            # Convert the UTC date to the local date
+            raise Http404()
     else:
         date = None
+
+    #print date
 
     # Get a list of the members who are in the groups selected by the logged-in member; otherwise, get all of the logged-in member's friends
     if ("selectedGroupIds" in request.POST):
@@ -512,10 +517,10 @@ def all_inklings_view(request):
         members = get_members_from_groups(member, selected_group_ids)
     else:
         members = list(member.friends.filter(is_active = True))
-    
+
     # Append the logged-in member to the members list
     members.append(member)
-    
+
     # Get the inklings the members are attending on the specified date
     inklings = []
     for m in members:
@@ -537,7 +542,7 @@ def all_inklings_view(request):
     for i in inklings:
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending()
         })
 
@@ -676,28 +681,6 @@ def groups_main_content_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
-def is_member_inkling_view(request):
-    """Returns True if the logged-in memeber is attending the inputted inkling."""
-    # Get the logged-in member
-    try:
-        member = Member.active.get(pk = request.session["member_id"])
-    except (Member.DoesNotExist, KeyError) as e:
-        raise Http404()
-
-    # Get the inputted inkling
-    try:
-        inkling_id = request.POST["inklingId"]
-    except:
-        raise Http404()
-
-    # Return True if the logged-in member is attending the inkling or False otherwise
-    if (member.inklings.filter(pk = inkling_id)):
-        return HttpResponse("True")
-    else:
-        return HttpResponse("False")
-
-
 # TODO: either delete this if it is not being used or update the function comment for it
 @csrf_exempt
 def inkling_view(request):
@@ -708,11 +691,19 @@ def inkling_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    # Get the current inkling
+    # Get the current inkling and local date (cannot just used datetime.date.today() since that always returns UTC)
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
+        timezone_offset = int(request.POST["timezoneOffset"])
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
     except:
         raise Http404()
+
+    # Determine if the inkling has already occured (to see if it is still editable)
+    inkling.is_frozen = False
+    if (today > inkling.date):
+        inkling.is_frozen = True
 
     # Set the number of member pictures to show for each section
     num_member_pics = 8
@@ -723,7 +714,7 @@ def inkling_view(request):
     if (inkling in member.inklings.all()):
         members_attending.append(member)
         i = 1
-    
+
     for m in inkling.get_members_attending():
         if (i == num_member_pics):
             break
@@ -739,7 +730,7 @@ def inkling_view(request):
     if (inkling.member_has_pending_invitation(member)):
         members_awaiting_reply.append(member)
         i = 1
-    
+
     for m in inkling.get_members_awaiting_reply():
         if (i == num_member_pics):
             break
@@ -750,9 +741,17 @@ def inkling_view(request):
     num_other_members_awaiting_reply = inkling.get_num_members_awaiting_reply() - i
 
     # Return the HTML for the current inkling
-    return render_to_response( "inkling.html",
-        { "member" : member, "inkling" : inkling, "members_attending" : members_attending, "num_other_members_attending" : num_other_members_attending, "members_awaiting_reply" : members_awaiting_reply, "num_other_members_awaiting_reply" : num_other_members_awaiting_reply },
-        context_instance = RequestContext(request) )
+    return render_to_response("inkling.html", {
+            "member": member,
+            "inkling": inkling,
+            "members_attending": members_attending,
+            "num_other_members_attending": num_other_members_attending,
+            "members_awaiting_reply": members_awaiting_reply,
+            "num_other_members_awaiting_reply": num_other_members_awaiting_reply
+        },
+        context_instance = RequestContext(request)
+    )
+
 
 @csrf_exempt
 def share_settings_form_view(request):
@@ -767,6 +766,7 @@ def share_settings_form_view(request):
     return render_to_response( "shareSettingsForm.html",
         { "member" : member },
         context_instance = RequestContext(request) )
+
 
 @csrf_exempt
 def set_share_setting_view(request):
@@ -954,7 +954,7 @@ def inkling_feed_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
-    # Get the current inkling
+    # Get the current inkling and the timezone offset
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
     except:
@@ -964,40 +964,39 @@ def inkling_feed_view(request):
     response_feed_items = []
 
     # Add the inkling creation feed update to the response list
-    html = render_to_string( "inklingFeedUpdateListItem.html", {
-        "inkling" : inkling,
-        "member" : member
+    html = render_to_string("inklingFeedUpdateListItem.html", {
+        "inkling": inkling,
+        "member": member
     })
 
     response_feed_items.append({
-        "html" : html,
-        "date" : inkling.date_created
+        "html": html,
+        "date": inkling.date_created
     })
 
     # Add the feed comments to the response list
     for feed_comment in inkling.feedcomment_set.all():
-        html = render_to_string( "inklingFeedCommentListItem.html", {
-            "feed_comment" : feed_comment,
-            "member" : member
+        html = render_to_string("inklingFeedCommentListItem.html", {
+            "feed_comment": feed_comment,
+            "member": member
         })
 
         response_feed_items.append({
-            "html" : html,
-            "date" : feed_comment.date_created
+            "html": html,
+            "date": feed_comment.date_created
         })
 
     # Add the feed updates to the response list
     for feed_update in inkling.feedupdate_set.all():
-        html = render_to_string( "inklingFeedUpdateListItem.html", {
-            "feed_update" : feed_update,
-            "member" : member
+        html = render_to_string("inklingFeedUpdateListItem.html", {
+            "feed_update": feed_update,
+            "member": member
         })
 
         response_feed_items.append({
-            "html" : html,
-            "date" : feed_update.date_created
+            "html": html,
+            "date": feed_update.date_created
         })
-
 
     # Sort the feed items chronologically
     response_feed_items.sort(key = lambda feed_item : feed_item["date"])
@@ -1114,8 +1113,19 @@ def my_inklings_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
 
+    # Get the current local date (cannot just used datetime.date.today() since that always returns UTC)
+    try:
+        print "a"
+        timezone_offset = int(request.POST["timezoneOffset"])
+        print timezone_offset
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        print today
+        today = today.date()
+        print today
+    except KeyError:
+        raise Http404()
+
     # Create several date objects
-    today = datetime.date.today()
     tomorrow = today + datetime.timedelta(days = 1)
     this_week = today + datetime.timedelta(days = 6)
 
@@ -1124,7 +1134,7 @@ def my_inklings_view(request):
     for i in member.inklings.filter(date = today):
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Today",
             "groupIndex" : 0
@@ -1134,7 +1144,7 @@ def my_inklings_view(request):
     for i in member.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Tomorrow",
             "groupIndex" : 1
@@ -1144,7 +1154,7 @@ def my_inklings_view(request):
     for i in member.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending(),
             "group" : "This Week",
             "groupIndex" : 2
@@ -1156,7 +1166,7 @@ def my_inklings_view(request):
     for i in future_inklings:
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Future",
             "groupIndex" : 3
@@ -1166,7 +1176,7 @@ def my_inklings_view(request):
     for i in member.inklings.filter(date__exact = None):
         response_inklings.append({
             "id" : i.id,
-            "html" : get_inkling_list_item_html(i),
+            "html" : get_inkling_list_item_html(i, member),
             "numMembersAttending" : i.get_num_members_attending(),
             "group" : "Future",
             "groupIndex" : 3
@@ -1185,7 +1195,7 @@ def num_inkling_invitations_view(request):
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
     
-    # Return the number of inklings to which the logged-in member has pending invitations
+    # Return the number of inklings to which the logged-in member has pending or missed invitations
     return HttpResponse(member.inkling_invitations_received.filter(status = "pending").count() + member.inkling_invitations_received.filter(status = "missed").count())
 
 
@@ -1197,32 +1207,47 @@ def inkling_invitations_view(request):
         member = Member.active.get(pk = request.session["member_id"])
     except (Member.DoesNotExist, KeyError) as e:
         raise Http404()
-    
+
+    # Get the current inkling and local date (cannot just used datetime.date.today() since that always returns UTC)
+    try:
+        timezone_offset = int(request.POST["timezoneOffset"])
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
+    except:
+        raise Http404()
+
     # Get a list of the inklings to which the logged-in member has pending invitations
     response_invitations = []
     for invitation in member.inkling_invitations_received.filter(status = "pending"):
-        html = render_to_string( "inklingInvitationListItem.html", {
-            "invitation" : invitation
-        })
-        
-        response_invitations.append({
-            "invitationId" : invitation.id,
-            "inklingId" : invitation.inkling.id,
-            "html": html
-        })
+        # Mark the invitation if it has been missed
+        if (today > invitation.inkling.date):
+            invitation.status = "missed"
+            invitation.save()
+
+        # Otherwise, add it to the response list
+        else:
+            html = render_to_string("inklingInvitationListItem.html", {
+                "invitation": invitation
+            })
+
+            response_invitations.append({
+                "invitationId": invitation.id,
+                "inklingId": invitation.inkling.id,
+                "html": html
+            })
 
     # Add the inklings to which the logged-in members has missed invitations
     for invitation in member.inkling_invitations_received.filter(status = "missed"):
-        html = render_to_string( "inklingInvitationListItem.html", {
-            "invitation" : invitation
+        html = render_to_string("inklingInvitationListItem.html", {
+            "invitation": invitation
         })
-        
+
         response_invitations.append({
-            "invitationId" : invitation.id,
-            "inklingId" : invitation.inkling.id,
+            "invitationId": invitation.id,
+            "inklingId": invitation.inkling.id,
             "html": html
         })
-    
+
     # Create and return a JSON object
     response = simplejson.dumps(response_invitations)
     return HttpResponse(response, mimetype = "application/json")

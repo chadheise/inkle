@@ -104,32 +104,28 @@ Ext.define("inkle.controller.LoginController", {
     activateMainTabView: function() {
         // Destroy the main tab view
 		if (this.getMainTabView()) {
-		    this.getMainTabView().destroy();
+            this.getMainTabView().destroy();
 		}
 		
 		// Destroy all other components
 		if (this.getAllInklingsGroupsListPanel()) {
-		    this.getAllInklingsGroupsListPanel().destroy();
+            this.getAllInklingsGroupsListPanel().destroy();
 		}
 		if (this.getAllInklingsDatePickerPanel()) {
-		    this.getAllInklingsDatePickerPanel().destroy();
+            this.getAllInklingsDatePickerPanel().destroy();
 		}
 		if (this.getInklingInvitationsPanel()) {
-		    this.getInklingInvitationsPanel().destroy();
+            this.getInklingInvitationsPanel().destroy();
 		}
         
         // Create the main tab view
         var mainTabView = Ext.create("inkle.view.Main");
         
         // Animate the main tab view
-        Ext.Viewport.animateActiveItem(mainTabView, { type: "slide", direction: "up" });
-        
-        // Set the date of the date picker button
-        today = new Date();
-	    var day = this.getDayString(today.getDay());
-	    var date = today.getDate();
-	    var month = this.getMonthString(today.getMonth());
-	    this.getAllInklingsDateButton().setText(day + ", " + month + " " + date);
+        Ext.Viewport.animateActiveItem(mainTabView, {
+            type: "slide",
+            direction: "up"
+        });
     },
 	
     /**************/

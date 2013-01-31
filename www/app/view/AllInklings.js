@@ -4,87 +4,52 @@ Ext.define("inkle.view.AllInklings", {
 	xtype: "allInklingsView",
 	
     requires: [
-    	"Ext.TouchCalendar",
-    	"Ext.plugin.PullRefresh"
+        "Ext.TouchCalendar",
+        "Ext.plugin.PullRefresh"
     ],
 	
 	config: {
 		// Tab title and icon
 		title: "All Inklings",
 		iconCls: "allInklingsIcon",
-    	
-    	// Hide the navigation bar
-    	navigationBar: false,
-    	
-    	// Navigation bar
-    	/*navigationBar: {
-    		items: [
-    			{
-                	xtype: "button",
-                	ui: "action",
-                	itemId: "allInklingsDateButton"
-                },
-			 	//{ xtype: "spacer" },
-				{
-					xtype: "container",
-					html: "<img style='padding-top:2px; height: 45px;' src='resources/images/mainInkleIcon.png' />",
-					//align: "center",
-					centered: true
-				},
-				//{ xtype: "spacer" },
-    			{
-                    xtype: "button",
-                    ui: "action",
-                    text: "All Groups",
-                    align: "right",
-                    itemId: "allInklingsGroupsButton",
-                    data: {
-                       	"groupId": -1
-                	}
-                },
-    		]
-    	},*/
-    	
-    	items: [
+
+        // Hide the navigation bar
+        navigationBar: false,
+
+        items: [
 			// Top toolbar
-    		{
+            {
                 title: "Inklings",
-    			xtype: "toolbar",
-    			id: "allInklingsViewToolbar",
+                xtype: "toolbar",
+                id: "allInklingsViewToolbar",
                 docked: "top",
                 items: [
-                	{
-                		xtype: "button",
-                		ui: "action",
-                		itemId: "allInklingsDateButton"
-                	},
-                	{
-                		xtype: "button",
-                		ui: "back",
-                		text: "All Inklings",
-                		itemId: "allInklingsInklingBackButton",
-                		hidden: true
-                	},
-                	{
-                		xtype: "button",
-                		ui: "back",
-                		text: "Inkling",
-                		itemId: "backToInklingButton",
-                		hidden: true
-                	},
-                	{
-                		xtype: "button",
-                		ui: "action",
-                		text: "Cancel",
-                		itemId: "cancelEditInklingButton",
-                		hidden: true
-                	},
-                    { xtype: "spacer" },
-                    /*{
-                    	xtype: "container",
-                    	html: "<img style='padding-top:2px; height: 46px;' src='resources/images/icons/inkleIcon.png' />",
-                    	centered: true
-                    },*/
+                    {
+                        xtype: "button",
+                        ui: "action",
+                        itemId: "allInklingsDateButton"
+                    },
+                    {
+                        xtype: "button",
+                        ui: "back",
+                        text: "All Inklings",
+                        itemId: "allInklingsInklingBackButton",
+                        hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        ui: "back",
+                        text: "Inkling",
+                        itemId: "backToInklingButton",
+                        hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        ui: "action",
+                        text: "Cancel",
+                        itemId: "cancelEditInklingButton",
+                        hidden: true
+                    },
                     { xtype: "spacer" },
                     {
                         xtype: "button",
@@ -102,10 +67,8 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        //iconMask: true,
-                		//iconCls: "feedIcon",
-                		cls: ["toolbarButton", "toolbarButtonFeed"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
+                        cls: ["toolbarButton", "toolbarButtonFeed"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonFeedPressed"],
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
@@ -119,19 +82,17 @@ Ext.define("inkle.view.AllInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        //iconMask: true,
-                        //iconCls: "plusIcon",
                         cls: ["toolbarButton", "toolbarButtonPlus"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                         itemId: "addCommentButton",
                         hidden: true
                     }
                 ]
-    		},
+            },
 
-    		// All inklings list
-    		{
-    			xtype: "list",
+            // All inklings list
+            {
+                xtype: "list",
 				id: "allInklingsList",
                 cls: "inklingsList",
 				loadingText: "Loading inklings...",
@@ -150,12 +111,9 @@ Ext.define("inkle.view.AllInklings", {
 						actionMethods: {
 							read: "POST"
 						},
-						extraParams: {
-                            onlyIncludeNoDatedInklings: "false"
-                        },
 						url: "http://127.0.0.1:8000/allInklings/"
 					},
-					autoLoad: true
+					autoLoad: false
 				},
 				
 				plugins: [
@@ -166,49 +124,47 @@ Ext.define("inkle.view.AllInklings", {
                         }
                     }
                 ]
-    		},
+            },
 
-        	// Date picker
-        	{
-        		xtype: "panel",
-        		id: "allInklingsDatePickerPanel",
-        		hidden: true,
-        		top: 0,
-        		width: 300,
-        		height: 275,
-        		layout: "fit",
-        		items: [
+            // Date picker
+            {
+                xtype: "panel",
+                id: "allInklingsDatePickerPanel",
+                hidden: true,
+                top: 0,
+                width: 300,
+                height: 310,
+                layout: "fit",
+                items: [
 					{
-					    xtype: "calendar",
-					    itemId: "allInklingsDatePicker",
-                        height: 221,
+                        xtype: "calendar",
+                        itemId: "allInklingsDatePicker",
+                        height: 256,
                         viewConfig: {
                             viewMode: "month",
                             weekStart: 0,
                             value: new Date()
-                        } 
+                        }
                     },
 					{
-					    xtype: "checkboxfield",
-					    id: "noDatedInklingsCheckbox",
-                        label: "Include inklings with no date",
-                        top: 222,
-                        width: 300,
-                        labelWidth: 250,
-                        checked: false
+                        xtype: "container",
+                        html: [
+                            "<div>",
+                                "<img id='undatedInklingsCheckbox' class='selectionItem' src='resources/images/deselected.png'>",
+                                "<p id='undatedInklingsText'>Show inklings with no date</p>",
+                            "</div>"
+                        ].join(""),
+                        top: 257,
+                        width: 300
 					}
-            	],
+                ],
 				
 				listeners: [
                     {
-                        delegate: "#noDatedInklingsCheckbox",
-                        event: "check",
-                        fn: "onNoDatedInklingsCheckboxCheck"
-                    },
-                    {
-                        delegate: "#noDatedInklingsCheckbox",
-                        event: "uncheck",
-                        fn: "onNoDatedInklingsCheckboxUncheck"
+                        delegate: "#undatedInklingsCheckbox",
+                        element: "element",
+                        event: "tap",
+                        fn: "onUndatedInklingsCheckboxTap"
                     },
                     {
                         delegate: "#allInklingsDatePicker",
@@ -217,8 +173,8 @@ Ext.define("inkle.view.AllInklings", {
                     }
 				],
     
-                onNoDatedInklingsCheckboxCheck: function() {
-                    this.fireEvent("noDatedInklingsCheckboxChecked");
+                onUndatedInklingsCheckboxTap: function() {
+                    this.fireEvent("undatedInklingsCheckboxTapped");
                 },
                 
                 onNoDatedInklingsCheckboxUncheck: function() {
@@ -229,19 +185,19 @@ Ext.define("inkle.view.AllInklings", {
                     this.fireEvent("allInklingsDatePickerSelectionChanged", selectedDate);
                 }
 			},
-        	
-        	// Groups list
-        	{
-        		xtype: "panel",
-        		id: "allInklingsGroupsListPanel",
+
+            // Groups list
+            {
+                xtype: "panel",
+                id: "allInklingsGroupsListPanel",
                 cls: "groupsListPanel",
-        		hidden: true,
-        		top: 0,
-        		width: 310,
-        		height: 275,
-        		layout: "fit",
-        		items: [
-        			{
+                hidden: true,
+                top: 0,
+                width: 310,
+                height: 275,
+                layout: "fit",
+                items: [
+                    {
 						xtype: "list",
 						id: "allInklingsGroupsList",
 						loadingText: "Loading groups...",
@@ -273,71 +229,76 @@ Ext.define("inkle.view.AllInklings", {
 						element: "element",
 						delegate: ".selectionButton",
 						fn: "onGroupSelectionButtonTap"
-					},
+                    }
 				],
 				
-				onGroupSelectionButtonTap: function(event, target) {
-					this.fireEvent("groupSelectionButtonTapped", Ext.fly(target));
+                onGroupSelectionButtonTap: function(event, target) {
+                    this.fireEvent("groupSelectionButtonTapped", Ext.fly(target));
 				}
 			}
-    	],
-    	
-    	listeners: [
-    		/* All inklings view */
-			{
-            	delegate: "#allInklingsDateButton",
-            	event: "tap",
-            	fn: "onAllInklingsDateButtonTap"
-        	},
-			{
-            	delegate: "#allInklingsGroupsButton",
-            	event: "tap",
-            	fn: "onAllInklingsGroupsButtonTap"
-        	},
-        	{
-        	    delegate: "#allInklingsList",
-        	    event: "pullToRefresh",
-        	    fn: "onAllInklingsListRefresh"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".inklingListItem",
-				fn: "onInklingTap"
-        	},
-        	
-        	/* Not all inklings view */
-        	{
-            	delegate: "#allInklingsInklingBackButton",
-            	event: "tap",
-            	fn: "onAllInklingsInklingBackButtonTap"
-        	},
-        	{
-            	delegate: "#backToInklingButton",
-            	event: "tap",
-            	fn: "onBackToInklingButtonTap"
-        	},
-        	{
-            	delegate: "#joinInklingButton",
-            	event: "tap",
-            	fn: "onJoinInklingButtonTap"
-        	},
-        	{
-            	delegate: "#saveInklingButton",
-            	event: "tap",
-            	fn: "onSaveInklingButtonTap"
-        	},
-        	{
-            	delegate: "#cancelEditInklingButton",
-            	event: "tap",
-            	fn: "onCancelEditInklingButtonTap"
-        	},
-        	{
-            	delegate: "#inklingFeedButton",
-            	event: "tap",
-            	fn: "onInklingFeedButtonTap"
-        	},
-        	{
+        ],
+
+        listeners: [
+            /* All inklings view */
+            {
+                delegate: "#allInklingsDateButton",
+                event: "tap",
+                fn: "onAllInklingsDateButtonTap"
+            },
+            {
+                delegate: "#allInklingsGroupsButton",
+                event: "tap",
+                fn: "onAllInklingsGroupsButtonTap"
+            },
+            {
+                delegate: "#allInklingsList",
+                event: "pullToRefresh",
+                fn: "onAllInklingsListRefresh"
+            },
+            /*{
+                event: "tap",
+                element: "element",
+                delegate: ".inklingListItem",
+                fn: "onInklingTap"
+            },*/
+            {
+                delegate: "#allInklingsList",
+                event: "itemtap",
+                fn: "onAllInklingsListItemTap"
+            },
+
+            /* Not all inklings view */
+            {
+                delegate: "#allInklingsInklingBackButton",
+                event: "tap",
+                fn: "onAllInklingsInklingBackButtonTap"
+            },
+            {
+                delegate: "#backToInklingButton",
+                event: "tap",
+                fn: "onBackToInklingButtonTap"
+            },
+            {
+                delegate: "#joinInklingButton",
+                event: "tap",
+                fn: "onJoinInklingButtonTap"
+            },
+            {
+                delegate: "#saveInklingButton",
+                event: "tap",
+                fn: "onSaveInklingButtonTap"
+            },
+            {
+                delegate: "#cancelEditInklingButton",
+                event: "tap",
+                fn: "onCancelEditInklingButtonTap"
+            },
+            {
+                delegate: "#inklingFeedButton",
+                event: "tap",
+                fn: "onInklingFeedButtonTap"
+            },
+            {
                 delegate: "#addCommentButton",
                 event: "tap",
                 fn: "onAddCommentButtonTapped"
@@ -358,9 +319,16 @@ Ext.define("inkle.view.AllInklings", {
         this.fireEvent("allInklingsListRefreshed");
     },
     
-    onInklingTap: function(event, target) {
+    /*onInklingTap: function(event, target) {
         var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("data-inklingId");
         this.fireEvent("inklingTapped", tappedInklingId);
+    },*/
+
+    onAllInklingsListItemTap: function(allInklingsList, index, target, record, event, options) {
+        var inklingListItem = event.getTarget(".inklingListItem");
+        var tappedInklingId = inklingListItem.getAttribute("data-inklingId");
+        var isMemberAttending = inklingListItem.getAttribute("data-isMemberAttending");
+        this.fireEvent("inklingTapped", tappedInklingId, isMemberAttending);
     },
     
     onAllInklingsInklingBackButtonTap: function() {
