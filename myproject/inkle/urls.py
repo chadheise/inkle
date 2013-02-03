@@ -8,12 +8,13 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns(
     "myproject.inkle.views",
 
+    (r"^raise404/$", "raise_404_view"),
+
     # Login, logout, and registration
     (r"^isLoggedIn/$", "is_logged_in"),
     (r"^login/$", "login_view"),
     (r"^logout/$", "logout_view"),
     (r"^registration/$", "registration_view"),
-    (r"^isFacebookUser/$", "is_facebook_user"),
     (r"^linkFacebookAccount/$", "link_facebook_account_view"),
 
     # Common
