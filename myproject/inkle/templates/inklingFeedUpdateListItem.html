@@ -3,7 +3,7 @@
 <div class="feedUpdate">
     {% if feed_update %}
         <!-- Icon -->
-        {% if feed_update.creator == member %}
+        {% if feed_update.creator == user %}
             <img class="floatRight" src="resources/images/{{ feed_update.get_icon_name }}" />
         {% else %}
             <img src="resources/images/{{ feed_update.get_icon_name }}" />
@@ -14,7 +14,7 @@
         <p class="timestamp">{{ feed_update.date_created|naturaltime }}</p>
     {% else %}
         <!-- Icon -->
-        {% if inkling.creator == member %}
+        {% if inkling.creator == user %}
             <img class="floatRight" src="resources/images/feed/inkle.jpg" />
         {% else %}
             <img src="resources/images/feed/inkle.jpg" />

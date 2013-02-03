@@ -14,7 +14,7 @@
     {% endif %}
 
     <!-- Member image -->
-    <img class="memberImage" src="{{ m.get_picture_path }}" />
+    <img class="memberImage" src="{{ m.get_profile.get_picture_path }}" />
 
     <!-- Member info -->
     <div class="memberInfo">
@@ -25,8 +25,8 @@
         </div>
 
         <!-- Mutual friends -->
-        {% if m != member %}
-            <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+        {% if m != user %}
+            <p class="numMutualFriends">{{ m.get_profile.num_mutual_friends }} mutual friend{{ m.get_profile.num_mutual_friends|pluralize }}</p>
         {% endif %}
     </div>
 
@@ -37,10 +37,10 @@
 
     <!-- Add friend buttons -->
     {% if include_add_friend_buttons %}
-        {% if m in member.friends.all %}
+        {% if m in user.get_profile.friends.all %}
             <input class="isFriendButton" type="button" value="Friends" />
         {% else %}
-            {% if m == member %}
+            {% if m == user %}
                 <input class="isFriendButton" type="button" value="Me" />
             {% else %}
                 <input class="addFriendButton" type="button" value="Add Friend" />
