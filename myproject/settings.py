@@ -154,7 +154,10 @@ LOGGING = {
 # User authentication
 AUTH_PROFILE_MODULE = "inkle.UserProfile"
 LOGIN_URL = "/raise404/"
-
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "inkle.backend.FacebookAuthenticationBackend"
+)
 # TODO: get rid of this?
 #Added for Django_facebook integration
 """

@@ -31,8 +31,9 @@ import re
 
 import string
 import random
-# TODO: get rid of shutil?
-#import shutil
+
+# TODO: get rid of shutil? No
+import shutil
 
 # TODO: clean up print statements
 
@@ -48,27 +49,13 @@ def is_logged_in(request):
 
 
 @csrf_exempt
-def login_view(request):
-    """Logs a member in or returns the login error."""
+def email_login_view(request):
+    """Logs in a non-Facebook member or returns a login error."""
     # Get the inputted email and password
     try:
-        if ("facebookId" in request.POST):
-            facebookId = request.POST["facebookId"]
-            facebookAccessToken = request.POST["facebookAccessToken"]
-            # Create random password 32 chars long
-            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
-            first_name = request.POST["first_name"]
-            last_name = request.POST["last_name"]
-            email = request.POST["email"]
-            day = int(request.POST["birthday"].split('/')[1])
-            month = int(request.POST["birthday"].split('/')[0])
-            year = int(request.POST["birthday"].split('/')[2])
-            birthday = datetime.date(day = day, month = month, year = year)
-            gender = request.POST["gender"][0]
-        else:
-            email = request.POST["email"]
-            password = request.POST["password"]
-            facebookId = False
+        email = request.POST["email"]
+        password = request.POST["password"]
+        #facebook_id = None
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
 
@@ -76,128 +63,109 @@ def login_view(request):
     response_error = ""
 
     # Validate the email and password
-    if (not facebookId):
-        if ((not email) and (not password)):
-            response_error = "Email and password not specified"
-        elif (not email):
-            response_error = "Email not specified"
-        elif (not password):
-            response_error = "Password not specified"
-
-    print "guhh"
+    if ((not email) and (not password)):
+        response_error = "Email and password not specified"
+    elif (not email):
+        response_error = "Email not specified"
+    elif (not password):
+        response_error = "Password not specified"
 
     # Log in the member if their email and password are correct
     if (not response_error):
-        try:
-            # Get the member by facebookId
-            if (facebookId):
-                member = User.objects.filter(is_active = True).get(facebookId = facebookId)
-                #Should allow user to update their email if their facebook email doesn't match the one in inkle
-            # Get the member according to the provided email
-            else:
-                member = User.objects.filter(is_active = True).get(email = email)
-        except:
-            member = []
-
-        if (facebookId and not member):  #A new member registering facebook (the facebookId was sent but no member object exists for that facebookId)
-            print "facebookId and not member"
-            try:
-                #If the user has not logged in with facebook before but they registered with their email
-                member = User.objects.filter(is_active = True).get(email = email)
-                if member:
-                    print "found member by email"
-                    response_error = "A user with that email address already exists. "
-                    response_error += "You can link your account to facebook by logging in with your email and going to the settings tab."
-                    # Create and return a JSON object
-                    response = simplejson.dumps({
-                        "success": False,
-                        "error": response_error
-                    })
-                    print response
-                    return HttpResponse(response, mimetype = "application/json")
-            except:
-                print "except"
-                # Create the new member
-                member = User(
-                    first_name = first_name,
-                    last_name = last_name,
-                    username = email,
-                    email = email
-                )
-                member.set_password("password")
-                member.save()
-                print "saved"
-                #if (gender == "Male"):
-                #    shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
-                #else:
-                #    shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
-
-                user_profile = UserProfile(user = member, facebookId = facebookId, birthday = birthday, gender = gender)
-                user_profile.save()
-                print "Facebook logged in"
-
-        # If the user is logging in with facebook, validate their authentication token or log them out
-        if (facebookId):
-            # Confirm the user is active and log them in
-            try:
-                if (member and member.is_active):
-                    request.session["member_id"] = member.id
-                    fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
-                    fbResponse = urllib2.urlopen(fbRequest).read()  # Will throw an exception if access token can't be validated
-                    request.session["facebook_access_token"] = facebookAccessToken
-                    fbData = simplejson.loads(fbResponse)
-                    member.last_login = datetime.datetime.now()
-                    member.save()
-                    print "..."
-                    user = authenticate(username=email, password="password")
-                    print user
-                    login(request, user)
-                    print "Facebook logged in"
-                # Otherwise, add to the errors list
-                else:
-                    response_error = "Could not login using Facebook"
-            except Exception, e:
-                response_error = "Could not login using Facebook"
+        user = authenticate(username = email, password = password)
+        print user
+        if (user and user.is_active):
+            login(request, user)
+            user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
+            user.save()                                # TODO: get rid of this?
         else:
-            print "else"
-            user = authenticate(username=email, password=password)
-            print user
-            if user is not None:
-                print "is not None"
-                if user.is_active:
-                    login(request, user)
-                    print "Logged in"
-                    user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
-                    user.save()  # TODO: get rid of this?
-                    print "Logged in"
-                else:
-                    print "Account disabled"
-                    response_error = "Invalid login combination"
-            else:
-                response_error = "Invalid login combination"
-
-            # Confirm the username and password combination and log the member in
-            #if (member and member.is_active and member.check_password(password)):
-            #    request.session["member_id"] = member.id
-            #    member.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
-            #    member.save()
-            # Otherwise, add to the errors list
-            #else:
-            #    response_error = "Invalid login combination"
-
-    # Determine if the login was successful
-    if (response_error):
-        success = False
-    else:
-        success = True
+            response_error = "Invalid login combination"
 
     # Create and return a JSON object
     response = simplejson.dumps({
-        "success": success,
+        "success": response_error == "",
         "error": response_error
     })
-    # TODO: Do we need this modified thing anymore?
-    request.session.modified = True
+
+    return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def facebook_login_view(request):
+    """Logs in a Facebook member or returns a login error."""
+    # Get the Facebook information sent via POST
+    try:
+        facebook_id = request.POST["facebookId"]
+        facebook_access_token = request.POST["facebookAccessToken"]
+        first_name = request.POST["firstName"]
+        last_name = request.POST["lastName"]
+        email = request.POST["email"]
+        day = int(request.POST["birthday"].split('/')[1])
+        month = int(request.POST["birthday"].split('/')[0])
+        year = int(request.POST["birthday"].split('/')[2])
+        birthday = datetime.date(day = day, month = month, year = year)
+        gender = request.POST["gender"][0]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+
+    # Create a string to hold the login error
+    response_error = ""
+
+    # Get the user with the inputted Facebook ID
+    try:
+        user_profile = UserProfile.objects.get(facebook_id = facebook_id)
+        user = user_profile.user
+        if (not user.is_active):
+            user = None
+    except:
+        user = None
+
+    # If there already is a Facebook user, skip this
+    if (not user):
+        try:
+            # If there is a non-Facebook user with the inputted username, return an error
+            user = User.objects.filter(is_active = True).get(email = email)
+            response_error = "A user with that email address already exists. Link your account to Facebook in the settings tab."
+        except:
+            # If there is no Facebook or non-Facebook user already created, create it
+            user = User(
+                first_name = first_name,
+                last_name = last_name,
+                username = email,
+                email = email
+            )
+            user.set_unusable_password()
+            user.save()
+
+            if (gender == "Male"):
+                shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+            else:
+                shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+
+            user_profile = UserProfile(
+                user = user,
+                facebook_id = facebook_id,
+                birthday = birthday,
+                gender = gender
+            )
+            user_profile.save()
+
+    # If there is a user object and no errors, authenticate the user
+    if (user and not response_error):
+        user = authenticate(facebook_id = facebook_id, facebook_access_token = facebook_access_token)
+        if (user and user.is_active):
+            login(request, user)
+            user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
+            user.save()                                # TODO: get rid of this?
+        else:
+            response_error = "Invalid login"
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
     return HttpResponse(response, mimetype = "application/json")
 
 
@@ -433,8 +401,8 @@ def link_facebook_account_view(request):
 
     # Get the facebook credentials
     try:
-        if ("facebookId" in request.POST):
-            facebookId = request.POST["facebookId"]
+        if ("facebook_id" in request.POST):
+            facebook_id = request.POST["facebookId"]
             facebookAccessToken = request.POST["facebookAccessToken"]
             #first_name = request.POST["first_name"]
             #last_name = request.POST["last_name"]
@@ -449,7 +417,7 @@ def link_facebook_account_view(request):
 
     # Check for existing member with the facebook ID
     try:
-        fbUser = User.objects.filter(is_active = True).get(facebookId = facebookId)
+        fbUser = User.objects.filter(is_active = True).get(facebook_id = facebook_id)
         #NEED TO DECIDE WHAT TO DO IN THIS CASE
     except:
         #There is no existing member with the provided facebook ID
@@ -469,7 +437,7 @@ def link_facebook_account_view(request):
 
     if (fbUser is None):
         try:
-            request.user.facebookId = facebookId  # Store their facebookId for future use
+            request.user.facebook_id = facebook_id  # Store their facebook_id for future use
             #Replace the users password with a random one - they must login with facebook now
             password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
             request.user.set_password(password)
@@ -1535,7 +1503,7 @@ def invite_facebook_friends_view(request):
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Get inkle user from facebook user id
-            inkleUser = User.objects.get(facebookId = fbFriend["uid"]) #Will throw error if no member object exists with the given facebookId
+            inkleUser = User.objects.get(facebook_id = fbFriend["uid"]) #Will throw error if no member object exists with the given facebook_id
             if inkleUser not in request.user.friends.all(): #If the facebook friend is not an inkle friend
                 inkleUser.is_friend = False
                 inkleUser.is_pending = request.user.has_pending_friend_request_to(inkleFriend)
@@ -1547,7 +1515,7 @@ def invite_facebook_friends_view(request):
             personData = {} #Create dictionary for facebook friend data
             personData["first_name"] = fbFriend["first_name"]
             personData["last_name"] = fbFriend["last_name"]
-            personData["facebookId"] = fbFriend["uid"]
+            personData["facebook_id"] = fbFriend["uid"]
             #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
             personData["id"] = "fb" + str(fbFriend["uid"])
             personData["num_mutual_friends"] = 0
@@ -1672,7 +1640,7 @@ def people_search_view(request):
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Get inkle user from facebook user id
-            inkleFriend = User.objects.get(facebookId = fbFriend["uid"])
+            inkleFriend = User.objects.get(facebook_id = fbFriend["uid"])
             if inkleFriend not in inkleFriends: #If the facebook friend is not an inkle friend
                 inkleFriend.num_mutual_friends = member.get_profile().get_num_mutual_friends(inkleFriend)
                 inkleFriend.is_friend = False
@@ -1682,7 +1650,7 @@ def people_search_view(request):
             personData = {} #Create dictionary for facebook friend data
             personData["first_name"] = fbFriend["first_name"]
             personData["last_name"] = fbFriend["last_name"]
-            personData["facebookId"] = fbFriend["uid"]
+            personData["facebook_id"] = fbFriend["uid"]
             #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
             personData["id"] = "fb" + str(fbFriend["uid"])
             personData["num_mutual_friends"] = 0
