@@ -22,9 +22,9 @@ Ext.define("inkle.view.AddFriends", {
                 items: [
                     {
                         xtype: "button",
+                        ui: "action",
                         itemId: "addFriendsViewDoneButton",
                         text: "Done",
-                        pressedCls: ["toolbarButtonPressed"]
                     }
                 ]
             },
