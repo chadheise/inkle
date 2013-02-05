@@ -12,20 +12,20 @@
    	<!-- Right-hand button -->
 	{% if m.is_friend %}
 		<input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Friends" memberId="{{ m.id }}" />
-		{% elif m.is_pending %}
-			<!-- Not styled yet -->
-			<input id="member{{ m.id }}IsPendingButton" class="isPendingButton" type="button" value="Pending" memberId="{{ m.id }}" />
-		{% elif m == member %}
-		    <input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+	{% elif m.is_pending %}
+		<!-- Not styled yet -->
+		<input id="member{{ m.id }}IsPendingButton" class="isPendingButton" type="button" value="Pending" memberId="{{ m.id }}" />
+	{% elif m == member %}
+		<input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
+		<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
+	{% elif m.facebookId %}
+		<!-- Facebook friends not on inkle -->
+		{% if "fb" in m.id %}
 			<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
-		{% elif m.facebookId %}
-			<!-- Facebook friends not on inkle -->
-			{% if "fb" in m.id %}
-				<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
-			<!-- Facebook friends on inkle -->
-			{% else %}
-				<input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
-			{% endif %}
+		<!-- Facebook friends on inkle -->
+		{% else %}
+			<input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
+		{% endif %}
 	<!-- inkle user who is not on Facebook-->
 	{% else %}
 		<input id="member{{ m.id }}AddFriendButton" class="addFriendButton" type="button" value="Add Friend" memberId="{{ m.id }}" />
