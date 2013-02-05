@@ -564,11 +564,32 @@ $badge-bg-gradient: "matte";
     font-size: 18px;
     font-weight: bold;
     color: $mediumBlue;
+
+.isFriendButton {
+	float: right;
+	font-size: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #FFFFFF;
+	background-color: $mediumGreen;
+	border: solid 1px $darkestGreen;
+	border-radius: 5px;
+	margin: 0px 10px 0px 0px;
 }
 
 .settingsList .disclosureArrow {
     float: right;
     margin: 5px -7px 0px 0px;
+}
+
+.addFriendButton {
+	float: right;
+	font-size: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #FFFFFF;
+	background-color: $mediumBlue;
+	border: solid 1px $darkestBlue;
+	border-radius: 5px;
+
 }
 
 /* List section headers */
@@ -1010,37 +1031,9 @@ $badge-bg-gradient: "matte";
 	box-shadow: 0px 0px 10px #888;
 }
 
-#friendsView .mutualFriends {
-	float: left;
-}
-
 
 .hidden {
     visibility: "hidden";
-}
-
-
-
-.isFriendButton {
-	float: right;
-	font-size: 14px;
-	padding: 2px 5px 2px 5px;
-	color: #FFFFFF;
-	background-color: $mediumGreen;
-	border: solid 1px $darkestGreen;
-	border-radius: 5px;
-	margin: 14px 10px 0px 0px;
-}
-
-.addFriendButton {
-	float: right;
-	font-size: 14px;
-	padding: 2px 5px 2px 5px;
-	color: #FFFFFF;
-	background-color: $mediumBlue;
-	border: solid 1px $darkestBlue;
-	border-radius: 5px;
-	margin: 14px 10px 0px 0px;
 }
 
 /* Inkling invitees list */
@@ -1099,6 +1092,10 @@ $badge-bg-gradient: "matte";
 	margin-right: 5px;
 	border: solid green 1px;
 }*/
+
+#friendsView .mutualFriends {
+	float: left;
+}
 
 /****************/
 /* PROFILE VIEW */
