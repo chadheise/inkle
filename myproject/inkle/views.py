@@ -119,17 +119,22 @@ def login_view(request):
                 print "except"
                 # Create the new member
                 member = User(
-                    facebookId = facebookId,
                     first_name = first_name,
                     last_name = last_name,
                     username = email,
-                    email = email,
-                    birthday = birthday,
-                    gender = gender
+                    email = email
                 )
-                # Set the new member's password
-                member.set_password(password)
-                member.save()  # Save the new member
+                member.set_password("password")
+                member.save()
+                print "saved"
+                #if (gender == "Male"):
+                #    shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+                #else:
+                #    shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+
+                user_profile = UserProfile(user = member, facebookId = facebookId, birthday = birthday, gender = gender)
+                user_profile.save()
+                print "Facebook logged in"
 
         # If the user is logging in with facebook, validate their authentication token or log them out
         if (facebookId):
@@ -143,6 +148,11 @@ def login_view(request):
                     fbData = simplejson.loads(fbResponse)
                     member.last_login = datetime.datetime.now()
                     member.save()
+                    print "..."
+                    user = authenticate(username=email, password="password")
+                    print user
+                    login(request, user)
+                    print "Facebook logged in"
                 # Otherwise, add to the errors list
                 else:
                     response_error = "Could not login using Facebook"
