@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 from datetime import date
 
-#from myproject.settings import STATIC_URL
 
 class Group(models.Model):
     """Group class definition."""
@@ -234,7 +233,7 @@ class UserProfile(models.Model):
     # General information
     gender = models.CharField(max_length = 1, choices=(("m", "Male"), ("f", "Female")), blank = True, null = True)
     birthday = models.DateField()
-    facebookId = models.BigIntegerField(blank = True, null = True, unique = True)
+    facebook_id = models.BigIntegerField(blank = True, null = True, unique = True)
 
     # Friends
     friends = models.ManyToManyField(User, related_name = "user_friends")
