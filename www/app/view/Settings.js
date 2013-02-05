@@ -61,18 +61,11 @@ Ext.define("inkle.view.Settings", {
 				],
 				store: {
 					fields: [
-						"text"
+						"text",
+						"key"
 					],
-					data: [
-						{ text: "Update email" },
-						{ text: "Update password" },
-						{ text: "Update picture" },
-						{ text: "Notifications" },
-						{ text: "Sharing" },
-						{ text: "Invite Facebook Friends" },
-						{ text : "Link to Facebook account" }
-					],
-					autoLoad: true
+					// data loaded via initializer in SettingsController
+					autoLoad: false //Set to false once updating the data
 				}
     		},
     	],
@@ -106,15 +99,16 @@ Ext.define("inkle.view.Settings", {
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
     },
-    onSettingsViewListItemTap: function(settingsList, index) {
-        if (index < 3) {
-            alert("Clicked " + index);
+    onSettingsViewListItemTap: function(settingsList, index, target, record, event, options) {
+        var selectedSetting = record.getData()["key"]
+        if (selectedSetting == "linkFacebookAccount") {
+            this.fireEvent("inviteFacebookFriendsTapped");
         }
-        else if (index == 4) {
+        else if (selectedSetting == "sharing") {
             this.fireEvent("shareSettingsTapped");
         }
-        else if (index == 5 || index == 6) {
-            this.fireEvent("inviteFacebookFriendsTapped");
+        else {
+            alert(selectedSetting);
         }
     },
     onInviteFacebookFriendsBackButtonTap: function() {
