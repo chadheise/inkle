@@ -136,21 +136,21 @@ Ext.define("inkle.controller.LoginController", {
 		this.getLoginFormView().submit({
 			method: "POST",
 						
-         	waitMsg: {
-         		xtype: "loadmask",
-            	message: "Processing",
-            	cls : "demos-loading"
-         	},
-         				
-         	success: function(form, response) {
-            	this.activateMainTabView();
-         	},
-         				
-         	failure: function(form, response) {
-        	    Ext.Msg.alert("Error", response.error);
-         	},
-         	
-         	scope: this
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+            this.activateMainTabView();
+            },
+
+            failure: function(form, response) {
+            Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
         });
     },
     
@@ -161,40 +161,60 @@ Ext.define("inkle.controller.LoginController", {
         FB.login(function(response) {
             if (response.authResponse) {
                 facebookAccessToken = response.authResponse.accessToken;
-                 FB.api("/me", function(response) {
-           		   //Log the user in to inkle
-               	   Ext.Ajax.request({
-                       url: "http://127.0.0.1:8000/login/",
-                       params: {
-                           facebookId: response.id,
-                           facebookAccessToken: facebookAccessToken,
-                   		   email: response.email,
-                   		   first_name: response.first_name,
-                   		   last_name: response.last_name,
-                   		   gender: response.gender,
-                   		   birthday: response.birthday
-                   	   },
-                   	   //Must use callback instead of normal success/failure because request is not sent in a form
-                       callback: function(options, success, response){
-                           var data = Ext.decode(response.responseText);
-                           if (data.success) {
-                               this.activateMainTabView();
-                           }
-                           else{
-                               Ext.Msg.alert("Error", data.error);
-                               //Logout of facebook
-                               FB.logout(function(response) {
-                                 // user is now logged out
-                               }); 
-                           }
+                FB.api("/me", function(response) {
+                    Ext.Ajax.request({
+                        url: "http://127.0.0.1:8000/facebookLogin/",
+                        params: {
+                            facebookId: response.id,
+                            facebookAccessToken: facebookAccessToken,
+                            email: response.email,
+                            firstName: response.first_name,
+                            lastName: response.last_name,
+                            birthday: response.birthday,
+                            gender: response.gender
                         },
+
+                   	    //Must use callback instead of normal success/failure because request is not sent in a form
+                        callback: function(options, success, response) {
+                            console.log("in");
+                            var data = Ext.decode(response.responseText);
+                            if (data.success) {
+                                console.log("success");
+                                this.activateMainTabView();
+                            }
+                            else {
+                                console.log("failure");
+                            }
+                        },
+                        /*success: function(response){
+                            var data = Ext.decode(response.responseText);
+                            if (data.success) {
+                                console.log("success");
+                                this.activateMainTabView();
+                            }
+                            else {
+                                console.log("failure");
+                            }
+                        },
+
+                        failure: function(response) {
+                            console.log("really failure");
+                            Ext.Msg.alert("Error", response.error);
+                            //Logout of facebook
+                            FB.logout();
+                        },*/
+
                        	scope: object
                		});
-                 });
-               } else {
-                 alert("User cancelled login or did not fully authorize.");
-               }
-            }, {scope: "email,user_birthday,publish_stream"});
+                });
+            }
+            else {
+                alert("User cancelled login or did not fully authorize.");
+            }
+        },
+        {
+            scope: "email,user_birthday,publish_stream"
+        });
     },
     
     /* Registers a new member */
