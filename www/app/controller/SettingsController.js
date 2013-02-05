@@ -68,8 +68,7 @@ Ext.define("inkle.controller.SettingsController", {
              settingsListStore.setData([
         			{ text: "Notifications", key: "notifications" },
         			{ text: "Sharing", key: "sharing"},
-        			{ text: "Invite Facebook Friends", key: "inviteFacebookFriends"},
-        			{ text : "Logged in with Facebook!"}
+        			{ text: "Invite Facebook Friends", key: "inviteFacebookFriends"}
         		]);
         }
         else {
@@ -80,8 +79,7 @@ Ext.define("inkle.controller.SettingsController", {
         			{ text: "Notifications", key: "notifications" },
         			{ text: "Sharing", key: "sharing" },
         			{ text: "Invite Facebook Friends", key: "linkFacebookAccount" },
-        			{ text : "Link to Facebook account", key: "linkFacebookAccount" },
-        			{ text : "Logged in with email"}
+        			{ text : "Link to Facebook account", key: "linkFacebookAccount" }
         		]);
         }
         //settingsListStore.load();
