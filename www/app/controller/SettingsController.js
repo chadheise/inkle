@@ -19,6 +19,7 @@ Ext.define("inkle.controller.SettingsController", {
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
+            settingsViewList: "#settingsViewList",
 
         },
         control: {
@@ -29,6 +30,7 @@ Ext.define("inkle.controller.SettingsController", {
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
                 shareSettingsTapped: "shareSettings",
                 shareSettingsBackButtonTapped: "shareSettingsBack",
+                initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
            		inviteFriendButtonTapped: "inviteFriend",
@@ -43,6 +45,46 @@ Ext.define("inkle.controller.SettingsController", {
             	forwardingShareSettingTapped: "toggleForwardingShareSetting",
            	}
         }
+    },
+	
+	initializeSettingsView: function() {
+    
+        //Determine if the user is logged in with facebook
+        var fbAccessToken = "";
+		FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                fbAccessToken = response.authResponse.accessToken;
+            } else if (response.status === 'not_authorized') {
+                // the user is logged in to Facebook, 
+                // but has not authenticated your app
+            } else {
+                // the user isn't logged in to Facebook.
+            }
+        });
+    
+        // Update the settings list based on whether or not the user is logged in with facebook
+        var settingsListStore = this.getSettingsViewList().getStore();
+        if (fbAccessToken != "") {
+             settingsListStore.setData([
+        			{ text: "Notifications", key: "notifications" },
+        			{ text: "Sharing", key: "sharing"},
+        			{ text: "Invite Facebook Friends", key: "inviteFacebookFriends"},
+        			{ text : "Logged in with Facebook!"}
+        		]);
+        }
+        else {
+            settingsListStore.setData([
+        			{ text: "Update email", key: "email"},
+        			{ text: "Update password", key: "password" },
+        			{ text: "Update picture", key: "picture" },
+        			{ text: "Notifications", key: "notifications" },
+        			{ text: "Sharing", key: "sharing" },
+        			{ text: "Invite Facebook Friends", key: "linkFacebookAccount" },
+        			{ text : "Link to Facebook account", key: "linkFacebookAccount" },
+        			{ text : "Logged in with email"}
+        		]);
+        }
+        //settingsListStore.load();
     },
 	
 	/* Transitions */
