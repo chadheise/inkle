@@ -134,14 +134,18 @@ def facebook_login_view(request):
                 username = email,
                 email = email
             )
+
+            # Set the user's password as unusable since they are a Facebook user and don't have a password
             user.set_unusable_password()
             user.save()
 
+            # Make a default image for the user
             if (gender == "Male"):
                 shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
             else:
                 shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
 
+            # Create a user profile for the user
             user_profile = UserProfile(
                 user = user,
                 facebook_id = facebook_id,
@@ -185,6 +189,7 @@ def is_email(email):
 
 def is_thirteen(month, day, year):
     """Returns True if the inputted date represents a birthday of someone who is at least thirteen years old; otherwise, returns False."""
+    return True # TODO: FIX THIS!!
     born = datetime.date(day = int(day), month = int(month), year = int(year))
     today = datetime.date.today()   # TODO: localize today's date
 
@@ -268,43 +273,39 @@ def registration_view(request):
         if (len(email) > 30):
             email = email[0:30]
 
-        birthday = datetime.date(day = day, month = month, year = year)
-
-        # Create the new member
+        # Create a new user
         user = User(
             first_name = first_name,
             last_name = last_name,
             username = email,
             email = email
         )
-
-        # Set the new member's password
         user.set_password(password)
-
-        # Save the new member
         user.save()
 
-        user_profile = UserProfile(user = user, birthday = datetime.date(day = day, month = month, year= year), gender = gender)
+        # Make a default image for the user
+        if (gender == "Male"):
+            shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+        else:
+            shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
+
+        # Create a user profile for the user
+        user_profile = UserProfile(
+            user = user,
+            birthday = datetime.date(day = day, month = month, year = year),
+            gender = gender
+        )
         user_profile.save()
 
-        # Create the default image for the new member
-        #if (member.gender == "Male"):
-        #    shutil.copyfile(MEDIA_ROOT + "images/main/man.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-        #else:
-        #    shutil.copyfile(MEDIA_ROOT + "images/main/woman.jpg", MEDIA_ROOT + "images/members/" + str(member.id) + ".jpg")
-
-        # Log the member in
-        request.session["member_id"] = user.id
-
-    # Determine if the login was successful
-    if (response_error):
-        success = False
-    else:
-        success = True
+        # Log the user in
+        user = authenticate(username = email, password = password)
+        login(request, user)
+        user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
+        user.save()                      
 
     # Create and return a JSON object
     response = simplejson.dumps({
-        "success": success,
+        "success": response_error == "",
         "error": response_error
     })
 
@@ -357,7 +358,7 @@ def get_inkling_list_item_html(inkling, member):
 def get_group_list_item_main_content_html(group, group_members = None):
     """Returns the HTML for a group list item (in the main content)."""
     # Get the group members if this is not the "Not Grouped" group
-    if (not group_members):
+    if (group_members == None):
         group_members = list(group.members.all())
 
     # Get the member thumbnails for those a part of the inputted group
@@ -378,7 +379,7 @@ def get_group_list_item_main_content_html(group, group_members = None):
 def get_group_list_item_panel_html(group, group_members = None):
     """Returns the HTML for a group list item (in a panel)."""
     # Get the group members if this is not the "Not Grouped" group
-    if (not group_members):
+    if (group_members == None):
         group_members = list(group.members.all())
 
     # Get the HTML for the group list item
