@@ -51,6 +51,7 @@ Ext.application({
 	*/
 	
     launch: function() {
+        console.log("launching app");
 		// Determine if the user is logged in
 		var isLoggedIn;
 		Ext.Ajax.request({
