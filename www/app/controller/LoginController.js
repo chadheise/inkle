@@ -174,38 +174,17 @@ Ext.define("inkle.controller.LoginController", {
                             gender: response.gender
                         },
 
-                   	    //Must use callback instead of normal success/failure because request is not sent in a form
-                        callback: function(options, success, response) {
-                            console.log("in");
-                            var data = Ext.decode(response.responseText);
-                            if (data.success) {
-                                console.log("success");
-                                this.activateMainTabView();
-                            }
-                            else {
-                                console.log("failure");
-                            }
-                        },
-                        /*success: function(response){
-                            var data = Ext.decode(response.responseText);
-                            if (data.success) {
-                                console.log("success");
-                                this.activateMainTabView();
-                            }
-                            else {
-                                console.log("failure");
-                            }
+                        success: function(response){
+                            this.activateMainTabView();
                         },
 
                         failure: function(response) {
-                            console.log("really failure");
                             Ext.Msg.alert("Error", response.error);
-                            //Logout of facebook
                             FB.logout();
-                        },*/
+                        },
 
-                       	scope: object
-               		});
+                        scope: object
+                    });
                 });
             }
             else {
