@@ -27,7 +27,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 					],
 					proxy: {
 						type: "ajax",
-						url: "http://127.0.0.1:8000/inklingInvitedFriends/",
+						url: inkle.app.getBaseUrl() + "/inklingInvitedFriends/",
 						actionMethods: {
 							read: "POST"
 						},
@@ -72,7 +72,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/groupsPanel/",
+								url: inkle.app.getBaseUrl() + "/groupsPanel/",
                                 extraParams: {
                                     autoSetGroupsAsSelected: "false",
                                     inklingId: "-1"

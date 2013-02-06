@@ -111,7 +111,7 @@ Ext.define("inkle.view.AllInklings", {
 						actionMethods: {
 							read: "POST"
 						},
-						url: "http://127.0.0.1:8000/allInklings/"
+						url: inkle.app.getBaseUrl() + "allInklings/"
 					},
 					autoLoad: false
 				},
@@ -213,7 +213,8 @@ Ext.define("inkle.view.AllInklings", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: "http://127.0.0.1:8000/groupsPanel/",
+								url: inkle.app.getBaseUrl() + "/groupsPanel/",
+								//url: "badURl",
 								extraParams: {
 									autoSetGroupsAsSelected: "true"
 								}

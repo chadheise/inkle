@@ -50,15 +50,23 @@ Ext.application({
     tabletStartupScreen: "resources/loading/Homescreen~ipad.jpg",
 	*/
 	
+	getBaseUrl: function() {
+        //return "http://127.0.0.1:8000";
+        return "http://chads-macbook-pro.local:8000";
+    },
+	
     launch: function() {
         console.log("launching app");
+        console.log(inkle.app.getBaseUrl());
 		// Determine if the user is logged in
 		var isLoggedIn;
 		Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/isLoggedIn/",
+    		//url: "http://127.0.0.1:8000/isLoggedIn/",
+    		url: inkle.app.getBaseUrl() + "/isLoggedIn/",
 		    success: function(response) {
         		isLoggedIn = response.responseText;
+        		console.log(isLoggedIn);
         	},
         	failure: function(response) {
         		Ext.Msg.alert("Errors", response.errors);
