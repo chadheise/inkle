@@ -604,6 +604,7 @@
 				"HEADER_SEARCH_PATHS[arch=*]" = "\"$(CORDOVALIB)/Classes\"";
 				INFOPLIST_FILE = "inkle/inkle-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-all_load",
 					"-Obj-C",
@@ -624,6 +625,7 @@
 				"HEADER_SEARCH_PATHS[arch=*]" = "\"$(CORDOVALIB)/Classes\"";
 				INFOPLIST_FILE = "inkle/inkle-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-all_load",
 					"-Obj-C",
