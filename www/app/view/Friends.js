@@ -144,7 +144,7 @@ Ext.define("inkle.view.Friends", {
                             ],
                             proxy: {
                                 type: "ajax",
-                                url: inkle.app.getBaseUrl() + "/friends/",
+                                url: inkle.app.baseUrl + "/friends/",
                                 actionMethods: {
                                     read: "POST"
                                 },
@@ -190,7 +190,7 @@ Ext.define("inkle.view.Friends", {
                                 actionMethods: {
                                     read: "POST"
                                 },
-                                url: inkle.app.getBaseUrl() + "/groupsMainContent/"
+                                url: inkle.app.baseUrl + "/groupsMainContent/"
                             },
                             autoLoad: true
                         },
@@ -225,7 +225,7 @@ Ext.define("inkle.view.Friends", {
                                 actionMethods: {
                                     read: "POST"
                                 },
-                                url: inkle.app.getBaseUrl() + "/friendRequests/"
+                                url: inkle.app.baseUrl + "/friendRequests/"
                             },
                             autoLoad: true
                         },

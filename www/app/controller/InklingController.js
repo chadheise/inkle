@@ -327,7 +327,7 @@ Ext.define("inkle.controller.InklingController", {
     	// Specify in the database that the current member is joining the current inkling
     	Ext.Ajax.request({
     		async: false,
-    		url: inkle.app.getBaseUrl() + "/joinInkling/",
+    		url: inkle.app.baseUrl + "/joinInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -350,7 +350,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;   	
     	Ext.Ajax.request({
     		async: false,
-    		url: inkle.app.getBaseUrl() + "/editInkling/",
+    		url: inkle.app.baseUrl + "/editInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -379,7 +379,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: inkle.app.getBaseUrl() + "/saveInkling/",
+    		url: inkle.app.baseUrl + "/saveInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"],
     			location: Ext.get("location").getValue(),
@@ -411,7 +411,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: inkle.app.getBaseUrl() + "/inkling/",
+    		url: inkle.app.baseUrl + "/inkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -488,7 +488,7 @@ Ext.define("inkle.controller.InklingController", {
     addComment: function() {
   		// Add the new comment to the inkling feed
     	Ext.Ajax.request({
-    		url: inkle.app.getBaseUrl() + "/addFeedComment/",
+    		url: inkle.app.baseUrl + "/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
     			text: this.getAddCommentTextField().getValue()

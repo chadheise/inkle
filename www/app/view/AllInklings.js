@@ -111,7 +111,7 @@ Ext.define("inkle.view.AllInklings", {
 						actionMethods: {
 							read: "POST"
 						},
-						url: inkle.app.getBaseUrl() + "allInklings/"
+						url: inkle.app.baseUrl + "/allInklings/"
 					},
 					autoLoad: false
 				},
@@ -213,8 +213,7 @@ Ext.define("inkle.view.AllInklings", {
 								actionMethods: {
 									read: "POST"
 								},
-								url: inkle.app.getBaseUrl() + "/groupsPanel/",
-								//url: "badURl",
+								url: inkle.app.baseUrl + "/groupsPanel/",
 								extraParams: {
 									autoSetGroupsAsSelected: "true"
 								}

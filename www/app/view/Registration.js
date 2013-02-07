@@ -13,7 +13,7 @@ Ext.define("inkle.view.Registration", {
 		scrollable: false,
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
-		url: inkle.app.getBaseUrl() + "/registration/",
+		url: inkle.app.baseUrl + "/registration/",
 		
 		items: [
 		    // Top toolbar

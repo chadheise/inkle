@@ -32,7 +32,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 					],
 					proxy: {
 						type: "ajax",
-						url: inkle.app.getBaseUrl() + "/inviteFacebookFriendsView/",
+						url: inkle.app.baseUrl + "/inviteFacebookFriendsView/",
 						actionMethods: {
 							read: "POST"
 						}

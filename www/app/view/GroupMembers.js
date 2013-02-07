@@ -30,7 +30,7 @@ Ext.define("inkle.view.GroupMembers", {
 					],
 					proxy: {
 						type: "ajax",
-						url: inkle.app.getBaseUrl() + "/groupMembers/",
+						url: inkle.app.baseUrl + "/groupMembers/",
 						actionMethods: {
 							read: "POST"
 						},
