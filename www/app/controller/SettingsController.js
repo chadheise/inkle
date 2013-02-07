@@ -114,7 +114,7 @@ Ext.define("inkle.controller.SettingsController", {
     
 		Ext.Ajax.request({
 			async: false,
-			url: inkle.app.getBaseUrl() + "/logout/",
+			url: inkle.app.baseUrl + "/logout/",
 			success: function(response) {
 				console.log("Logged out");
 			},
@@ -201,7 +201,7 @@ Ext.define("inkle.controller.SettingsController", {
                  FB.api("/me", function(response) {
            		   //Log the user in to inkle
                	   Ext.Ajax.request({
-                       url: inkle.app.getBaseUrl() + "/linkFacebookAccount/",
+                       url: inkle.app.baseUrl + "/linkFacebookAccount/",
                        params: {
                            facebookId: response.id,
                            facebookAccessToken: facebookAccessToken,
@@ -306,7 +306,7 @@ Ext.define("inkle.controller.SettingsController", {
         //Only make ajax call if the item was not selected
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
-                url: inkle.app.getBaseUrl() + "/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
@@ -350,7 +350,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
             //Only make ajax call if the selectedGroupsShareSetting is selected
     	    Ext.Ajax.request({
-                url: inkle.app.getBaseUrl() + "/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareGroupByDefault",
@@ -382,7 +382,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    //Only make ajax call if the item was not selected
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
-                url: inkle.app.getBaseUrl() + "/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
@@ -423,7 +423,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    
 	    //Only make ajax call if the item was not selected
 	    Ext.Ajax.request({
-            url: inkle.app.getBaseUrl() + "/setShareSetting/",
+            url: inkle.app.baseUrl + "/setShareSetting/",
             headers : { "cache-control": "no-cache" },
             params: {
                 setting: "allowInklingAttendeesToShare",

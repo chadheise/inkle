@@ -56,7 +56,7 @@ Ext.define("inkle.view.AddFriends", {
 					],
 					proxy: {
 						type: "ajax",
-						url: inkle.app.getBaseUrl() + "/peopleSearch/",
+						url: inkle.app.baseUrl + "/peopleSearch/",
 						actionMethods: {
 							read: "POST"
 						},

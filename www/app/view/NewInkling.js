@@ -74,7 +74,7 @@ Ext.define("inkle.view.NewInkling", {
 			{
 			    xtype: "htmlcontainer",
 			    id: "newInklingShareOptions",
-			    url: inkle.app.getBaseUrl() + "/shareSettingsForm/"
+			    url: inkle.app.baseUrl + "/shareSettingsForm/"
 			},
 		],
     	

@@ -31,7 +31,7 @@ Ext.define("inkle.view.InklingMembersAwaitingReply", {
                     ],
                     proxy: {
                         type: "ajax",
-                        url: inkle.app.getBaseUrl() + "/inklingMembersAwaitingReply/",
+                        url: inkle.app.baseUrl + "/inklingMembersAwaitingReply/",
                         actionMethods: {
                             read: "POST"
                         }

@@ -163,7 +163,7 @@ Ext.define("inkle.controller.LoginController", {
                 facebookAccessToken = response.authResponse.accessToken;
                 FB.api("/me", function(response) {
                     Ext.Ajax.request({
-                        url: inkle.app.getBaseUrl() + "/facebookLogin/",
+                        url: inkle.app.baseUrl + "/facebookLogin/",
                         params: {
                             facebookId: response.id,
                             facebookAccessToken: facebookAccessToken,
@@ -244,7 +244,7 @@ Ext.define("inkle.controller.LoginController", {
     setBadges: function() {
         // Set the "My Inklings" tab and inkling invites badges
         Ext.Ajax.request({
-            url: inkle.app.getBaseUrl() + "/numInklingInvitations/",
+            url: inkle.app.baseUrl + "/numInklingInvitations/",
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
@@ -260,7 +260,7 @@ Ext.define("inkle.controller.LoginController", {
         
         // Set the "Friends" tab and friends requests badges
         Ext.Ajax.request({
-            url: inkle.app.getBaseUrl() + "/numFriendRequests/",
+            url: inkle.app.baseUrl + "/numFriendRequests/",
             
             success: function(response) {
                 numFriendRequests = response.responseText;
