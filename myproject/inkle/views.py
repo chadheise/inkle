@@ -796,10 +796,6 @@ def change_password_view(request):
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
     
-    print currentPassword
-    print newPassword1
-    print newPassword2
-    
     # Create a string to hold the login error
     response_error = ""
     
