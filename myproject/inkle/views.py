@@ -784,6 +784,50 @@ def set_share_setting_view(request):
 
     return HttpResponse("True")
 
+@csrf_exempt
+@login_required
+def change_password_view(request):
+    """Allows a user to change their password."""
+    # Get the inputted current password
+    try:
+        currentPassword = request.POST["currentPassword"]
+        print currentPassword
+        newPassword1 = request.POST["newPassword1"]
+        print newPassword1
+        newPassword2 = request.POST["newPassword2"]
+        print newPassword2
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+    
+    # Create a string to hold the login error
+    response_error = ""
+    
+    # Validate the email and password
+    if ((not currentPassword) and (not newPassword1)):
+        response_error = "A current and new password must be specified"
+    elif (not currentPassword):
+        response_error = "Current password not specified"
+    elif (not newPassword1):
+        response_error = "New password not specified"
+    elif (newPassword1 != newPassword2):
+        response_error = "New passwords do not match"
+        
+    # Need to add check to ensure new password is valid
+    
+    if (not response_error): #If there is no error with suplying the required data
+        if (request.user.check_password(currentPassword)):
+            request.user.set_password(newPassword1)
+            request.user.save()
+        else:
+            response_error = "Current password not valid"
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
 
 @csrf_exempt
 @login_required
