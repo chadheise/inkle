@@ -483,7 +483,11 @@ Ext.define("inkle.controller.SettingsController", {
 
             success: function(form, response) {
             //this.activateMainTabView();
-                Ext.Msg.alert("Success", response.error);
+                Ext.Msg.alert("Success", "Your password was successfully changed!");
+                //Clear form fields
+                Ext.ComponentQuery.query('textfield[name="currentPassword"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="newPassword1"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="newPassword2"]').pop().setValue("");
             },
 
             failure: function(form, response) {
