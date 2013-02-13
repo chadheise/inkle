@@ -791,30 +791,33 @@ def change_password_view(request):
     # Get the inputted current password
     try:
         currentPassword = request.POST["currentPassword"]
-        print currentPassword
         newPassword1 = request.POST["newPassword1"]
-        print newPassword1
         newPassword2 = request.POST["newPassword2"]
-        print newPassword2
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
+    
+    print currentPassword
+    print newPassword1
+    print newPassword2
     
     # Create a string to hold the login error
     response_error = ""
     
-    # Validate the email and password
+    # Validate the current and new password
     if ((not currentPassword) and (not newPassword1)):
         response_error = "A current and new password must be specified"
     elif (not currentPassword):
         response_error = "Current password not specified"
     elif (not newPassword1):
         response_error = "New password not specified"
+    elif (len(newPassword1) < 8):
+        response_error = "New password must contain at least eight characters"
     elif (newPassword1 != newPassword2):
-        response_error = "New passwords do not match"
-        
-    # Need to add check to ensure new password is valid
+        response_error = "New password and confirm password do not match"
+    elif (currentPassword == newPassword1):
+        response_error = "New password must be different than current password"
     
-    if (not response_error): #If there is no error with suplying the required data
+    if (not response_error): #If there is no error with supplying the required data
         if (request.user.check_password(currentPassword)):
             request.user.set_password(newPassword1)
             request.user.save()
