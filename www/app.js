@@ -1,3 +1,9 @@
+/*Ext.Loader.setConfig( {enabled: true, disableCaching: true} );
+Ext.data.Connection.disableCaching = true;
+Ext.data.JsonP.disableCaching = true;*/
+//Ext.data.proxy.Server.prototype.noCache = true;
+//Ext.Ajax.disableCaching = true;
+
 Ext.application({
     name: "inkle",
     
@@ -24,7 +30,8 @@ Ext.application({
     	"Settings",
     	"InviteFacebookFriends",
     	"LinkFacebookAccount",
-    	"ShareSettings"
+    	"ShareSettings",
+    	"changePassword",
     ],
     controllers: [
     	"LoginController",
@@ -54,8 +61,6 @@ Ext.application({
 	//baseUrl: "http://127.0.0.1:8000",
 	
     launch: function() {
-        console.log("launching app");
-        console.log(inkle.app.baseUrl);
 		// Determine if the user is logged in
 		var isLoggedIn;
 		Ext.Ajax.request({
@@ -63,11 +68,9 @@ Ext.application({
     		url: inkle.app.baseUrl + "/isLoggedIn/",
 		    success: function(response) {
         		isLoggedIn = response.responseText;
-        		console.log(isLoggedIn);
         	},
         	failure: function(response) {
         		Ext.Msg.alert("Errors", response.errors);
-        		console.log(response.responseText);
         	}
 		});
 		

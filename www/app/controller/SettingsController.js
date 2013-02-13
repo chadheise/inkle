@@ -11,11 +11,13 @@ Ext.define("inkle.controller.SettingsController", {
             inviteFacebookFriendsList: "#inviteFacebookFriendsList",
             linkFacebookAccountView: "linkFacebookAccountView",
             shareSettingsView: "shareSettingsView",
+            changePasswordView: "changePasswordView",
             
             // Toolbar buttons
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
             shareSettingsBackButton: "#shareSettingsBackButton",
+            changePasswordBackButton: "#changePasswordBackButton",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -30,6 +32,8 @@ Ext.define("inkle.controller.SettingsController", {
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
                 shareSettingsTapped: "shareSettings",
                 shareSettingsBackButtonTapped: "shareSettingsBack",
+                changePasswordTapped: "loadChangePasswordView",
+                changePasswordBackButtonTapped: "changePasswordBack",
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
@@ -43,6 +47,9 @@ Ext.define("inkle.controller.SettingsController", {
             	groupShareSettingTapped: "toggleGroupShareSetting",
             	noOneShareSettingTapped: "selectNoOneShareSetting",
             	forwardingShareSettingTapped: "toggleForwardingShareSetting",
+           	},
+           	changePasswordView: {
+           	    changePasswordButtonTapped: "changePassword",
            	}
         }
     },
@@ -74,7 +81,7 @@ Ext.define("inkle.controller.SettingsController", {
         else {
             settingsListStore.setData([
         			{ text: "Update email", key: "email"},
-        			{ text: "Update password", key: "password" },
+        			{ text: "Change password", key: "password" },
         			{ text: "Update picture", key: "picture" },
         			{ text: "Notifications", key: "notifications" },
         			{ text: "Sharing", key: "sharing" },
@@ -296,6 +303,22 @@ Ext.define("inkle.controller.SettingsController", {
         this.getShareSettingsBackButton().hide();
         this.getSettingsLogoutButton().show();
     },
+    
+    loadChangePasswordView: function() {
+           // Push the change password view
+           this.getSettingsView().push({
+       	    xtype: "changePasswordView"
+           });
+           //Update buttons
+           this.getSettingsLogoutButton().hide();
+           this.getChangePasswordBackButton().show();
+       },
+
+       changePasswordBack: function() {
+           this.getSettingsView().pop();
+           this.getChangePasswordBackButton().hide();
+           this.getSettingsLogoutButton().show();
+       },
  
     editSettings: function() {
         console.log("editSettings");
@@ -449,4 +472,25 @@ Ext.define("inkle.controller.SettingsController", {
         });
 	},
     
+    changePassword: function() {
+        this.getChangePasswordView().submit({
+			method: "POST",		
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+            //this.activateMainTabView();
+                Ext.Msg.alert("Success", response.error);
+            },
+
+            failure: function(form, response) {
+            Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
+        });
+    },
 });

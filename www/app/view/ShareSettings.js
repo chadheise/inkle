@@ -4,7 +4,6 @@ Ext.define("inkle.view.ShareSettings", {
 	xtype: "shareSettingsView",
 	
 	requires: [
-		"Ext.field.DatePicker",
 		"Ext.field.Select"
 	],
 	
@@ -36,22 +35,6 @@ Ext.define("inkle.view.ShareSettings", {
 				element: "element",
             	delegate: "#newInklingViewInvitees",
             	fn: "onNewInklingViewInviteesTap"
-        	},
-        	{
-        		event: "check",
-        		delegate: "#isPrivateCheckbox",
-        		fn: "onIsPrivateCheckboxCheck"
-        	},
-        	{
-        		event: "uncheck",
-        		delegate: "#isPrivateCheckbox",
-        		fn: "onIsPrivateCheckboxUncheck"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-            	delegate: "#forwardingSelectionItem",
-            	fn: "onForwardingSelectionItemTap"
         	},
         	{
 				event: "tap",
