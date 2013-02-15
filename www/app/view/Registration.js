@@ -20,7 +20,7 @@ Ext.define("inkle.view.Registration", {
     		{
     			xtype: "toolbar",
     			id: "registrationFormToolbar",
-    			title: "Inkle Sign Up",
+    			title: "Sign Up",
                 docked: "top",
                 items: [
                 	{

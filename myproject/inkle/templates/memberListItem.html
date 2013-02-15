@@ -1,7 +1,7 @@
 <div class="member" data-memberId="{{ m.id }}">
     <!-- Delete lock -->
     {% if include_delete_items %}
-        <img class="deleteLock deleteLockHidden" src="resources/images/delete.png">
+        <img class="deleteLock deleteLockHidden locked" src="resources/images/delete.png">
     {% endif %}
 
     <!-- Selection item -->
@@ -26,7 +26,7 @@
 
         <!-- Mutual friends -->
         {% if m != user %}
-            <p class="numMutualFriends">{{ m.get_profile.num_mutual_friends }} mutual friend{{ m.get_profile.num_mutual_friends|pluralize }}</p>
+            <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
         {% endif %}
     </div>
 
@@ -48,9 +48,8 @@
         {% endif %}
     {% endif %}
 
-    <!-- Friend request buttons -->
-    {% if include_friend_request_buttons %}
-        <input class="acceptRequestButton" type="button" value="Accept" />
-        <input class="ignoreRequestButton" type="button" value="Ignore" />
+    <!-- Disclosure arrow -->
+    {% if include_disclosure_arrow %}
+        <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
     {% endif %}
 </div>

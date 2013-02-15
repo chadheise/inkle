@@ -8,38 +8,39 @@ Ext.define("inkle.view.LoginForm", {
 		"Ext.field.Email",
 		"Ext.field.Password"
 	],
-   	
-   	config: {
+
+    config: {
 		scrollable: false,
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
 		url: "http://127.0.0.1:8000/emailLogin/",
+        headers : { "cache-control": "no-cache" },
 		
 		items: [
-		    // Top toolbar
-    		{
-    			xtype: "toolbar",
-    			id: "loginFormToolbar",
-    			title: "Inkle Login",
+            // Top toolbar
+            {
+                xtype: "toolbar",
+                id: "loginFormToolbar",
+                title: "Login",
                 docked: "top",
                 items: [
-                	{
-                		xtype: "button",
-                		id: "loginFormCancelButton",
-   		    			text: "Cancel",
-                		ui: "action"
-                	},
-                	{ xtype: "spacer" },
                     {
-                		xtype: "button",
-                		id: "loginFormLoginButton",
-   		    			text: "Login",
-                		ui: "action"
-                	}
+                        xtype: "button",
+                        id: "loginFormCancelButton",
+                        text: "Cancel",
+                        ui: "action"
+                    },
+                    { xtype: "spacer" },
+                    {
+                        xtype: "button",
+                        id: "loginFormLoginButton",
+                        text: "Login",
+                        ui: "action"
+                    }
                 ]
             },
             
-		    // Login form
+            // Login form
 			{
 				xtype: "fieldset",
 				id: "loginForm",

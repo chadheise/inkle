@@ -259,7 +259,7 @@ class UserProfile(models.Model):
 
     def is_facebook_member(self):
         """Returns True if the current member logged in using Facebook or False otherwise."""
-        return (self.facebookId is not None)
+        return (self.facebook_id is not None)
 
     def get_num_mutual_friends(self, m):
         """Returns the number of mutual friends the current member has with the inputted member."""
@@ -273,6 +273,6 @@ class UserProfile(models.Model):
     def get_picture_path(self):
         """Returns the path to the current member's picture."""
         if (self.is_facebook_member()):
-            return "https://graph.facebook.com/" + str(self.facebookId) + "/picture"
+            return "https://graph.facebook.com/" + str(self.facebook_id) + "/picture"
         else:
             return "http://127.0.0.1:8000/static/media/images/members/" + str(self.id) + ".jpg"

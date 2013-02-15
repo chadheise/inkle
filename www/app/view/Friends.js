@@ -5,7 +5,8 @@ Ext.define("inkle.view.Friends", {
 	
     requires: [
         "Ext.SegmentedButton",
-        "Ext.dataview.List"
+        "Ext.dataview.List",
+        "Ext.ActionSheet"
     ],
 	
 	config: {
@@ -208,7 +209,7 @@ Ext.define("inkle.view.Friends", {
 					{
 						xtype: "list",
 						id: "friendsViewRequestsList",
-                        cls: "membersList membersListWithButtons",
+                        cls: "membersList",
 						loadingText: "Loading friend requests...",
 						emptyText: "<div class='emptyListText'>No friend requests</div>",
 						disableSelection: true,
@@ -298,6 +299,11 @@ Ext.define("inkle.view.Friends", {
                 event: "itemtap",
                 fn: "onFriendsViewGroupsListItemTap"
             },
+            {
+                delegate: "#friendsViewRequestsList",
+                event: "itemtap",
+                fn: "onFriendsViewRequestsListItemTap"
+            },
 
             // Groups list name input blur
             {
@@ -308,7 +314,7 @@ Ext.define("inkle.view.Friends", {
             },
 
             // Requests list accept/ignore buttons
-            {
+            /*{
                 event: "tap",
                 element: "element",
                 delegate: ".acceptRequestButton",
@@ -319,7 +325,7 @@ Ext.define("inkle.view.Friends", {
                 element: "element",
                 delegate: ".ignoreRequestButton",
                 fn: "onIgnoreRequestButtonTap"
-            },
+            },*/
 
             // Pull to refresh
             {
@@ -383,7 +389,7 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", friendsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
+            this.fireEvent("friendsViewFriendsListItemTapped", record.getData()["id"]);
         }
     },
 
@@ -396,6 +402,10 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
         }
     },
+
+    onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
+        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["id"]);
+    },
     
     // Groups list name input blur
     onGroupNameInputBlurred: function(event, target) {
@@ -404,10 +414,10 @@ Ext.define("inkle.view.Friends", {
     },
     
     // Requests list accept/ignore buttons
-    onAcceptRequestButtonTap: function(event, target) {
+    /*onAcceptRequestButtonTap: function(event, target) {
 		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
-    },
+    },*/
     
     onIgnoreRequestButtonTap: function(event, target) {
 		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");

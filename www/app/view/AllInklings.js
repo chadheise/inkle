@@ -255,12 +255,6 @@ Ext.define("inkle.view.AllInklings", {
                 event: "pullToRefresh",
                 fn: "onAllInklingsListRefresh"
             },
-            /*{
-                event: "tap",
-                element: "element",
-                delegate: ".inklingListItem",
-                fn: "onInklingTap"
-            },*/
             {
                 delegate: "#allInklingsList",
                 event: "itemtap",
@@ -318,11 +312,6 @@ Ext.define("inkle.view.AllInklings", {
     onAllInklingsListRefresh: function() {
         this.fireEvent("allInklingsListRefreshed");
     },
-    
-    /*onInklingTap: function(event, target) {
-        var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("data-inklingId");
-        this.fireEvent("inklingTapped", tappedInklingId);
-    },*/
 
     onAllInklingsListItemTap: function(allInklingsList, index, target, record, event, options) {
         var inklingListItem = event.getTarget(".inklingListItem");
