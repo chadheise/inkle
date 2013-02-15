@@ -50,8 +50,7 @@ Ext.define("inkle.view.Settings", {
     		// Main content list
     		{
     			xtype: "list",
-    			id: "settingsViewList",
-                cls: "settingsList",
+    			id: "settingsList",
 				disableSelection: true,
 				scrollable: true,
 				//height: 236,

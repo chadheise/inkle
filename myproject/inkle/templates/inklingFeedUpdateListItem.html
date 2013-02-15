@@ -10,8 +10,10 @@
         {% endif %}
 
         <!-- Update information -->
-        <p class="text"><span class="creatorName">{{ feed_update.creator.get_full_name }}</span> {{ feed_update.get_text }}</p>
-        <p class="timestamp">{{ feed_update.date_created|naturaltime }}</p>
+        <div class="feedUpdateInfo">
+            <p class="text"><span class="creatorName">{{ feed_update.creator.get_full_name }}</span> {{ feed_update.get_text }}</p>
+            <p class="timestamp">{{ feed_update.date_created|naturaltime }}</p>
+        </div>
     {% else %}
         <!-- Icon -->
         {% if inkling.creator == user %}
@@ -21,7 +23,9 @@
         {% endif %}
 
         <!-- Update information -->
-        <p class="text"><span class="creatorName">{{ inkling.creator.get_full_name }}</span> created this inkling.</p>
-        <p class="timestamp">{{ inkling.date_created|naturaltime }}</p>
+        <div class="feedUpdateInfo">
+            <p class="text"><span class="creatorName">{{ inkling.creator.get_full_name }}</span> created this inkling.</p>
+            <p class="timestamp">{{ inkling.date_created|naturaltime }}</p>
+        </div>
     {% endif %}
 </div>

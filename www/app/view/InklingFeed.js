@@ -14,9 +14,9 @@ Ext.define("inkle.view.InklingFeed", {
 				loadingText: "Loading inkling feed...",
 				emptyText: "<div class='emptyListText'>No feed items</div>",
 				disableSelection: true,
-				scrollable: {
+				/*scrollable: {
 					initialOffset: { x: 0, y: 10000000 }
-				},
+				},*/
 				itemTpl: [
 					"{ html }"
 				],
@@ -32,7 +32,16 @@ Ext.define("inkle.view.InklingFeed", {
 						}
 					},
 					autoLoad: false
-				}
+				},
+                
+                plugins: [
+                    {
+                        xclass: "Ext.plugin.PullRefresh",
+                        refreshFn: function(plugin) {
+                            plugin.up().fireEvent("pullToRefresh");
+                        }
+                    }
+                ]
 			},
             
             // Add comment panel
@@ -85,6 +94,19 @@ Ext.define("inkle.view.InklingFeed", {
                     this.fireEvent("addCommentSendButtonTapped");
                 }
 			}
+        ],
+
+        listeners: [
+            {
+                delegate: "#inklingFeedList",
+                event: "pullToRefresh",
+                fn: "onInklingFeedListRefresh"
+            }
         ]
+    },
+
+    /* Event firings */
+    onInklingFeedListRefresh: function() {
+        this.fireEvent("inklingFeedListRefreshed");
     }
 });
