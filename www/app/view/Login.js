@@ -2,32 +2,33 @@ Ext.define("inkle.view.Login", {
 	extend: "Ext.Panel",
 	
 	xtype: "loginView",
-   	
-   	config: {
+
+    config: {
 		scrollable: false,
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 		
 		items: [
-		    {
-		        xtype: "container",
-		        html: [
-		            "<center>",
-		            "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 80%;' />",
-		            "</center>"
-		        ].join("")
-		    },
-		    {
-		        xtype: "container",
-		        centered: true,
-		        items: [
-		            {
+
+            {
+                xtype: "container",
+                html: [
+                    "<center>",
+                    "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 80%;' />",
+                    "</center>"
+                ].join("")
+            },
+            {
+                xtype: "container",
+                centered: true,
+                items: [
+                    {
                         xtype: "button",
                         id: "facebookLoginButton",
                         cls: "facebookLoginButton",
                         pressedCls: "facebookLoginDarkButton",
-                    	margin: 15,
-                    	height: 50,
-                    	width: 230,
+                        margin: 15,
+                        height: 50,
+                        width: 230
                     },
                     {
                         xtype: "button",
@@ -35,38 +36,40 @@ Ext.define("inkle.view.Login", {
                         cls: "emailLoginButton",
                         pressedCls: "emailLoginDarkButton",
                         margin: 15,
-                    	height: 50,
-                    	width: 230,
-                    },
+                        height: 50,
+                        width: 230
+                    }
                 ]
             },
+
+            /* Footer */
             {
-		        xtype: "container",
-		        html: [
-		            "<div style='position: absolute; top: 200px; left: 75px; color:#fff;'>",
-		            "   <span id='registrationLink'>Sign Up</span>  |  Take a Tour",
-		            "</div>",
-		        ].join("")
-		    },
+                xtype: "container",
+                html: [
+                    "<div id='loginFooter'>",
+                    "   <span id='registration'>Sign Up</span>  |  <span id='tour'>Take a Tour</span>",
+                    "<div>"
+                ].join("")
+            }
 		],
 
 		listeners: [
-			{
-				delegate: "#facebookLoginButton",
-            	event: "tap",
-            	fn: "onFacebookLoginButtonTap"
-			},
-			{
-            	delegate: "#emailLoginButton",
-            	event: "tap",
-            	fn: "onEmailLoginButtonTap"
-        	},
-        	{
-    			element: "element",
-            	delegate: "#registrationLink",
-            	event: "tap",
-            	fn: "onRegistrationLinkTap"
-        	}
+            {
+                delegate: "#facebookLoginButton",
+                event: "tap",
+                fn: "onFacebookLoginButtonTap"
+            },
+            {
+                delegate: "#emailLoginButton",
+                event: "tap",
+                fn: "onEmailLoginButtonTap"
+            },
+            {
+                element: "element",
+                delegate: "#registration",
+                event: "tap",
+                fn: "onRegistrationTap"
+            }
         ]
 	},
 	
@@ -77,8 +80,7 @@ Ext.define("inkle.view.Login", {
     onEmailLoginButtonTap: function () {
         this.fireEvent("emailLoginButtonTapped");
     },
-    onRegistrationLinkTap: function() {
-        this.fireEvent("registrationLinkTapped");
+    onRegistrationTap: function() {
+        this.fireEvent("registrationTapped");
     }
-
 });

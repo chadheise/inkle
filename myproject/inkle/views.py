@@ -55,7 +55,6 @@ def email_login_view(request):
     try:
         email = request.POST["email"]
         password = request.POST["password"]
-        #facebook_id = None
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
 
@@ -72,13 +71,14 @@ def email_login_view(request):
 
     # Log in the member if their email and password are correct
     if (not response_error):
-        user = authenticate(username = email, password = password)
-        print user
-        if (user and user.is_active):
-            login(request, user)
-            user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
-            user.save()                                # TODO: get rid of this?
-        else:
+        try:
+            user = User.objects.get(email = email)
+            user = authenticate(username = user.username, password = password)
+            if (user and user.is_active):
+                login(request, user)
+            else:
+                response_error = "Invalid login combination"
+        except:
             response_error = "Invalid login combination"
 
     # Create and return a JSON object
@@ -120,6 +120,8 @@ def facebook_login_view(request):
     except:
         user = None
 
+    print user
+
     # If there already is a Facebook user, skip this
     if (not user):
         try:
@@ -159,10 +161,11 @@ def facebook_login_view(request):
         user = authenticate(facebook_id = facebook_id, facebook_access_token = facebook_access_token)
         if (user and user.is_active):
             login(request, user)
-            user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
-            user.save()                                # TODO: get rid of this?
         else:
             response_error = "Invalid login"
+
+    print response_error
+    print response_error == ""
 
     # Create and return a JSON object
     response = simplejson.dumps({
@@ -228,6 +231,9 @@ def registration_view(request):
         month = int(birthday[1])
         day = int(birthday[2])
 
+    # Set the username equal to the email
+    username = email
+
     # Create a string to hold the registration error
     response_error = ""
 
@@ -257,6 +263,23 @@ def registration_view(request):
     elif (User.objects.filter(email = email)):
         response_error = "An account already exists for that email."
 
+    # Make sure the username is less than 30 characters and do a trick to ensure it is unique
+    elif (len(username) > 30):
+        username = username[0:30]
+        first = True
+        while (User.objects.filter(username = username)):
+            if (first):
+                username = username[0:27] + "000"
+                first = False
+            else:
+                new_number = int(username[27]) * 100 + int(username[28]) * 10 + int(username[29]) + 1
+                if (new_number < 10):
+                    username = username[0:27] + "00" + str(new_number)
+                elif (new_number < 100):
+                    username = username[0:27] + "0" + str(new_number)
+                else:
+                    username = username[0:27] + str(new_number)
+
     # Validate the password and confirm password
     elif (not password):
         response_error = "Password not specified"
@@ -269,15 +292,11 @@ def registration_view(request):
 
     # If the registration form is valid, create a new member with the provided POST data
     if (not response_error):
-        # TODO: fix this shit
-        if (len(email) > 30):
-            email = email[0:30]
-
         # Create a new user
         user = User(
             first_name = first_name,
             last_name = last_name,
-            username = email,
+            username = username,
             email = email
         )
         user.set_password(password)
@@ -298,7 +317,7 @@ def registration_view(request):
         user_profile.save()
 
         # Log the user in
-        user = authenticate(username = email, password = password)
+        user = authenticate(username = username, password = password)
         login(request, user)
         user.last_login = datetime.datetime.now()  # TODO: get rid of this since built in django login alreayd does this? Does it?
         user.save()                      
@@ -394,78 +413,68 @@ def get_group_list_item_panel_html(group, group_members = None):
 @login_required
 def link_facebook_account_view(request):
     """Links an existing user account to a facebook account."""
-    # Get the logged-in member
-    member = request.user
-
+    print "a"
     # Create a string to hold the login error
     response_error = ""
 
-    # Get the facebook credentials
+    # Get the POST data
     try:
-        if ("facebook_id" in request.POST):
-            facebook_id = request.POST["facebookId"]
-            facebookAccessToken = request.POST["facebookAccessToken"]
-            #first_name = request.POST["first_name"]
-            #last_name = request.POST["last_name"]
-            email = request.POST["email"]
-            day = int(request.POST["birthday"].split('/')[1])
-            month = int(request.POST["birthday"].split('/')[0])
-            year = int(request.POST["birthday"].split('/')[2])
-            birthday = datetime.date(day = day, month = month, year = year)
-            gender = request.POST["gender"][0]
+        facebook_id = request.POST["facebookId"]
+        facebookAccessToken = request.POST["facebookAccessToken"]
+        email = request.POST["email"]
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
 
-    # Check for existing member with the facebook ID
+    print "b"
+
+    # Check if the user has separate email and Facebook accounts already and tell them that they cannot currently be merged
     try:
-        fbUser = User.objects.filter(is_active = True).get(facebook_id = facebook_id)
-        #NEED TO DECIDE WHAT TO DO IN THIS CASE
+        user = UserProfile.objects.get(facebook_id = facebook_id)
+        print "already"
+        print user
+        if (user.is_active):
+            response_error = "An inkle account already exists for that Facebook user."
     except:
-        #There is no existing member with the provided facebook ID
-        fbUser = None
+        user = None
 
-    if fbUser is not None:
-        response = simplejson.dumps({
-            "success": False,
-            "error": "An inkle account already exists for that facebook user"
-        })
-        return HttpResponse(response, mimetype = "application/json")
+    if (not response_error):
+        print "c"
+        # Alert the user if their emails do not match
+        if (email != request.user.email):
+            print "d"
+            response_error = "The email addresses for your Facebook and inkle accounts do not match. Update your email in the settings before linking to Facebook."
 
-    if (email != request.user.email):
-        # User will need to update their inkle email to match the one in their facebook account
-        response_error = "The email address for the facebook account does not match your inkle account email. "
-        response_error += "Please update your email in the settings before linking your account to facebook."
-
-    if (fbUser is None):
-        try:
-            request.user.facebook_id = facebook_id  # Store their facebook_id for future use
-            #Replace the users password with a random one - they must login with facebook now
-            password = ''.join(random.choice(string.ascii_letters + string.punctuation + string.digits) for x in range(32))
-            request.user.set_password(password)
+        # Otherwise, convert their email account to a Facebook one
+        else:
+            print "e"
+            request.user.get_profile().facebook_id = facebook_id
+            print "f"
+            request.user.set_unusable_password()
+            print "g"
+            request.user.get_profile().save()
             request.user.save()
-        except:
-            # Error saving member
-            HttpResponse("Error saving member object")
+            print "h"
 
-    # Validate facebook authentication token or log them out
-    # Confirm the user is active and log them in
-    try:
+            # Log the user out and require them to log in with Facebook
+            logout(request)
+    """try:
+
+        user = authenticate(facebook_id = facebook_id, facebook_access_token = facebook_access_token)
+        if (user and user.is_active):
+            login(request, user)
+        else:
+            response_error = "Invalid login"
         fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
         fbResponse = urllib2.urlopen(fbRequest).read()  # Will throw an exception if access token can't be validated
         request.session["facebook_access_token"] = facebookAccessToken
         fbData = simplejson.loads(fbResponse)
     except Exception, e:
-        response_error = "Could not authenticate with facebook"
+        response_error = "Could not authenticate with facebook"""
 
-    # Determine if the link was successful
-    if (response_error):
-        success = False
-    else:
-        success = True
-
+    print response_error
     # Create and return a JSON object
     response = simplejson.dumps({
-        "success": success,
+        "success": response_error == "",
         "error": response_error
     })
 
@@ -1420,7 +1429,7 @@ def friends_view(request):
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
-        m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.num_mutual_friends = m.get_profile().get_num_mutual_friends(request.user)
 
         html = render_to_string("memberListItem.html", {
             "m": m,
@@ -1455,7 +1464,7 @@ def friend_requests_view(request):
 
         html = render_to_string("memberListItem.html", {
             "m": m,
-            "include_friend_request_buttons": True
+            "include_disclosure_arrow": True
         })
 
         response_friend_requests.append({
@@ -1779,7 +1788,7 @@ def respond_to_request_view(request):
     friend_request.save()
 
     # Return the number of pending friend requests for the logged-in member
-    return HttpResponse(FriendRequest.objects.filter(receiver = member, status = "pending").count())
+    return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
 
 
 @csrf_exempt

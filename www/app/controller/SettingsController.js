@@ -198,39 +198,36 @@ Ext.define("inkle.controller.SettingsController", {
         FB.login(function(response) {
             if (response.authResponse) {
                 facebookAccessToken = response.authResponse.accessToken;
-                 FB.api("/me", function(response) {
-           		   //Log the user in to inkle
-               	   Ext.Ajax.request({
-                       url: "http://127.0.0.1:8000/linkFacebookAccount/",
-                       params: {
-                           facebookId: response.id,
-                           facebookAccessToken: facebookAccessToken,
-                   		   email: response.email,
-                   		   first_name: response.first_name,
-                   		   last_name: response.last_name,
-                   		   gender: response.gender,
-                   		   birthday: response.birthday
-                   	   },
-               		   success: function(response) {
-                           alert("success!");
-                           //Pop the linkFacebookAccount view off the settings page
-                           this.getSettingsView().pop();
-                           //Push the invite friends view now that they are linked to facebook
-                           this.getSettingsView().push({
-                       	    xtype: "inviteFacebookFriendsView"
-                           });
-                       },
-                       failure: function(response) {
-                           Ext.Msg.alert(response.responseText);
-                           Ext.Msg.alert(response.error);
+                FB.api("/me", function(response) {
+               		//Log the user in to inkle
+                   	Ext.Ajax.request({
+                        url: "http://127.0.0.1:8000/linkFacebookAccount/",
+                        params: {
+                            facebookId: response.id,
+                            facebookAccessToken: facebookAccessToken,
+                   		    email: response.email
+                   	    },
+               		    callback: function(options, success, response) {
+                            var realSuccess = JSON.parse(response.responseText)["success"];
+                            var error = JSON.parse(response.responseText)["error"];
+                            if (realSuccess) {
+                                this.activateLoginView();
+                            }
+                            else {
+                                Ext.Msg.alert(error);
+                            }
                         },
                        	scope: object
                		});
-                 });
-               } else {
-                 alert("User cancelled login or did not fully authorize.");
-               }
-            }, {scope: "email,user_birthday,publish_stream"});
+                });
+            }
+            else {
+                alert("User cancelled login or did not fully authorize.");
+            }
+        },
+        {
+            scope: "email,user_birthday,publish_stream"
+        });
     },
 
 	inviteFacebookFriends: function() {

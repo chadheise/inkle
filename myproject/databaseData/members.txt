@@ -1,5 +1,5 @@
 # FIRST NAME | LAST NAME | EMAIL/USERNAME | BIRTHDAY DAY | BIRTHDAY MONTH | BIRTHDAY YEAR | GENDER | IS_STAFF
-Jacob | Wenger | jwenger@nd.edu | 20 | 5 | 1990 | Male | True
+Jacob | Wenger | wenger.jacob@gmail.com | 20 | 5 | 1990 | Male | True
 Chad | Heise | cheise@nd.edu | 14 | 1 | 1990 | Male | True
 Jane | Obringer | jobring2@nd.edu | 7 | 7 | 1990 | Male | False
 David | Ulery | dulery@nd.edu | 3 | 8 | 1990 | Male | False

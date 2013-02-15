@@ -312,6 +312,26 @@ $badge-bg-gradient: "matte";
 }
 
 /***********/
+/*  LOGIN  */
+/***********/
+#loginFooter {
+    color: #FFFFFF;
+    position: fixed;
+    width: 100%;
+    bottom: 0px;
+    text-align: center;
+    height: 100px;
+}
+
+#registration {
+    margin-right: 10px;
+}
+
+#tour {
+    margin-left: 10px;
+}
+
+/***********/
 /*  LISTS  */
 /***********/
 /* Inklings list */
@@ -533,11 +553,11 @@ $badge-bg-gradient: "matte";
     float: left;
 	height: 50px;
 	width: 50px;
-	margin-right: 5px;
+	margin: 3px 5px 0px 0px;
 }
 
 .membersList .memberInfo {
-    margin-top: -3px;
+    margin: -3px 15px 0px 0px;
 }
 
 .membersList .memberName {
@@ -557,6 +577,12 @@ $badge-bg-gradient: "matte";
 	color: $mediumGray;
 }
 
+.membersList .disclosureArrow {
+    position: absolute;
+    top: 22px;
+    right: 7px;
+}
+
 /* Settings list */
 .settingsList .settingName {
     float: left;
@@ -564,6 +590,7 @@ $badge-bg-gradient: "matte";
     font-size: 18px;
     font-weight: bold;
     color: $mediumBlue;
+}
 
 .isFriendButton {
 	float: right;
@@ -624,6 +651,10 @@ $badge-bg-gradient: "matte";
     padding: 8px 4px 0px 0px;
 }
 
+.listDeleteButton {
+    margin-right: 20px;
+}
+
 /*************************/
 /*  LIST DELETION ITEMS  */
 /*************************/
@@ -638,11 +669,11 @@ $badge-bg-gradient: "matte";
 }
 
 .deleteLockSlideLeft {
-	-webkit-animation: deleteLockSlideLeftAnimation 0.5s 1; 
+	-webkit-animation: deleteLockSlideLeftAnimation 2s 1; 
 }
 
 .deleteLockSlideRight {
-	-webkit-animation: deleteLockSlideRightAnimation 0.5s 1; 
+	-webkit-animation: deleteLockSlideRightAnimation 2s 1; 
 }
 
 @-webkit-keyframes deleteLockSlideLeftAnimation {

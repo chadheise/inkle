@@ -25,7 +25,7 @@ Ext.define("inkle.controller.LoginController", {
             loginView: {
                 emailLoginButtonTapped: "activateLoginFormView",
 				facebookLoginButtonTapped: "loginWithFacebook",
-				registrationLinkTapped: "activateRegistrationView"
+				registrationTapped: "activateRegistrationView"
             },
             
             loginFormView: {
@@ -143,11 +143,11 @@ Ext.define("inkle.controller.LoginController", {
             },
 
             success: function(form, response) {
-            this.activateMainTabView();
+                this.activateMainTabView();
             },
 
             failure: function(form, response) {
-            Ext.Msg.alert("Error", response.error);
+                Ext.Msg.alert("Error", response.error);
             },
 
             scope: this
@@ -157,13 +157,13 @@ Ext.define("inkle.controller.LoginController", {
     /* Logs the user in with Facebook */
 	loginWithFacebook: function() {
         var object = this;
-        var facebookAccessToken;
         FB.login(function(response) {
             if (response.authResponse) {
-                facebookAccessToken = response.authResponse.accessToken;
+                var facebookAccessToken = response.authResponse.accessToken;
                 FB.api("/me", function(response) {
                     Ext.Ajax.request({
                         url: "http://127.0.0.1:8000/facebookLogin/",
+                        headers : { "cache-control": "no-cache" },
                         params: {
                             facebookId: response.id,
                             facebookAccessToken: facebookAccessToken,
@@ -174,13 +174,16 @@ Ext.define("inkle.controller.LoginController", {
                             gender: response.gender
                         },
 
-                        success: function(response){
-                            this.activateMainTabView();
-                        },
-
-                        failure: function(response) {
-                            Ext.Msg.alert("Error", response.error);
-                            FB.logout();
+                        callback: function(options, success, response) {
+                            var realSuccess = JSON.parse(response.responseText)["success"];
+                            var error = JSON.parse(response.responseText)["error"];
+                            if (realSuccess) {
+                                this.activateMainTabView();
+                            }
+                            else {
+                                Ext.Msg.alert("Error", error);
+                                FB.logout();
+                            }
                         },
 
                         scope: object
