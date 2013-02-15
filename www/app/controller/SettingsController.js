@@ -19,7 +19,7 @@ Ext.define("inkle.controller.SettingsController", {
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
-            settingsViewList: "#settingsViewList",
+            settingsList: "#settingsList",
 
         },
         control: {
@@ -63,7 +63,7 @@ Ext.define("inkle.controller.SettingsController", {
         });
     
         // Update the settings list based on whether or not the user is logged in with facebook
-        var settingsListStore = this.getSettingsViewList().getStore();
+        var settingsListStore = this.getSettingsList().getStore();
         if (fbAccessToken != "") {
              settingsListStore.setData([
         			{ text: "Notifications", key: "notifications" },

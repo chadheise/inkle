@@ -583,8 +583,46 @@ $badge-bg-gradient: "matte";
     right: 7px;
 }
 
+/* Inkling feed list */
+#inklingFeedList .x-list-item-label {
+    padding: 5px;
+    min-height: 60px;
+}
+
+#inklingFeedList img {
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin: 3px 5px 0px 0px;
+}
+
+#inklingFeedList .floatRight {
+    float: right;
+    margin-right: 0px;
+    margin-left: 5px;
+}
+
+#inklingFeedList .feedUpdateInfo, #inklingFeedList .feedCommentInfo {
+    margin: -3px 5px 0px 55px;
+}
+
+#inklingFeedList .creatorName {
+    font-size: 16px;
+    font-weight: bold;
+    color: $mediumBlue;
+}
+
+#inklingFeedList .text {
+    font-size: 16px;
+}
+
+#inklingFeedList .timestamp {
+    font-size: 12px;
+    color: $lighterGray;
+}
+
 /* Settings list */
-.settingsList .settingName {
+#settingsList .settingName {
     float: left;
     margin-left: -5px;
     font-size: 18px;
@@ -592,6 +630,7 @@ $badge-bg-gradient: "matte";
     color: $mediumBlue;
 }
 
+/* Add friends list??? */
 .isFriendButton {
 	float: right;
 	font-size: 14px;
@@ -958,49 +997,8 @@ $badge-bg-gradient: "matte";
     margin-top: 50px;
 }
 
-/******************/
-/*  INKLING FEED  */
-/******************/
-#inklingFeedList .x-list-item-label {
-	/*height: 60px;*/
-	padding: 10px;
-}
 
-#inklingFeedList img {
-	float: left;
-	height: 50px;
-	width: 50px;
-	margin-right: 10px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $lightestBlue;
-	box-shadow: 0px 0px 10px #888;
-}
 
-#inklingFeedList .floatRight {
-	float: right;
-	margin-right: 0px;
-	margin-left: 10px;
-}
-
-#inklingFeedList .feedcommentInfo {
-	float: left;
-}
-
-#inklingFeedList .creatorName {
-	font-size: 16px;
-	font-weight: bold;
-	color: $mediumGreen;
-}
-
-#inklingFeedList .text {
-	font-size: 16px;
-}
-
-#inklingFeedList .timestamp {
-	font-size: 12px;
-	color: #AAAAAA;
-}
 
 
 

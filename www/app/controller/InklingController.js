@@ -80,6 +80,9 @@ Ext.define("inkle.controller.InklingController", {
             	membersAttendingDisclosureArrowTapped: "activateInklingMembersAttendingView",
             	membersAwaitingReplyDisclosureArrowTapped: "activateInklingMembersAwaitingReplyView"
             },
+            inklingFeedView: {
+                inklingFeedListRefreshed: "updateInklingFeedList",
+            },
             addCommentPanel: {
             	// Commands
             	addCommentTextFieldKeyedUp: "toggleAddCommentSendButton",
@@ -287,7 +290,10 @@ Ext.define("inkle.controller.InklingController", {
 		});
 		
 		// Re-load the inkling feed list
-		inklingFeedListStore.load();
+		inklingFeedListStore.load(function() {
+            // Erase false to simply have it go to bottom right away
+            this.getInklingFeedList().getScrollable().getScroller().refresh().scrollToEnd(false);
+        }, this);
 	},
 	
 	/* Updates the inkling members attending list */
