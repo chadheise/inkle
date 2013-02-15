@@ -6,17 +6,14 @@ Ext.define("inkle.view.InklingFeed", {
 	config: {
 		layout: "card",
 		
-    	items: [
-    		// Inkling feed list
+        items: [
+            // Inkling feed list
 			{
 				xtype: "list",
 				id: "inklingFeedList",
 				loadingText: "Loading inkling feed...",
 				emptyText: "<div class='emptyListText'>No feed items</div>",
 				disableSelection: true,
-				/*scrollable: {
-					initialOffset: { x: 0, y: 10000000 }
-				},*/
 				itemTpl: [
 					"{ html }"
 				],

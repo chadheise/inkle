@@ -291,7 +291,6 @@ Ext.define("inkle.controller.InklingController", {
 		
 		// Re-load the inkling feed list
 		inklingFeedListStore.load(function() {
-            // Erase false to simply have it go to bottom right away
             this.getInklingFeedList().getScrollable().getScroller().refresh().scrollToEnd(false);
         }, this);
 	},
