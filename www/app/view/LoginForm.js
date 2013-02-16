@@ -13,8 +13,8 @@ Ext.define("inkle.view.LoginForm", {
 		scrollable: false,
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
-		url: "http://127.0.0.1:8000/emailLogin/",
-        headers : { "cache-control": "no-cache" },
+		url: inkle.app.baseUrl + "/emailLogin/",
+		headers : { "cache-control": "no-cache" },
 		
 		items: [
             // Top toolbar

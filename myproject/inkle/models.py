@@ -278,4 +278,4 @@ class UserProfile(models.Model):
         if (self.is_facebook_member()):
             return "https://graph.facebook.com/" + str(self.facebook_id) + "/picture"
         else:
-            return "http://127.0.0.1:8000/static/media/images/members/" + str(self.id) + ".jpg"
+            return "http://127.0.0.1:8000/static/media/images/members/" + str(self.user.id) + ".jpg"

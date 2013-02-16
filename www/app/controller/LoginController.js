@@ -193,7 +193,7 @@ Ext.define("inkle.controller.LoginController", {
                 var facebookAccessToken = response.authResponse.accessToken;
                 FB.api("/me", function(response) {
                     Ext.Ajax.request({
-                        url: "http://127.0.0.1:8000/facebookLogin/",
+                        url: inkle.app.baseUrl + "/facebookLogin/",
                         headers : { "cache-control": "no-cache" },
                         params: {
                             facebookId: response.id,
@@ -280,7 +280,7 @@ Ext.define("inkle.controller.LoginController", {
     setBadges: function() {
         // Set the "My Inklings" tab and inkling invites badges
         Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/numInklingInvitations/",
+            url: inkle.app.baseUrl + "/numInklingInvitations/",
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
@@ -296,7 +296,7 @@ Ext.define("inkle.controller.LoginController", {
         
         // Set the "Friends" tab and friends requests badges
         Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/numFriendRequests/",
+            url: inkle.app.baseUrl + "/numFriendRequests/",
             
             success: function(response) {
                 numFriendRequests = response.responseText;

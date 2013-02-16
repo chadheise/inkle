@@ -207,9 +207,9 @@ $badge-bg-gradient: "matte";
 	box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
-/**********************/
-/*   LOGIN BUTTONS 	  */
-/**********************/
+/******************************/
+/*   LOGIN & LARGE BUTTONS 	  */
+/******************************/
 .facebookLoginButton {
 	background: url("../images/facebookLogin.png") !important;
 }
@@ -224,6 +224,14 @@ $badge-bg-gradient: "matte";
 
 .emailLoginDarkButton {
 	background: url("../images/emailLoginDark.png") !important;
+}
+
+.changePasswordButton {
+	background: url("../images/changePassword.png") !important;
+}
+
+.changePasswordDarkButton {
+	background: url("../images/changePasswordDark.png") !important;
 }
 
 /**************************/
@@ -1067,7 +1075,6 @@ $badge-bg-gradient: "matte";
 	background-color: $lightestBlue;
 	box-shadow: 0px 0px 10px #888;
 }
-
 
 .hidden {
     visibility: "hidden";
