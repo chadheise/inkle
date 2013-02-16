@@ -7,6 +7,7 @@ Ext.define("inkle.controller.LoginController", {
             loginView: "loginView",
             loginFormView: "loginFormView",
             registrationView: "registrationView",
+            forgottenPasswordView: "forgottenPasswordView",
             mainTabView: "mainTabView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
@@ -30,16 +31,22 @@ Ext.define("inkle.controller.LoginController", {
             
             loginFormView: {
                 loginFormCancelButtonTapped: "activateLoginView",
-                loginFormLoginButtonTapped: "loginWithEmail"
+                loginFormLoginButtonTapped: "loginWithEmail",
+                forgottenPasswordTapped: "activateForgottenPasswordView"
             },
             
+            forgottenPasswordView: {
+                forgottenPasswordCancelButtonTapped: "activateLoginView",
+                forgottenPasswordSendButtonTapped: "sendForgottenPasswordEmail"
+            },
+
             registrationView: {
                 registrationFormCancelButtonTapped: "activateLoginView",
                 registrationFormRegisterButtonTapped: "registerMember"
             },
             
             mainTabView: {
-                activate: "setBadges",
+                activate: "setBadges"
             }
         }
     },
@@ -55,7 +62,7 @@ Ext.define("inkle.controller.LoginController", {
 	
 	/* Returns the month string associated with the inputted index */
 	getMonthString: function(index) {
-		months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
+		months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
 		return months[index];
 	},
     
@@ -64,40 +71,64 @@ Ext.define("inkle.controller.LoginController", {
 	/**********************/
 	/* Creates and activates the login form view */
 	activateLoginFormView: function() {
-	    if (this.getLoginFormView())
-	    {
-	        Ext.Viewport.animateActiveItem(this.getLoginFormView(), { type: "flip" });
-	    }
-	    else
-	    {
+        if (this.getLoginFormView())
+        {
+            Ext.Viewport.animateActiveItem(this.getLoginFormView(), { type: "flip" });
+        }
+        else
+        {
             var loginFormView = Ext.create("inkle.view.LoginForm");
-	        Ext.Viewport.animateActiveItem(loginFormView, { type: "flip" });
-	    }
+            Ext.Viewport.animateActiveItem(loginFormView, {
+                type: "flip"
+            });
+        }
 
-	    // Set the focus on the email input
-	    this.getLoginEmail().focus();
-	    //windows.scrollTo(0,0);
+        // Set the focus on the email input
+        this.getLoginEmail().focus();
+        //windows.scrollTo(0,0);
 	},
 	
+    activateForgottenPasswordView: function() {
+        if (this.getForgottenPasswordView())
+        {
+            Ext.Viewport.animateActiveItem(this.getForgottenPasswordView(), {
+                type: "slide",
+                direction: "up"
+            });
+        }
+        else
+        {
+            var forgottenPasswordView = Ext.create("inkle.view.ForgottenPassword");
+            Ext.Viewport.animateActiveItem(forgottenPasswordView, {
+                type: "slide",
+                direction: "up"
+            });
+        }
+    },
+    
 	/* Creates and activates the registration view */
 	activateRegistrationView: function() {
-	    if (this.getRegistrationView())
-	    {
-	        Ext.Viewport.animateActiveItem(this.getRegistrationView(), { type: "flip" });
-	    }
-	    else
-	    {
+        if (this.getRegistrationView())
+        {
+            Ext.Viewport.animateActiveItem(this.getRegistrationView(), { type: "flip" });
+        }
+        else
+        {
             var registrationView = Ext.create("inkle.view.Registration");
-	        Ext.Viewport.animateActiveItem(registrationView, { type: "flip" });
-	    }
-	    
-	    // Set the focus on the first name input
-	    this.getRegistrationFirstName().focus();
+            Ext.Viewport.animateActiveItem(registrationView, {
+                type: "flip"
+            });
+        }
+
+        // Set the focus on the first name input
+        this.getRegistrationFirstName().focus();
 	},
 	
 	/* Activates the login view */
 	activateLoginView: function() {
-	    Ext.Viewport.animateActiveItem(this.getLoginView(), { type: "flip" });
+        Ext.Viewport.animateActiveItem(this.getLoginView(), {
+            type: "flip"
+        });
 	},
 	
 	/* Creates and activates the main tab view */
@@ -127,7 +158,7 @@ Ext.define("inkle.controller.LoginController", {
             direction: "up"
         });
     },
-	
+
     /**************/
 	/*  COMMANDS  */
 	/**************/
@@ -198,27 +229,50 @@ Ext.define("inkle.controller.LoginController", {
             scope: "email,user_birthday,publish_stream"
         });
     },
+
+    /* Sends the forgotten password email to the email address provided by the user */
+    sendForgottenPasswordEmail: function() {
+        this.getForgottenPasswordView().submit({
+            method: "POST",
+                        
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+                Ext.Msg.alert("Success", "Your PIN has been emailed to you.");
+            },
+
+            failure: function(form, response) {
+                Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
+        });
+    },
     
     /* Registers a new member */
     registerMember: function() {
 		this.getRegistrationView().submit({
 			method: "POST",
-						
-         	waitMsg: {
-         		xtype: "loadmask",
-            	message: "Processing",
-            	cls : "demos-loading"
-         	},
-         				
-         	success: function(form, response) {
-            	this.activateMainTabView();
-         	},
-         				
-         	failure: function(form, response) {
-        	    Ext.Msg.alert("Error", response.error);
-         	},
-         	
-         	scope: this
+
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+                this.activateMainTabView();
+            },
+
+            failure: function(form, response) {
+                Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
         });
     },
     

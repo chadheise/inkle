@@ -300,7 +300,7 @@ $badge-bg-gradient: "matte";
 	box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
-//The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect
+/* The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect */
 .toolbarButton {
 	width: 33px;
 	height: 33px;
@@ -329,6 +329,14 @@ $badge-bg-gradient: "matte";
 
 #tour {
     margin-left: 10px;
+}
+
+#forgottenPassword {
+    float: right;
+    color: $mediumBlue;
+    font-size: 14px;
+    padding: 10px;
+    margin: 110px 0px 0px 0px;
 }
 
 /***********/

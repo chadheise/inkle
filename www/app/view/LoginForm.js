@@ -53,7 +53,7 @@ Ext.define("inkle.view.LoginForm", {
 						xtype: "emailfield",
 						id: "loginFormEmail",
 						name: "email",
-						placeHolder: "Email",
+						placeHolder: "Email"
 					},
 					{
 						xtype: "passwordfield",
@@ -62,34 +62,48 @@ Ext.define("inkle.view.LoginForm", {
 						placeHolder: "Password"
 					}
 				]
-			}
+			},
+
+            // Forgotten password
+            {
+                xtype: "container",
+                html: [
+                    "<p id='forgottenPassword'>Forgot your password?</p>"
+                ].join("")
+            }
 		],
 
 		listeners: [
 			{
-            	delegate: "#loginFormCancelButton",
-            	event: "tap",
-            	fn: "onLoginFormCancelButtonTap"
-        	},
-        	{
-            	delegate: "#loginFormLoginButton",
-            	event: "tap",
-            	fn: "onLoginFormLoginButtonTap"
-        	},
-        	{
-        	    delegate: "#loginFormPassword",
-        	    event: "focus",
-        	    fn: "onLoginFormTap"
+                delegate: "#loginFormCancelButton",
+                event: "tap",
+                fn: "onLoginFormCancelButtonTap"
+            },
+            {
+                delegate: "#loginFormLoginButton",
+                event: "tap",
+                fn: "onLoginFormLoginButtonTap"
+            },
+            {
+                delegate: "#loginFormPassword",
+                event: "focus",
+                fn: "onLoginFormTap"
+            },
+            {
+                delegate: "#forgottenPassword",
+                element: "element",
+                event: "tap",
+                fn: "onForgottenPasswordTap"
             }
         ]
 	},
 	
 	// Event firings
 	onLoginFormCancelButtonTap: function() {
-	    this.fireEvent("loginFormCancelButtonTapped");
+        this.fireEvent("loginFormCancelButtonTapped");
 	},
 	
-	onLoginFormLoginButtonTap: function () {
+	onLoginFormLoginButtonTap: function() {
         this.fireEvent("loginFormLoginButtonTapped");
     },
     
@@ -97,5 +111,9 @@ Ext.define("inkle.view.LoginForm", {
         //window.scrollTo(500,500);
         //alert(this.getLoginFormToolbar());
         //this.getLoginFormToolbar().scrollTo(0,0);
+    },
+
+    onForgottenPasswordTap: function() {
+        this.fireEvent("forgottenPasswordTapped");
     }
 });

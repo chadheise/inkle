@@ -74,10 +74,10 @@ Ext.define("inkle.view.Login", {
 	},
 	
 	// Event firings
-	onFacebookLoginButtonTap: function () {
+	onFacebookLoginButtonTap: function() {
         this.fireEvent("facebookLoginButtonTapped");
     },
-    onEmailLoginButtonTap: function () {
+    onEmailLoginButtonTap: function() {
         this.fireEvent("emailLoginButtonTapped");
     },
     onRegistrationTap: function() {
