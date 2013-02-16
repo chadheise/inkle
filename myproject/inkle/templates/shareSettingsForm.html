@@ -3,14 +3,14 @@
 <div class="shareSettingsForm">
     <!-- Selected groups -->
     <div class="selectedGroupsHeader">
-        <img class="selectedGroupsShareSetting selectionItem" src={% if user.shareWithSelectedGroups %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
+        <img class="selectedGroupsShareSetting selectionItem" src={% if user.get_profile.shareWithSelectedGroups %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
         <p>Selected groups</p>
     </div>
     {% for g in user.group_set.all %}
         <div class="selectedGroupsGroup">
             <img id="group{{ g.id }}ShareSetting" class="groupShareSetting selectionItem" groupId="{{ g.id }}"
 				src={% if g.shareByDefault %}
-						{% if user.shareWithSelectedGroups %}
+						{% if user.get_profile.shareWithSelectedGroups %}
 							"resources/images/selected.png"
 						{% else %}
 							"resources/images/fadedselected.png"
@@ -30,13 +30,13 @@
 
     <!-- No one -->
     <div class="noOne">
-        <img class="noOneShareSetting selectionItem" src={% if user.shareWithSelectedGroups|is_false %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
+        <img class="noOneShareSetting selectionItem" src={% if user.get_profile.shareWithSelectedGroups|is_false %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
         <p>No one</p>
     </div>
 
     <!-- Forwarding -->
     <div class="forwarding">
-        <img class="forwardingShareSetting selectionItem" src={% if user.allowInklingAttendeesToShare %}"resources/images/selected.png"{% else %} "resources/images/deselected.png"{% endif %}>
+        <img class="forwardingShareSetting selectionItem" src={% if user.get_profile.allowInklingAttendeesToShare %}"resources/images/selected.png"{% else %} "resources/images/deselected.png"{% endif %}>
         <p>Allow people attending to share with others</p>
     </div>
 </div>

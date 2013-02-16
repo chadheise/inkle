@@ -44,6 +44,13 @@ Ext.define("inkle.view.Settings", {
                 		text: "Settings",
                 		hidden: true,
                 	},
+                	{
+                		xtype: "button",
+                		itemId: "changePasswordBackButton",
+                		ui: "back",
+                		text: "Settings",
+                		hidden: true,
+                	},
                 ]
     		},
     		
@@ -76,9 +83,9 @@ Ext.define("inkle.view.Settings", {
             	fn: "onSettingsLogoutButtonTap"
         	},
         	{
-            	delegate: "#settingsViewList",
+            	delegate: "#settingsList",
             	event: "itemtap",
-            	fn: "onSettingsViewListItemTap"
+            	fn: "onSettingsListItemTap"
         	},
         	{
             	delegate: "#inviteFacebookFriendsBackButton",
@@ -90,6 +97,11 @@ Ext.define("inkle.view.Settings", {
             	event: "tap",
             	fn: "onShareSettingsBackButtonTap"
         	},
+        	{
+            	delegate: "#changePasswordBackButton",
+            	event: "tap",
+            	fn: "onChangePasswordBackButtonTap"
+        	},
         	
         ]
 	},
@@ -98,9 +110,12 @@ Ext.define("inkle.view.Settings", {
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
     },
-    onSettingsViewListItemTap: function(settingsList, index, target, record, event, options) {
+    onSettingsListItemTap: function(settingsList, index, target, record, event, options) {
         var selectedSetting = record.getData()["key"]
-        if (selectedSetting == "linkFacebookAccount") {
+        if (selectedSetting == "password") {
+            this.fireEvent("changePasswordTapped");
+        }
+        else if (selectedSetting == "linkFacebookAccount") {
             this.fireEvent("inviteFacebookFriendsTapped");
         }
         else if (selectedSetting == "sharing") {
@@ -115,5 +130,8 @@ Ext.define("inkle.view.Settings", {
     },
     onShareSettingsBackButtonTap: function() {
         this.fireEvent("shareSettingsBackButtonTapped");
+    },
+    onChangePasswordBackButtonTap: function() {
+        this.fireEvent("changePasswordBackButtonTapped");
     }
 });

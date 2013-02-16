@@ -1,3 +1,9 @@
+/*Ext.Loader.setConfig( {enabled: true, disableCaching: true} );
+Ext.data.Connection.disableCaching = true;
+Ext.data.JsonP.disableCaching = true;*/
+//Ext.data.proxy.Server.prototype.noCache = true;
+//Ext.Ajax.disableCaching = true;
+
 Ext.application({
     name: "inkle",
     
@@ -25,7 +31,8 @@ Ext.application({
         "Settings",
         "InviteFacebookFriends",
         "LinkFacebookAccount",
-        "ShareSettings"
+        "ShareSettings",
+        "changePassword"
     ],
     controllers: [
         "LoginController",
@@ -51,6 +58,9 @@ Ext.application({
     phoneStartupScreen: "resources/loading/Homescreen.jpg",
     tabletStartupScreen: "resources/loading/Homescreen~ipad.jpg",
 	*/
+	//Set the base url for all server requests
+	//baseUrl: "http://chads-macbook-pro.local:8000",
+	baseUrl: "http://127.0.0.1:8000",
 	
     launch: function() {
         console.log("launching app");
@@ -90,15 +100,15 @@ Ext.application({
 		// Determine if the user is logged in
 		var isLoggedIn;
 		Ext.Ajax.request({
-            async: false,
-            url: "http://127.0.0.1:8000/isLoggedIn/",
-            success: function(response) {
-                isLoggedIn = response.responseText;
-            },
-            failure: function(response) {
-                Ext.Msg.alert("Errors", response.errors);
-                console.log(response.responseText);
-            }
+    		async: false,
+    		url: inkle.app.baseUrl + "/isLoggedIn/",
+		    success: function(response) {
+        		isLoggedIn = response.responseText;
+        	},
+        	failure: function(response) {
+        		Ext.Msg.alert("Errors", response.errors);
+        		console.log(response.responseText);
+        	}
 		});
 
 		// Show the main tab view is the user is logged in

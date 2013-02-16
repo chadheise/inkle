@@ -46,8 +46,6 @@ urlpatterns = patterns(
     (r"^uninviteGroup/$", "uninvite_group_view"),
     (r"^numInklingInvitations/$", "num_inkling_invitations_view"),
     (r"^inklingInvitations/$", "inkling_invitations_view"),
-    (r"^shareSettingsForm/$", "share_settings_form_view"),
-    (r"^setShareSetting/$", "set_share_setting_view"),
     (r"^respondToInklingInvitation/$", "respond_to_inkling_invitation_view"),
 
     (r"^friends/$", "friends_view"),
@@ -64,6 +62,10 @@ urlpatterns = patterns(
     (r"^createGroup/$", "create_group_view"),
     (r"^renameGroup/$", "rename_group_view"),
 
+    # Settings
+    (r"^shareSettingsForm/$", "share_settings_form_view"),
+    (r"^setShareSetting/$", "set_share_setting_view"),
+    (r"^changePassword/$", "change_password_view"),
     (r"^inviteFacebookFriendsView/$", "invite_facebook_friends_view"),
 
     (r"^facebookPost/$", "facebook_post"),
