@@ -83,9 +83,9 @@ Ext.define("inkle.view.Settings", {
             	fn: "onSettingsLogoutButtonTap"
         	},
         	{
-            	delegate: "#settingsViewList",
+            	delegate: "#settingsList",
             	event: "itemtap",
-            	fn: "onSettingsViewListItemTap"
+            	fn: "onSettingsListItemTap"
         	},
         	{
             	delegate: "#inviteFacebookFriendsBackButton",
@@ -110,7 +110,7 @@ Ext.define("inkle.view.Settings", {
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
     },
-    onSettingsViewListItemTap: function(settingsList, index, target, record, event, options) {
+    onSettingsListItemTap: function(settingsList, index, target, record, event, options) {
         var selectedSetting = record.getData()["key"]
         if (selectedSetting == "password") {
             this.fireEvent("changePasswordTapped");
