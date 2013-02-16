@@ -246,6 +246,9 @@ class UserProfile(models.Model):
     allowInklingAttendeesToShare = models.BooleanField(default=False)
     # Group share settings are part of the Group object
 
+    # Password reset information
+    password_reset_pin = models.IntegerField(default = -1)
+
     # Managers
     objects = models.Manager()
 

@@ -9,6 +9,7 @@ Ext.application({
         "Main",
         "Login",
         "LoginForm",
+        "ForgottenPassword",
         "Registration",
         "AllInklings",
         "MyInklings",

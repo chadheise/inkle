@@ -17,8 +17,9 @@ from django.utils import simplejson
 # URL module
 import urllib2
 
-# Inkle database models
+# Inkle database models and emails
 from myproject.inkle.models import *
+from myproject.inkle.emails import *
 
 # Regular expression database querying module
 from django.db.models import Q
@@ -180,6 +181,44 @@ def logout_view(request):
     """Logs out the logged-in member."""
     logout(request)
     return HttpResponse()
+
+
+@csrf_exempt
+def forgotten_password_view(request):
+    """Sends a PIN to the inputted email address so they can reset their password."""
+    # Get the POST data
+    try:
+        email = request.POST["email"]
+    except:
+        raise Http404()
+
+    # Create a string to hold the registration error
+    response_error = ""
+
+    # Validate the email
+    if (not email):
+        response_error = "Email not specified"
+    elif (not is_email(email)):
+        response_error = "Invalid email format"
+
+    if (not response_error):
+        # Get the user with the inputted email
+        try:
+            user = User.objects.get(email = email)
+            if (not user.get_profile().is_facebook_member()):
+                user.get_profile().password_reset_pin = random.randint(100000, 999999)
+                user.get_profile().save()
+                send_password_reset_email(user)
+        except:
+            pass
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
 
 
 def is_email(email):
@@ -429,7 +468,8 @@ def link_facebook_account_view(request):
 
     # Check if the user has separate email and Facebook accounts already and tell them that they cannot currently be merged
     try:
-        user = UserProfile.objects.get(facebook_id = facebook_id)
+        user_profile = UserProfile.objects.get(facebook_id = facebook_id)
+        user = user_profile.user
         print "already"
         print user
         if (user.is_active):
