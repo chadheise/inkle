@@ -1,4 +1,4 @@
-Ext.define("inkle.view.changePassword", {
+Ext.define("inkle.view.ChangePassword", {
 	extend: "Ext.form.Panel",
 	
 	xtype: "changePasswordView",
@@ -13,7 +13,7 @@ Ext.define("inkle.view.changePassword", {
    	
    	config: {
 		scrollable: false,
-		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
+		//style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
 		url: inkle.app.baseUrl + "/changePassword/",
 		

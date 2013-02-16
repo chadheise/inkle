@@ -51,6 +51,13 @@ Ext.define("inkle.view.Settings", {
                 		text: "Settings",
                 		hidden: true,
                 	},
+                	{
+                		xtype: "button",
+                		itemId: "changeEmailBackButton",
+                		ui: "back",
+                		text: "Settings",
+                		hidden: true,
+                	},
                 ]
     		},
     		
@@ -102,6 +109,11 @@ Ext.define("inkle.view.Settings", {
             	event: "tap",
             	fn: "onChangePasswordBackButtonTap"
         	},
+        	{
+            	delegate: "#changeEmailBackButton",
+            	event: "tap",
+            	fn: "onChangeEmailBackButtonTap"
+        	},
         	
         ]
 	},
@@ -114,6 +126,9 @@ Ext.define("inkle.view.Settings", {
         var selectedSetting = record.getData()["key"]
         if (selectedSetting == "password") {
             this.fireEvent("changePasswordTapped");
+        }
+        else if (selectedSetting == "email") {
+            this.fireEvent("changeEmailTapped");
         }
         else if (selectedSetting == "linkFacebookAccount") {
             this.fireEvent("inviteFacebookFriendsTapped");
@@ -133,5 +148,8 @@ Ext.define("inkle.view.Settings", {
     },
     onChangePasswordBackButtonTap: function() {
         this.fireEvent("changePasswordBackButtonTapped");
+    },
+    onChangeEmailBackButtonTap: function() {
+        this.fireEvent("changeEmailBackButtonTapped");
     }
 });

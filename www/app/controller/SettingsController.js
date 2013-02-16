@@ -12,12 +12,14 @@ Ext.define("inkle.controller.SettingsController", {
             linkFacebookAccountView: "linkFacebookAccountView",
             shareSettingsView: "shareSettingsView",
             changePasswordView: "changePasswordView",
+            changeEmailView: "changeEmailView",
             
             // Toolbar buttons
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
             shareSettingsBackButton: "#shareSettingsBackButton",
             changePasswordBackButton: "#changePasswordBackButton",
+            changeEmailBackButton: "#changeEmailBackButton",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -34,6 +36,8 @@ Ext.define("inkle.controller.SettingsController", {
                 shareSettingsBackButtonTapped: "shareSettingsBack",
                 changePasswordTapped: "loadChangePasswordView",
                 changePasswordBackButtonTapped: "changePasswordBack",
+                changeEmailTapped: "loadChangeEmailView",
+                changeEmailBackButtonTapped: "changeEmailBack",
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
@@ -50,6 +54,9 @@ Ext.define("inkle.controller.SettingsController", {
            	},
            	changePasswordView: {
            	    changePasswordButtonTapped: "changePassword",
+           	},
+           	changeEmailView: {
+           	    changeEmailButtonTapped: "changeEmail",
            	}
         }
     },
@@ -80,7 +87,7 @@ Ext.define("inkle.controller.SettingsController", {
         }
         else {
             settingsListStore.setData([
-        			{ text: "Update email", key: "email"},
+        			{ text: "Change email", key: "email"},
         			{ text: "Change password", key: "password" },
         			{ text: "Update picture", key: "picture" },
         			{ text: "Notifications", key: "notifications" },
@@ -303,21 +310,37 @@ Ext.define("inkle.controller.SettingsController", {
     },
     
     loadChangePasswordView: function() {
-           // Push the change password view
-           this.getSettingsView().push({
+        // Push the change password view
+        this.getSettingsView().push({
        	    xtype: "changePasswordView"
-           });
-           //Update buttons
-           this.getSettingsLogoutButton().hide();
-           this.getChangePasswordBackButton().show();
-       },
+        });
+        //Update buttons
+        this.getSettingsLogoutButton().hide();
+        this.getChangePasswordBackButton().show();
+    },
 
-       changePasswordBack: function() {
-           this.getSettingsView().pop();
-           this.getChangePasswordBackButton().hide();
-           this.getSettingsLogoutButton().show();
-       },
- 
+    changePasswordBack: function() {
+        this.getSettingsView().pop();
+        this.getChangePasswordBackButton().hide();
+        this.getSettingsLogoutButton().show();
+    },
+
+    loadChangeEmailView: function() {
+        // Push the change email view
+        this.getSettingsView().push({
+       	    xtype: "changeEmailView"
+        });
+        //Update buttons
+        this.getSettingsLogoutButton().hide();
+        this.getChangeEmailBackButton().show();
+    },
+
+    changeEmailBack: function() {
+        this.getSettingsView().pop();
+        this.getChangeEmailBackButton().hide();
+        this.getSettingsLogoutButton().show();
+    },
+
     editSettings: function() {
         console.log("editSettings");
     },
@@ -486,6 +509,33 @@ Ext.define("inkle.controller.SettingsController", {
                 Ext.ComponentQuery.query('textfield[name="currentPassword"]').pop().setValue("");
                 Ext.ComponentQuery.query('textfield[name="newPassword1"]').pop().setValue("");
                 Ext.ComponentQuery.query('textfield[name="newPassword2"]').pop().setValue("");
+            },
+
+            failure: function(form, response) {
+            Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
+        });
+    },
+    
+    changeEmail: function() {
+        this.getChangeEmailView().submit({
+			method: "POST",		
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+            //this.activateMainTabView();
+                Ext.Msg.alert("Success", "Your email was successfully changed!");
+                //Clear form fields
+                Ext.ComponentQuery.query('textfield[name="changeEmailCurrentEmail"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="changeEmailPassword"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="changeEmailNewEmail1"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="changeEmailNewEmail2"]').pop().setValue("");
             },
 
             failure: function(form, response) {
