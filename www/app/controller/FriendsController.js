@@ -204,32 +204,32 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     respondToRequest: function(memberId, response) {
-        Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/respondToRequest/",
-            params: {
-                memberId: memberId,
-                response: response
-            },
-            success: function(response) {
-                var requestsButton = this.getRequestsButton();
-                numFriendRequests = response.responseText;
-                if (numFriendRequests != 0) {
-                    requestsButton.setBadgeText(numFriendRequests);
-                }
-                else {
-                    requestsButton.setBadgeText("");
-                }
-                
-                this.updateFriendsList();
-                this.updateRequestsList();
-            },
-            failure: function(response) {
-                console.log(response.responseText);
-                Ext.Msg.alert("Error", response.responseText);
-            },
-            scope: this
-        });
-    },
+		Ext.Ajax.request({
+			url: inkle.app.baseUrl + "/respondToRequest/",
+    		params: {
+    			memberId: memberId,
+    			response: response
+    		},
+    		success: function(response) {
+    		    var requestsButton = this.getRequestsButton();
+    			numFriendRequests = response.responseText;
+				if (numFriendRequests != 0) {
+					requestsButton.setBadgeText(numFriendRequests);
+				}
+				else {
+					requestsButton.setBadgeText("");
+				}
+				
+				this.updateFriendsList();
+				this.updateRequestsList();
+    		},
+        	failure: function(response) {
+        		console.log(response.responseText);
+        		Ext.Msg.alert("Error", response.responseText);
+        	},
+        	scope: this
+		});
+	},
 
 	/**************/
 	/*  COMMANDS  */
@@ -445,11 +445,11 @@ Ext.define("inkle.controller.FriendsController", {
         var tappedId, url;
         if (tappedDeleteLock.parent(".group")) {
             tappedId = tappedDeleteLock.parent(".group").getAttribute("data-groupId");
-            url = "http://127.0.0.1:8000/deleteGroup/";
+            url = inkle.app.baseUrl + "/deleteGroup/";
         }
         else {
             tappedId = tappedDeleteLock.parent(".member").getAttribute("data-memberId");
-            url = "http://127.0.0.1:8000/removeFriend/";
+            url = inkle.app.baseUrl + "/removeFriend/";
         }
 
         // "Lock" the tapped delete lock if it is already "unlocked"
@@ -539,7 +539,7 @@ Ext.define("inkle.controller.FriendsController", {
 	/* Creates a new group, puts the groups list in edit mode, and sets the focus on the new group */
 	createGroup: function() {
 		Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/createGroup/",
+            url: inkle.app.baseUrl + "/createGroup/",
             success: function(response) {
                 groupId = response.responseText;
 
@@ -572,7 +572,7 @@ Ext.define("inkle.controller.FriendsController", {
 			groupName.setHtml(groupNameInputValue);
 			
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/renameGroup/",
+				url: inkle.app.baseUrl + "/renameGroup/",
 				params: {
 					groupId: groupId,
 					name: groupNameInputValue
@@ -627,7 +627,7 @@ Ext.define("inkle.controller.FriendsController", {
 		});
 		
 		Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/addFriend/",
+    		url: inkle.app.baseUrl + "/addFriend/",
     		params: {
     			memberId: memberId
     		},
@@ -710,7 +710,7 @@ Ext.define("inkle.controller.FriendsController", {
         // Toggle the selection item and the memsber's membership in the group
 		if (tappedSelectionItem.hasCls("selected")) {	
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/removeFromGroup/",
+				url: inkle.app.baseUrl + "/removeFromGroup/",
 				params: {
 					memberId: memberId,
 					groupId: groupId
@@ -729,7 +729,7 @@ Ext.define("inkle.controller.FriendsController", {
 		}
 		else {
 			Ext.Ajax.request({
-				url: "http://127.0.0.1:8000/addToGroup/",
+				url: inkle.app.baseUrl + "/addToGroup/",
 				params: {
 					memberId: memberId,
 					groupId: groupId
@@ -791,7 +791,7 @@ Ext.define("inkle.controller.FriendsController", {
     /* Shows the "Friends" tab badge */
     showFriendsTabBadge: function() {
         Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/numFriendRequests/",
+            url: inkle.app.baseUrl + "/numFriendRequests/",
             
             success: function(response) {
                 numFriendRequests = response.responseText;

@@ -31,7 +31,7 @@ Ext.define("inkle.view.InklingMembersAttending", {
                     ],
                     proxy: {
                         type: "ajax",
-                        url: "http://127.0.0.1:8000/inklingMembersAttending/",
+                        url: inkle.app.baseUrl + "/inklingMembersAttending/",
                         actionMethods: {
                             read: "POST"
                         }

@@ -153,7 +153,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         var inklingId;
         Ext.Ajax.request({
         	async: false,
-			url: "http://127.0.0.1:8000/createInkling/",
+			url: inkle.app.baseUrl + "/createInkling/",
 			success: function(response) {
 				inklingId = response.responseText;
 			},
@@ -183,7 +183,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		
 		// Update the number of invitees
         Ext.Ajax.request({
-			url: "http://127.0.0.1:8000/numInvitedFriends/",
+			url: inkle.app.baseUrl + "/numInvitedFriends/",
 			params: {
 				inklingId: this.getNewInklingView().getData()["inklingId"]
 			},
@@ -260,7 +260,7 @@ Ext.define("inkle.controller.MyInklingsController", {
     	else {
 			this.getNewInklingView().submit({
 				async: false,
-				url: "http://127.0.0.1:8000/updateInkling/",
+				url: inkle.app.baseUrl + "/updateInkling/",
 				method: "POST",
 				params: {
 					inklingId : this.getNewInklingView().getData()["inklingId"]
@@ -285,7 +285,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 			});
 
 			if (itemType == "Group") {
-				var url = "http://127.0.0.1:8000/uninviteGroup/";
+				var url = inkle.app.baseUrl + "/uninviteGroup/";
 			
 				// Create the comma-separated string of selected groups
 				var groupSelectionButtons = Ext.query("#newInklingInvitedGroupsList .selectionButton");
@@ -297,7 +297,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 				}
 			}
 			else if (itemType == "Member") {
-				var url = "http://127.0.0.1:8000/uninviteMember/";
+				var url = inkle.app.baseUrl + "/uninviteMember/";
 			}
 
             selectionButton.removeCls("selected");
@@ -310,10 +310,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 			});
 			
 			if (itemType == "Group") {
-				var url = "http://127.0.0.1:8000/inviteGroup/";
+				var url = inkle.app.baseUrl + "/inviteGroup/";
 			}
 			else if (itemType == "Member") {
-				var url = "http://127.0.0.1:8000/inviteMember/";
+				var url = inkle.app.baseUrl + "/inviteMember/";
 			}
 
             selectionButton.addCls("selected");
@@ -382,7 +382,7 @@ Ext.define("inkle.controller.MyInklingsController", {
 		
 		// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
         Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/numInklingInvitations/",
+            url: inkle.app.baseUrl + "/numInklingInvitations/",
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
@@ -488,7 +488,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         console.log(invitationId);
         console.log(invitationResponse);
 	    Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/respondToInklingInvitation/",
+            url: inkle.app.baseUrl + "/respondToInklingInvitation/",
             params: {
 				invitationId: invitationId,
 				response: invitationResponse
