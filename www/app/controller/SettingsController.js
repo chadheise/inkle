@@ -11,11 +11,13 @@ Ext.define("inkle.controller.SettingsController", {
             inviteFacebookFriendsList: "#inviteFacebookFriendsList",
             linkFacebookAccountView: "linkFacebookAccountView",
             shareSettingsView: "shareSettingsView",
+            changePasswordView: "changePasswordView",
             
             // Toolbar buttons
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
             shareSettingsBackButton: "#shareSettingsBackButton",
+            changePasswordBackButton: "#changePasswordBackButton",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -30,6 +32,8 @@ Ext.define("inkle.controller.SettingsController", {
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
                 shareSettingsTapped: "shareSettings",
                 shareSettingsBackButtonTapped: "shareSettingsBack",
+                changePasswordTapped: "loadChangePasswordView",
+                changePasswordBackButtonTapped: "changePasswordBack",
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
@@ -43,6 +47,9 @@ Ext.define("inkle.controller.SettingsController", {
             	groupShareSettingTapped: "toggleGroupShareSetting",
             	noOneShareSettingTapped: "selectNoOneShareSetting",
             	forwardingShareSettingTapped: "toggleForwardingShareSetting",
+           	},
+           	changePasswordView: {
+           	    changePasswordButtonTapped: "changePassword",
            	}
         }
     },
@@ -74,7 +81,7 @@ Ext.define("inkle.controller.SettingsController", {
         else {
             settingsListStore.setData([
         			{ text: "Update email", key: "email"},
-        			{ text: "Update password", key: "password" },
+        			{ text: "Change password", key: "password" },
         			{ text: "Update picture", key: "picture" },
         			{ text: "Notifications", key: "notifications" },
         			{ text: "Sharing", key: "sharing" },
@@ -114,7 +121,7 @@ Ext.define("inkle.controller.SettingsController", {
     
 		Ext.Ajax.request({
 			async: false,
-			url: "http://127.0.0.1:8000/logout/",
+			url: inkle.app.baseUrl + "/logout/",
 			success: function(response) {
 				console.log("Logged out");
 			},
@@ -198,10 +205,11 @@ Ext.define("inkle.controller.SettingsController", {
         FB.login(function(response) {
             if (response.authResponse) {
                 facebookAccessToken = response.authResponse.accessToken;
+
                 FB.api("/me", function(response) {
                		//Log the user in to inkle
                    	Ext.Ajax.request({
-                        url: "http://127.0.0.1:8000/linkFacebookAccount/",
+                        url: inkle.app.baseUrl + "/linkFacebookAccount/",
                         params: {
                             facebookId: response.id,
                             facebookAccessToken: facebookAccessToken,
@@ -293,6 +301,22 @@ Ext.define("inkle.controller.SettingsController", {
         this.getShareSettingsBackButton().hide();
         this.getSettingsLogoutButton().show();
     },
+    
+    loadChangePasswordView: function() {
+           // Push the change password view
+           this.getSettingsView().push({
+       	    xtype: "changePasswordView"
+           });
+           //Update buttons
+           this.getSettingsLogoutButton().hide();
+           this.getChangePasswordBackButton().show();
+       },
+
+       changePasswordBack: function() {
+           this.getSettingsView().pop();
+           this.getChangePasswordBackButton().hide();
+           this.getSettingsLogoutButton().show();
+       },
  
     editSettings: function() {
         console.log("editSettings");
@@ -303,7 +327,7 @@ Ext.define("inkle.controller.SettingsController", {
         //Only make ajax call if the item was not selected
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
-                url: "http://127.0.0.1:8000/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
@@ -347,7 +371,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/selected.png") {
             //Only make ajax call if the selectedGroupsShareSetting is selected
     	    Ext.Ajax.request({
-                url: "http://127.0.0.1:8000/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareGroupByDefault",
@@ -379,7 +403,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    //Only make ajax call if the item was not selected
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
-                url: "http://127.0.0.1:8000/setShareSetting/",
+                url: inkle.app.baseUrl + "/setShareSetting/",
                 headers : { "cache-control": "no-cache" },
                 params: {
                     setting: "shareWithSelectedGroups",
@@ -420,7 +444,7 @@ Ext.define("inkle.controller.SettingsController", {
 	    
 	    //Only make ajax call if the item was not selected
 	    Ext.Ajax.request({
-            url: "http://127.0.0.1:8000/setShareSetting/",
+            url: inkle.app.baseUrl + "/setShareSetting/",
             headers : { "cache-control": "no-cache" },
             params: {
                 setting: "allowInklingAttendeesToShare",
@@ -446,4 +470,29 @@ Ext.define("inkle.controller.SettingsController", {
         });
 	},
     
+    changePassword: function() {
+        this.getChangePasswordView().submit({
+			method: "POST",		
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            success: function(form, response) {
+            //this.activateMainTabView();
+                Ext.Msg.alert("Success", "Your password was successfully changed!");
+                //Clear form fields
+                Ext.ComponentQuery.query('textfield[name="currentPassword"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="newPassword1"]').pop().setValue("");
+                Ext.ComponentQuery.query('textfield[name="newPassword2"]').pop().setValue("");
+            },
+
+            failure: function(form, response) {
+            Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
+        });
+    },
 });

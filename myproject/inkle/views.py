@@ -759,19 +759,14 @@ def set_share_setting_view(request):
     elif value == validValues[1]:
         value = False
 
-    print "-----------Before------------"
     groups = list(request.user.group_set.all())
-    print "shareWithSelectedGroups: " + str(request.user.get_profile().shareWithSelectedGroups)
-    for g in groups:
-        print "    " + str(g.name) + ": " + str(g.shareByDefault)
-    print "allowInklingAttendeesToShare: " + str(request.user.get_profile().allowInklingAttendeesToShare)
 
     if (setting == validSettings[0]):
         request.user.get_profile().shareWithSelectedGroups = value
-        request.user.save()
+        request.user.get_profile().save()
     elif (setting == validSettings[1]):
         request.user.get_profile().allowInklingAttendeesToShare = value
-        request.user.save()
+        request.user.get_profile().save()
     elif (setting == validSettings[2]):
         #Ensure the group belongs to the logged in member
         try:
@@ -785,15 +780,53 @@ def set_share_setting_view(request):
         group.shareByDefault = value
         group.save()
 
-    print "-----------After------------"
     groups = list(request.user.group_set.all())
-    print "shareWithSelectedGroups: " + str(request.user.get_profile().shareWithSelectedGroups)
-    for g in groups:
-        print "    " + str(g.name) + ": " + str(g.shareByDefault)
-    print "allowInklingAttendeesToShare: " + str(request.user.get_profile().allowInklingAttendeesToShare)
 
     return HttpResponse("True")
 
+@csrf_exempt
+@login_required
+def change_password_view(request):
+    """Allows a user to change their password."""
+    # Get the inputted current password
+    try:
+        currentPassword = request.POST["currentPassword"]
+        newPassword1 = request.POST["newPassword1"]
+        newPassword2 = request.POST["newPassword2"]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+    
+    # Create a string to hold the login error
+    response_error = ""
+    
+    # Validate the current and new password
+    if ((not currentPassword) and (not newPassword1)):
+        response_error = "A current and new password must be specified"
+    elif (not currentPassword):
+        response_error = "Current password not specified"
+    elif (not newPassword1):
+        response_error = "New password not specified"
+    elif (len(newPassword1) < 8):
+        response_error = "New password must contain at least eight characters"
+    elif (newPassword1 != newPassword2):
+        response_error = "New password and confirm password do not match"
+    elif (currentPassword == newPassword1):
+        response_error = "New password must be different than current password"
+    
+    if (not response_error): #If there is no error with supplying the required data
+        if (request.user.check_password(currentPassword)):
+            request.user.set_password(newPassword1)
+            request.user.save()
+        else:
+            response_error = "Current password not valid"
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
 
 @csrf_exempt
 @login_required
@@ -1418,7 +1451,6 @@ def friends_view(request):
         mode = request.POST["mode"]
     except:
         raise Http404()
-
     # Get the list of the logged-in member's friends
     friends = list(request.user.get_profile().friends.all())
 
@@ -1430,7 +1462,7 @@ def friends_view(request):
     response_friends = []
     for m in friends:
         m.num_mutual_friends = m.get_profile().get_num_mutual_friends(request.user)
-
+        
         html = render_to_string("memberListItem.html", {
             "m": m,
             "include_delete_items": include_delete_items,

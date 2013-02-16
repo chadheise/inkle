@@ -332,7 +332,7 @@ Ext.define("inkle.controller.InklingController", {
     	// Specify in the database that the current member is joining the current inkling
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/joinInkling/",
+    		url: inkle.app.baseUrl + "/joinInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -355,7 +355,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;   	
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/editInkling/",
+    		url: inkle.app.baseUrl + "/editInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -384,7 +384,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/saveInkling/",
+    		url: inkle.app.baseUrl + "/saveInkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"],
     			location: Ext.get("location").getValue(),
@@ -416,7 +416,7 @@ Ext.define("inkle.controller.InklingController", {
     	var html;
     	Ext.Ajax.request({
     		async: false,
-    		url: "http://127.0.0.1:8000/inkling/",
+    		url: inkle.app.baseUrl + "/inkling/",
     		params: {
     			inklingId: this.getInklingView().getData()["inklingId"]
     		},
@@ -493,7 +493,7 @@ Ext.define("inkle.controller.InklingController", {
     addComment: function() {
   		// Add the new comment to the inkling feed
     	Ext.Ajax.request({
-    		url: "http://127.0.0.1:8000/addFeedComment/",
+    		url: inkle.app.baseUrl + "/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
     			text: this.getAddCommentTextField().getValue()

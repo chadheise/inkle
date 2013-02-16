@@ -6,7 +6,7 @@ Ext.define("inkle.view.Inkling", {
 	config: {
 		scrollable: true,
 		
-        url: "http://127.0.0.1:8000/inkling/",
+        url: inkle.app.baseUrl + "/inkling/",
 
         listeners: [
             {
