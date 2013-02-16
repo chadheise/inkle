@@ -749,19 +749,14 @@ def set_share_setting_view(request):
     elif value == validValues[1]:
         value = False
 
-    print "-----------Before------------"
     groups = list(request.user.group_set.all())
-    print "shareWithSelectedGroups: " + str(request.user.get_profile().shareWithSelectedGroups)
-    for g in groups:
-        print "    " + str(g.name) + ": " + str(g.shareByDefault)
-    print "allowInklingAttendeesToShare: " + str(request.user.get_profile().allowInklingAttendeesToShare)
 
     if (setting == validSettings[0]):
         request.user.get_profile().shareWithSelectedGroups = value
-        request.user.save()
+        request.user.get_profile().save()
     elif (setting == validSettings[1]):
         request.user.get_profile().allowInklingAttendeesToShare = value
-        request.user.save()
+        request.user.get_profile().save()
     elif (setting == validSettings[2]):
         #Ensure the group belongs to the logged in member
         try:
@@ -775,12 +770,7 @@ def set_share_setting_view(request):
         group.shareByDefault = value
         group.save()
 
-    print "-----------After------------"
     groups = list(request.user.group_set.all())
-    print "shareWithSelectedGroups: " + str(request.user.get_profile().shareWithSelectedGroups)
-    for g in groups:
-        print "    " + str(g.name) + ": " + str(g.shareByDefault)
-    print "allowInklingAttendeesToShare: " + str(request.user.get_profile().allowInklingAttendeesToShare)
 
     return HttpResponse("True")
 
@@ -1451,19 +1441,19 @@ def friends_view(request):
         mode = request.POST["mode"]
     except:
         raise Http404()
-
     # Get the list of the logged-in member's friends
     friends = list(request.user.get_profile().friends.all())
 
     # Determine what items to include in the member list item
     include_delete_items = (mode == "friends")
     include_selection_item = (mode == "invite")
+    print "include_selection_item " + str(include_selection_item)
 
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
         m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
-
+        print m.first_name + " " + m.last_name + " " + str(m.id) #+ " " + str(m.selected)
         html = render_to_string("memberListItem.html", {
             "m": m,
             "include_delete_items": include_delete_items,
@@ -1475,7 +1465,7 @@ def friends_view(request):
             "lastName": m.last_name,
             "html": html
         })
-
+    print "end of friends view"
     # Create and return a JSON object
     response = simplejson.dumps(response_friends)
     return HttpResponse(response, mimetype = "application/json")
