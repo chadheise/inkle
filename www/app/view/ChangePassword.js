@@ -13,7 +13,6 @@ Ext.define("inkle.view.ChangePassword", {
    	
    	config: {
 		scrollable: false,
-		//style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
 		url: inkle.app.baseUrl + "/changePassword/",
 		
@@ -29,7 +28,6 @@ Ext.define("inkle.view.ChangePassword", {
 				top: 0,
 				margin: 10,
 				width: "94%",
-				flex: 1,
 				
 				items: [
 				    {
@@ -51,42 +49,13 @@ Ext.define("inkle.view.ChangePassword", {
 						placeHolder: "Confirm New Password",
 					},
 				]
-			},
-            {
-                flex: 1 //Hack needed to get button to display properly
-            },
-            {
-                xtype: "container",
-                flex: 3,
-                border: 1,
-                items: [
-			        {
-                        xtype: "button",
-                        id: "changePasswordButton",
-                        centered: true,
-                        cls: "changePasswordButton",
-                        pressedCls: "changePasswordDarkButton",
-                    	margin: 15,
-                    	height: 50,
-                    	width: 230,
-                    },
-                ]
-            }
-			
+			},			
 		],
 
 		listeners: [
-			{
-				delegate: "#changePasswordButton",
-            	event: "tap",
-            	fn: "onChangePasswordButtonTap"
-			},
         ]
 	},
 	
 	// Event firings
-	onChangePasswordButtonTap: function() {
-	    this.fireEvent("changePasswordButtonTapped");
-	},
 });
     

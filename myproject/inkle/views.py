@@ -261,7 +261,7 @@ def registration_view(request):
     elif (not is_email(email)):
         response_error = "Invalid email format"
     elif (User.objects.filter(email = email)):
-        response_error = "An account already exists for that email."
+        response_error = "Email not valid."
 
     # Make sure the username is less than 30 characters and do a trick to ensure it is unique
     elif (len(username) > 30):
@@ -857,18 +857,18 @@ def change_email_view(request):
         response_error = "New email must be different than current email"
     elif (not is_email(newEmail1)):
         response_error = "Invalid email format"
+    elif (request.user.email != currentEmail):
+        response_error = "Current email not valid"
     elif (User.objects.filter(email = newEmail1)):
-        response_error = "An account already exists for that email."
+        response_error = "New email not valid."
 
     if (not response_error): #If there is no error with supplying the required data
-        if (request.user.email != currentEmail):
-            response_error = "Current email is not correct"
-        if (not request.user.check_password(password)):
-            response_error = "Password not valid"
-        else:
+        if (request.user.check_password(password)):
             request.user.email = newEmail1
             request.user.save()
-    print response_error
+        else:
+            response_error = "Password not valid"
+
     # Create and return a JSON object
     response = simplejson.dumps({
         "success": response_error == "",
