@@ -15,6 +15,7 @@ urlpatterns = patterns(
     (r"^emailLogin/$", "email_login_view"),
     (r"^facebookLogin/$", "facebook_login_view"),
     (r"^logout/$", "logout_view"),
+    (r"^forgottenPassword/$", "forgotten_password_view"),
     (r"^registration/$", "registration_view"),
     (r"^linkFacebookAccount/$", "link_facebook_account_view"),
 
