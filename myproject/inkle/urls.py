@@ -65,6 +65,7 @@ urlpatterns = patterns(
     (r"^shareSettingsForm/$", "share_settings_form_view"),
     (r"^setShareSetting/$", "set_share_setting_view"),
     (r"^changePassword/$", "change_password_view"),
+    (r"^changeEmail/$", "change_email_view"),
     (r"^inviteFacebookFriendsView/$", "invite_facebook_friends_view"),
 
     (r"^facebookPost/$", "facebook_post"),
