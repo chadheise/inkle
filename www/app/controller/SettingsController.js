@@ -19,7 +19,9 @@ Ext.define("inkle.controller.SettingsController", {
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
             shareSettingsBackButton: "#shareSettingsBackButton",
             changePasswordBackButton: "#changePasswordBackButton",
+            changePasswordSubmitButton: "#changePasswordSubmitButton",
             changeEmailBackButton: "#changeEmailBackButton",
+            changeEmailSubmitButton: "#changeEmailSubmitButton",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -30,14 +32,21 @@ Ext.define("inkle.controller.SettingsController", {
             settingsView: {
                 settingsLogoutButtonTapped: "logout",
                 settingsEditButtonTapped: "editSettings",
+                
                 inviteFacebookFriendsTapped: "inviteFacebookFriends",
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
+                
                 shareSettingsTapped: "shareSettings",
                 shareSettingsBackButtonTapped: "shareSettingsBack",
+                
                 changePasswordTapped: "loadChangePasswordView",
                 changePasswordBackButtonTapped: "changePasswordBack",
+                changePasswordSubmitButtonTapped: "changePassword",
+                
                 changeEmailTapped: "loadChangeEmailView",
                 changeEmailBackButtonTapped: "changeEmailBack",
+                changeEmailSubmitButtonTapped: "changeEmail",
+                
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
@@ -52,12 +61,6 @@ Ext.define("inkle.controller.SettingsController", {
             	noOneShareSettingTapped: "selectNoOneShareSetting",
             	forwardingShareSettingTapped: "toggleForwardingShareSetting",
            	},
-           	changePasswordView: {
-           	    changePasswordButtonTapped: "changePassword",
-           	},
-           	changeEmailView: {
-           	    changeEmailButtonTapped: "changeEmail",
-           	}
         }
     },
 	
@@ -317,11 +320,13 @@ Ext.define("inkle.controller.SettingsController", {
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getChangePasswordBackButton().show();
+        this.getChangePasswordSubmitButton().show();
     },
 
     changePasswordBack: function() {
         this.getSettingsView().pop();
         this.getChangePasswordBackButton().hide();
+        this.getChangePasswordSubmitButton().hide();
         this.getSettingsLogoutButton().show();
     },
 
@@ -333,11 +338,13 @@ Ext.define("inkle.controller.SettingsController", {
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getChangeEmailBackButton().show();
+        this.getChangeEmailSubmitButton().show();
     },
 
     changeEmailBack: function() {
         this.getSettingsView().pop();
         this.getChangeEmailBackButton().hide();
+        this.getChangeEmailSubmitButton().hide();
         this.getSettingsLogoutButton().show();
     },
 

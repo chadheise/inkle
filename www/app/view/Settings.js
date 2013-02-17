@@ -58,6 +58,21 @@ Ext.define("inkle.view.Settings", {
                 		text: "Settings",
                 		hidden: true,
                 	},
+                	{ xtype: "spacer" },
+                	{
+                        xtype: "button",
+                        id: "changeEmailSubmitButton",
+                        text: "Submit",
+                        ui: "action",
+                        hidden: true,
+                    },
+                	{
+                        xtype: "button",
+                        id: "changePasswordSubmitButton",
+                        text: "Submit",
+                        ui: "action",
+                        hidden: true,
+                    },
                 ]
     		},
     		
@@ -110,9 +125,19 @@ Ext.define("inkle.view.Settings", {
             	fn: "onChangePasswordBackButtonTap"
         	},
         	{
+            	delegate: "#changePasswordSubmitButton",
+            	event: "tap",
+            	fn: "onChangePasswordSubmitButtonTap"
+        	},
+        	{
             	delegate: "#changeEmailBackButton",
             	event: "tap",
             	fn: "onChangeEmailBackButtonTap"
+        	},
+        	{
+            	delegate: "#changeEmailSubmitButton",
+            	event: "tap",
+            	fn: "onChangeEmailSubmitButtonTap"
         	},
         	
         ]
@@ -149,7 +174,13 @@ Ext.define("inkle.view.Settings", {
     onChangePasswordBackButtonTap: function() {
         this.fireEvent("changePasswordBackButtonTapped");
     },
+    onChangePasswordSubmitButtonTap: function() {
+        this.fireEvent("changePasswordSubmitButtonTapped");
+    },
     onChangeEmailBackButtonTap: function() {
         this.fireEvent("changeEmailBackButtonTapped");
+    },
+    onChangeEmailSubmitButtonTap: function() {
+        this.fireEvent("changeEmailSubmitButtonTapped");
     }
 });
