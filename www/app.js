@@ -32,7 +32,7 @@ Ext.application({
         "InviteFacebookFriends",
         "LinkFacebookAccount",
         "ShareSettings",
-        "changePassword"
+        "ChangePassword"
     ],
     controllers: [
         "LoginController",

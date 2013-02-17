@@ -1,4 +1,4 @@
-Ext.define("inkle.view.changePassword", {
+Ext.define("inkle.view.ChangePassword", {
 	extend: "Ext.form.Panel",
 	
 	xtype: "changePasswordView",
