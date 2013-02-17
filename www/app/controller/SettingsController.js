@@ -122,6 +122,12 @@ Ext.define("inkle.controller.SettingsController", {
         Ext.Viewport.animateActiveItem(loginView, { type: "slide", direction: "down" });
     },
 	
+    changePasswordBack: function() {
+        this.getSettingsView().pop();
+        this.getChangePasswordBackButton().hide();
+        this.getSettingsLogoutButton().show();
+    },
+
     /* Commands */
     logout: function() {
         //Logout of facebook
@@ -317,10 +323,10 @@ Ext.define("inkle.controller.SettingsController", {
         this.getSettingsView().push({
        	    xtype: "changePasswordView"
         });
+
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getChangePasswordBackButton().show();
-        this.getChangePasswordSubmitButton().show();
     },
 
     changePasswordBack: function() {

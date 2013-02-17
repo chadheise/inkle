@@ -2,6 +2,9 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Custom setting to determine email format (HTML if True; plain text if False)
+SEND_EMAILS_AS_HTML = True
+
 # People who receive error reports when a view raises an exception
 if (not DEBUG):
     ADMINS = (
