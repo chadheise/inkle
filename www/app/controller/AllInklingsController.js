@@ -46,7 +46,7 @@ Ext.define("inkle.controller.AllInklingsController", {
                 deactivate: "hideAllInklingsPanels",
                 activeitemchange: "hideAllInklingsPanels",
                 allInklingsListRefreshed: "updateAllInklingsList",
-                initialize: "initializeAllInklingsView"
+                initialize: "initializeAllInklingsView",
             },
             
             allInklingsDatePickerPanel: {

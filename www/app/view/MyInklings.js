@@ -118,9 +118,9 @@ Ext.define("inkle.view.MyInklings", {
                         ui: "action",
                         //iconMask: true,
                         //iconCls: "plusIcon",
+                        itemId: "addCommentButton",
                         cls: ["toolbarButton", "toolbarButtonPlus"],
                 		pressedCls: ["toolbarButton", "toolbarButtonPlusPressed"],
-                        itemId: "addCommentButton",
                         hidden: true
                     }
                 ]
