@@ -830,6 +830,55 @@ def change_password_view(request):
 
 @csrf_exempt
 @login_required
+def change_email_view(request):
+    """Allows a user to change their email."""
+    # Get the inputted current password
+    try:
+        currentEmail = request.POST["changeEmailCurrentEmail"]
+        password = request.POST["changeEmailPassword"]
+        newEmail1 = request.POST["changeEmailNewEmail1"]
+        newEmail2 = request.POST["changeEmailNewEmail2"]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+
+    # Create a string to hold the login error
+    response_error = ""
+
+    # Validate the current and new password
+    if (not currentEmail):
+        response_error = "Current email not specified"
+    elif (not password):
+        response_error = "Password not specified"
+    elif (not newEmail1):
+        response_error = "New email not specified"
+    elif (newEmail1 != newEmail2):
+        response_error = "New email and confirm email do not match"
+    elif (currentEmail == newEmail1):
+        response_error = "New email must be different than current email"
+    elif (not is_email(newEmail1)):
+        response_error = "Invalid email format"
+    elif (User.objects.filter(email = newEmail1)):
+        response_error = "An account already exists for that email."
+
+    if (not response_error): #If there is no error with supplying the required data
+        if (request.user.email != currentEmail):
+            response_error = "Current email is not correct"
+        if (not request.user.check_password(password)):
+            response_error = "Password not valid"
+        else:
+            request.user.email = newEmail1
+            request.user.save()
+    print response_error
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
+
+@csrf_exempt
+@login_required
 def respond_to_inkling_invitation_view(request):
     """Responds the logged-in member to the an inkling invitation."""
     # Get the inputted inkling and the response

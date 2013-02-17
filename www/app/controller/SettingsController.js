@@ -539,7 +539,7 @@ Ext.define("inkle.controller.SettingsController", {
             },
 
             failure: function(form, response) {
-            Ext.Msg.alert("Error", response.error);
+                Ext.Msg.alert("Error", response.error);
             },
 
             scope: this
