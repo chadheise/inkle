@@ -20,7 +20,7 @@ Ext.define("inkle.view.ForgottenPassword", {
             {
                 xtype: "toolbar",
                 id: "forgottenPasswordToolbar",
-                title: "Password",
+                title: "New Password",
                 docked: "top",
                 items: [
                     {
@@ -32,8 +32,8 @@ Ext.define("inkle.view.ForgottenPassword", {
                     { xtype: "spacer" },
                     {
                         xtype: "button",
-                        id: "forgottenPasswordSendButton",
-                        text: "Send",
+                        id: "forgottenPasswordSubmitButton",
+                        text: "Submit",
                         ui: "action"
                     }
                 ]
@@ -43,7 +43,7 @@ Ext.define("inkle.view.ForgottenPassword", {
             {
                 xtype: "container",
                 html: [
-                    "<p id='forgottenPasswordExplanation'>Give us the email address associate with your inkle account and we will send you an email with a PIN that you can use to create a new password.</p>"
+                    "<p>Give us the email address associated with your inkle account and we will send you an email with a PIN that you can use to create a new password.</p>"
                 ].join("")
             },
             
@@ -51,6 +51,31 @@ Ext.define("inkle.view.ForgottenPassword", {
             {
                 xtype: "fieldset",
                 id: "forgottenPasswordForm",
+                margin: 10,
+                width: "94%",
+                
+                items: [
+                    {
+                        xtype: "emailfield",
+                        id: "forgottenPasswordEmail",
+                        name: "email",
+                        placeHolder: "Email"
+                    }
+                ]
+            },
+
+            // Forgotten password explanation
+            {
+                xtype: "container",
+                html: [
+                    "<p>If you've already received your six-digit PIN from us, enter it here and you'll be able to create a new password.</p>"
+                ].join("")
+            },
+            
+            // Forgotten password email form
+            {
+                xtype: "fieldset",
+                id: "forgottenPasswordPinForm",
                 margin: 10,
                 width: "94%",
                 
@@ -72,7 +97,7 @@ Ext.define("inkle.view.ForgottenPassword", {
                 fn: "onForgottenPasswordCancelButtonTap"
             },
             {
-                delegate: "#forgottenPasswordSendButton",
+                delegate: "#forgottenPasswordSubmitButton",
                 event: "tap",
                 fn: "onForgottenPasswordSendButtonTap"
             }
@@ -84,7 +109,7 @@ Ext.define("inkle.view.ForgottenPassword", {
         this.fireEvent("forgottenPasswordCancelButtonTapped");
     },
     
-    onForgottenPasswordSendButtonTap: function() {
-        this.fireEvent("forgottenPasswordSendButtonTapped");
+    onForgottenPasswordSubmitButtonTap: function() {
+        this.fireEvent("forgottenPasswordSubmitButtonTapped");
     }
 });
