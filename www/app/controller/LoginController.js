@@ -37,7 +37,7 @@ Ext.define("inkle.controller.LoginController", {
             
             forgottenPasswordView: {
                 forgottenPasswordCancelButtonTapped: "activateLoginView",
-                forgottenPasswordSendButtonTapped: "sendForgottenPasswordEmail"
+                forgottenPasswordSubmitButtonTapped: "sendForgottenPasswordEmail"
             },
 
             registrationView: {
