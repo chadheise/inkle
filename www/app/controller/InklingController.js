@@ -11,6 +11,7 @@ Ext.define("inkle.controller.InklingController", {
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
             
             inklingFeedList: "#inklingFeedList",
+            addCommentPanel: "#addCommentPanel",
             
             // Toolbars
             allInklingsViewToolbar: "#allInklingsViewToolbar",
@@ -23,8 +24,6 @@ Ext.define("inkle.controller.InklingController", {
             allInklingsJoinInklingButton: "allInklingsView #joinInklingButton",
             allInklingsSaveInklingButton: "allInklingsView #saveInklingButton",
             allInklingsCancelEditInklingButton: "allInklingsView #cancelEditInklingButton",
-            allInklingsAddCommentTextField: "allInklingsView #addCommentTextField",
-            allInklingsAddCommentSendButton: "allInklingsView #addCommentSendButton",
             allInklingsAddCommentButton: "allInklingsView #allInklingsAddCommentButton",
             allInklingsAddCommentPanel: "allInklingsView #addCommentPanel",
 
@@ -34,21 +33,15 @@ Ext.define("inkle.controller.InklingController", {
             myInklingsBackToInklingButton: "myInklingsView #backToInklingButton",
             myInklingsSaveInklingButton: "myInklingsView #saveInklingButton",
             myInklingsCancelEditInklingButton: "myInklingsView #cancelEditInklingButton",
-            myInklingsAddCommentTextField: "myInklingsView #addCommentTextField",
-            myInklingsAddCommentSendButton: "myInklingsView #addCommentSendButton",
-            myInklingsAddCommentButton: "myInklingsView #addCommentButton",
+            myInklingsAddCommentButton: "myInklingsView #myInklingsAddCommentButton",
             myInklingsAddCommentPanel: "myInklingsView #addCommentPanel",
-
-
 
             // Elements
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
             inklingInvitationsButton: "#inklingInvitationsButton",
             
-            
             newInklingButton: "#newInklingButton",
-            
             
             inklingMembersAttendingList: "#inklingMembersAttendingList",
             inklingMembersAwaitingReplyList: "#inklingMembersAwaitingReplyList"
@@ -65,13 +58,16 @@ Ext.define("inkle.controller.InklingController", {
             	joinInklingButtonTapped: "joinInkling",
             	saveInklingButtonTapped: "saveInkling",
             	cancelEditInklingButtonTapped: "cancelEditInkling",
-            	allInklingsAddCommentButtonTapped: "toggleAllInklingsAddCommentPanelVisibility",
+            	allInklingsAddCommentButtonTapped: "toggleAddCommentPanelVisibility",
             },
             myInklingsView: {
             	// View transitions
                 inklingFeedButtonTapped: "activateInklingFeedView",
             	myInklingsInklingBackButtonTapped: "activateMyInklingsView",
-                backToInklingButtonTapped: "backToInklingView"
+                backToInklingButtonTapped: "backToInklingView",
+                
+                //Commands
+                myInklingsAddCommentButtonTapped: "toggleAddCommentPanelVisibility",
             },
             inklingView: {
             	// Commands
@@ -85,8 +81,8 @@ Ext.define("inkle.controller.InklingController", {
             },
             addCommentPanel: {
             	// Commands
-            	addCommentTextFieldKeyedUp: "toggleAddCommentSendButton",
-            	addCommentSendButtonTapped: "addComment"
+            	addCommentTextFieldKeyedUp: "toggleAddCommentPostButton",
+            	addCommentPostButtonTapped: "addComment"
             }
         }
     },
@@ -181,10 +177,14 @@ Ext.define("inkle.controller.InklingController", {
 	/* Activates the inkling view from the inkling feed view */
 	backToInklingView: function() {
         // Pop off the inkling feed, members attening, or awaiting reply view
+        
         if (!this.getAllInklingsView().isHidden()) {
             // Display the appropriate top toolbar buttons
-            this.getAllInklingsAddCommentButton().hide();
             this.getAllInklingsBackToInklingButton().hide();
+            this.getAllInklingsAddCommentButton().hide();
+            this.getAllInklingsAddCommentButton().removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+            this.getAllInklingsAddCommentButton().setCls("toolbarButton toolbarButtonPlus");
+            
             if (this.getInklingView().getData()["isMemberAttending"] === "True") {
                 this.getAllInklingsInklingFeedButton().show();
             }
@@ -195,19 +195,25 @@ Ext.define("inkle.controller.InklingController", {
 
             this.getAllInklingsView().pop();
             this.getAllInklingsViewToolbar().setTitle("Inkling");
+            
+            this.getAllInklingsAddCommentPanel().destroy();
         }
         else if (!this.getMyInklingsView().isHidden()) {
             // Display the appropriate top toolbar buttons
-            this.getMyInklingsAddCommentButton().hide();
             this.getMyInklingsBackToInklingButton().hide();
+            this.getMyInklingsAddCommentButton().hide();
+            this.getMyInklingsAddCommentButton().removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+            this.getMyInklingsAddCommentButton().setCls("toolbarButton toolbarButtonPlus");
+            
             this.getMyInklingsInklingFeedButton().show();
             this.getMyInklingsInklingBackButton().show();
             
             this.getMyInklingsView().pop();
             this.getMyInklingsViewToolbar().setTitle("Inkling");
+            
+            this.getMyInklingsAddCommentPanel().destroy();
         }
-        
-        this.getAddCommentPanel().destroy();
+
     },
 	
 	activateInklingMembersAttendingView: function() {
@@ -468,46 +474,82 @@ Ext.define("inkle.controller.InklingController", {
         console.log("c");
     },
     
-    toggleAllInklingsAddCommentPanelVisibility: function() {
-        var addCommentButton = this.getAllInklingsAddCommentButton()
-        var addCommentPanel = this.getAllInklingsAddCommentPanel();
+    toggleAddCommentPanelVisibility: function() {
+        var addCommentButton;
+        var addCommentPanel;
+        if (!this.getAllInklingsView().isHidden()) { //If we are on the all inklings tab
+            addCommentButton = this.getAllInklingsAddCommentButton();
+            addCommentPanel = this.getAllInklingsAddCommentPanel();
+        }
+        else {
+            addCommentButton = this.getMyInklingsAddCommentButton();
+            addCommentPanel = this.getMyInklingsAddCommentPanel();
+        }
+        
 		if (addCommentPanel.isHidden()) {
-			addCommentPanel.showBy(this.getAllInklingsAddCommentButton());
+			addCommentPanel.showBy(addCommentButton);
+			addCommentButton.removeCls("toolbarButton toolbarButtonPlus");
             addCommentButton.setCls("toolbarButtonPressed toolbarButtonPlusPressed");
 		}
 		else {
 		    addCommentPanel.hide();
+		    addCommentButton.removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
 		    addCommentButton.setCls("toolbarButton toolbarButtonPlus");
 		}
     },
     
-    /* Toggles whether the new comment "Send" button is enabled or disabled */
-    toggleAllInklingsAddCommentSendButton: function() {
-    	if (this.getAllInklingsAddCommentTextField().getValue() == "") {
-    		this.getAllInklingsAddCommentSendButton().disable();
+    /* Toggles whether the new comment "Post button is enabled or disabled */
+    toggleAddCommentPostButton: function() {
+        var addCommentPanel;
+        if (!this.getAllInklingsView().isHidden()) { //If we are on the all inklings tab
+            addCommentPanel = this.getAllInklingsAddCommentPanel()
+        }
+        else {
+            addCommentPanel = this.getMyInklingsAddCommentPanel()
+        }
+        var addCommentTextField = addCommentPanel.child("#addCommentTextField");
+        var addCommentPostButton = addCommentPanel.child("#addCommentPostButton");
+        
+    	if (addCommentTextField.getValue() == "") {
+    		addCommentPostButton.disable();
     	}
     	else {
-    		this.getAllInklingsAddCommentSendButton().enable();
+    		addCommentPostButton.enable();
     	}
     },
     
     /* Adds a new comment to the inkling feed */
-    allInklingsAddComment: function() {
+    addComment: function() {
+        var addCommentPanel;
+        var addCommentButton;
+        if (!this.getAllInklingsView().isHidden()) { //If we are on the all inklings tab
+            addCommentPanel = this.getAllInklingsAddCommentPanel();
+            addCommentButton = this.getAllInklingsAddCommentButton();
+        }
+        else {
+            addCommentPanel = this.getMyInklingsAddCommentPanel();
+            addCommentButton = this.getMyInklingsAddCommentButton();
+        }
+        var addCommentTextField = addCommentPanel.child("#addCommentTextField");
+        var addCommentPostButton = addCommentPanel.child("#addCommentPostButton");
+        
   		// Add the new comment to the inkling feed
     	Ext.Ajax.request({
     		url: inkle.app.baseUrl + "/addFeedComment/",
     		params: {
     			inklingId: this.getInklingFeedView().getData()["inklingId"],
-    			text: this.getAllInklingsAddCommentTextField().getValue()
+    			text: addCommentTextField.getValue()
     		},
 		    success: function(response) {
 		    	// Update the inkling feed list
 		    	this.updateInklingFeedList();
 		    	
 		    	// Reset the new comment text field and disable the new comment "Send" button
-				this.getAllInklingsAddCommentTextField().reset();
-				this.getAllInklingsAddCommentSendButton().disable();
-				this.getAllInklingsAddCommentPanel().hide();
+				addCommentTextField.reset();
+				addCommentPostButton.disable();
+				addCommentPanel.hide();
+				addCommentButton.removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+    		    addCommentButton.setCls("toolbarButton toolbarButtonPlus");
         	},
         	failure: function(response) {
         		console.log(response.resposeText);

@@ -61,7 +61,7 @@ Ext.define("inkle.view.InklingFeed", {
                     },
                     {
                         xtype: "button",
-                        itemId: "addCommentSendButton",
+                        itemId: "addCommentPostButton",
                         disabled: true,
                         text: "Post",
                         width: 100,
@@ -76,9 +76,9 @@ Ext.define("inkle.view.InklingFeed", {
                         fn: "onAddCommentTextFieldKeyup"
                     },
                     {
-                        delegate: "#addCommentSendButton",
+                        delegate: "#addCommentPostButton",
                         event: "tap",
-                        fn: "onAddCommentSendButtonTap"
+                        fn: "onAddCommentPostButtonTap"
                     }
                 ],
     
@@ -87,8 +87,8 @@ Ext.define("inkle.view.InklingFeed", {
                     this.fireEvent("addCommentTextFieldKeyedUp");
                 },
                 
-                onAddCommentSendButtonTap: function() {
-                    this.fireEvent("addCommentSendButtonTapped");
+                onAddCommentPostButtonTap: function() {
+                    this.fireEvent("addCommentPostButtonTapped");
                 }
 			}
         ],

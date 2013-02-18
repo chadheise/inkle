@@ -116,11 +116,9 @@ Ext.define("inkle.view.MyInklings", {
                     {
                         xtype: "button",
                         ui: "action",
-                        //iconMask: true,
-                        //iconCls: "plusIcon",
-                        itemId: "addCommentButton",
+                        itemId: "myInklingsAddCommentButton",
                         cls: ["toolbarButton", "toolbarButtonPlus"],
-                		pressedCls: ["toolbarButton", "toolbarButtonPlusPressed"],
+                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                         hidden: true
                     }
                 ]
@@ -319,6 +317,11 @@ Ext.define("inkle.view.MyInklings", {
                 delegate: "#inklingFeedButton",
                 event: "tap",
                 fn: "onInklingFeedButtonTap"
+            },
+            {
+                delegate: "#myInklingsAddCommentButton",
+                event: "tap",
+                fn: "onAddCommentButtonTapped"
             }
         ]
 	},
@@ -383,5 +386,8 @@ Ext.define("inkle.view.MyInklings", {
 
     onInklingFeedButtonTap: function() {
         this.fireEvent("inklingFeedButtonTapped");
+    },
+    onAddCommentButtonTapped: function() {
+        this.fireEvent("myInklingsAddCommentButtonTapped");
     }
 });
