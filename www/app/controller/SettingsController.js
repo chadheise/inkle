@@ -327,6 +327,7 @@ Ext.define("inkle.controller.SettingsController", {
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getChangePasswordBackButton().show();
+        this.getChangePasswordSubmitButton().show();
     },
 
     changePasswordBack: function() {
