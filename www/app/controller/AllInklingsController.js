@@ -8,12 +8,14 @@ Ext.define("inkle.controller.AllInklingsController", {
             allInklingsView: "allInklingsView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
+            allInklingsFeedCommentPanel: "panel[id=addCommentPanel]",
             inklingView: "inklingView",
             inklingFeedView: "inklingFeedView",
             
             // Toolbar buttons
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
+            allInklingsAddCommentButton: "#allInklingsAddCommentButton",
             
             // Elements
             allInklingsList: "#allInklingsList",
@@ -189,6 +191,13 @@ Ext.define("inkle.controller.AllInklingsController", {
 		var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
 		if (allInklingsGroupsListPanel) {
 			allInklingsGroupsListPanel.hide();
+		}
+		
+		var allInklingsFeedCommentPanel = this.getAllInklingsFeedCommentPanel();
+		if (allInklingsFeedCommentPanel) {
+			allInklingsFeedCommentPanel.hide();
+			this.getAllInklingsAddCommentButton().removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+            this.getAllInklingsAddCommentButton().setCls("toolbarButton toolbarButtonPlus");
 		}
 	},
 
