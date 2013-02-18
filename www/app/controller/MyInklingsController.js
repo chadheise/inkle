@@ -10,8 +10,10 @@ Ext.define("inkle.controller.MyInklingsController", {
             //newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
             newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
+            myInklingsFeedCommentPanel: "panel[id=addCommentPanel]",
 
             myInklingsViewToolbar: "#myInklingsViewToolbar",
+            myInklingsAddCommentButton: "#myInklingsAddCommentButton",
 
             newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
 
@@ -378,6 +380,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 		var newInklingInvitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
 		if (newInklingInvitedGroupsPanel) {
 			newInklingInvitedGroupsPanel.hide();
+		}
+		
+		var myInklingsFeedCommentPanel = this.getMyInklingsFeedCommentPanel();
+		if (myInklingsFeedCommentPanel) {
+			myInklingsFeedCommentPanel.hide();
+			this.getMyInklingsAddCommentButton().removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+            this.getMyInklingsAddCommentButton().setCls("toolbarButton toolbarButtonPlus");
 		}
 		
 		// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
