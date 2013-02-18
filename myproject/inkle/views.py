@@ -189,11 +189,13 @@ def forgotten_password_view(request):
     # Get the POST data
     try:
         email = request.POST["email"]
+        pin = request.POST["pin"]
     except:
         raise Http404()
 
-    # Create a string to hold the registration error
+    # Create a string to hold the responses
     response_error = ""
+    pin_validated = False
 
     # Validate the email
     if (not email):
@@ -205,16 +207,30 @@ def forgotten_password_view(request):
         # Get the user with the inputted email
         try:
             user = User.objects.get(email = email)
-            if (not user.get_profile().is_facebook_member()):
-                user.get_profile().password_reset_pin = random.randint(100000, 999999)
-                user.get_profile().save()
-                send_password_reset_email(user)
         except:
-            pass
+            user = None
+
+        if (user):
+            # If a PIN is provided, validate it
+            if (pin):
+                if ((not user.get_profile().is_facebook_member()) and (pin == str(user.get_profile().password_reset_pin)) and (len(pin) == 6)):
+                    pin_validated = True
+                else:
+                    response_error = "Invalid PIN"
+
+            # Otherwise, if the user is not a Facebook member, send them an email with their new PIN
+            else:
+                if (not user.get_profile().is_facebook_member()):
+                    user.get_profile().password_reset_pin = random.randint(100000, 999999)
+                    user.get_profile().save()
+                    send_password_reset_email(user)
 
     # Create and return a JSON object
     response = simplejson.dumps({
         "success": response_error == "",
+        "pin_validated": pin_validated,
+        "email": email,
+        "pin": pin,
         "error": response_error
     })
 
@@ -824,6 +840,7 @@ def set_share_setting_view(request):
 
     return HttpResponse("True")
 
+
 @csrf_exempt
 @login_required
 def change_password_view(request):
@@ -867,6 +884,47 @@ def change_password_view(request):
     })
 
     return HttpResponse(response, mimetype = "application/json")
+
+
+@csrf_exempt
+def reset_password_view(request):
+    """Allows a user to reset their password."""
+    # Get the POST data
+    try:
+        email = request.POST["email"]
+        pin = request.POST["pin"]
+        newPassword1 = request.POST["newPassword1"]
+        newPassword2 = request.POST["newPassword2"]
+    except KeyError as e:
+        return HttpResponse("Error accessing request POST data: " + e.message)
+
+    # Create a string to hold the login error
+    response_error = ""
+
+    # Validate the current and new password
+    if (not newPassword1):
+        response_error = "New password not specified"
+    elif (len(newPassword1) < 8):
+        response_error = "New password must contain at least eight characters"
+    elif (newPassword1 != newPassword2):
+        response_error = "New password and confirm password do not match"
+
+    if (not response_error): #If there is no error with supplying the required data
+        user = User.objects.get(email = email)
+        if ((not user.get_profile().is_facebook_member()) and (pin == str(user.get_profile().password_reset_pin)) and (len(pin) == 6)):
+            user.set_password(newPassword1)
+            user.get_profile().password_reset_pin = -1
+            user.get_profile().save()
+            user.save()
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": response_error == "",
+        "error": response_error
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
+
 
 @csrf_exempt
 @login_required

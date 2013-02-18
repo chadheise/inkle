@@ -8,6 +8,7 @@ Ext.define("inkle.controller.LoginController", {
             loginFormView: "loginFormView",
             registrationView: "registrationView",
             forgottenPasswordView: "forgottenPasswordView",
+            resetPasswordView: "resetPasswordView",
             mainTabView: "mainTabView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
@@ -21,6 +22,10 @@ Ext.define("inkle.controller.LoginController", {
             allInklingsDateButton: "#allInklingsDateButton",
             inklingInvitationsButton: "#inklingInvitationsButton",
             requestsButton: "#friendsViewRequestsButton",
+            forgottenPasswordEmail: "#forgottenPasswordEmail",
+            forgottenPasswordPin: "#forgottenPasswordPin",
+            resetPasswordNewPassword1: "#resetPasswordNewPassword1",
+            resetPasswordNewPassword2: "#resetPasswordNewPassword2"
         },
         control: {
             loginView: {
@@ -36,8 +41,13 @@ Ext.define("inkle.controller.LoginController", {
             },
             
             forgottenPasswordView: {
-                forgottenPasswordCancelButtonTapped: "activateLoginView",
-                forgottenPasswordSubmitButtonTapped: "sendForgottenPasswordEmail"
+                forgottenPasswordBackButtonTapped: "activateLoginFormViewFromForgottenPasswordView",
+                forgottenPasswordSubmitButtonTapped: "submitForgottenPasswordForm"
+            },
+
+            resetPasswordView: {
+                resetPasswordBackButtonTapped: "activateForgottenPasswordViewFromResetPasswordView",
+                resetPasswordSubmitButtonTapped: "submitResetPasswordForm"
             },
 
             registrationView: {
@@ -93,7 +103,7 @@ Ext.define("inkle.controller.LoginController", {
         {
             Ext.Viewport.animateActiveItem(this.getForgottenPasswordView(), {
                 type: "slide",
-                direction: "up"
+                direction: "left"
             });
         }
         else
@@ -101,11 +111,60 @@ Ext.define("inkle.controller.LoginController", {
             var forgottenPasswordView = Ext.create("inkle.view.ForgottenPassword");
             Ext.Viewport.animateActiveItem(forgottenPasswordView, {
                 type: "slide",
-                direction: "up"
+                direction: "left"
             });
         }
     },
     
+    activateResetPasswordView: function(email, pin) {
+        var resetPasswordView;
+        if (this.getResetPasswordView())
+        {
+            resetPasswordView = this.getResetPasswordView();
+        }
+        else
+        {
+            resetPasswordView = Ext.create("inkle.view.ResetPassword");
+        }
+
+        Ext.Viewport.animateActiveItem(resetPasswordView, {
+            type: "slide",
+            direction: "left"
+        });
+    },
+
+    activateLoginFormViewFromForgottenPasswordView: function() {
+        Ext.Viewport.animateActiveItem(this.getLoginFormView(), {
+            type: "slide",
+            direction: "right"
+        });
+
+        this.getForgottenPasswordEmail().setValue("");
+        this.getForgottenPasswordPin().setValue("");
+    },
+
+    activateLoginFormViewFromResetPasswordView: function() {
+        Ext.Viewport.animateActiveItem(this.getLoginFormView(), {
+            type: "slide",
+            direction: "right"
+        });
+
+        this.getResetPasswordNewPassword1().setValue("");
+        this.getResetPasswordNewPassword2().setValue("");
+        this.getForgottenPasswordEmail().setValue("");
+        this.getForgottenPasswordPin().setValue("");
+    },
+
+    activateForgottenPasswordViewFromResetPasswordView: function() {
+        Ext.Viewport.animateActiveItem(this.getForgottenPasswordView(), {
+            type: "slide",
+            direction: "right"
+        });
+
+        this.getResetPasswordNewPassword1().setValue("");
+        this.getResetPasswordNewPassword2().setValue("");
+    },
+
 	/* Creates and activates the registration view */
 	activateRegistrationView: function() {
         if (this.getRegistrationView())
@@ -231,7 +290,7 @@ Ext.define("inkle.controller.LoginController", {
     },
 
     /* Sends the forgotten password email to the email address provided by the user */
-    sendForgottenPasswordEmail: function() {
+    submitForgottenPasswordForm: function() {
         this.getForgottenPasswordView().submit({
             method: "POST",
                         
@@ -242,7 +301,43 @@ Ext.define("inkle.controller.LoginController", {
             },
 
             success: function(form, response) {
-                Ext.Msg.alert("Success", "Your PIN has been emailed to you.");
+                if (response.pin_validated === false) {
+                    Ext.Msg.alert("Success", "Your PIN has been emailed to you.", function() {
+                        this.activateLoginFormViewFromForgottenPasswordView();
+                    }, this);
+                }
+                else {
+                    this.activateResetPasswordView();
+                }
+            },
+
+            failure: function(form, response) {
+                Ext.Msg.alert("Error", response.error);
+            },
+
+            scope: this
+        });
+    },
+
+    submitResetPasswordForm: function() {
+        this.getResetPasswordView().submit({
+            method: "POST",
+                        
+            waitMsg: {
+                xtype: "loadmask",
+                message: "Processing",
+                cls : "demos-loading"
+            },
+
+            params: {
+                email: this.getForgottenPasswordEmail().getValue(),
+                pin: this.getForgottenPasswordPin().getValue()
+            },
+
+            success: function(form, response) {
+                Ext.Msg.alert("Success", "Your password has been changed.", function() {
+                    this.activateLoginFormViewFromResetPasswordView();
+                }, this);
             },
 
             failure: function(form, response) {
