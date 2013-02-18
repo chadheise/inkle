@@ -355,7 +355,7 @@ $badge-bg-gradient: "matte";
     margin: 110px 0px 0px 0px;
 }
 
-#forgottenPasswordExplanation {
+#forgottenPasswordExplanation, #resetPasswordExplanation {
     color: $mediumBlue;
     padding: 5px;
     text-align: justify;
