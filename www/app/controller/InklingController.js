@@ -511,8 +511,10 @@ Ext.define("inkle.controller.InklingController", {
     /* Adds a new comment to the inkling feed */
     addComment: function() {
         var addCommentPanel;
+        var addCommentButton;
         if (!this.getAllInklingsView().isHidden()) { //If we are on the all inklings tab
-            addCommentPanel = this.getAllInklingsAddCommentPanel()
+            addCommentPanel = this.getAllInklingsAddCommentPanel();
+            addCommentButton = this.getAllInklingsAddCommentButton();
         }
         /*else {
         }*/
@@ -534,6 +536,8 @@ Ext.define("inkle.controller.InklingController", {
 				addCommentTextField.reset();
 				addCommentPostButton.disable();
 				addCommentPanel.hide();
+				addCommentButton.removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+    		    addCommentButton.setCls("toolbarButton toolbarButtonPlus");
         	},
         	failure: function(response) {
         		console.log(response.resposeText);
