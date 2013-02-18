@@ -33,7 +33,7 @@ Ext.define("inkle.controller.InklingController", {
             myInklingsBackToInklingButton: "myInklingsView #backToInklingButton",
             myInklingsSaveInklingButton: "myInklingsView #saveInklingButton",
             myInklingsCancelEditInklingButton: "myInklingsView #cancelEditInklingButton",
-            myInklingsAddCommentButton: "myInklingsView #addCommentButton",
+            myInklingsAddCommentButton: "myInklingsView #myInklingsAddCommentButton",
             myInklingsAddCommentPanel: "myInklingsView #addCommentPanel",
 
             // Elements
@@ -64,7 +64,10 @@ Ext.define("inkle.controller.InklingController", {
             	// View transitions
                 inklingFeedButtonTapped: "activateInklingFeedView",
             	myInklingsInklingBackButtonTapped: "activateMyInklingsView",
-                backToInklingButtonTapped: "backToInklingView"
+                backToInklingButtonTapped: "backToInklingView",
+                
+                //Commands
+                myInklingsAddCommentButtonTapped: "toggleAddCommentPanelVisibility",
             },
             inklingView: {
             	// Commands
@@ -484,7 +487,7 @@ Ext.define("inkle.controller.InklingController", {
         }
         
 		if (addCommentPanel.isHidden()) {
-			addCommentPanel.showBy(this.getAllInklingsAddCommentButton());
+			addCommentPanel.showBy(addCommentButton);
 			addCommentButton.removeCls("toolbarButton toolbarButtonPlus");
             addCommentButton.setCls("toolbarButtonPressed toolbarButtonPlusPressed");
 		}
