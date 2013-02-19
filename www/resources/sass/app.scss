@@ -303,6 +303,7 @@ $badge-bg-gradient: "matte";
 	background: url("../images/toolbarButtons/envelopePressed.png") !important;
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
+	width: 45px !important;
 }
 
 .toolbarButtonFeed {
@@ -314,6 +315,7 @@ $badge-bg-gradient: "matte";
 	background: url("../images/toolbarButtons/feedPressed.png") !important;
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
+	width: 45px !important;
 }
 
 /* The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect */

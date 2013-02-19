@@ -186,11 +186,13 @@ Ext.define("inkle.controller.AllInklingsController", {
 		var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();
 		if (allInklingsDatePickerPanel) {
 			allInklingsDatePickerPanel.hide();
+			this.getAllInklingsDateButton().removeCls("x-button-pressed");
 		}
 		
 		var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
 		if (allInklingsGroupsListPanel) {
 			allInklingsGroupsListPanel.hide();
+			this.getAllInklingsGroupsButton().removeCls("x-button-pressed");
 		}
 		
 		var allInklingsFeedCommentPanel = this.getAllInklingsFeedCommentPanel();

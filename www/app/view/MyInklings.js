@@ -21,8 +21,6 @@ Ext.define("inkle.view.MyInklings", {
                         xtype: "button",
                         itemId: "inklingInvitationsButton",
                         ui: "action",
-                		//iconMask: true,
-                		//iconCls: "inklingInvitationsIcon"
                 		cls: ["toolbarButton", "toolbarButtonEnvelope"],
                 		pressedCls: ["toolbarButtonPressed", "toolbarButtonEnvelopePressed"],
                     },
