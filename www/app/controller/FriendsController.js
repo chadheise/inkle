@@ -157,7 +157,7 @@ Ext.define("inkle.controller.FriendsController", {
         var friendRequestsActionSheet = Ext.create("Ext.ActionSheet", {
             id: "friendReqeustsActionSheet",
             items: [
-                // Acept request
+                // Accept request
                 {
                     text: "Accept",
                     ui: "confirm",

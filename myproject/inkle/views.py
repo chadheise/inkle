@@ -1757,12 +1757,12 @@ def invite_facebook_friends_view(request):
 @login_required
 def people_search_view(request):
     """Returns a list of member's who match the inputted query."""
+    print "inside people_search_view"
     # Get the search query
     try:
         query = request.POST["query"]
         fbAccessToken = request.POST["fbAccessToken"]
     except:
-        print "except1: " + str(e)
         raise Http404()
 
     # Split the query into words
@@ -1777,7 +1777,7 @@ def people_search_view(request):
     # If the query is more than two words long, return no results
     else:
         members = []
-
+    print "check 1"
     fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
     if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
         fbUrl = "https://graph.facebook.com/fql?q="
@@ -1802,7 +1802,7 @@ def people_search_view(request):
             except Exception, e:
                 print "except2: " + str(e)
             fbData = simplejson.loads(fbResponse)      
-
+    print "check 2"
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
     inkleFriends = [] #Users of inkle who are friends on inkle with the user
@@ -1810,10 +1810,11 @@ def people_search_view(request):
     inkleOther = [] #Users of inkle who are are not friends with the user and do not have a pending request
     facebookInkle = [] #Users of inkle who are facebook friends with the user
     facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
-
+    print "check 3"
+    print members
     for m in members:
         m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
-        if m in request.user.friends.all(): #If the member is a friend of the user
+        if m in request.user.get_profile().friends.all(): #If the member is a friend of the user
             m.is_friend = True
             m.is_pending = False
             inkleFriends.append(m)
@@ -1825,7 +1826,7 @@ def people_search_view(request):
             m.is_friend = False
             m.is_pending = False
             inkleOther.append(m)
-
+    print "check 4"
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Get inkle user from facebook user id
@@ -1841,13 +1842,14 @@ def people_search_view(request):
             personData["last_name"] = fbFriend["last_name"]
             personData["facebook_id"] = fbFriend["uid"]
             #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
-            personData["id"] = "fb" + str(fbFriend["uid"])
+            #personData["id"] = "fb" + str(fbFriend["uid"])
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
             personData["get_picture_path"] = fbFriend["pic_square"]
+            personData["is_facebook_user_not_inkle_user"] = True
             facebookNotInkle.append(personData)
-
+    print "check 5"
     searchResults = []
     if inkleFriends:
         searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
@@ -1859,15 +1861,25 @@ def people_search_view(request):
         searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
-    
+    print "check 6"
+    print inkleFriends
+    print inklePending
+    print facebookInkle
+    print facebookNotInkle
+    print inkleOther
+    print "results"
+    print searchResults
     response_members = []
     for m in searchResults:
         try:
-            html = render_to_string( "addFriendItem.html", {
+            #html = render_to_string("addFriendItem.html", {
+            html = render_to_string("memberListItem.html", {
             "m" : m,
-            "member" : member,
+            #"member" : member,
             })
         except:
+            print "this error"
+            print html
             raise Http404()
 
         try:
@@ -1878,7 +1890,7 @@ def people_search_view(request):
             "id": memberId,
             "html": html
         })
-
+    print "check 7"
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
@@ -1959,6 +1971,7 @@ def respond_to_request_view(request):
     # Add the friendship if the logged in member accepted the request
     if (response == "accept"):
         request.user.get_profile().friends.add(m)
+        m.get_profile().friends.add(request.user)
         friend_request.status = "accepted"
     else:
         friend_request.status = "declined"
