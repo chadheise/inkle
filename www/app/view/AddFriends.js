@@ -42,6 +42,7 @@ Ext.define("inkle.view.AddFriends", {
             {
                 xtype: "list",
                 id: "addFriendsSuggestions",
+                cls: "membersList",
                 flex: 1,
                 loadingText: "Loading suggestions...",
                 emptyText: "<p class='emptyListText'>No matches</p>",
@@ -85,6 +86,11 @@ Ext.define("inkle.view.AddFriends", {
         {
             delegate: "#addFriendsSearchField",
             event: "keyup",
+            fn: "onAddFriendsSearchFieldKeyUp"
+        },
+        {
+            delegate: "#addFriendsSearchField",
+            event: "change",
             fn: "onAddFriendsSearchFieldKeyUp"
         },
         {

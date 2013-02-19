@@ -15,10 +15,10 @@
 	{% elif m.is_pending %}
 		<!-- Not styled yet -->
 		<input id="member{{ m.id }}IsPendingButton" class="isPendingButton" type="button" value="Pending" memberId="{{ m.id }}" />
-	{% elif m == member %}
+	{% elif m == user %}
 		<input id="member{{ m.id }}IsFriendButton" class="isFriendButton" type="button" value="Me" memberId="{{ m.id }}" />
 		<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />
-	{% elif m.facebookId %}
+	{% elif m.facebook_id %}
 		<!-- Facebook friends not on inkle -->
 		{% if "fb" in m.id %}
 			<input id="member{{ m.id }}InviteFriendButton" class="inviteFriendButton" type="button" value="Invite" memberId="{{ m.id }}" />

@@ -1,4 +1,4 @@
-<div class="member" data-memberId="{{ m.id }}">
+<div class="member" data-memberId="{{ m.id }}" data-facebookId={%if m.facebook_id %}{{m.facebook_id}}{% else %}""{% endif %}>
     <!-- Delete lock -->
     {% if include_delete_items %}
         <img class="deleteLock deleteLockHidden locked" src="resources/images/delete.png">
@@ -25,9 +25,11 @@
 	    </div>
 
 	    <!-- Mutual friends -->
-	    {% if m != user %}
-	        <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
-	    {% endif %}
+		{% if m.id %} <!-- Facebook users who are not on inkle will not have a member id -->
+			{% if m != user %}
+	        	<p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+	    	{% endif %}
+		{% endif %}
 	</div>
 
 	<!-- Delete button -->
