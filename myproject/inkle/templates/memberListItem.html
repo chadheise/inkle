@@ -1,4 +1,4 @@
-<div class="member" data-memberId="{{ m.id }}" data-facebookId={%if m.facebook_id %}{{m.facebook_id}}{% else %}""{% endif %}>
+<div class="member" data-memberId={%if m.id %}"{{m.id}}"{% else %}""{% endif %} data-facebookId={%if m.get_profile.facebook_id %}"{{m.get_profile.facebook_id}}"{% else %}""{% endif %}>
     <!-- Delete lock -->
     {% if include_delete_items %}
         <img class="deleteLock deleteLockHidden locked" src="resources/images/delete.png">
