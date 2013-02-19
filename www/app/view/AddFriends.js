@@ -52,7 +52,7 @@ Ext.define("inkle.view.AddFriends", {
 				],
 				store: {
 					fields: [
-						"id",
+						//"id",
 						"html"
 					],
 					proxy: {
