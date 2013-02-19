@@ -144,6 +144,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 	activateNewInklingView: function() {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
+		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 		this.getInklingInvitationsButton().hide();
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
@@ -247,9 +249,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    var inklingInvitationsPanel = this.getInklingInvitationsPanel();
 	    if (inklingInvitationsPanel.getHidden()) {
 	    	inklingInvitationsPanel.showBy(this.getInklingInvitationsButton());
+	    	this.getInklingInvitationsButton().removeCls("toolbarButton toolbarButtonEnvelope");
+	    	this.getInklingInvitationsButton().setCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
     	}
     	else {
     		inklingInvitationsPanel.hide();
+    		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+    		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
     	}
     },
     
@@ -408,6 +414,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         });
         
         this.getInklingInvitationsPanel().hide();
+        this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 	},
 	
 	hideMyInklingsTabBadge: function() {
