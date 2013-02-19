@@ -205,14 +205,17 @@ Ext.define("inkle.controller.AllInklingsController", {
     toggleDatePickerVisibility: function() {
         // Hide the groups list
         this.getAllInklingsGroupsListPanel().hide();
+        this.getAllInklingsGroupsButton().removeCls("x-button-pressed");
         
 	    // Toggle the visibility of the date picker
 	    var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();
 	    if (allInklingsDatePickerPanel.getHidden()) {
 	    	allInklingsDatePickerPanel.showBy(this.getAllInklingsDateButton());
+	    	this.getAllInklingsDateButton().setCls("x-button-pressed");
     	}
     	else {
     		allInklingsDatePickerPanel.hide();
+    		this.getAllInklingsDateButton().removeCls("x-button-pressed");
     		
     		// Update the all inklings list
     		this.updateAllInklingsList();
@@ -242,14 +245,17 @@ Ext.define("inkle.controller.AllInklingsController", {
     toggleGroupsListVisibility: function() {
         // Hide the date picker
         this.getAllInklingsDatePickerPanel().hide();
+        this.getAllInklingsDateButton().removeCls("x-button-pressed");
         
         // Toggle the visibility of the groups panel
 	    var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
 	    if (allInklingsGroupsListPanel.getHidden()) {
 	    	allInklingsGroupsListPanel.showBy(this.getAllInklingsGroupsButton());
+	    	this.getAllInklingsGroupsButton().setCls("x-button-pressed");
     	}
     	else {
     		allInklingsGroupsListPanel.hide();
+    		this.getAllInklingsGroupsButton().removeCls("x-button-pressed");
     	}
     },
     
