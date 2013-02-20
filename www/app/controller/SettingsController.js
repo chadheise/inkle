@@ -238,7 +238,7 @@ Ext.define("inkle.controller.SettingsController", {
                                 this.activateLoginView();
                             }
                             else {
-                                Ext.Msg.alert(error);
+                                Ext.Msg.alert("Error", error);
                             }
                         },
                        	scope: object

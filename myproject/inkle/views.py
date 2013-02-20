@@ -480,36 +480,26 @@ def link_facebook_account_view(request):
     except KeyError as e:
         return HttpResponse("Error accessing request POST data: " + e.message)
 
-    print "b"
-
     # Check if the user has separate email and Facebook accounts already and tell them that they cannot currently be merged
     try:
         user_profile = UserProfile.objects.get(facebook_id = facebook_id)
         user = user_profile.user
-        print "already"
-        print user
         if (user.is_active):
             response_error = "An inkle account already exists for that Facebook user."
     except:
         user = None
 
     if (not response_error):
-        print "c"
         # Alert the user if their emails do not match
         if (email != request.user.email):
-            print "d"
             response_error = "The email addresses for your Facebook and inkle accounts do not match. Update your email in the settings before linking to Facebook."
 
         # Otherwise, convert their email account to a Facebook one
         else:
-            print "e"
             request.user.get_profile().facebook_id = facebook_id
-            print "f"
             request.user.set_unusable_password()
-            print "g"
             request.user.get_profile().save()
             request.user.save()
-            print "h"
 
             # Log the user out and require them to log in with Facebook
             logout(request)
@@ -527,7 +517,6 @@ def link_facebook_account_view(request):
     except Exception, e:
         response_error = "Could not authenticate with facebook"""
 
-    print response_error
     # Create and return a JSON object
     response = simplejson.dumps({
         "success": response_error == "",
