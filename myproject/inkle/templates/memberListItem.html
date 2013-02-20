@@ -56,6 +56,19 @@
 	    <input class="ignoreRequestButton" type="button" value="Ignore" />
 	{% endif %}
 	
+	{% if m.is_friend %}
+		<span class="relationship">Friend</span>
+	{% endif %}
+	{% if m.is_pending %}
+		<span class="relationship">Pending</span>
+	{% endif %}
+	{% if m.is_requested %}
+		<span class="relationship">Requested</span>
+	{% endif %}
+	{%if m.get_profile.facebook_id %}
+		<img class="facebookIcon" src="resources/images/facebookIcon.png">
+	{% endif %}
+	
     <!-- Disclosure arrow -->
     {% if include_disclosure_arrow %}
         <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />

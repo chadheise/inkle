@@ -1807,6 +1807,7 @@ def people_search_view(request):
     # of connection a member can have to the user
     inkleFriends = [] #Users of inkle who are friends on inkle with the user
     inklePending = [] #Users of inkle who have a pending request from the user
+    inkleRequested = [] #Users of inkle who have requested to be friends with the user
     inkleOther = [] #Users of inkle who are are not friends with the user and do not have a pending request
     facebookInkle = [] #Users of inkle who are facebook friends with the user
     facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
@@ -1815,15 +1816,18 @@ def people_search_view(request):
         m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
         if m in request.user.get_profile().friends.all(): #If the member is a friend of the user
             m.is_friend = True
-            m.is_pending = False
+            #m.is_pending = False
             inkleFriends.append(m)
         elif request.user.get_profile().has_pending_friend_request_to(m):
-            m.is_friend = False
+            #m.is_friend = False
             m.is_pending = True
             inklePending.append(m)
+        elif m.get_profile().has_pending_friend_request_to(request.user):
+            m.is_requested = True
+            inkleRequested.append(m)
         else:  #If the member matches the search query but is not friends with the user and a request is not pending
-            m.is_friend = False
-            m.is_pending = False
+            #m.is_friend = False
+            #m.is_pending = False
             inkleOther.append(m)
     print "check 4"
     for fbFriend in fbData["data"]:
@@ -1870,6 +1874,8 @@ def people_search_view(request):
         searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
     if inklePending:
         searchResults += sorted(inklePending, key = lambda m : m.last_name)
+    if inkleRequested:
+        searchResults += sorted(inkleRequested, key = lambda m : m.last_name)
     if facebookInkle:
         searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
     if facebookNotInkle:
@@ -1879,6 +1885,7 @@ def people_search_view(request):
     print "check 6"
     print "inkleFriends " + str(inkleFriends)
     print "inklePending " + str(inklePending)
+    print "inkleRequested " + str(inkleRequested)
     print "facebookInkle " + str(facebookInkle)
     print "facebookNotInkle " + str(facebookNotInkle)
     print inkleOther
@@ -1891,6 +1898,7 @@ def people_search_view(request):
             #html = render_to_string("addFriendItem.html", {
             html = render_to_string("memberListItem.html", {
             "m" : m,
+            "include_disclosure_arrow" : True,
             #"member" : member,
             })
         except:
