@@ -4,28 +4,28 @@
 /* Green */
 $darkestGreen: #1A492B;
 $darkerGreen: #336E34;
-$mediumGreen: #288D42;	// Primary green
+$mediumGreen: #288D42;  // Primary green
 $lighterGreen: #6ABB6A;
 $lightestGreen: #ABD4B0;
 
 /* Blue */
 $darkestBlue: #002C45;
 $darkerBlue: #2A4360;
-$mediumBlue: #1B5898;	// Primary blue
+$mediumBlue: #1B5898;   // Primary blue
 $lighterBlue: #70A9DB;
 $lightestBlue: #ABC2E5;
 
 /* Red */
 $darkestRed: #7E181A;
 $darkerRed: #914044;
-$mediumRed: #CD1A26;	// Primary red
+$mediumRed: #CD1A26;    // Primary red
 $lighterRed: #E5736F;
 $lightestRed: #EAB0B5;
 
 /* Gray */
 $darkestGray: #333333;
 $darkerGray: #555555;
-$mediumGray: #777777;	// Primary gray
+$mediumGray: #777777;   // Primary gray
 $lighterGray: #BBBBBB;
 $lightestGray: #DDDDDD;
 
@@ -52,7 +52,7 @@ $badge-bg-gradient: "matte";
 
 .x-list-pullrefresh-arrow {
     /*background: center center theme_image("default", "refreshArrow.png") no-repeat !important;*/
-	background: center center url("../images/refreshArrow.png") no-repeat !important;
+    background: center center url("../images/refreshArrow.png") no-repeat !important;
 }
 
 /********************/
@@ -83,47 +83,47 @@ $badge-bg-gradient: "matte";
 /***************/
 /* TODO: get rid of any unused icons */
 .allInklingsIcon {
-	-webkit-mask-box-image: url("../images/icons/allInklings.png");
+    -webkit-mask-box-image: url("../images/icons/allInklings.png");
 }
 
 .myInklingsIcon {
-	-webkit-mask-box-image: url("../images/icons/myInklings.png");
+    -webkit-mask-box-image: url("../images/icons/myInklings.png");
 }
 
 .friendsIcon {
-	-webkit-mask-box-image: url("../images/icons/friends.png");
+    -webkit-mask-box-image: url("../images/icons/friends.png");
 }
 
 .settingsIcon {
-	-webkit-mask-box-image: url("../images/icons/gears.png");
+    -webkit-mask-box-image: url("../images/icons/gears.png");
 }
 
 .inklingInvitationsIcon {
-	-webkit-mask-box-image: url("../images/icons/envelope.png");
+    -webkit-mask-box-image: url("../images/icons/envelope.png");
 }
 
 .minusIcon {
-	-webkit-mask-box-image: url("../images/icons/minus.png");
+    -webkit-mask-box-image: url("../images/icons/minus.png");
 }
 
 .plusIcon {
-	-webkit-mask-box-image: url("../images/icons/plus.png");
+    -webkit-mask-box-image: url("../images/icons/plus.png");
 }
 
 .plusFriendIcon {
-	-webkit-mask-box-image: url("../images/icons/plusFriend.png");
+    -webkit-mask-box-image: url("../images/icons/plusFriend.png");
 }
 
 .minusFriendIcon {
-	-webkit-mask-box-image: url("../images/icons/minusFriend.png");
+    -webkit-mask-box-image: url("../images/icons/minusFriend.png");
 }
 
 .feedIcon {
-	-webkit-mask-box-image: url("../images/icons/feed.png");
+    -webkit-mask-box-image: url("../images/icons/feed.png");
 }
 
 .editIcon {
-	-webkit-mask-box-image: url("../images/icons/gear.png");
+    -webkit-mask-box-image: url("../images/icons/gear.png");
 }
 
 /*************/
@@ -131,8 +131,8 @@ $badge-bg-gradient: "matte";
 /*************/
 
 .x-toolbar {
-	background: $mediumGreen !important;
-	border-bottom: 1px solid $darkestGreen !important;
+    background: $mediumGreen !important;
+    border-bottom: 1px solid $darkestGreen !important;
 }
 
 /*************/
@@ -140,36 +140,36 @@ $badge-bg-gradient: "matte";
 /*************/
 
 .x-tabbar {
-	background: $mediumGreen !important;
-	border-top: 1px solid $darkestGreen !important;
+    background: $mediumGreen !important;
+    border-top: 1px solid $darkestGreen !important;
 }
 
 .x-tabbar .x-tab {
-	padding-top: 5px !important;
-	padding-bottom: 5px !important;
-	width: 25% !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    width: 25% !important;
 }
 
 .x-tabbar .x-tab-active {
-	background: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    background: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 .x-tabbar .x-button-icon {
-	background-color: $darkestGreen !important;
+    background-color: $darkestGreen !important;
 }
 
 .x-tabbar .x-tab-active .x-button-icon {
-	background-color: #FFFFFF !important;
+    background-color: #FFFFFF !important;
 }
 
 .x-tabbar .x-button-label {
-	color: $darkestGreen !important;
-	font-size: 11px !important;
+    color: $darkestGreen !important;
+    font-size: 11px !important;
 }
 
 .x-tabbar .x-tab-active .x-button-label {
-	color: #FFFFFF !important;
+    color: #FFFFFF !important;
 }
 
 /*************/
@@ -177,154 +177,154 @@ $badge-bg-gradient: "matte";
 /*************/
 
 .x-button {
-	color: $darkestGreen !important;
-	border-color: $darkestGreen !important;
-	background: $mediumGreen !important;
+    color: $darkestGreen !important;
+    border-color: $darkestGreen !important;
+    background: $mediumGreen !important;
 }
 
 .x-button-pressed, .x-button-pressing {
-	color: #FFFFFF !important;
-	background: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    color: #FFFFFF !important;
+    background: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 .x-button-back::before {
-	margin-left: 4px !important;
-	background: $darkestGreen !important;
+    margin-left: 4px !important;
+    background: $darkestGreen !important;
 }
 
 .x-button-back::after {
-	margin-left: 4px !important;
-	background: $mediumGreen !important;
+    margin-left: 4px !important;
+    background: $mediumGreen !important;
 }
 
 .x-button-back {
-	z-index: 3 !important;
+    z-index: 3 !important;
 }
 
 .x-button-pressing.x-button-back::after {
-	background: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    background: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 /******************************/
-/*   LOGIN & LARGE BUTTONS 	  */
+/*   LOGIN & LARGE BUTTONS    */
 /******************************/
 .facebookLoginButton {
-	background: url("../images/facebookLogin.png") !important;
+    background: url("../images/facebookLogin.png") !important;
 }
 
 .facebookLoginDarkButton {
-	background: url("../images/facebookLoginDark.png") !important;
+    background: url("../images/facebookLoginDark.png") !important;
 }
 
 .emailLoginButton {
-	background: url("../images/emailLogin.png") !important;
+    background: url("../images/emailLogin.png") !important;
 }
 
 .emailLoginDarkButton {
-	background: url("../images/emailLoginDark.png") !important;
+    background: url("../images/emailLoginDark.png") !important;
 }
 
 .changePasswordButton {
-	background: url("../images/changePassword.png") !important;
+    background: url("../images/changePassword.png") !important;
 }
 
 .changePasswordDarkButton {
-	background: url("../images/changePasswordDark.png") !important;
+    background: url("../images/changePasswordDark.png") !important;
 }
 
 .changeEmailButton {
-	background: url("../images/changeEmail.png") !important;
+    background: url("../images/changeEmail.png") !important;
 }
 
 .changeEmailDarkButton {
-	background: url("../images/changeEmailDark.png") !important;
+    background: url("../images/changeEmailDark.png") !important;
 }
 
 /**************************/
-/*   TOOLBAR BUTTONS 	  */
+/*   TOOLBAR BUTTONS      */
 /**************************/
 
 .toolbarButtonGear {
-	background: url("../images/toolbarButtons/gear.png") !important;
+    background: url("../images/toolbarButtons/gear.png") !important;
 }
 
 .toolbarButtonGearPressed {
-	background: url("../images/toolbarButtons/gearPressed.png") !important;
+    background: url("../images/toolbarButtons/gearPressed.png") !important;
 }
 
 .toolbarButtonGears {
-	background: url("../images/toolbarButtons/gears.png") !important;
+    background: url("../images/toolbarButtons/gears.png") !important;
 }
 
 .toolbarButtonGearsPressed {
-	background: url("../images/toolbarButtons/gearsPressed.png") !important;
+    background: url("../images/toolbarButtons/gearsPressed.png") !important;
 }
 
 .toolbarButtonMinus {
-	background: url("../images/toolbarButtons/minus.png") !important;
+    background: url("../images/toolbarButtons/minus.png") !important;
 }
 
 .toolbarButtonMinusPressed {
-	background: url("../images/toolbarButtons/minusPressed.png") !important;
+    background: url("../images/toolbarButtons/minusPressed.png") !important;
 }
 
 .toolbarButtonMinusFriend {
-	background: url("../images/toolbarButtons/minusFriend.png") !important;
+    background: url("../images/toolbarButtons/minusFriend.png") !important;
 }
 
 .toolbarButtonMinusFriendPressed {
-	background: url("../images/toolbarButtons/minusFriendPressed.png") !important;
+    background: url("../images/toolbarButtons/minusFriendPressed.png") !important;
 }
 
 .toolbarButtonPlus {
-	background: url("../images/toolbarButtons/plus.png") !important;
+    background: url("../images/toolbarButtons/plus.png") !important;
 }
 
 .toolbarButtonPlusPressed {
-	background: url("../images/toolbarButtons/plusPressed.png") !important;
+    background: url("../images/toolbarButtons/plusPressed.png") !important;
 }
 
 .toolbarButtonPlusFriend {
-	background: url("../images/toolbarButtons/plusFriend.png") !important;
+    background: url("../images/toolbarButtons/plusFriend.png") !important;
 }
 
 .toolbarButtonPlusFriendPressed {
-	background: url("../images/toolbarButtons/plusFriendPressed.png") !important;
+    background: url("../images/toolbarButtons/plusFriendPressed.png") !important;
 }
 
 .toolbarButtonEnvelope {
-	background: url("../images/toolbarButtons/envelope.png") !important;
-	width: 45px !important;
+    background: url("../images/toolbarButtons/envelope.png") !important;
+    width: 45px !important;
 }
 
 .toolbarButtonEnvelopePressed {
-	background: url("../images/toolbarButtons/envelopePressed.png") !important;
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    background: url("../images/toolbarButtons/envelopePressed.png") !important;
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 .toolbarButtonFeed {
-	background: url("../images/toolbarButtons/feed.png") !important;
-	width: 45px !important;
+    background: url("../images/toolbarButtons/feed.png") !important;
+    width: 45px !important;
 }
 
 .toolbarButtonFeedPressed {
-	background: url("../images/toolbarButtons/feedPressed.png") !important;
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    background: url("../images/toolbarButtons/feedPressed.png") !important;
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 /* The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect */
 .toolbarButton {
-	width: 33px;
-	height: 33px;
+    width: 33px;
+    height: 33px;
 }
 
 .toolbarButtonPressed {
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 /***********/
@@ -366,18 +366,18 @@ $badge-bg-gradient: "matte";
 /***********/
 /* Inklings list */
 .inklingsList .x-list-item-label {
-	height: 60px !important;
-	padding: 5px !important;
+    height: 60px !important;
+    padding: 5px !important;
 }
 
 .inklingsList .location {
-	margin-top: -3px;
-	color: $mediumBlue;
-	font-weight: bold;
-	font-size: 24px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    margin-top: -3px;
+    color: $mediumBlue;
+    font-weight: bold;
+    font-size: 24px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     width: 95%;
 }
 
@@ -387,14 +387,14 @@ $badge-bg-gradient: "matte";
     font-size: 18px;
     max-width: 135px;
     overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .inklingsList .dot {
-	float: left;
-	color: $mediumGray;
-	margin: 0px 5px 0px 5px;
+    float: left;
+    color: $mediumGray;
+    margin: 0px 5px 0px 5px;
 }
 
 .inklingsList .attendingMemberThumbnail {
@@ -412,24 +412,25 @@ $badge-bg-gradient: "matte";
 }
 
 .inklingsList .disclosureArrow {
-    float: right;
-    margin-top: -10px;
+    position: absolute;
+    top: 22px;
+    right: 7px;
 }
 
 /* Inkling invitations list */
 .inklingInvitationsList .x-list-item-label {
-	height: 90px !important;
-	padding: 5px !important;
+    height: 90px !important;
+    padding: 5px !important;
 }
 
 .inklingInvitationsList .location {
-	margin-top: -3px;
-	color: $mediumBlue;
-	font-weight: bold;
-	font-size: 24px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    margin-top: -3px;
+    color: $mediumBlue;
+    font-weight: bold;
+    font-size: 24px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .inklingInvitationsList .time {
@@ -438,8 +439,8 @@ $badge-bg-gradient: "matte";
     font-size: 18px;
     max-width: 145px;
     overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .inklingInvitationsList .date {
@@ -449,14 +450,14 @@ $badge-bg-gradient: "matte";
     font-size: 18px;
     max-width: 145px;
     overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .inklingInvitationsList .dot {
-	float: left;
-	color: $mediumGray;
-	margin: 0px 5px 0px 5px;
+    float: left;
+    color: $mediumGray;
+    margin: 0px 5px 0px 5px;
 }
 
 .inklingInvitationsList .attendingMemberThumbnail {
@@ -474,50 +475,59 @@ $badge-bg-gradient: "matte";
 }
 
 .inklingInvitationsList input[type="button"] {
-	color: #FFFFFF;
-	border-radius: 3px !important;
-	float: left;
+    color: #FFFFFF;
+    border-radius: 3px !important;
+    float: left;
 }
 
 .inklingInvitationsList .acceptInklingInvitationButton {
-	clear: left;
-	margin-right: 10px;
-	background-color: $mediumGreen !important;
-	border: solid 1px $darkestGreen !important;
+    clear: left;
+    margin-right: 10px;
+    background-color: $mediumGreen !important;
+    border: solid 1px $darkestGreen !important;
 }
 
 .inklingInvitationsList .ignoreInklingInvitationButton {
-	background-color: $mediumRed !important;
-	border: solid 1px $darkestRed !important;
+    background-color: $mediumRed !important;
+    border: solid 1px $darkestRed !important;
 }
 
 .inklingInvitationsList .hideInklingInvitationButton {
-	clear: left;
-	background-color: $mediumBlue !important;
-	border: solid 1px $darkestBlue !important;
+    clear: left;
+    background-color: $mediumBlue !important;
+    border: solid 1px $darkestBlue !important;
 }
 
 .inklingInvitationsList .disclosureArrow {
-	float: right;
-	margin: -17px 0px 0px 0px;
+    position: absolute;
+    top: 22px;
+    right: 7px;
 }
 
 /* Groups list (main content) */
 .groupsListMainContent .x-list-item-label {
-	height: 60px !important;
-	padding: 5px !important;
-	background-color: #FFFFFF;
+    height: 60px !important;
+    padding: 5px !important;
+    background-color: #FFFFFF;
+}
+
+.groupsListMainContent .group {
+    -webkit-transition: 0.5s;
+}
+
+.groupsList .groupInfo {
+    margin: -3px 15px 0px 0px;
 }
 
 .groupsListMainContent .groupName {
-	margin-top: -3px;
-	width: 270px;
-	color: $mediumBlue;
-	font-weight: bold;
-	font-size: 24px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    margin-top: -3px;
+    width: 270px;
+    color: $mediumBlue;
+    font-weight: bold;
+    font-size: 24px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .groupsListMainContent .groupMemberThumbnail {
@@ -535,55 +545,65 @@ $badge-bg-gradient: "matte";
 }
 
 .groupsListMainContent .disclosureArrow {
-	float: right;
-	margin: -10px 3px 0px 0px;
+    position: absolute;
+    top: 22px;
+    right: 7px;
 }
 
 .groupsListMainContent .groupNameInput {
-	margin-top: -3px;
-	width: 270px;
-	color: $mediumBlue;
-	font-weight: bold;
-	font-size: 24px;
-	border-width: 0px;
-	background-color: #FFFFFF;
+    margin-top: -3px;
+    width: 270px;
+    color: $mediumBlue;
+    font-weight: bold;
+    font-size: 24px;
+    border-width: 0px;
+    background-color: #FFFFFF;
 }
 
 .groupsListMainContent .groupNameHidden, .groupsListMainContent .groupNameInputHidden {
-	display: none;
+    display: none;
+}
+
+.groupsList .listDeleteButton {
+    margin-right: 55px;
 }
 
 /* Groups list (panel) */
 .groupsListPanel .selectionButton {
-	float: left;
-	margin: -4px 5px 0px -10px;
+    float: left;
+    margin: -4px 5px 0px -10px;
 }
 
 .groupsListPanel .groupName {
-	font-weight: bold;
-	color: $mediumBlue;
-	font-weight: bold;
-	font-size: 20px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    font-weight: bold;
+    color: $mediumBlue;
+    font-weight: bold;
+    font-size: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* Members list */
 .membersList .x-list-item-label {
-	height: 60px;
-	padding: 5px !important;
+    height: 60px;
+    padding: 5px !important;
 }
 
+// TODO: get rid of this?
 .membersListWithButtons .x-list-item-label {
     height: 90px;
 }
 
+.membersList .member {
+    -webkit-transition: 0.5s;
+}
+
 .membersList .memberImage {
     float: left;
-	height: 50px;
-	width: 50px;
-	margin: 3px 5px 0px 0px;
+    height: 50px;
+    width: 50px;
+    margin: 3px 5px 0px 0px;
 }
 
 .membersList .memberInfo {
@@ -591,26 +611,30 @@ $badge-bg-gradient: "matte";
 }
 
 .membersList .memberName {
-	font-size: 24px;
-	color: $mediumBlue;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    font-size: 24px;
+    color: $mediumBlue;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .membersList .lastName {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .membersList .numMutualFriends {
-	font-size: 18px;
-	color: $mediumGray;
+    font-size: 18px;
+    color: $mediumGray;
 }
 
 .membersList .disclosureArrow {
     position: absolute;
     top: 22px;
     right: 7px;
+}
+
+.membersList .listDeleteButton {
+    right: 70px;
 }
 
 /* Inkling feed list */
@@ -624,7 +648,7 @@ $badge-bg-gradient: "matte";
     height: 50px;
     width: 50px;
     margin: 3px 5px 0px 0px;
-	border: 1px solid #000000;
+    border: 1px solid #000000;
 }
 
 #inklingFeedList .floatRight {
@@ -662,30 +686,31 @@ $badge-bg-gradient: "matte";
 }
 
 #settingsList .disclosureArrow {
-    float: right;
-    margin: 5px -7px 0px 0px;
+    position: absolute;
+    top: 17px;
+    right: 7px;
 }
 
 /* Add friends list??? */
 .isFriendButton {
-	float: right;
-	font-size: 14px;
-	padding: 2px 5px 2px 5px;
-	color: #FFFFFF;
-	background-color: $mediumGreen;
-	border: solid 1px $darkestGreen;
-	border-radius: 5px;
-	margin: 0px 10px 0px 0px;
+    float: right;
+    font-size: 14px;
+    padding: 2px 5px 2px 5px;
+    color: #FFFFFF;
+    background-color: $mediumGreen;
+    border: solid 1px $darkestGreen;
+    border-radius: 5px;
+    margin: 0px 10px 0px 0px;
 }
 
 .addFriendButton {
-	float: right;
-	font-size: 14px;
-	padding: 2px 5px 2px 5px;
-	color: #FFFFFF;
-	background-color: $mediumBlue;
-	border: solid 1px $darkestBlue;
-	border-radius: 5px;
+    float: right;
+    font-size: 14px;
+    padding: 2px 5px 2px 5px;
+    color: #FFFFFF;
+    background-color: $mediumBlue;
+    border: solid 1px $darkestBlue;
+    border-radius: 5px;
 
 }
 
@@ -709,6 +734,35 @@ $badge-bg-gradient: "matte";
     opacity: 1 !important;
 }
 
+/* List deletion items */
+.listDeleteButton {
+    position: absolute;
+    right: 0px;
+    bottom: 12px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    border: solid 1px $darkestRed !important;
+    background-color: $mediumRed !important;
+    font-size: 16px;
+    color: #FFFFFF !important;
+}
+
+.deleteLock {
+	float: left;
+	margin: 11px 0px 0px -40px;
+	-webkit-transition: 0.5s;
+}
+
+.showDeleteLock {
+    -webkit-transform: translate(40px, 0px);
+    -webkit-transition: 0.5s;
+}
+
+.unlockDeleteLock {
+    -webkit-transform: rotate(-90deg);
+    -webkit-transition: 0.5s;
+}
+
 /* Miscellaneous list items */
 .emptyListText {
     padding-top: 10px;
@@ -719,122 +773,6 @@ $badge-bg-gradient: "matte";
 .selectionItem {
     float: left;
     padding: 8px 4px 0px 0px;
-}
-
-.listDeleteButton {
-    margin-right: 20px;
-}
-
-/*************************/
-/*  LIST DELETION ITEMS  */
-/*************************/
-/* Delete lock */
-.deleteLock {
-	float: left;
-	margin: 8px 5px 0px 0px;
-}
-
-.deleteLockHidden {
-	margin-left: -50px !important;
-}
-
-.deleteLockSlideLeft {
-	-webkit-animation: deleteLockSlideLeftAnimation 2s 1; 
-}
-
-.deleteLockSlideRight {
-	-webkit-animation: deleteLockSlideRightAnimation 2s 1; 
-}
-
-@-webkit-keyframes deleteLockSlideLeftAnimation {
-	0% 	 { opacity: 1;	margin-left: 0px; }
-	100% { opacity: 0; margin-left: -50px; }
-}
-
-@-webkit-keyframes deleteLockSlideRightAnimation {
-	0% 	 { opacity: 0;	margin-left: -50px; }
-	100% { opacity: 1; margin-left: 0px; }
-}
-
-.deleteLockRotateLeft {
-	-webkit-animation: deleteLockRotateLeftAnimation 0.5s 1; 
-	-webkit-animation-fill-mode: forwards;
-}
-
-.deleteLockRotateRight {
-	-webkit-animation: deleteLockRotateRightAnimation 0.5s 1; 
-	-webkit-animation-fill-mode: forwards;
-}
-
-@-webkit-keyframes deleteLockRotateLeftAnimation {
-	0% 	 { 	-webkit-transform: rotate(0deg);  	}
-	100% { 	-webkit-transform: rotate(-90deg);  }
-}
-
-@-webkit-keyframes deleteLockRotateRightAnimation {
-	0% 	 { 	-webkit-transform: rotate(-90deg);  	}
-	100% { 	-webkit-transform: rotate(0deg);  }
-}
-
-.deleteLockRotateRight {
-	-webkit-transform:rotate(-90deg);
-}
-
-/* List delete button */
-.listDeleteButton {
-    position: absolute;
-    right: 10px;
-    bottom: 15px;
-    padding: 5px 10px 5px 10px;
-    border-radius: 5px;
-    border: solid 1px $darkestRed !important;
-    background-color: $mediumRed !important;
-    font-size: 16px;
-    color: #FFFFFF !important;
-}
-
-/*.deleteButtonHidden {
-	margin-right: -75px;
-}
-
-.deleteButtonSlideLeft {
-	-webkit-animation: deleteButtonSlideLeftAnimation 0.5s 1; 
-}
-
-.deleteButtonSlideRight {
-	-webkit-animation: deleteButtonSlideRightAnimation 0.5s 1; 
-}
-
-@-webkit-keyframes deleteButtonSlideLeftAnimation {
-	0% 	 { opacity: 0; margin-right: -75px; }
-	100% { opacity: 1; margin-right: 10px; }
-}
-
-@-webkit-keyframes deleteButtonSlideRightAnimation {
-	0% 	 { opacity: 1; margin-right: 10px; }
-	100% { opacity: 0; margin-right: -75px; }
-}*/
-
-.disclosureArrowHidden {
-	margin-right: -150px !important;
-}
-
-.disclosureArrowSlideLeft {
-	-webkit-animation: disclosureArrowSlideLeftAnimation 0.5s 1; 
-}
-
-.disclosureArrowSlideRight {
-	-webkit-animation: disclosureArrowSlideRightAnimation 0.5s 1; 
-}
-
-@-webkit-keyframes disclosureArrowSlideLeftAnimation {
-	0% 	 { opacity: 0; margin-right: -75px; }
-	100% { opacity: 1; margin-right: 0px; }
-}
-
-@-webkit-keyframes disclosureArrowSlideRightAnimation {
-	0% 	 { opacity: 1; margin-right: 0px; }
-	100% { opacity: 0; margin-right: -75px; }
 }
 
 /******************/
@@ -956,50 +894,50 @@ $badge-bg-gradient: "matte";
 /*  INKLING VIEW  */
 /******************/
 #inklingView #inklingHeader {
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	box-shadow: 0px 0px 5px #888;
+    color: #888;
+    border: solid 1px #EFEFEF;
+    background-color: #EFEFEF;
+    border-radius: 3px;
+    margin: 10px 0px 20px 0px;
+    box-shadow: 0px 0px 5px #888;
 }
 
 #inklingView .numAttendees {
-	float: left;
-	color: #EFEFEF;
-	font-size: 30px;
-	font-weight: bold;
-	text-align: center;
-	padding-top: 5px;
-	height: 50px;
-	width: 50px;
-	margin: 5px 10px 5px 5px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $lightestGreen;
-	box-shadow: 0px 0px 10px #888;
+    float: left;
+    color: #EFEFEF;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 5px;
+    height: 50px;
+    width: 50px;
+    margin: 5px 10px 5px 5px;
+    border-radius: 3px;
+    border: solid 2px #DDD;
+    background-color: $lightestGreen;
+    box-shadow: 0px 0px 10px #888;
 }
 
 #inklingView .location {
-	float: left;
-	padding-top: 10px;
-	font-size: 28px;
-	width: 75%;
+    float: left;
+    padding-top: 10px;
+    font-size: 28px;
+    width: 75%;
 }
 
 #inklingView #editInklingButton {
-	margin: 3px 3px 0px -25px;
-	float: right;
-	height: 20px;
+    margin: 3px 3px 0px -25px;
+    float: right;
+    height: 20px;
 }
 
 .clear
 {
-	clear: both;
+    clear: both;
 }
 
 #inklingView .infoContainer {
-	padding: 5px;
+    padding: 5px;
 }
 
 #inklingView #membersAttendingPictures {
@@ -1008,87 +946,94 @@ $badge-bg-gradient: "matte";
 }
 
 #inklingView .memberPicture {
-	height: 60px;
-	width: 60px;
+    height: 60px;
+    width: 60px;
     margin: 5px 5px 0px 0px;
-	float: left;
+    float: left;
 }
 
 #inklingView #membersAttendingPictures .memberPicture:nth-child(4n+4) {
-	margin-right: 0px;
+    margin-right: 0px;
 }
 
 #inklingView .disclosureArrow {
     float: right;
-	margin: 18px 9px 0px 0px;
-	padding: 10px;
+    margin: 18px 9px 0px 0px;
+    padding: 10px;
 }
 
 #inklingView .lowerDisclosureArrow {
     margin-top: 50px;
 }
 
+/******************/
+/*  MISCELLANEOUS */
+/******************/
+/* Remove glitchy/flickering animations */
+* {
+    -webkit-backface-visibility: hidden;
+}
 
 
 
 
 
 #inklingInfo, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	box-shadow: 0px 0px 5px #888;
-	height: 60px;
+    color: #888;
+    border: solid 1px #EFEFEF;
+    background-color: #EFEFEF;
+    border-radius: 3px;
+    margin: 10px 0px 20px 0px;
+    box-shadow: 0px 0px 5px #888;
+    height: 60px;
 }
 
 .noInklings, .noFriends, .noGroups
 {
-	color: #888;
-	border: solid 1px #EFEFEF;
-	background-color: #EFEFEF;
-	border-radius: 3px;
-	margin: 10px 0px 20px 0px;
-	padding: 5px;
-	box-shadow: 0px 0px 5px #888;
+    color: #888;
+    border: solid 1px #EFEFEF;
+    background-color: #EFEFEF;
+    border-radius: 3px;
+    margin: 10px 0px 20px 0px;
+    padding: 5px;
+    box-shadow: 0px 0px 5px #888;
 }
 
 #inklingView .time, #inlingView .category {
-	float: none;
+    float: none;
 }
 
 #inklingView .basicInfoLabel {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .x-button .x-badge {
-	margin-top: -3px;
-	margin-right: -8px;
+    margin-top: -3px;
+    margin-right: -8px;
 }
 
 #inklingView #editInklingButton:hover {
-	box-shadow: 0px 0px 10px #888;
+    box-shadow: 0px 0px 10px #888;
 }
 
 #inklingView #inklingInfo {
-	height: auto;
+    height: auto;
 }
 
 .banner {
-	color: #EFEFEF;
-	text-align: left;
-	font-size: 16px;
-	font-weight: bold;
-	height: 30px;
-	width: 200px;
-	padding-top: 3px;
-	padding-left: 20px;
-	margin: 5px 0px 0px -15px;
-	border-radius: 3px;
-	border: solid 2px #DDD;
-	background-color: $lightestBlue;
-	box-shadow: 0px 0px 10px #888;
+    color: #EFEFEF;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+    width: 200px;
+    padding-top: 3px;
+    padding-left: 20px;
+    margin: 5px 0px 0px -15px;
+    border-radius: 3px;
+    border: solid 2px #DDD;
+    background-color: $lightestBlue;
+    box-shadow: 0px 0px 10px #888;
 }
 
 .hidden {
@@ -1097,13 +1042,13 @@ $badge-bg-gradient: "matte";
 
 /* Inkling invitees list */
 #groupInviteesList .groupInfo {
-	padding: 11px 0px 0px 3px;
-	float: left;
+    padding: 11px 0px 0px 3px;
+    float: left;
 }
 
 #groupInviteesList .name {
-	font-size: 20px;
-	font-weight: bold;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /**********************/
@@ -1138,93 +1083,73 @@ $badge-bg-gradient: "matte";
 /******************/
 
 /*#addFriendsSuggestions .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
-	height: 60px;
-	padding: 5px 55px 5px 5px;
-	margin-right: -50px;
-	border: solid red 1px;
+    height: 60px;
+    padding: 5px 55px 5px 5px;
+    margin-right: -50px;
+    border: solid red 1px;
 }
 
 #addFriendsSuggestions .image, #groupMembersList .image {
-	float: left;
-	height: 50px;
-	width: 50px;
-	margin-right: 5px;
-	border: solid green 1px;
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin-right: 5px;
+    border: solid green 1px;
 }*/
 
 #friendsView .mutualFriends {
-	float: left;
-}
-
-/****************/
-/* PROFILE VIEW */
-/****************/
-
-#profileViewList {
-	margin: 10px;
-	border-radius: 7px;
-	border: 1px solid #CCCCCC;
-}
-
-#profileViewList p {
-	float: left;
-	font-weight: bold;
-}
-
-#profileViewList .disclosureArrow {
-	float: right;
-	margin-top: 5px;
+    float: left;
 }
 
 /****************/
 /* SETTINGS VIEW */
 /****************/
 #linkFacebookAccountMessage {
-	color: $mediumBlue;
-	text-align: left;
-	margin-top: 10px;
-	margin-bottom: 10px;
+    color: $mediumBlue;
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #linkFacebookAccountMessage p {
-	margin: 10px;
+    margin: 10px;
 }
 
 #linkFacebookAccountButton {
-	float: left;
+    float: left;
 
 }
 
 #shareSettingsHeader {
-	color: $mediumBlue;
-	font-weight: bold;
-	text-align: left;
-	margin-bottom: 10px;
+    color: $mediumBlue;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 10px;
 }
 
 #shareSettingsHeader p {
-	margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px;
 }
 
 .shareSettingsForm p {
-	color: $mediumBlue;
-	font-size: 18px;
-	padding-top: 5px;
-	padding-bottom: 10px;
+    color: $mediumBlue;
+    font-size: 18px;
+    padding-top: 5px;
+    padding-bottom: 10px;
 }
 
 .shareSettingsForm img {
-	margin-right: 5px;
-	margin-left: 0px;
+    margin-right: 5px;
+    margin-left: 0px;
 }
 
 .shareSettingsForm .selectionItem {
-	float: left;
-	padding: 0px;
+    float: left;
+    padding: 0px;
 }
 
 .shareSettingsForm .selectedGroupsGroup .selectionItem {
-	margin-left: 25px;
+    margin-left: 25px;
 }
 
 .shareSettingsForm .forwarding {
@@ -1233,8 +1158,8 @@ $badge-bg-gradient: "matte";
 
 /* Used when a user has not created any groups yet*/
 .shareSettingsForm .noGroupsShareSetting p {
-	color: $mediumGray;
-	margin-left: 38px;
-	font-size: 16px;
-	padding: 0px;
+    color: $mediumGray;
+    margin-left: 38px;
+    font-size: 16px;
+    padding: 0px;
 }
