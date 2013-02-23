@@ -457,6 +457,7 @@ Ext.define("inkle.controller.FriendsController", {
 
                             // Destroy the delete lock
                             deleteLock.destroy();
+
                         },
                         failure: function(response) {
                             Ext.Msg.alert("Error", "Unable to delete item. Please try again later.");
@@ -471,19 +472,24 @@ Ext.define("inkle.controller.FriendsController", {
 
             // Add a handler to remove the delete button when a touch event occurs in the corresponding list
             var removeDeleteButton = function(list, index, target, record, event, options) {
-				// Destroy the delete button
-			    deleteButton.destroy();
-
-                // Reset the tapped delete lock's rotation
-				tappedDeleteLock.removeCls("unlockDeleteLock");
-				
-				// Keep the delete lock locked if the same record is being tapped (TODO: need to only do this if the actual delete lock is tapped)
-				if (record == tappedRecord) {
-					tappedDeleteLock.addCls("keepLocked");
+				// If there is an unlocked delete lock and the delete button was not pressed, lock the delete lock and destroy the delete button
+				var unlockDeleteLocks = Ext.query(".unlockDeleteLock");
+				if ((unlockDeleteLocks.length != 0) && (!event.getTarget(".listDeleteButton"))) {
+					// Destroy the delete button
+					deleteButton.destroy();
+					
+	                // Reset the tapped delete lock's rotation
+					Ext.fly(unlockDeleteLocks[0]).removeCls("unlockDeleteLock");
+					
+					// Keep the delete lock locked if the same record is being tapped but the delete lock itself was not tapped
+					if ((record == tappedRecord) && (event.getTarget(".deleteLock"))) {
+							tappedDeleteLock.addCls("keepLocked");
+						}
+					}	             
 				}
-
-                // Remove the event listener on the list
-                list.un("itemtouchstart", removeDeleteButton, this);
+				
+				// Remove the event listener on the list
+            	list.un("itemtouchstart", removeDeleteButton, this);
             };
             
             // Remove the delete button whenever an item in the friends list is tapped

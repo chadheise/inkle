@@ -225,7 +225,9 @@ Ext.define("inkle.controller.LoginController", {
     loginWithEmail: function() {
 		this.getLoginFormView().submit({
 			method: "POST",
-						
+
+			headers : { "cache-control": "no-cache" },			
+
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -322,7 +324,9 @@ Ext.define("inkle.controller.LoginController", {
     submitResetPasswordForm: function() {
         this.getResetPasswordView().submit({
             method: "POST",
-                        
+
+            headers : { "cache-control": "no-cache" },
+  
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -352,6 +356,8 @@ Ext.define("inkle.controller.LoginController", {
     registerMember: function() {
 		this.getRegistrationView().submit({
 			method: "POST",
+
+			headers : { "cache-control": "no-cache" },
 
             waitMsg: {
                 xtype: "loadmask",
