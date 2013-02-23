@@ -1,5 +1,5 @@
 /*************************/
-/*  Inkle color palette  */
+/*  INKLE COLOR PALETTE  */
 /*************************/
 /* Green */
 $darkestGreen: #1A492B;
@@ -30,7 +30,7 @@ $lighterGray: #BBBBBB;
 $lightestGray: #DDDDDD;
 
 /*******************************/
-/*  Sencha variable overrides  */
+/*  SENCHA VARIABLE OVERRIDES  */
 /*******************************/
 /* General */
 $base-gradient: "flat";
@@ -55,8 +55,9 @@ $badge-bg-gradient: "matte";
     background: center center url("../images/refreshArrow.png") no-repeat !important;
 }
 
+
 /********************/
-/*  Sencha modules  */
+/*  SENCHA MODULES  */
 /********************/
 @import "sencha-touch/default/all";
 
@@ -75,7 +76,6 @@ $badge-bg-gradient: "matte";
 @include sencha-form;
 @include sencha-msgbox;
 @include sencha-list-pullrefresh;
-
 
 
 /***************/
@@ -188,17 +188,25 @@ $badge-bg-gradient: "matte";
     box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
+/* Back button */
 .x-button-back::before {
     margin-left: 4px !important;
     background: $darkestGreen !important;
 }
 
 .x-button-back::after {
+    width: 12px !important;
     margin-left: 4px !important;
     background: $mediumGreen !important;
 }
 
 .x-button-back {
+    margin-left: 14px !important;
+    padding-left: 1px !important;
+    padding-right: 5px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-left: #FFFFFF solid 0px !important;
     z-index: 3 !important;
 }
 
@@ -300,10 +308,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonEnvelopePressed {
-	background: url("../images/toolbarButtons/envelopePressed.png") !important;
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
-	width: 45px !important;
+    background: url("../images/toolbarButtons/envelopePressed.png") !important;
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
+    width: 45px !important;
 }
 
 .toolbarButtonFeed {
@@ -312,10 +320,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonFeedPressed {
-	background: url("../images/toolbarButtons/feedPressed.png") !important;
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
-	width: 45px !important;
+    background: url("../images/toolbarButtons/feedPressed.png") !important;
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
+    width: 45px !important;
 }
 
 /* The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect */
@@ -325,10 +333,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonPressed {
-	width: 33px;
-	height: 33px;
-	background-color: $darkestGreen !important;
-	box-shadow: inset 0px 5px 5px #002200 !important;
+    /*width: 33px;
+    height: 33px;*/
+    background-color: $darkestGreen !important;
+    box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
 /***********/
@@ -519,12 +527,12 @@ $badge-bg-gradient: "matte";
     -webkit-transition: 0.5s;
 }
 
-.groupsList .groupInfo {
+.groupsListMainContent .groupInfo {
+    height: 50px !important;
     margin: -3px 15px 0px 0px;
 }
 
 .groupsListMainContent .groupName {
-    margin-top: -3px;
     width: 270px;
     color: $mediumBlue;
     font-weight: bold;
@@ -550,26 +558,27 @@ $badge-bg-gradient: "matte";
 
 .groupsListMainContent .disclosureArrow {
     position: absolute;
-    top: 22px;
-    right: 7px;
+    top: 22px !important;
+    right: 7px !important;
 }
 
 .groupsListMainContent .groupNameInput {
-    margin-top: -3px;
     width: 270px;
     color: $mediumBlue;
     font-weight: bold;
     font-size: 24px;
     border-width: 0px;
-    background-color: #FFFFFF;
+    background-color: $lightestGray;
 }
 
 .groupsListMainContent .groupNameHidden, .groupsListMainContent .groupNameInputHidden {
     display: none;
 }
 
-.groupsList .listDeleteButton {
-    margin-right: 55px;
+.groupsListMainContent .listDeleteButton {
+    position: absolute;
+    right: 70px !important;
+    bottom: 2px !important;
 }
 
 /* Groups list (panel) */
@@ -605,10 +614,10 @@ $badge-bg-gradient: "matte";
 
 .membersList .memberImage {
     float: left;
-	height: 50px;
-	width: 50px;
-	margin: 3px 5px 0px 0px;
-	border: 1px solid #000000;
+    height: 50px;
+    width: 50px;
+    margin: 3px 5px 0px 0px;
+    border: 1px solid #000000;
 }
 
 .membersList .memberInfo {
@@ -633,19 +642,19 @@ $badge-bg-gradient: "matte";
 }
 
 .membersList .relationship {
-	padding-left: 3px;
-	padding-right: 3px;
-	font-size: 13px;
-	color: white;
-	border: 1px solid $darkestGreen;
-	text-align: center;
-	background: $mediumGreen;
-	height: 20px;
-	width: 70px;
-	border-radius: 3px;
-	position: absolute;
-	bottom: 5px;
-	right: 25px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 13px;
+    color: white;
+    border: 1px solid $darkestGreen;
+    text-align: center;
+    background: $mediumGreen;
+    height: 20px;
+    width: 70px;
+    border-radius: 3px;
+    position: absolute;
+    bottom: 5px;
+    right: 25px;
 }
 
 .membersList .facebookIcon {
@@ -661,10 +670,6 @@ $badge-bg-gradient: "matte";
     right: 7px;
 }
 
-.membersList .listDeleteButton {
-    right: 70px;
-}
-
 /* Inkling feed list */
 #inklingFeedList .x-list-item-label {
     padding: 5px;
@@ -677,7 +682,7 @@ $badge-bg-gradient: "matte";
     width: 50px;
     margin: 3px 5px 0px 0px;
     border: 1px solid #000000;
-	border-radius: 6px;
+    border-radius: 6px;
 }
 
 #inklingFeedList .floatRight {
@@ -776,10 +781,19 @@ $badge-bg-gradient: "matte";
     color: #FFFFFF !important;
 }
 
+.groupsListMainContent .listDeleteButton {
+    right: 45px !important;
+    bottom: 12px !important;
+}
+
+.membersList .listDeleteButton {
+    right: 70px !important;
+}
+
 .deleteLock {
-	float: left;
-	margin: 11px 0px 0px -40px;
-	-webkit-transition: 0.5s;
+    float: left;
+    margin: 11px 0px 0px -40px;
+    -webkit-transition: 0.5s;
 }
 
 .showDeleteLock {
@@ -1003,8 +1017,20 @@ $badge-bg-gradient: "matte";
     -webkit-backface-visibility: hidden;
 }
 
+/******************/
+/*  ACTION SHEET  */
+/******************/
+.actionSheetNormalButton {
+    color: #FFFFFF !important;
+    background-color: $mediumGreen !important;
+    border-color: $darkestGreen !important;
+}
 
-
+.actionSheetCancelButton {
+    color: #FFFFFF !important;
+    background-color: $mediumRed !important;
+    border-color: $darkestRed !important;
+}
 
 
 #inklingInfo, #myInklingsView .inkling, #profileView #header, #friendsView .member, #friendsView .group {

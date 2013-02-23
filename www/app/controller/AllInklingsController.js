@@ -1,30 +1,29 @@
 Ext.define("inkle.controller.AllInklingsController", {
     extend: "Ext.app.Controller",
-    
+
     config: {
         refs: {
-        	// Views
-        	mainTabView: "mainTabView",
+            // Views
+            mainTabView: "mainTabView",
             allInklingsView: "allInklingsView",
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
             allInklingsFeedCommentPanel: "panel[id=addCommentPanel]",
             inklingView: "inklingView",
             inklingFeedView: "inklingFeedView",
-            
+
             // Toolbar buttons
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
             allInklingsAddCommentButton: "#allInklingsAddCommentButton",
-            
+
             // Elements
             allInklingsList: "#allInklingsList",
             allInklingsDatePicker: "#allInklingsDatePicker",
-            
+
             allInklingsViewToolbar: "#allInklingsViewToolbar",
             inklingTopToolbar: "#inklingTopToolbar",
-            
-            
+
             allInklingsInklingBackButton: "#allInklingsInklingBackButton",
             inklingFeedBackButton: "#inklingFeedBackButton",
             inklingFeedButton: "#inklingFeedButton",
@@ -34,66 +33,66 @@ Ext.define("inkle.controller.AllInklingsController", {
             newCommentSendButton: "#newCommentSendButton",
             allInklingsHtmlContainer: "#allInklingsHtmlContainer"
         },
-        
+
         control: {
             allInklingsView: {
-            	// View transitions
-            	inklingTapped: "activateInklingView",
+                // View transitions
+                inklingTapped: "activateInklingView",
 
-            	// Commands
+                // Commands
                 allInklingsDateButtonTapped: "toggleDatePickerVisibility",
                 allInklingsGroupsButtonTapped: "toggleGroupsListVisibility",
                 allInklingsGroupsPickerChanged: "changeGroup",
-                
+
                 deactivate: "hideAllInklingsPanels",
                 activeitemchange: "hideAllInklingsPanels",
                 allInklingsListRefreshed: "updateAllInklingsList",
                 initialize: "initializeAllInklingsView",
             },
-            
+
             allInklingsDatePickerPanel: {
                 allInklingsDatePickerSelectionChanged: "updateDate",
                 undatedInklingsCheckboxTapped: "toggleDatePickerEnabled"
             },
-            
+
             allInklingsGroupsListPanel: {
             	groupSelectionButtonTapped: "toggleGroupSelectionButton"
             }
         }
     },
-	
-	/**********************/
-	/*  VIEW TRANSITIONS  */
-	/**********************/
-	
-	/* Activates the inkling view from the all inklings view */
-	activateInklingView: function (inklingId, isMemberAttending) {
-		// Display the appropriate top toolbar buttons
-		this.getAllInklingsGroupsButton().hide();
-		this.getAllInklingsDateButton().hide();
-		this.getAllInklingsInklingBackButton().show();
-		
+
+    /**********************/
+    /*  VIEW TRANSITIONS  */
+    /**********************/
+
+    /* Activates the inkling view from the all inklings view */
+    activateInklingView: function (inklingId, isMemberAttending) {
+        // Display the appropriate top toolbar buttons
+        this.getAllInklingsGroupsButton().hide();
+        this.getAllInklingsDateButton().hide();
+        this.getAllInklingsInklingBackButton().show();
+
         // If the current member is attending the tapped inkling, show the "Feed" button; otherwise, show the "Join" button
-		if (isMemberAttending === "True") {
-			this.getInklingFeedButton().show();
-		}
-		else {
-			this.getJoinInklingButton().show();
-		}
+        if (isMemberAttending === "True") {
+            this.getInklingFeedButton().show();
+        }
+        else {
+            this.getJoinInklingButton().show();
+        }
 
         // Get todays' date
         var today = new Date();
 
         // Push the inkling view onto the all inklings view
-		this.getAllInklingsView().push({
-			xtype: "inklingView",
-			data: {
-				inklingId: inklingId,
+        this.getAllInklingsView().push({
+            xtype: "inklingView",
+            data: {
+                inklingId: inklingId,
                 timezoneOffset: today.getTimezoneOffset(),
                 source: "allInklings",
                 isMemberAttending: isMemberAttending
-			}
-		});
+            }
+        });
 
         // Update the top toolbar's title
         this.getAllInklingsViewToolbar().setTitle("Inkling");
