@@ -300,16 +300,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonEnvelopePressed {
-<<<<<<< local
-    background: url("../images/toolbarButtons/envelopePressed.png") !important;
-    background-color: $darkestGreen !important;
-    box-shadow: inset 0px 5px 5px #002200 !important;
-=======
 	background: url("../images/toolbarButtons/envelopePressed.png") !important;
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
 	width: 45px !important;
->>>>>>> other
 }
 
 .toolbarButtonFeed {
@@ -318,16 +312,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonFeedPressed {
-<<<<<<< local
-    background: url("../images/toolbarButtons/feedPressed.png") !important;
-    background-color: $darkestGreen !important;
-    box-shadow: inset 0px 5px 5px #002200 !important;
-=======
 	background: url("../images/toolbarButtons/feedPressed.png") !important;
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
 	width: 45px !important;
->>>>>>> other
 }
 
 /* The .toolbarButton and .toolbarButtonPressed classes must come last in order for !important to take effect */
@@ -337,15 +325,10 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonPressed {
-<<<<<<< local
-    background-color: $darkestGreen !important;
-    box-shadow: inset 0px 5px 5px #002200 !important;
-=======
 	width: 33px;
 	height: 33px;
 	background-color: $darkestGreen !important;
 	box-shadow: inset 0px 5px 5px #002200 !important;
->>>>>>> other
 }
 
 /***********/
@@ -693,12 +676,8 @@ $badge-bg-gradient: "matte";
     height: 50px;
     width: 50px;
     margin: 3px 5px 0px 0px;
-<<<<<<< local
     border: 1px solid #000000;
-=======
-	border: 1px solid #000000;
 	border-radius: 6px;
->>>>>>> other
 }
 
 #inklingFeedList .floatRight {
