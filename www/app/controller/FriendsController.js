@@ -94,6 +94,10 @@ Ext.define("inkle.controller.FriendsController", {
 	activateFriendsView: function(source) {
         // If coming from the add friends view, slide that view away
         if (source == "addFriendsView") {
+            //this.getAddFriendsSearchField().setValue(""); //Clear search field
+            ///this.getAddFriendsSuggestions()
+            ///this.getAddFriendsSuggestions().getStore().removeAll();
+            ///this.getAddFriendsSuggestions().getStore().load();
             Ext.Viewport.animateActiveItem(this.getMainTabView(), {
                 type: "slide",
                 direction: "down"
@@ -165,7 +169,7 @@ Ext.define("inkle.controller.FriendsController", {
         var friendRequestsActionSheet = Ext.create("Ext.ActionSheet", {
             id: "friendReqeustsActionSheet",
             items: [
-                // Acept request
+                // Accept request
                 {
                     text: "Accept",
                     ui: "confirm",

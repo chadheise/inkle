@@ -1,4 +1,4 @@
-<div class="member" data-memberId="{{ m.id }}">
+<div class="member" data-memberId={%if m.id %}"{{m.id}}"{% else %}""{% endif %} data-facebookId={%if m.get_profile.facebook_id %}"{{m.get_profile.facebook_id}}"{% else %}""{% endif %}>
     <!-- Delete lock -->
     {% if include_delete_items %}
         <img class="deleteLock" src="resources/images/delete.png">
@@ -25,9 +25,11 @@
 	    </div>
 
 	    <!-- Mutual friends -->
-	    {% if m != user %}
-	        <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
-	    {% endif %}
+		{% if m.id %} <!-- Facebook users who are not on inkle will not have a member id -->
+			{% if m != user %}
+	        	<p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+	    	{% endif %}
+		{% endif %}
 	</div>
 
 	<!-- Delete button -->
@@ -52,6 +54,19 @@
 	{% if include_friend_request_buttons %}
 	    <input class="acceptRequestButton" type="button" value="Accept" />
 	    <input class="ignoreRequestButton" type="button" value="Ignore" />
+	{% endif %}
+	
+	{% if m.is_friend %}
+		<span class="relationship">Friend</span>
+	{% endif %}
+	{% if m.is_pending %}
+		<span class="relationship">Pending</span>
+	{% endif %}
+	{% if m.is_requested %}
+		<span class="relationship">Requested</span>
+	{% endif %}
+	{%if m.get_profile.facebook_id %}
+		<img class="facebookIcon" src="resources/images/facebookIcon.png">
 	{% endif %}
 	
     <!-- Disclosure arrow -->

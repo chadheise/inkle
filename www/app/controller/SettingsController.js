@@ -238,7 +238,7 @@ Ext.define("inkle.controller.SettingsController", {
                                 this.activateLoginView();
                             }
                             else {
-                                Ext.Msg.alert(error);
+                                Ext.Msg.alert("Error", error);
                             }
                         },
                        	scope: object
@@ -327,6 +327,7 @@ Ext.define("inkle.controller.SettingsController", {
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getChangePasswordBackButton().show();
+        this.getChangePasswordSubmitButton().show();
     },
 
     changePasswordBack: function() {
