@@ -10,8 +10,10 @@ Ext.define("inkle.controller.MyInklingsController", {
             //newInklingInvitedGroupsPanel: "#newInklingInvitedGroupsPanel",
             newInklingInvitedGroupsPanel: "panel[id=newInklingInvitedGroupsPanel]",
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
+            myInklingsFeedCommentPanel: "panel[id=addCommentPanel]",
 
             myInklingsViewToolbar: "#myInklingsViewToolbar",
+            myInklingsAddCommentButton: "#myInklingsAddCommentButton",
 
             newInklingInvitedFriendsList: "#newInklingInvitedFriendsList",
 
@@ -142,6 +144,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 	activateNewInklingView: function() {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
+		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 		this.getInklingInvitationsButton().hide();
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
@@ -245,9 +249,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    var inklingInvitationsPanel = this.getInklingInvitationsPanel();
 	    if (inklingInvitationsPanel.getHidden()) {
 	    	inklingInvitationsPanel.showBy(this.getInklingInvitationsButton());
+	    	this.getInklingInvitationsButton().removeCls("toolbarButton toolbarButtonEnvelope");
+	    	this.getInklingInvitationsButton().setCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
     	}
     	else {
     		inklingInvitationsPanel.hide();
+    		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+    		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
     	}
     },
     
@@ -380,6 +388,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 			newInklingInvitedGroupsPanel.hide();
 		}
 		
+		var myInklingsFeedCommentPanel = this.getMyInklingsFeedCommentPanel();
+		if (myInklingsFeedCommentPanel) {
+			myInklingsFeedCommentPanel.hide();
+			this.getMyInklingsAddCommentButton().removeCls("toolbarButtonPressed toolbarButtonPlusPressed");
+            this.getMyInklingsAddCommentButton().setCls("toolbarButton toolbarButtonPlus");
+		}
+		
 		// If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/numInklingInvitations/",
@@ -399,6 +414,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         });
         
         this.getInklingInvitationsPanel().hide();
+        this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 	},
 	
 	hideMyInklingsTabBadge: function() {

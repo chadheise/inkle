@@ -38,6 +38,7 @@ def load_friends():
                 assert (receiver not in sender.get_profile().friends.all()), "Sender (%d) and receiver (%d) are already friends" % (sender.id, receiver.id)
                 
                 sender.get_profile().friends.add(receiver)
+                receiver.get_profile().friends.add(sender)
 
 
 def load_friend_requests():

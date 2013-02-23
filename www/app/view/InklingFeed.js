@@ -53,6 +53,7 @@ Ext.define("inkle.view.InklingFeed", {
                 items: [
                     {
                         xtype: "textareafield",
+                        //useClearIcon: false,
                         itemId: "addCommentTextField",
                         placeHolder: "Add a comment...",
                         width: "100%",
@@ -72,14 +73,14 @@ Ext.define("inkle.view.InklingFeed", {
 				listeners: [
                     {
                         delegate: "#addCommentTextField",
-                        event: "keyup",
+                        event: "change",
                         fn: "onAddCommentTextFieldKeyup"
                     },
                     {
                         delegate: "#addCommentPostButton",
                         event: "tap",
                         fn: "onAddCommentPostButtonTap"
-                    }
+                    },
                 ],
     
                 // Event firings
