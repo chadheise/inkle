@@ -1,14 +1,14 @@
 Ext.define("inkle.view.Friends", {
     extend: "Ext.navigation.View",
-    
+
     xtype: "friendsView",
-    
+
     requires: [
         "Ext.SegmentedButton",
         "Ext.dataview.List",
         "Ext.ActionSheet"
     ],
-    
+
     config: {
         // Tab information
         title: "Friends",
@@ -61,7 +61,7 @@ Ext.define("inkle.view.Friends", {
                         id: "groupMembersViewBackButton",
                         text: "Groups",
                         ui: "back",
-                        pressedCls: ["toolbarButtonPressed"],
+                        //pressedCls: ["toolbarButtonPressed"],
                         hidden: true
                     },
 
@@ -170,7 +170,7 @@ Ext.define("inkle.view.Friends", {
                             }
                         ]
                     },
-                    
+
                     // Groups list
                     {
                         xtype: "list",
@@ -205,7 +205,7 @@ Ext.define("inkle.view.Friends", {
                             }
                         ]
                     },
-                    
+
                     // Friend requests list
                     {
                         xtype: "list",
@@ -314,20 +314,6 @@ Ext.define("inkle.view.Friends", {
                 fn: "onGroupNameInputBlurred"
             },
 
-            // Requests list accept/ignore buttons
-            /*{
-                event: "tap",
-                element: "element",
-                delegate: ".acceptRequestButton",
-                fn: "onAcceptRequestButtonTap"
-            },
-            {
-                event: "tap",
-                element: "element",
-                delegate: ".ignoreRequestButton",
-                fn: "onIgnoreRequestButtonTap"
-            },*/
-
             // Pull to refresh
             {
                 delegate: "#friendsViewFriendsList",
@@ -346,19 +332,19 @@ Ext.define("inkle.view.Friends", {
             }
         ]
     },
-    
+
     /* Event firings */
     // Top toolbar segmented button
     onFriendsViewSegmentedButtonToggle: function(segmentedButton, button, isPressed, options) {
         var tappedId = segmentedButton.getItems().indexOf(button);
         this.fireEvent("friendsViewSegmentedButtonToggled", tappedId);
     },
-    
+
     // Top toolbar buttons
     onFriendsViewRemoveFriendsButtonTap: function() {
         this.fireEvent("friendsViewRemoveFriendsButtonTapped", "editable");
     },
-    
+
     onFriendsViewRemoveFriendsDoneButtonTap: function() {
         this.fireEvent("friendsViewRemoveFriendsDoneButtonTapped", "uneditable");
     },
@@ -366,7 +352,7 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewAddFriendsButtonTap: function() {
         this.fireEvent("friendsViewAddFriendsButtonTapped");
     },
-    
+
     onFriendsViewEditGroupsButtonTap: function() {
         this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
     },
@@ -407,19 +393,13 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
         this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["id"]);
     },
-    
+
     // Groups list name input blur
     onGroupNameInputBlurred: function(event, target) {
         var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
         this.fireEvent("groupNameInputBlurred", groupId);
     },
-    
-    // Requests list accept/ignore buttons
-    /*onAcceptRequestButtonTap: function(event, target) {
-        var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
-        this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
-    },*/
-    
+
     onIgnoreRequestButtonTap: function(event, target) {
         var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("ignoreRequestButtonTapped", memberId, "ignore");
@@ -429,11 +409,11 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewFriendsListRefresh: function() {
         this.fireEvent("friendsViewFriendsListRefreshed");
     },
-    
+
     onFriendsViewGroupsListRefresh: function() {
         this.fireEvent("friendsViewGroupsListRefreshed");
     },
-    
+
     onFriendsViewRequestsListRefresh: function() {
         this.fireEvent("friendsViewRequestsListRefreshed");
     },
