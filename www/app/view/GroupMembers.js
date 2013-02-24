@@ -52,21 +52,18 @@ Ext.define("inkle.view.GroupMembers", {
 
         listeners: [
             {
-                delegate: "#groupMembersBackButton",
-                event: "tap",
-                fn: "onGroupMembersBackButtonTapped"
-            },
-            {
-                event: "tap",
-                element: "element",
-                delegate: ".selectionItem",
-                fn: "onSelectionItemTap"
+                delegate: "#groupMembersList",
+                event: "itemtap",
+                fn: "onGroupMembersListItemTap"
             }
         ]
     },
-    
-    // Event firings
-    onSelectionItemTap: function(event, target) {
-        this.fireEvent("selectionItemTapped", Ext.fly(target));
+
+    // Event firings    
+    onGroupMembersListItemTap: function(groupMembersList, index, target, record, event, options) {
+        var selectionButton = Ext.fly(event.getTarget(".selectionButton"));
+        if (selectionButton) {
+            this.fireEvent("selectionItemTapped", selectionButton);
+        }
     }
 });

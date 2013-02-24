@@ -621,7 +621,7 @@ $badge-bg-gradient: "matte";
 }
 
 .membersList .memberInfo {
-    margin: -3px 15px 0px 0px;
+    margin: -3px 15px 0px 50px;
 }
 
 .membersList .memberName {
@@ -813,9 +813,11 @@ $badge-bg-gradient: "matte";
     text-align: center;
 }
 
-.selectionItem {
+/* TODO: get rid of .selectionItem once nothing uses it anymore */
+.selectionButton, .selectionItem {
     float: left;
-    padding: 8px 4px 0px 0px;
+    margin: 8px 4px 0px 0px;
+    border: solid 1px red;
 }
 
 /******************/

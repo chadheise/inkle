@@ -4,74 +4,73 @@
         <img class="deleteLock" src="resources/images/delete.png">
     {% endif %}
 
-	<!-- Selection item -->
-	{% if include_selection_item %}
-	    {% if m.selected %}
-		    <img class="selectionItem selected" src="resources/images/selected.png">
-		{% else %}
-		    <img class="selectionItem" src="resources/images/deselected.png">
-		{% endif %}
-	{% endif %}
-	
-	<!-- Member image -->
-	<img class="memberImage" src="{{ m.get_profile.get_picture_path }}">
-	
-	<!-- Member info -->
-	<div class="memberInfo">
-	    <!-- Member name -->
-	    <div class="memberName">
-	        <span class="firstName">{{ m.first_name }}</span>
-	        <span class="lastName">{{ m.last_name }}</span>
-	    </div>
+    <!-- Selection item -->
+    {% if include_selection_item %}
+        {% if m.selected %}
+            <img class="selectionButton selected" src="resources/images/selected.png">
+        {% else %}
+            <img class="selectionButton" src="resources/images/deselected.png">
+        {% endif %}
+    {% endif %}
 
-	    <!-- Mutual friends -->
-		{% if m.id %} <!-- Facebook users who are not on inkle will not have a member id -->
-			{% if m != user %}
-	        	<p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
-	    	{% endif %}
-		{% endif %}
-	</div>
+    <!-- Member image -->
+    <img class="memberImage" src="{{ m.get_profile.get_picture_path }}">
 
-	<!-- Delete button -->
-	{% if include_delete_items %}
-	    <div class="deleteButtonPlaceholder"></div>
-	{% endif %}
+    <!-- Member info -->
+    <div class="memberInfo">
+        <!-- Member name -->
+        <div class="memberName">
+            <span class="firstName">{{ m.first_name }}</span>
+            <span class="lastName">{{ m.last_name }}</span>
+        </div>
 
-	<!-- Add friend buttons -->
-	{% if include_add_friend_buttons %}
-	    {% if m in user.get_profile.friends.all %}
-	        <input class="isFriendButton" type="button" value="Friends" />
-	    {% else %}
-	        {% if m == user %}
-	            <input class="isFriendButton" type="button" value="Me" />
-	        {% else %}
-	            <input class="addFriendButton" type="button" value="Add Friend" />
-	        {% endif %}
-	    {% endif %}
-	{% endif %}
+        <!-- Mutual friends -->
+        {% if m.id %} <!-- Facebook users who are not on inkle will not have a member id -->
+            {% if m != user %}
+                <p class="numMutualFriends">{{ m.num_mutual_friends }} mutual friend{{ m.num_mutual_friends|pluralize }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
 
-	<!-- Friend request buttons -->
-	{% if include_friend_request_buttons %}
-	    <input class="acceptRequestButton" type="button" value="Accept" />
-	    <input class="ignoreRequestButton" type="button" value="Ignore" />
-	{% endif %}
-	
-	{% if m.is_friend %}
-		<span class="relationship">Friend</span>
-	{% endif %}
-	{% if m.is_pending %}
-		<span class="relationship">Pending</span>
-	{% endif %}
-	{% if m.is_requested %}
-		<span class="relationship">Requested</span>
-	{% endif %}
-	{%if m.get_profile.facebook_id %}
-		<img class="facebookIcon" src="resources/images/facebookIcon.png">
-	{% endif %}
-	
+    <!-- Delete button -->
+    {% if include_delete_items %}
+        <div class="deleteButtonPlaceholder"></div>
+    {% endif %}
+
+    <!-- Add friend buttons -->
+    {% if include_add_friend_buttons %}
+        {% if m in user.get_profile.friends.all %}
+            <input class="isFriendButton" type="button" value="Friends" />
+        {% else %}
+            {% if m == user %}
+                <input class="isFriendButton" type="button" value="Me" />
+            {% else %}
+                <input class="addFriendButton" type="button" value="Add Friend" />
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <!-- Friend request buttons -->
+    {% if include_friend_request_buttons %}
+        <input class="acceptRequestButton" type="button" value="Accept" />
+        <input class="ignoreRequestButton" type="button" value="Ignore" />
+    {% endif %}
+
+    {% if m.is_friend %}
+        <span class="relationship">Friend</span>
+    {% endif %}
+    {% if m.is_pending %}
+        <span class="relationship">Pending</span>
+    {% endif %}
+    {% if m.is_requested %}
+        <span class="relationship">Requested</span>
+    {% endif %}
+    {%if m.get_profile.facebook_id %}
+        <img class="facebookIcon" src="resources/images/facebookIcon.png">
+    {% endif %}
+
     <!-- Disclosure arrow -->
     {% if include_disclosure_arrow %}
         <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
     {% endif %}
-
 </div>
