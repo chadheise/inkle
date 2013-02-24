@@ -41,7 +41,7 @@ Ext.define("inkle.view.AddFriends", {
             // Suggestions list
             {
                 xtype: "list",
-                id: "addFriendsSuggestions",
+                id: "addFriendsList",
                 cls: "membersList",
                 flex: 1,
                 loadingText: "Loading suggestions...",
@@ -52,7 +52,9 @@ Ext.define("inkle.view.AddFriends", {
 				],
 				store: {
 					fields: [
-						//"id",
+						"id",
+						"facebook_id",
+						"relationship",
 						"html"
 					],
 					proxy: {
@@ -104,7 +106,12 @@ Ext.define("inkle.view.AddFriends", {
             element: "element",
             delegate: ".inviteFriendButton",
             fn: "onInviteFriendButtonTap"
-        }
+        },
+        {
+            delegate: "#addFriendsList",
+            event: "itemtap",
+            fn: "onAddFriendsListItemTap"
+        },
         ]
     },
     
@@ -125,5 +132,9 @@ Ext.define("inkle.view.AddFriends", {
     onInviteFriendButtonTap: function(event) {
         var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
         this.fireEvent("inviteFriendButtonTapped", tappedId);
-    }
+    },
+    
+    onAddFriendsListItemTap: function(requestsList, index, target, record, event, options) {
+        this.fireEvent("addFriendsViewListItemTapped", record.getData());
+    },
 });
