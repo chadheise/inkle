@@ -510,7 +510,8 @@ Ext.define("inkle.controller.SettingsController", {
     
     changePassword: function() {
         this.getChangePasswordView().submit({
-			method: "POST",		
+			method: "POST",
+			headers : { "cache-control": "no-cache" },	
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -536,7 +537,8 @@ Ext.define("inkle.controller.SettingsController", {
     
     changeEmail: function() {
         this.getChangeEmailView().submit({
-			method: "POST",		
+			method: "POST",
+			headers : { "cache-control": "no-cache" },
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",

@@ -1,18 +1,18 @@
 Ext.define("inkle.view.Friends", {
-	extend: "Ext.navigation.View",
-	
-	xtype: "friendsView",
-	
+    extend: "Ext.navigation.View",
+
+    xtype: "friendsView",
+
     requires: [
         "Ext.SegmentedButton",
         "Ext.dataview.List",
         "Ext.ActionSheet"
     ],
-	
-	config: {
+
+    config: {
         // Tab information
-		title: "Friends",
-		iconCls: "friendsIcon",
+        title: "Friends",
+        iconCls: "friendsIcon",
 
         // Layout information
         navigationBar: false,
@@ -58,9 +58,10 @@ Ext.define("inkle.view.Friends", {
                     // Group members button
                     {
                         xtype: "button",
-                        id: "groupMembersViewDoneButton",
-                        text: "Done",
-                        pressedCls: ["toolbarButtonPressed"],
+                        id: "groupMembersViewBackButton",
+                        text: "Groups",
+                        ui: "back",
+                        //pressedCls: ["toolbarButtonPressed"],
                         hidden: true
                     },
 
@@ -76,24 +77,24 @@ Ext.define("inkle.view.Friends", {
                         centered: true,
                         items: [
                             {
-								text: "Friends",
-								id: "friendsViewFriendsButton",
-								width: 68,
-								pressed: true
-							},
-							{
-								text: "Groups",
-								id: "friendsViewGroupsButton",
-								width: 68,
-								padding: 0
-							},
-							{
-								text: "Requests",
-								id: "friendsViewRequestsButton",
-								width: 68,
-								padding: 0
-							}
-						]
+                                text: "Friends",
+                                id: "friendsViewFriendsButton",
+                                width: 68,
+                                pressed: true
+                            },
+                            {
+                                text: "Groups",
+                                id: "friendsViewGroupsButton",
+                                width: 68,
+                                padding: 0
+                            },
+                            {
+                                text: "Requests",
+                                id: "friendsViewRequestsButton",
+                                width: 68,
+                                padding: 0
+                            }
+                        ]
                     },
 
                     // Spacer
@@ -125,19 +126,19 @@ Ext.define("inkle.view.Friends", {
                 layout: "card",
                 items: [
                     // Friends list
-					{
-						xtype: "list",
-						id: "friendsViewFriendsList",
+                    {
+                        xtype: "list",
+                        id: "friendsViewFriendsList",
                         cls: "membersList",
-						loadingText: "Loading friends...",
-						emptyText: "<div class='emptyListText'>No friends</div>",
-						grouped: true,
-						disableSelection: true,
-						indexBar: true,
-						itemTpl: [
-							"{ html }"
-						],
-						store: {
+                        loadingText: "Loading friends...",
+                        emptyText: "<div class='emptyListText'>No friends</div>",
+                        grouped: true,
+                        disableSelection: true,
+                        indexBar: true,
+                        itemTpl: [
+                            "{ html }"
+                        ],
+                        store: {
                             fields: [
                                 "id",
                                 "lastName",
@@ -150,14 +151,14 @@ Ext.define("inkle.view.Friends", {
                                     read: "POST"
                                 },
                                 extraParams: {
-									mode: "friends"
-								}
+                                    mode: "friends"
+                                }
                             },
                             grouper: {
-								groupFn: function(record) {
-									return record.get("lastName").substr(0, 1);
-								}
-							},
+                                groupFn: function(record) {
+                                    return record.get("lastName").substr(0, 1);
+                                }
+                            },
                             autoLoad: true
                             },
                             plugins: [
@@ -168,20 +169,20 @@ Ext.define("inkle.view.Friends", {
                                 }
                             }
                         ]
-					},
-					
-					// Groups list
-					{
-						xtype: "list",
-						id: "friendsViewGroupsList",
+                    },
+
+                    // Groups list
+                    {
+                        xtype: "list",
+                        id: "friendsViewGroupsList",
                         cls: "groupsListMainContent",
-						loadingText: "Loading groups...",
-						emptyText: "<div class='emptyListText'>No groups</div>",
-						disableSelection: true,
-						itemTpl: [
-							"{ html }"
-						],
-						store: {
+                        loadingText: "Loading groups...",
+                        emptyText: "<div class='emptyListText'>No groups</div>",
+                        disableSelection: true,
+                        itemTpl: [
+                            "{ html }"
+                        ],
+                        store: {
                             fields: [
                                 "id",
                                 "html"
@@ -203,20 +204,20 @@ Ext.define("inkle.view.Friends", {
                                 }
                             }
                         ]
-					},
-					
-					// Friend requests list
-					{
-						xtype: "list",
-						id: "friendsViewRequestsList",
+                    },
+
+                    // Friend requests list
+                    {
+                        xtype: "list",
+                        id: "friendsViewRequestsList",
                         cls: "membersList",
-						loadingText: "Loading friend requests...",
-						emptyText: "<div class='emptyListText'>No friend requests</div>",
-						disableSelection: true,
-						itemTpl: [
-							"{ html }"
-						],
-						store: {
+                        loadingText: "Loading friend requests...",
+                        emptyText: "<div class='emptyListText'>No friend requests</div>",
+                        disableSelection: true,
+                        itemTpl: [
+                            "{ html }"
+                        ],
+                        store: {
                             fields: [
                                 "id",
                                 "html"
@@ -283,9 +284,9 @@ Ext.define("inkle.view.Friends", {
                 fn: "onFriendsViewCreateGroupButtonTap"
             },
             {
-                delegate: "#groupMembersViewDoneButton",
+                delegate: "#groupMembersViewBackButton",
                 event: "tap",
-                fn: "onGroupMembersViewDoneButtonTap"
+                fn: "onGroupMembersViewBackButtonTap"
             },
 
             // List disclosure/itemtap
@@ -313,20 +314,6 @@ Ext.define("inkle.view.Friends", {
                 fn: "onGroupNameInputBlurred"
             },
 
-            // Requests list accept/ignore buttons
-            /*{
-                event: "tap",
-                element: "element",
-                delegate: ".acceptRequestButton",
-                fn: "onAcceptRequestButtonTap"
-            },
-            {
-                event: "tap",
-                element: "element",
-                delegate: ".ignoreRequestButton",
-                fn: "onIgnoreRequestButtonTap"
-            },*/
-
             // Pull to refresh
             {
                 delegate: "#friendsViewFriendsList",
@@ -344,30 +331,30 @@ Ext.define("inkle.view.Friends", {
                 fn: "onFriendsViewRequestsListRefresh"
             }
         ]
-	},
-	
-	/* Event firings */
+    },
+
+    /* Event firings */
     // Top toolbar segmented button
-	onFriendsViewSegmentedButtonToggle: function(segmentedButton, button, isPressed, options) {
-		var tappedId = segmentedButton.getItems().indexOf(button);
-		this.fireEvent("friendsViewSegmentedButtonToggled", tappedId);
-	},
-    
+    onFriendsViewSegmentedButtonToggle: function(segmentedButton, button, isPressed, options) {
+        var tappedId = segmentedButton.getItems().indexOf(button);
+        this.fireEvent("friendsViewSegmentedButtonToggled", tappedId);
+    },
+
     // Top toolbar buttons
     onFriendsViewRemoveFriendsButtonTap: function() {
-		this.fireEvent("friendsViewRemoveFriendsButtonTapped", "editable");
+        this.fireEvent("friendsViewRemoveFriendsButtonTapped", "editable");
     },
-    
+
     onFriendsViewRemoveFriendsDoneButtonTap: function() {
         this.fireEvent("friendsViewRemoveFriendsDoneButtonTapped", "uneditable");
     },
 
     onFriendsViewAddFriendsButtonTap: function() {
-		this.fireEvent("friendsViewAddFriendsButtonTapped");
+        this.fireEvent("friendsViewAddFriendsButtonTapped");
     },
-    
+
     onFriendsViewEditGroupsButtonTap: function() {
-		this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
+        this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
     },
     
     onFriendsViewEditGroupsDoneButtonTap: function() {
@@ -375,11 +362,11 @@ Ext.define("inkle.view.Friends", {
     },
 
     onFriendsViewCreateGroupButtonTap: function() {
-		this.fireEvent("friendsViewCreateGroupButtonTapped");
+        this.fireEvent("friendsViewCreateGroupButtonTapped");
     },
 
-    onGroupMembersViewDoneButtonTap: function() {
-        this.fireEvent("groupMembersViewDoneButtonTapped", /* source = */ "groupMembersView");
+    onGroupMembersViewBackButtonTap: function() {
+        this.fireEvent("groupMembersViewBackButtonTapped", /* source = */ "groupMembersView");
     },
     
     // List disclosure/itemtap
@@ -406,21 +393,15 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
         this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["id"]);
     },
-    
+
     // Groups list name input blur
     onGroupNameInputBlurred: function(event, target) {
         var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
         this.fireEvent("groupNameInputBlurred", groupId);
     },
-    
-    // Requests list accept/ignore buttons
-    /*onAcceptRequestButtonTap: function(event, target) {
-		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
-        this.fireEvent("acceptRequestButtonTapped", memberId, "accept");
-    },*/
-    
+
     onIgnoreRequestButtonTap: function(event, target) {
-		var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
+        var memberId = Ext.fly(target).parent(".member").getAttribute("data-memberId");
         this.fireEvent("ignoreRequestButtonTapped", memberId, "ignore");
     },
 
@@ -428,11 +409,11 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewFriendsListRefresh: function() {
         this.fireEvent("friendsViewFriendsListRefreshed");
     },
-    
+
     onFriendsViewGroupsListRefresh: function() {
         this.fireEvent("friendsViewGroupsListRefreshed");
     },
-    
+
     onFriendsViewRequestsListRefresh: function() {
         this.fireEvent("friendsViewRequestsListRefreshed");
     },
