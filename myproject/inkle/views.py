@@ -419,6 +419,8 @@ def get_inkling_list_item_html(inkling, member):
     members_attending = list(inkling.get_members_attending())[0 : num_members_attending_thumbnails]
     inkling.is_member_attending = inkling in member.get_profile().inklings.all()
 
+    print members_attending
+
     # Get the HTML for the inkling list item
     html = render_to_string("inklingListItem.html", {
         "i": inkling,

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from datetime import date
+from settings import STATIC_URL
 
 
 class Group(models.Model):
@@ -186,7 +187,10 @@ class Inkling(models.Model):
 
     def get_members_attending(self):
         """Returns a list of all the members attending the current inkling."""
-        return self.userprofile_set.all()
+        members_attending = []
+        for m in self.userprofile_set.all():
+            members_attending.append(m.user)
+        return members_attending
 
     def get_num_members_attending(self):
         """Returns the number of members attending the current inkling."""
@@ -267,7 +271,6 @@ class UserProfile(models.Model):
     def get_num_mutual_friends(self, m):
         """Returns the number of mutual friends the current member has with the inputted member."""
         return len(self.user.get_profile().friends.filter(is_active = True) & m.get_profile().friends.filter(is_active = True))
-
 
     def has_pending_friend_request_to(self, m):
         """Returns True if the current memeber has a pending friend request to the inputted member."""

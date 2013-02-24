@@ -669,35 +669,34 @@ Ext.define("inkle.controller.FriendsController", {
                     alert("A message inviting them to inkle has been posted to their facebook feed.");
                   }
                 });
-        	
-        	},
-        	failure: function(response) {
-        		alert("Error", response.responseText);
-        	}
-		});
-	},
-	
+
+            },
+            failure: function(response) {
+                alert("Error", response.responseText);
+            }
+        });
+    },
+
     /* Toggles the tapped selection item's state and the membership of corresponding member in the current group */
-	toggleSelectionItem: function(tappedSelectionItem) {
-        // Get the member and gropu IDs associate with the tapped selection item 
-		var memberId = tappedSelectionItem.parent(".member").getAttribute("data-memberId");
-		var groupId = this.getGroupMembersView().getData()["groupId"];
+    toggleSelectionItem: function(tappedSelectionItem) {
+        // Get the member and group IDs associated with the tapped selection item 
+        var memberId = tappedSelectionItem.parent(".member").getAttribute("data-memberId");
+        var groupId = this.getGroupMembersView().getData()["groupId"];
 
         // Toggle the selection item and the memsber's membership in the group
-		if (tappedSelectionItem.hasCls("selected")) {	
-			Ext.Ajax.request({
-				url: inkle.app.baseUrl + "/removeFromGroup/",
-				params: {
-					memberId: memberId,
-					groupId: groupId
-				},
+        if (tappedSelectionItem.hasCls("selected")) {	
+            Ext.Ajax.request({
+                url: inkle.app.baseUrl + "/removeFromGroup/",
+                params: {
+                    memberId: memberId,
+                    groupId: groupId
+                },
                 success: function(response) {
                     tappedSelectionItem.set({
                         "src" : "resources/images/deselected.png"
                     });
                 },
                 failure: function(response) {
-                    console.log(response.responseText);
                     Ext.Msg.alert("Error", "Unable to remove this member from your group. Please try again later.");
                 },
                 scope: this
@@ -716,7 +715,6 @@ Ext.define("inkle.controller.FriendsController", {
                     });
                 },
                 failure: function(response) {
-                    console.log(response.responseText);
                     Ext.Msg.alert("Error", "Unable to add this member to your group. Please try again later.");
                 },
                 scope: this
