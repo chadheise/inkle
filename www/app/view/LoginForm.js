@@ -14,7 +14,6 @@ Ext.define("inkle.view.LoginForm", {
 		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
 		
 		url: inkle.app.baseUrl + "/emailLogin/",
-		headers : { "cache-control": "no-cache" },
 		
 		items: [
             // Top toolbar
