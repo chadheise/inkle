@@ -34,7 +34,7 @@ Ext.define("inkle.controller.FriendsController", {
             
             // Elements
             addFriendsSearchField: "#addFriendsSearchField",
-            addFriendsSuggestions: "#addFriendsSuggestions",
+            addFriendsSuggestions: "#addFriendsList",
             friendsViewMainContent: "#friendsViewMainContent"
         },
         control: {
@@ -77,7 +77,8 @@ Ext.define("inkle.controller.FriendsController", {
                 addFriendsViewDoneButtonTapped: "activateFriendsView",
                 addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
                 addFriendButtonTapped: "addFriend",
-                inviteFriendButtonTapped: "inviteFriend"
+                inviteFriendButtonTapped: "inviteFriend",
+                addFriendsViewListItemTapped: "activateAddFriendsActionSheet",
             },
 
             groupMembersView: {
@@ -234,6 +235,73 @@ Ext.define("inkle.controller.FriendsController", {
         	scope: this
 		});
 	},
+
+    activateAddFriendsActionSheet: function(data) {
+        //alert(data["id"]);
+        //alert(data["facebook_id"]);
+        //alert(data["relationship"]);
+        
+        
+        //Create the possible action sheet buttons
+        var addFriend = {
+            text: "Add Friend",
+            ui: "confirm",
+            handler: function(button, event) {
+                //this.respondToRequest(memberId, "accept");
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var acceptRequest = {
+            text: "Accept",
+            ui: "confirm",
+            handler: function(button, event) {
+                this.respondToRequest(memberId, "accept");
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var ignoreRequest = {
+            text: "Ignore",
+            ui : "decline",
+            handler: function(button, event) {
+                this.respondToRequest(memberId, "ignore");
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var cancel = {
+            text: "Cancel",
+            handler: function(button, event) {
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        
+        var actionSheetItems = [cancel, ignoreRequest, acceptRequest];
+        
+        // Create the action sheet
+        var addFriendsActionSheet = Ext.create("Ext.ActionSheet", {
+            id: "addFriendsActionSheet",
+            items: actionSheetItems,
+        });
+
+        // Add the action sheet to the viewport
+        Ext.Viewport.add(addFriendsActionSheet);
+        addFriendsActionSheet.show();
+        
+    },
 
 	/**************/
 	/*  COMMANDS  */

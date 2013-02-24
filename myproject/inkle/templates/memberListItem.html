@@ -65,8 +65,10 @@
 	{% if m.is_requested %}
 		<span class="relationship">Requested</span>
 	{% endif %}
-	{%if m.get_profile.facebook_id %}
-		<img class="facebookIcon" src="resources/images/facebookIcon.png">
+	{% if include_facebook_icon %}
+		{%if m.get_profile.facebook_id %}
+			<img class="facebookIcon" src="resources/images/facebookIcon.png">
+		{% endif %}
 	{% endif %}
 	
     <!-- Disclosure arrow -->

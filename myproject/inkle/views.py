@@ -1803,20 +1803,19 @@ def people_search_view(request):
     
     for m in members:
         m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.is_friend = False #Default to false
+        m.is_pending = False #Default to false
+        m.is_requested = False #Default to false
         if m in request.user.get_profile().friends.all(): #If the member is a friend of the user
             m.is_friend = True
-            #m.is_pending = False
             inkleFriends.append(m)
         elif request.user.get_profile().has_pending_friend_request_to(m):
-            #m.is_friend = False
             m.is_pending = True
             inklePending.append(m)
         elif m.get_profile().has_pending_friend_request_to(request.user):
             m.is_requested = True
             inkleRequested.append(m)
         else:  #If the member matches the search query but is not friends with the user and a request is not pending
-            #m.is_friend = False
-            #m.is_pending = False
             inkleOther.append(m)
     print "check 4"
     for fbFriend in fbData["data"]:
@@ -1830,6 +1829,7 @@ def people_search_view(request):
                     inkleFriend.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(inkleFriend)
                     inkleFriend.is_friend = False
                     inkleFriend.is_pending = request.user.get_profile().has_pending_friend_request_to(inkleFriend)
+                    inkleFriend.is_requested = inkleFriend.get_profile().has_pending_friend_request_to(request.user) 
                     facebookInkle.append(inkleFriend)
             except:
                 personData = {} #Create dictionary for facebook friend data
@@ -1842,6 +1842,7 @@ def people_search_view(request):
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
+                personData["is_requested"] = False
                 personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
                 facebookNotInkle.append(personData)
         else: #If the facebook friend is not an inkle member
@@ -1855,6 +1856,7 @@ def people_search_view(request):
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
+            personData["is_requested"] = False
             personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
     print "check 5"
@@ -1888,6 +1890,7 @@ def people_search_view(request):
             html = render_to_string("memberListItem.html", {
             "m" : m,
             "include_disclosure_arrow" : True,
+            "include_facebook_icon" : True,
             #"member" : member,
             })
         except:
@@ -1895,12 +1898,36 @@ def people_search_view(request):
             print html
             raise Http404()
 
-        #try:
-        #    memberId = m.id
-        #except:
-        #    memberId = m["id"]
+        try: #inkle user
+            userId = m.id 
+            if m.get_profile().facebook_id:
+                facebook_id = m.get_profile().facebook_id
+            else:
+                facebook_id = "none"
+            if m.is_friend:
+                relationship = "friend"
+            elif m.is_pending:
+                relationship = "pending"
+            elif m.is_requested:
+                relationship = "requested"
+            else:
+                relationship = "none"
+        except: #Facebook friends not on inkle
+            userId = "none" 
+            facebook_id = m["get_profile"]["facebook_id"]
+            if m["is_friend"]:
+                relationship = "friend"
+            elif m["is_pending"]:
+                relationship = "pending"
+            elif m["is_requested"]:
+                relationship = "requested"
+            else:
+                relationship = "facebookOnlyFriend"
+            
         response_members.append({
-            #"id": memberId,
+            "id": userId,
+            "facebook_id": facebook_id,
+            "relationship": relationship,
             "html": html
         })
     print "check 7"

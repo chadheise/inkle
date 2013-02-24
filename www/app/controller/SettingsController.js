@@ -239,6 +239,7 @@ Ext.define("inkle.controller.SettingsController", {
                             }
                             else {
                                 Ext.Msg.alert("Error", error);
+                                //NEED TO LOG OUT FACEBOOK ACCOUNT
                             }
                         },
                        	scope: object
