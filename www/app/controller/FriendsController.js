@@ -241,17 +241,26 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     activateAddFriendsActionSheet: function(data) {
-        //alert(data["id"]);
-        //alert(data["facebook_id"]);
-        //alert(data["relationship"]);
-        
+        var userId = data["id"];
+        var facebookId = data["facebook_id"];
+        var relationship = data["relationship"];
         
         //Create the possible action sheet buttons
         var addFriend = {
             text: "Add Friend",
             ui: "confirm",
             handler: function(button, event) {
-                //this.respondToRequest(memberId, "accept");
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var inviteFacebookFriend = {
+            text: " Invite Facebook Friend",
+            ui: "confirm",
+            handler: function(button, event) {
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -263,7 +272,7 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Accept",
             ui: "confirm",
             handler: function(button, event) {
-                this.respondToRequest(memberId, "accept");
+                this.respondToRequest(userId, "accept");
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -275,7 +284,18 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Ignore",
             ui : "decline",
             handler: function(button, event) {
-                this.respondToRequest(memberId, "ignore");
+                this.respondToRequest(userId, "ignore");
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var revokeRequest = {
+            text: "Revoke my friend request",
+            ui : "decline",
+            handler: function(button, event) {
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -293,7 +313,25 @@ Ext.define("inkle.controller.FriendsController", {
             scope: this
         };
         
-        var actionSheetItems = [cancel, ignoreRequest, acceptRequest];
+        var actionSheetItems = [];
+        if (userId != "none") { //The person is an inkle user
+            if (relationship == "friend") {
+                actionSheetItems = [cancel]; //Should you be able to revoke friendship?
+            }
+            else if (relationship == "pending") {
+                actionSheetItems = [revokeRequest, cancel];
+            }
+            else if (relationship == "requested") {
+                alert("setting items");
+                actionSheetItems = [acceptRequest, ignoreRequest, cancel];
+            }
+            else {
+                actionSheetItems = [addFriend, cancel];
+            }
+        }
+        else { //The person is not an inkle user (only on facebook)
+            actionSheetItems = [inviteFacebookFriend, cancel];
+        }
         
         // Create the action sheet
         var addFriendsActionSheet = Ext.create("Ext.ActionSheet", {
