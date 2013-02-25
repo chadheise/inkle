@@ -57,20 +57,20 @@
 	{% endif %}
 	
 	{% if m.is_friend %}
-		<span class="relationship">Friend</span>
+		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Friend</span>
 	{% endif %}
 	{% if m.is_pending %}
-		<span class="relationship">Pending</span>
+		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Pending</span>
 	{% endif %}
 	{% if m.is_requested %}
-		<span class="relationship">Requested</span>
+		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Requested</span>
 	{% endif %}
+	<span id="addFriendRelationshipTag{{m.id}}"></span>
 	{% if include_facebook_icon %}
 		{%if m.get_profile.facebook_id %}
 			<img class="facebookIcon" src="resources/images/facebookIcon.png">
 		{% endif %}
 	{% endif %}
-
     <!-- Disclosure arrow -->
     {% if include_disclosure_arrow %}
         <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />

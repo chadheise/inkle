@@ -248,12 +248,12 @@ Ext.define("inkle.controller.FriendsController", {
         //Create the possible action sheet buttons
         var addFriend = {
             text: "Add Friend",
-            ui: "confirm",
+            cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 
-                /*var addFriendButton = Ext.fly("member" + memberId + "AddFriendButton");
+                /*var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
 
-        		addFriendButton.set({
+        		relationshipTag.set({
         			"value" : "Pending"
         		});*/
 
@@ -274,9 +274,10 @@ Ext.define("inkle.controller.FriendsController", {
             scope: this
         };
         var inviteFacebookFriend = {
-            text: " Invite Facebook Friend",
-            ui: "confirm",
+            text: " Invite on facebook",
+            cls: "actionSheetNormalButton",
             handler: function(button, event) {
+                this.inviteFriend(facebookId);
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -286,12 +287,10 @@ Ext.define("inkle.controller.FriendsController", {
         };
         var acceptRequest = {
             text: "Accept",
-            ui: "confirm",
+            cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "accept");
                 //Need to change relationship badge to "friend"
-                //userListItem = Ext.getCmp("addFriendsList").query(div[data-memberId=userId]);
-                //alert(userListItem.query(span[relationship]));
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -301,7 +300,7 @@ Ext.define("inkle.controller.FriendsController", {
         };
         var ignoreRequest = {
             text: "Ignore",
-            ui : "decline",
+            cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "ignore");
                 //Need to remove relationship badge
@@ -314,7 +313,7 @@ Ext.define("inkle.controller.FriendsController", {
         };
         var revokeRequest = {
             text: "Revoke my friend request",
-            ui : "decline",
+            cls: "actionSheetCancelButton",
             handler: function(button, event) {
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
@@ -325,6 +324,7 @@ Ext.define("inkle.controller.FriendsController", {
         };
         var cancel = {
             text: "Cancel",
+            cls: "actionSheetCancelButton",
             handler: function(button, event) {
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -736,67 +736,16 @@ Ext.define("inkle.controller.FriendsController", {
 		});
 	},
 	
-	inviteFriend: function(memberId) {
-		var inviteFriendButton = Ext.fly("member" + memberId + "InviteFriendButton");
-		
-		inviteFriendButton.set({
-			"value" : "Sent"
-		});
-		
-	    //var fbConnected = false;
-		var fbAccessToken = "";
-		FB.getLoginStatus(function(response) {
-          if (response.status === 'connected') {
-            // the user is logged in and has authenticated your
-            // app, and response.authResponse supplies
-            // the user's ID, a valid access token, a signed
-            // request, and the time the access token 
-            // and signed request each expire
-                //fbConnected = true;
-                //var uid = response.authResponse.userID;
-            fbAccessToken = response.authResponse.accessToken;
-          } else if (response.status === 'not_authorized') {
-            // the user is logged in to Facebook, 
-            // but has not authenticated your app
-          } else {
-            // the user isn't logged in to Facebook.
-          }
-         });
-		
-		Ext.Ajax.request({
-		    // THIS INCLUDES THE CLEINT_SECRET AND SHOULD NOT BE VISIBLE TO USERS - May need to hide on server side
-    		url: "https://graph.facebook.com/oauth/access_token?client_id=355653434520396&client_secret=e6df96d1801e704fecd7cb3fea71b944&grant_type=client_credentials",
-        	success: function(response) {
-                appAccessToken = response.responseText.replace("access_token=", "");
-        	    fbId = memberId.replace("fb","");
-        		
-        		var postData = {
-        		    access_token: fbAccessToken,
-        		    //body: 'body',
-        		    message: "I've been using inkle to easily make social plans. You should join too!",
-        		    link: "www.facebook.com/inkleit"
-        		}
-        		console.log(postData);
-                FB.api('/' + fbId + '/feed', 'post', postData, function(response) {
-                  if (!response || response.error) {
-                    alert("You have not given inkle permission to post on your behalf. Enable these permissions to invite your friends.");
-                    console.log(response);
-                    FB.login(function() {
-                      if (response.authResponse) {
-                        // user gave permission        
-                      } else {
-                        // user did not give permission
-                      }
-                    }, {scope:'publish_stream'});
-                  } else {
-                    alert("A message inviting them to inkle has been posted to their facebook feed.");
-                  }
-                });
-
-            },
-            failure: function(response) {
-                alert("Error", response.responseText);
-            }
+	inviteFriend: function(facebookId) {		
+	    FB.ui({
+            method: 'feed',
+            to: String(facebookId),
+            message: 'This is the message ',
+            link: "http://www.inkleit.com",
+            //picture: //link to a picture of inkle logo
+            name: "Join inkle!",
+            caption: "www.inkleit.com",
+            description: 'inkle makes it easy to plan dinners, hangouts, meetups, and other social events with your friends!',
         });
     },
 
