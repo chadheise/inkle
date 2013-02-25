@@ -251,6 +251,22 @@ Ext.define("inkle.controller.FriendsController", {
             ui: "confirm",
             handler: function(button, event) {
                 
+                /*var addFriendButton = Ext.fly("member" + memberId + "AddFriendButton");
+
+        		addFriendButton.set({
+        			"value" : "Pending"
+        		});*/
+
+        		Ext.Ajax.request({
+            		url: inkle.app.baseUrl + "/addFriend/",
+            		params: {
+            			memberId: userId
+            		},
+                	failure: function(response) {
+                		Ext.Msg.alert("Error", response.responseText);
+                	}
+        		});
+                
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
                 addFriendsActionSheet.destroy();
@@ -273,6 +289,9 @@ Ext.define("inkle.controller.FriendsController", {
             ui: "confirm",
             handler: function(button, event) {
                 this.respondToRequest(userId, "accept");
+                //Need to change relationship badge to "friend"
+                //userListItem = Ext.getCmp("addFriendsList").query(div[data-memberId=userId]);
+                //alert(userListItem.query(span[relationship]));
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -285,6 +304,7 @@ Ext.define("inkle.controller.FriendsController", {
             ui : "decline",
             handler: function(button, event) {
                 this.respondToRequest(userId, "ignore");
+                //Need to remove relationship badge
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -322,7 +342,6 @@ Ext.define("inkle.controller.FriendsController", {
                 actionSheetItems = [revokeRequest, cancel];
             }
             else if (relationship == "requested") {
-                alert("setting items");
                 actionSheetItems = [acceptRequest, ignoreRequest, cancel];
             }
             else {
