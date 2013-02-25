@@ -419,8 +419,6 @@ def get_inkling_list_item_html(inkling, member):
     members_attending = list(inkling.get_members_attending())[0 : num_members_attending_thumbnails]
     inkling.is_member_attending = inkling in member.get_profile().inklings.all()
 
-    print members_attending
-
     # Get the HTML for the inkling list item
     html = render_to_string("inklingListItem.html", {
         "i": inkling,
@@ -2182,6 +2180,10 @@ def rename_group_view(request):
     except:
         raise Http404()
 
+    print group
+    print name
+    print group.name
+
     # Make sure the group belongs to the logged-in member
     if (group.creator != request.user):
         raise Http404()
@@ -2189,6 +2191,8 @@ def rename_group_view(request):
     # Update and save the inputted group's name
     group.name = name
     group.save()
+
+    print group.name
 
     # Return the new group's ID
     # TODO: get rid of this?
