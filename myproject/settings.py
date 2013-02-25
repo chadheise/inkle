@@ -1,6 +1,9 @@
 # DEBUG and TEMPLATE_DEBUG are True if in devlopment; False if in production
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
+if (DEBUG):
+    TEMPLATE_STRING_IF_INVALID = "TEMPLATE_MISPELLING"
 
 # Custom setting to determine email format (HTML if True; plain text if False)
 SEND_EMAILS_AS_HTML = True
