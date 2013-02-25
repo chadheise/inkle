@@ -24,6 +24,7 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array>
+		<string>fbstatic-a.akamaihd.net</string>
 		<string>chads-macbook-pro.local</string>
 		<string>profile-b.xx.fbcdn.net</string>
 		<string>profile-a.xx.fbcdn.net</string>
