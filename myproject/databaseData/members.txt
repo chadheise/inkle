@@ -30,4 +30,3 @@ Rosemary | Alberico | ralber@nd.edu | 3 | 8 | 1990 | Female | False
 Barack | Obama | bobama@nd.edu | 4 | 10 | 1970 | Male | False
 Bill | Clinton | bclinton@nd.edu | 12 | 1 | 1955 | Male | False
 Penelope | Longnamechicowski | penelopelongnamechicowski@nd.edu | 17 | 5 | 1985 | Female | False
-
