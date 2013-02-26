@@ -1537,17 +1537,25 @@ def invite_member_view(request):
     # Get the inputted inkling and member
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-        m = User.objects.get(pk = request.POST["itemId"])
+        m = User.objects.get(pk = request.POST["memberId"])
     except:
+        print "bad POST data"
         raise Http404()
 
+    print inkling
+    print m
+
     # Make sure the inputted member is a friend of the logged-in member
-    if (m not in request.user.friends.all()):
+    if (m not in request.user.get_profile().friends.all()):
         raise Http404()
+
+    print "c"
 
     # Invite the inputted member to the inputted inkling if they have not already been invited
     if (not inkling.member_has_pending_invitation(m)):
         InklingInvitation.objects.create(sender = request.user, receiver = m, inkling = inkling)
+
+    print "d"
 
     return HttpResponse()
 
@@ -1559,7 +1567,7 @@ def uninvite_member_view(request):
     # Get the inputted inkling and member
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-        m = User.objects.get(pk = request.POST["itemId"])
+        m = User.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 

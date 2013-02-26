@@ -1,52 +1,54 @@
 Ext.define("inkle.view.NewInklingInvitedFriends", {
-	extend: "Ext.Container",
-	
-	xtype: "newInklingInvitedFriendsView",
-	
-	config: {
-		layout: "fit",
-		scrollable: false,
-		
-    	items: [
-    		{
-    			xtype: "list",
-				id: "newInklingInvitedFriendsList",
+    extend: "Ext.Container",
+
+    xtype: "newInklingInvitedFriendsView",
+
+    config: {
+        layout: "fit",
+        scrollable: false,
+
+        items: [
+            // Invited friends list
+            {
+                xtype: "list",
+                id: "newInklingInvitedFriendsList",
                 cls: "membersList",
-				flex: 1,
-				loadingText: "Loading friends...",
-				emptyText: "<div class='emptyListText'>No friends to invite</div>",
-				grouped: true,
-				disableSelection: true,
-				indexBar: true,
-				itemTpl: "{ html }",
-				store: {
-					fields: [
-						"id",
-						"lastName",
-						"html"
-					],
-					proxy: {
-						type: "ajax",
-						url: inkle.app.baseUrl + "/inklingInvitedFriends/",
-						actionMethods: {
-							read: "POST"
-						},
-						reader: {
-							type: "json",
-							rootProperty: "friends"
-						}
-					},
-					grouper: {
-						groupFn: function(record) {
-							return record.get("lastName").substr(0, 1);
-						}
-					},
-					autoLoad: false
-				}
-    		},
-        	
-        	// Groups list
-        	{
+                loadingText: "Loading friends...",
+                emptyText: "<div class='emptyListText'>No friends to invite</div>",
+                grouped: true,
+                disableSelection: true,
+                indexBar: true,
+                itemTpl: [
+                    "{ html }"
+                ],
+                store: {
+                    fields: [
+                        "id",
+                        "lastName",
+                        "html"
+                    ],
+                    proxy: {
+                        type: "ajax",
+                        url: inkle.app.baseUrl + "/inklingInvitedFriends/",
+                        actionMethods: {
+                            read: "POST"
+                        },
+                        reader: {
+                            type: "json",
+                            rootProperty: "friends"
+                        }
+                    },
+                    grouper: {
+                        groupFn: function(record) {
+                            return record.get("lastName").substr(0, 1);
+                        }
+                    },
+                    autoLoad: false
+                }
+            },
+
+            // Groups list
+            {
         		xtype: "panel",
         		id: "newInklingInvitedGroupsPanel",
                 cls: "groupsListPanel",
@@ -82,39 +84,39 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
 						}
 					}
 				],
-				
-				listeners: [
-					{
-						event: "tap",
-						element: "element",
-						delegate: ".selectionButton",
-						fn: "onGroupSelectionButtonTap"
-					},
-				],
-				
-				// Event firings
-				onGroupSelectionButtonTap: function(event, target) {
-					var groupSelectionButton = Ext.fly(target);
-                    var groupId = groupSelectionButton.parent(".group").getAttribute("data-groupId");
-					this.fireEvent("groupSelectionButtonTapped", groupSelectionButton, groupId, "Group");
-				}
-        	}
-    	],
-    	
-		listeners: [
-        	{
-				event: "tap",
-				element: "element",
-				delegate: ".member .selectionButton",
-				fn: "onMemberSelectionItemTap"
-        	}
+
+                listeners: [
+                    {
+                        delegate: "#newInklingInvitedGroupsList",
+                        event: "itemtap",
+                        fn: "onNewInklingInvitedGroupsListItemTap"
+                    },
+                ],
+
+                /* Event firings */
+                onNewInklingInvitedGroupsListItemTap: function(newInklingInvitedGroupsList, index, target, record, event, options) {
+                    var selectionButton = Ext.fly(event.getTarget(".selectionButton"));
+                    if (selectionButton) {
+                        this.fireEvent("groupSelectionButtonTapped", selectionButton);
+                    }
+                }
+            }
+        ],
+
+        listeners: [
+            {
+                delegate: "#newInklingInvitedFriendsList",
+                event: "itemtap",
+                fn: "onNewInklingInvitedFriendsListItemTap"
+            }
         ]
     },
-    
-    // Event firings
-    onMemberSelectionItemTap: function(event, target) {
-    	var memberId = event.getTarget(".selectionButton").getAttribute("memberId");
-    	var memberSelectionButton = Ext.fly(target);
-		this.fireEvent("memberSelectionButtonTapped", memberSelectionButton, memberId, "Member");
+
+    /* Event firings */
+    onNewInklingInvitedFriendsListItemTap: function(newInklingInvitedFriendsList, index, target, record, event, options) {
+        var selectionButton = Ext.fly(event.getTarget(".selectionButton"));
+        if (selectionButton) {
+            this.fireEvent("memberSelectionButtonTapped", selectionButton);
+        }
     }
 });

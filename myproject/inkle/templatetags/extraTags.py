@@ -4,22 +4,14 @@ from django.template.defaultfilters import stringfilter
 # Date object
 from datetime import date
 
-# Choices for months, states, and location categories
-from myproject.inkle.choices import *
+# DEBUG setting
 from myproject.settings import DEBUG
 
 register = template.Library()
 
-from django.template import Library
-
-register = Library()
-
 @register.filter()
 def is_false(arg): 
     return arg is False
-
-
-# TODO: get rid of rest of template tags if they are still unused
 
 @register.filter()
 @stringfilter
@@ -98,21 +90,6 @@ def years(value):
     # Return the reversed date range
     return reversed(range((today.year - num_years), (today.year + 1)))
 years.is_safe = True
-
-
-@register.filter()
-def states(value):
-    """Returns a list of the states and their abbreviations."""
-    return STATES
-states.is_safe = True
-
-
-@register.filter()
-def location_categories(value):
-    """Returns a list of the location categories."""
-    return LOCATION_CATEGORIES
-location_categories.is_safe = True
-
 
 @register.filter()
 def debug_value(value):
