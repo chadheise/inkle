@@ -50,7 +50,6 @@ Ext.define("inkle.controller.MyInklingsController", {
                 newInklingCancelButtonTapped: "activateMyInklingsView",
                 newInklingDoneButtonTapped: "createInkling",
                 inklingInviteesDoneButtonTapped: "activateNewInklingViewPop",
-                allFriendsInviteesDoneButtonTapped: "activateInklingInviteesViewPop",
                 newInklingInvitedFriendsBackButtonTapped: "activateNewInklingViewPop",
                 newInklingInvitedGroupsButtonTapped: "toggleNewInklingInvitedGroupsPanel",
                 activate: "hideMyInklingsTabBadge",
@@ -61,7 +60,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             newInklingView: {
-                newInklingInviteesTapped: "activateInklingInviteesView",
+                newInklingInviteesTapped: "activateNewInklingInvitedFriendsView",
                 selectedGroupsShareSettingTapped: "selectSelectedGroupsShareSetting",
                 groupShareSettingTapped: "toggleGroupShareSetting",
                 noOneShareSettingTapped: "selectNoOneShareSetting",
@@ -69,7 +68,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             newInklingInvitedFriendsView: {
-                memberSelectionButtonTapped: "toggleSelectionButton"
+                memberSelectionButtonTapped: "toggleMemberSelectionButton"
             },
             
             inklingInvitationsPanel: {
@@ -80,7 +79,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             },
             
             newInklingInvitedGroupsPanel: {
-                groupSelectionButtonTapped: "toggleSelectionButton"
+                groupSelectionButtonTapped: "toggleGroupSelectionButton"
             }
         }
     },
@@ -144,8 +143,8 @@ Ext.define("inkle.controller.MyInklingsController", {
 	activateNewInklingView: function() {
 		// Show appropriate buttons
 		this.getNewInklingButton().hide();
-		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
-		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
+		//this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		//this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 		this.getInklingInvitationsButton().hide();
 		this.getNewInklingCancelButton().show();
 		this.getNewInklingDoneButton().show();
@@ -213,33 +212,34 @@ Ext.define("inkle.controller.MyInklingsController", {
     },
     
     // Activates the inkling invitees view
-	activateInklingInviteesView: function() {
-		// Show appropriate buttons
-		this.getNewInklingCancelButton().hide();
-		this.getNewInklingDoneButton().hide();
-		this.getNewInklingInvitedFriendsBackButton().show();
-		this.getNewInklingInvitedGroupsButton().show();
-		
-		// Update the toolbar title
-		this.getMyInklingsViewToolbar().setTitle("Invite Friends");
-		
-		this.getMyInklingsView().push({
-        	xtype: "newInklingInvitedFriendsView",
-        	data: {
-        		inklingId: this.getNewInklingView().getData()["inklingId"]
-        	}
+    activateNewInklingInvitedFriendsView: function() {
+        // Show appropriate buttons
+        this.getNewInklingCancelButton().hide();
+        this.getNewInklingDoneButton().hide();
+        this.getNewInklingInvitedFriendsBackButton().show();
+        this.getNewInklingInvitedGroupsButton().show();
+
+        // Update the toolbar title
+        this.getMyInklingsViewToolbar().setTitle("Invites");
+
+        // Push the invited friends view
+        this.getMyInklingsView().push({
+            xtype: "newInklingInvitedFriendsView",
+            data: {
+                inklingId: this.getNewInklingView().getData()["inklingId"]
+            }
         });
-        
+
+        // Load the invited friends list
         var newInklingInvitedFriendsStore = this.getNewInklingInvitedFriendsList().getStore();
-		
-		newInklingInvitedFriendsStore.setProxy({
-			extraParams: {
-				inklingId: this.getNewInklingView().getData()["inklingId"]
-			}
-		});
-		newInklingInvitedFriendsStore.load();
+        newInklingInvitedFriendsStore.setProxy({
+            extraParams: {
+                inklingId: this.getNewInklingView().getData()["inklingId"]
+            }
+        });
+        newInklingInvitedFriendsStore.load();
     },
-    
+
     /************/
     // Commands //
     /************/
@@ -249,13 +249,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 	    var inklingInvitationsPanel = this.getInklingInvitationsPanel();
 	    if (inklingInvitationsPanel.getHidden()) {
 	    	inklingInvitationsPanel.showBy(this.getInklingInvitationsButton());
-	    	this.getInklingInvitationsButton().removeCls("toolbarButton toolbarButtonEnvelope");
-	    	this.getInklingInvitationsButton().setCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+	    	//this.getInklingInvitationsButton().removeCls("toolbarButton toolbarButtonEnvelope");
+	    	//this.getInklingInvitationsButton().setCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
     	}
     	else {
     		inklingInvitationsPanel.hide();
-    		this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
-    		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
+    		//this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+    		//this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
     	}
     },
     
@@ -280,78 +280,120 @@ Ext.define("inkle.controller.MyInklingsController", {
 			this.activateMyInklingsView();
 		}
     },
-    
-    // Toggles the state of the inputted selection button and (un)invites the appropriate friend(s)
-	toggleSelectionButton: function(selectionButton, itemId, itemType) {	
-		// Create a variable to hold a comma-separated string of selected groups
-		var selectedGroupIds = "";
-		
-		// If the inputted selection button is selected, deselect it
-		if (selectionButton.hasCls("selected")) {
-			selectionButton.set({
-				"src": "resources/images/deselected.png"
-			});
 
-			if (itemType == "Group") {
-				var url = inkle.app.baseUrl + "/uninviteGroup/";
-			
-				// Create the comma-separated string of selected groups
-				var groupSelectionButtons = Ext.query("#newInklingInvitedGroupsList .selectionButton");
-				for (var i = 0; i < groupSelectionButtons.length; i++) {
-					var groupSelectionButton = Ext.fly(groupSelectionButtons[i]);
-					if (groupSelectionButton.hasCls("selected")) {
-						selectedGroupIds = selectedGroupIds + groupSelectionButton.getAttribute("groupId") + ",";
-					}
-				}
-			}
-			else if (itemType == "Member") {
-				var url = inkle.app.baseUrl + "/uninviteMember/";
-			}
 
-            selectionButton.removeCls("selected");
-		}
-		
-		// Otherwise, select the inputted selection button
-		else {
-			selectionButton.set({
-				"src": "resources/images/selected.png"
-			});
-			
-			if (itemType == "Group") {
-				var url = inkle.app.baseUrl + "/inviteGroup/";
-			}
-			else if (itemType == "Member") {
-				var url = inkle.app.baseUrl + "/inviteMember/";
-			}
+    /* Toggles the state of the inputted member selection button and (un)invites the corresponding member */
+    toggleMemberSelectionButton: function(tappedSelectionButton) {
+        // Only do anything if the invited groups panel is hidden
+        if (this.getNewInklingInvitedGroupsPanel().getHidden()) {
+            // Determine whether to invite or uninvite the tapped member
+            var url;
+            if (tappedSelectionButton.hasCls("selected")) {
+                url = inkle.app.baseUrl + "/uninviteMember/";
+            }
+            else {
+                url = inkle.app.baseUrl + "/inviteMember/";
+            }
 
-            selectionButton.addCls("selected");
-		}
-		
-		var invitedGroupsPanel = this.getNewInklingInvitedGroupsPanel();
-		if ((itemType == "Member") && (!invitedGroupsPanel.getHidden())) {
-			invitedGroupsPanel.hide();
-		}
-		
-		// (Un)invite the appropriate friend(s)
-		var newInklingInvitedFriendsList = this.getNewInklingInvitedFriendsList();
-		Ext.Ajax.request({
-			url: url,
-			params: {
-				itemId: itemId,
-				inklingId: this.getNewInklingView().getData()["inklingId"],
-				selectedGroupIds: selectedGroupIds
-			},
-			success: function(response) {
-				if (itemType == "Group") {
-					newInklingInvitedFriendsList.getStore().load();
-				}
-			},
-			failure: function(response) {
-				console.log(response.responseText);
-			}
-		});
-	},
-	
+            // (Un)invite the tapped member
+            Ext.Ajax.request({
+                url: url,
+                headers : { "cache-control": "no-cache" },
+                params: {
+                    memberId: tappedSelectionButton.parent(".member").getAttribute("data-memberId"),
+                    inklingId: this.getNewInklingView().getData()["inklingId"]
+                },
+
+                success: function(response) {
+                    // Update the selection button's image source
+                    if (tappedSelectionButton.hasCls("selected")) {
+                        tappedSelectionButton.set({
+                            "src": "resources/images/deselected.png"
+                        });
+                    }
+                    else {
+                        tappedSelectionButton.set({
+                            "src": "resources/images/selected.png"
+                        });
+                    }
+
+                    // Toggle the selection button's state
+                    tappedSelectionButton.toggleCls("selected");
+                },
+
+                failure: function(response) {
+                    Ext.message("Error", response.responseText);
+                }, 
+
+                scope: this
+            });
+        }
+    },
+
+
+    /* Toggles the state of the inputted group selection button and (un)invites the corresponding group */
+    toggleGroupSelectionButton: function(tappedSelectionButton) {
+        // Determine whether to invite or uninvite the tapped group
+        var url;
+        var selectedGroupIds = "";
+        var x = new Array();
+        if (tappedSelectionButton.hasCls("selected")) {
+            url = inkle.app.baseUrl + "/uninviteGroup/";
+
+            // Create a comma-separated string of the selected groups
+            var groupSelectionButtons = Ext.query("#newInklingInvitedGroupsList .selectionButton");
+            for (var i = 0; i < groupSelectionButtons.length; i++) {
+                var groupSelectionButton = Ext.fly(groupSelectionButtons[i]);
+                if ((groupSelectionButton.hasCls("selected")) && (tappedSelectionButton != groupSelectionButton)) {
+                    x.push(groupSelectionButton.parent(".group").getAttribute("data-groupId"));
+                    selectedGroupIds = selectedGroupIds + groupSelectionButton.parent(".group").getAttribute("data-groupId") + ",";
+                }
+            }
+        }
+        else {
+            url = inkle.app.baseUrl + "/inviteGroup/";
+        }
+
+        // (Un)invite the tapped group
+        var newInklingInvitedFriendsList = this.getNewInklingInvitedFriendsList();
+        Ext.Ajax.request({
+            url: url,
+            headers : { "cache-control": "no-cache" },
+            params: {
+                groupId: tappedSelectionButton.parent(".group").getAttribute("data-groupId"),
+                inklingId: this.getNewInklingView().getData()["inklingId"],
+                selectedGroupIds: selectedGroupIds
+            },
+
+            success: function(response) {
+                // Update the selection button's image source
+                if (tappedSelectionButton.hasCls("selected")) {
+                    tappedSelectionButton.set({
+                        "src": "resources/images/deselected.png"
+                    });
+                }
+                else {
+                    tappedSelectionButton.set({
+                        "src": "resources/images/selected.png"
+                    });
+                }
+
+                // Toggle the selection button's state
+                tappedSelectionButton.toggleCls("selected");
+
+                // Update the invited friends list
+                this.getNewInklingInvitedFriendsList().getStore().load();
+            },
+
+            failure: function(response) {
+                Ext.message("Error", response.responseText);
+            },
+
+            scope: this
+        });
+    },
+
+
 	// Toggles the visibility of the new inkling invited groups panel
 	toggleNewInklingInvitedGroupsPanel: function() {
 		// Get the new inkling invited groups panel
@@ -414,8 +456,8 @@ Ext.define("inkle.controller.MyInklingsController", {
         });
         
         this.getInklingInvitationsPanel().hide();
-        this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
-		this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
+        //this.getInklingInvitationsButton().removeCls("toolbarButtonPressed toolbarButtonEnvelopePressed");
+		//this.getInklingInvitationsButton().setCls("toolbarButton toolbarButtonEnvelope");
 	},
 	
 	hideMyInklingsTabBadge: function() {

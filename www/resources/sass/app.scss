@@ -309,8 +309,7 @@ $badge-bg-gradient: "matte";
 
 .toolbarButtonEnvelopePressed {
     background: url("../images/toolbarButtons/envelopePressed.png") !important;
-    background-color: $darkestGreen !important;
-    box-shadow: inset 0px 5px 5px #002200 !important;
+    height: 33px !important;
     width: 45px !important;
 }
 
@@ -321,8 +320,6 @@ $badge-bg-gradient: "matte";
 
 .toolbarButtonFeedPressed {
     background: url("../images/toolbarButtons/feedPressed.png") !important;
-    background-color: $darkestGreen !important;
-    box-shadow: inset 0px 5px 5px #002200 !important;
     width: 45px !important;
 }
 
@@ -333,8 +330,6 @@ $badge-bg-gradient: "matte";
 }
 
 .toolbarButtonPressed {
-    /*width: 33px;
-    height: 33px;*/
     background-color: $darkestGreen !important;
     box-shadow: inset 0px 5px 5px #002200 !important;
 }
@@ -425,7 +420,7 @@ $badge-bg-gradient: "matte";
 
 .inklingsList .disclosureArrow {
     position: absolute;
-    top: 22px;
+    bottom: 23px;
     right: 7px;
 }
 
@@ -512,7 +507,7 @@ $badge-bg-gradient: "matte";
 
 .inklingInvitationsList .disclosureArrow {
     position: absolute;
-    top: 22px;
+    bottom: 23px;
     right: 7px;
 }
 
@@ -558,7 +553,7 @@ $badge-bg-gradient: "matte";
 
 .groupsListMainContent .disclosureArrow {
     position: absolute;
-    top: 22px !important;
+    bottom: 23px !important;
     right: 7px !important;
 }
 
@@ -666,7 +661,7 @@ $badge-bg-gradient: "matte";
 
 .membersList .disclosureArrow {
     position: absolute;
-    top: 22px;
+    bottom: 23px;
     right: 7px;
 }
 
@@ -1110,6 +1105,17 @@ $badge-bg-gradient: "matte";
 /**********************/
 /*  NEW INKLING VIEW  */
 /**********************/
+.x-form-fieldset-title {
+    color: $mediumBlue;
+    margin-left: 1px;
+}
+
+.newInklingViewSectionTitle {
+    color: $mediumBlue;
+    margin-left: 2px;
+    font-weight: bold;
+}
+
 /* New inkling invites privacy form */
 /* #newInklingPrivacyForm .selectedGroupsHeader, #newInklingPrivacyForm .noOne,  #newInklingPrivacyForm .forwarding, */
 .shareSettingsForm .selectedGroupsHeader, .shareSettingsForm .noOne, .shareSettingsForm {
