@@ -2079,6 +2079,14 @@ def remove_friend_view(request):
 
     # Remove the inputted member from the logged-in member's friends list
     request.user.get_profile().friends.remove(m)
+    
+    # Remove the logged-in member from the inputted member's groups
+    for group in m.group_set.all():
+        if (request.user in group.members.all()):
+            group.members.remove(request.user)
+
+    # Remove the logged-in member from the inputted member's friends list
+    m.get_profile().friends.remove(request.user)
 
     return HttpResponse()
 
