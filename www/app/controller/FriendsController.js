@@ -250,7 +250,7 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Add Friend",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                
+                //Need to change relationship badge to "pending"
                 /*var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
 
         		relationshipTag.set({
@@ -278,6 +278,27 @@ Ext.define("inkle.controller.FriendsController", {
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.inviteFriend(facebookId);
+                
+                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
+                addFriendsActionSheet.hide();
+                addFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var removeFriend = {
+            text: "Remove friend",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/removeFriend/",
+                    params: {
+                        memberId: userId,
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.error);
+                    }
+                });
+                //Need to hide relationship badge
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -315,6 +336,16 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Revoke my friend request",
             cls: "actionSheetCancelButton",
             handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/revokeRequest/",
+                    params: {
+                        userId: userId,
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.error);
+                    }
+                });
+                //Need to remove relationship badge
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -333,10 +364,11 @@ Ext.define("inkle.controller.FriendsController", {
             scope: this
         };
         
+        //Add the appropriate buttons to the action sheet item list
         var actionSheetItems = [];
         if (userId != "none") { //The person is an inkle user
             if (relationship == "friend") {
-                actionSheetItems = [cancel]; //Should you be able to revoke friendship?
+                actionSheetItems = [removeFriend, cancel];
             }
             else if (relationship == "pending") {
                 actionSheetItems = [revokeRequest, cancel];
