@@ -2007,7 +2007,8 @@ def respond_to_request_view(request):
         raise Http404()
 
     # Get the friend request
-    friend_request = FriendRequest.objects.get(sender = m, receiver = request.user)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    friend_request = FriendRequest.objects.get(sender = m, receiver = request.user, status = "pending")
 
     # Add the friendship if the logged in member accepted the request
     if (response == "accept"):
@@ -2038,7 +2039,8 @@ def revoke_request_view(request):
         raise Http404()
 
     # Get the friend request
-    friend_request = FriendRequest.objects.get(sender = request.user, receiver = m)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    friend_request = FriendRequest.objects.get(sender = request.user, receiver = m, status = "pending")
     
     # Set the status as "revoked""
     friend_request.status = "revoked"

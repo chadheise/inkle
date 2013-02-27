@@ -307,7 +307,7 @@ Ext.define("inkle.controller.FriendsController", {
             scope: this
         };
         var acceptRequest = {
-            text: "Accept",
+            text: "Accept friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "accept");
@@ -320,7 +320,7 @@ Ext.define("inkle.controller.FriendsController", {
             scope: this
         };
         var ignoreRequest = {
-            text: "Ignore",
+            text: "Ignore friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "ignore");
@@ -334,7 +334,7 @@ Ext.define("inkle.controller.FriendsController", {
         };
         var revokeRequest = {
             text: "Revoke my friend request",
-            cls: "actionSheetCancelButton",
+            cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 Ext.Ajax.request({
                     url: inkle.app.baseUrl + "/revokeRequest/",
