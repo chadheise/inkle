@@ -1991,7 +1991,6 @@ def add_friend_view(request):
 
     return HttpResponse()
 
-
 @csrf_exempt
 @login_required
 def respond_to_request_view(request):
@@ -2003,8 +2002,8 @@ def respond_to_request_view(request):
     except:
         raise Http404()
 
-    # Make sure the two members are not already friends and that the friend request actually exists
-    if ((m in request.user.get_profile().friends.all()) or (request.user.get_profile().has_pending_friend_request_to(m))):
+    # Make sure the two members are not already friends, there is not already a reciprocal friend request, and the friend request actually exists
+    if ((m in request.user.get_profile().friends.all()) or (request.user.get_profile().has_pending_friend_request_to(m)) or (not m.get_profile().has_pending_friend_request_to(request.user))):
         raise Http404()
 
     # Get the friend request
@@ -2024,6 +2023,38 @@ def respond_to_request_view(request):
     # Return the number of pending friend requests for the logged-in member
     return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
 
+@csrf_exempt
+@login_required
+def revoke_request_view(request):
+    """Revokes the logged-in member's friend request to the inputted memeber."""
+    # Get the member who sent the request and the logged-in member's response to it
+    try:
+        m = User.objects.get(pk = request.POST["userId"])
+    except:
+        raise Http404()
+
+    # Make sure the friend request actually exists
+    if (not request.user.get_profile().has_pending_friend_request_to(m)):
+        raise Http404()
+
+    # Get the friend request
+    friend_request = FriendRequest.objects.get(sender = request.user, receiver = m)
+    
+    # Set the status as "revoked""
+    friend_request.status = "revoked"
+
+    # Save the updated friend request
+    friend_request.save()
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": True
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
+
+    # Return the number of pending friend requests for the logged-in member
+    return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
 
 @csrf_exempt
 @login_required

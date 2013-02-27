@@ -55,6 +55,7 @@ urlpatterns = patterns(
     (r"^peopleSearch/$", "people_search_view"),
     (r"^addFriend/$", "add_friend_view"),
     (r"^respondToRequest/$", "respond_to_request_view"),
+    (r"^revokeRequest/$", "revoke_request_view"),
     (r"^removeFriend/$", "remove_friend_view"),
     (r"^deleteGroup/$", "delete_group_view"),
     (r"^groupMembers/$", "group_members_view"),
