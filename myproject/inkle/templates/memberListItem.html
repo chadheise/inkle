@@ -56,16 +56,17 @@
 	    <input class="ignoreRequestButton" type="button" value="Ignore" />
 	{% endif %}
 	
+	<span id="addFriendRelationshipTag{{m.id}}">
 	{% if m.is_friend %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Friend</span>
+		<span class="relationship">Friend</span>
 	{% endif %}
 	{% if m.is_pending %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Pending</span>
+		<span class="relationship">Pending</span>
 	{% endif %}
 	{% if m.is_requested %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Requested</span>
+		<span class="relationship">Requested</span>
 	{% endif %}
-	<span id="addFriendRelationshipTag{{m.id}}"></span>
+	</span>
 	{% if include_facebook_icon %}
 		{%if m.get_profile.facebook_id %}
 			<img class="facebookIcon" src="resources/images/facebookIcon.png">

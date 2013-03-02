@@ -64,6 +64,8 @@ Ext.application({
 	//baseUrl: "http://chads-macbook-pro.local:8000",
 	baseUrl: "http://127.0.0.1:8000",
 	
+	addFriendsTimeStamp: "",
+	
     launch: function() {
         console.log("launching app");
 
