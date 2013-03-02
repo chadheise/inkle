@@ -258,6 +258,7 @@ class UserProfile(models.Model):
 
     # Metadata
     date_last_modified = models.DateTimeField(auto_now = True)
+    time_last_people_search = models.DateTimeField(auto_now = False, null = True)
 
     # Class methods
     def __unicode__(self):

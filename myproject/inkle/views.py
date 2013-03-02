@@ -1748,14 +1748,19 @@ def invite_facebook_friends_view(request):
 @login_required
 def people_search_view(request):
     """Returns a list of member's who match the inputted query."""
-    print "people search view"
     # Get the search query
     try:
         query = request.POST["query"]
         fbAccessToken = request.POST["fbAccessToken"]
+        timeCalled = request.POST["timeCalled"]
     except:
         raise Http404()
-    print "check 1"
+
+    startTime = datetime.datetime.now()
+    print "START: " + str(startTime) + " - " + str(query)
+    request.user.get_profile().time_last_people_search = startTime
+    request.user.get_profile().save();
+
     # Split the query into words
     query_split = query.split()
 
@@ -1768,7 +1773,7 @@ def people_search_view(request):
     # If the query is more than two words long, return no results
     else:
         members = []
-    print "check 2"
+
     fbData = {"data":[]} #Create empty dictionary of fb data to prevent errors when trying to loop over fb results if the user is not on fb
     if fbAccessToken: #Make call to facebook to query the users friends if an accessToken was given
         fbUrl = "https://graph.facebook.com/fql?q="
@@ -1793,7 +1798,7 @@ def people_search_view(request):
             except Exception, e:
                 print "except2: " + str(e)
             fbData = simplejson.loads(fbResponse)      
-    print "check 3"
+
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
     inkleFriends = [] #Users of inkle who are friends on inkle with the user
@@ -1819,7 +1824,7 @@ def people_search_view(request):
             inkleRequested.append(m)
         else:  #If the member matches the search query but is not friends with the user and a request is not pending
             inkleOther.append(m)
-    print "check 4"
+
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Use try block in case they have authenticated the inkle app on facebook but
@@ -1861,7 +1866,7 @@ def people_search_view(request):
             personData["is_requested"] = False
             personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
-    print "check 5"
+
     searchResults = []
     if inkleFriends:
         searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
@@ -1875,15 +1880,7 @@ def people_search_view(request):
         searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
-    print "check 6"
-    print "inkleFriends " + str(inkleFriends)
-    print "inklePending " + str(inklePending)
-    print "inkleRequested " + str(inkleRequested)
-    print "facebookInkle " + str(facebookInkle)
-    print "facebookNotInkle " + str(facebookNotInkle)
-    print inkleOther
-    print "searchResults " + str(searchResults)
-    print len(searchResults)
+
     i = 0
     response_members = []
     for m in searchResults:
@@ -1896,8 +1893,6 @@ def people_search_view(request):
             #"member" : member,
             })
         except:
-            print "this error"
-            print html
             raise Http404()
 
         try: #inkle user
@@ -1930,9 +1925,20 @@ def people_search_view(request):
             "id": userId,
             "facebook_id": facebook_id,
             "relationship": relationship,
-            "html": html
+            "html": html,
+            "timeCalled": timeCalled,
         })
-    print "check 7"
+        
+    #print "searchResults " + str(searchResults)
+    print len(searchResults)
+    now = datetime.datetime.now()
+    print "    now: " + str(now) + " - " + query
+    print " stored: " + str(request.user.get_profile().time_last_people_search)  + " - " + query
+    if now < request.user.get_profile().time_last_people_search:
+        print "OLD"  + " - " + query
+    else:
+        print "NEW"  + " - " + query
+    print "STOP: " + str(datetime.datetime.now()) + " - " + str(query)
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")

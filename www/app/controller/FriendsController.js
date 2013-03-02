@@ -250,13 +250,6 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Add Friend",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                //Need to change relationship badge to "pending"
-                /*var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-
-        		relationshipTag.set({
-        			"value" : "Pending"
-        		});*/
-
         		Ext.Ajax.request({
             		url: inkle.app.baseUrl + "/addFriend/",
             		params: {
@@ -266,6 +259,10 @@ Ext.define("inkle.controller.FriendsController", {
                 		Ext.Msg.alert("Error", response.responseText);
                 	}
         		});
+                
+                //Change relationship badge to "Pending"
+                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                relationshipTag.setHtml('<span class="relationship">Pending</span>');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -298,7 +295,15 @@ Ext.define("inkle.controller.FriendsController", {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
-                //Need to hide relationship badge
+                
+                alert(userId);
+                //Hide relationship tag
+                //var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                alert('yea!');
+                alert(Ext.get("addFriendRelationshipTag"+ userId).child('span').getHtml());
+                //alert(Ext.fly("addFriendRelationshipTag"+ userId).child("relationship").getHtml());
+                //Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span>Hi</span>');
+                //alert(Ext.fly("addFriendRelationshipTag"+ userId).getHtml());
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -311,7 +316,10 @@ Ext.define("inkle.controller.FriendsController", {
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "accept");
-                //Need to change relationship badge to "friend"
+                
+                //Change relationship badge to "Friend"
+                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                relationshipTag.setHtml('<span class="relationship">Friend</span>');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -324,7 +332,10 @@ Ext.define("inkle.controller.FriendsController", {
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
                 this.respondToRequest(userId, "ignore");
-                //Need to remove relationship badge
+                
+                //Remove relationship badge
+                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                relationshipTag.setHtml('');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -345,7 +356,10 @@ Ext.define("inkle.controller.FriendsController", {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
-                //Need to remove relationship badge
+                
+                //Remove relationship badge
+                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                relationshipTag.setHtml('');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -739,15 +753,21 @@ Ext.define("inkle.controller.FriendsController", {
             // the user isn't logged in to Facebook.
           }
          });
-
+        
+        //var myVar = addFriendsStore.getProxy();
+        //alert(myVar);
+        //myVar.abortRequest(); //Abort a previous proxy Request
+        var currentTime = Date.now()
  		addFriendsStore.setProxy({
    		    extraParams: {
    			    query: query,
-   				fbAccessToken: fbAccessToken
+   				fbAccessToken: fbAccessToken,
+   				timeCalled: currentTime,
    			}
    		});
 		
 		addFriendsStore.load();
+		//inkle.app.addFriendsTimeStamp = Date.now();
 	},
 	
 	addFriend: function(memberId) {
