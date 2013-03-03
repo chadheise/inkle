@@ -1,5 +1,5 @@
 Ext.define("inkle.view.NewInkling", {
-    extend: "Ext.form.Panel",
+    extend: "Ext.navigation.View",
 
     xtype: "newInklingView",
 
@@ -9,88 +9,161 @@ Ext.define("inkle.view.NewInkling", {
     ],
 
     config: {
-        scrollable: true,
+        scrollable: false,
+        navigationBar: false,
 
         items: [
-            // Basic info form
+            // Top toolbar
             {
-                xtype: "fieldset",
-                margin: "-30px -10px 10px -10px",
-                title: "What are the details?",
-
+                xtype: "toolbar",
+                id: "newInklingViewToolbar",
+                docked: "top",
+                title: "New Inkling",
                 items: [
                     {
-                        xtype: "textfield",
-                        name: "location",
-                        label: "Location",
-                        placeHolder: "Optional",
-                        maxLength: 50
+                        xtype: "button",
+                        id: "newInklingCancelButton",
+                        ui: "action",
+                        text: "Cancel"
                     },
                     {
-                        xtype: "datepickerfield",
-                        name: "date",
-                        label: "Date",
-                        placeHolder: "Optional",
-                        minValue: new Date()
+                        xtype: "button",
+                        id: "newInklingInvitedFriendsBackButton",
+                        ui: "back",
+                        text: "New Inkling",
+                        hidden: true
+                    },
+                    { xtype: "spacer" },
+                    {
+                        xtype: "button",
+                        id: "newInklingDoneButton",
+                        ui: "action",
+                        text: "Done"
                     },
                     {
-                        xtype: "textfield",
-                        name: "time",
-                        label: "Time",
-                        placeHolder: "Optional",
-                        maxLength: 50
-                    },
-                    {
-                        xtype: "textareafield",
-                        name: "notes",
-                        label: "Notes",
-                        placeHolder: "Optional",
-                        maxLength: 150
+                        xtype: "button",
+                        id: "newInklingInvitedGroupsButton",
+                        ui: "action",
+                        text: "Groups",
+                        hidden: true
                     }
                 ]
             },
 
-            // Invited friends
             {
-                xtype: "container",
-                title: "Who is invited?",
-                margin: "0px -10px 10px -10px",
-                html: [
-                    "<p class='newInklingViewSectionTitle'>Who is invited?</p>",
-                    "<div id='newInklingViewInvitees'>",
-                        "<p id='numInvitedFriends'>0 friends invited</p>",
-                        "<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />",
-                    "</div>"
-                ].join("")
-            },
+                xtype: "formpanel",
+                items: [
+                    // Basic info form
+                    {
+                        xtype: "fieldset",
+                        id: "newInklingBasicInfoForm",
+                        margin: "-30px -10px 10px -10px",
+                        title: "What are the details?",
+
+                        items: [
+                            {
+                                xtype: "textfield",
+                                id: "newInklingLocationTextField",
+                                name: "location",
+                                label: "Location",
+                                placeHolder: "Optional",
+                                maxLength: 50
+                            },
+                            {
+                                xtype: "datepickerfield",
+                                id: "newInklingDatePicker",
+                                name: "date",
+                                label: "Date",
+                                placeHolder: "Optional",
+                                minValue: new Date()
+                            },
+                            {
+                                xtype: "textfield",
+                                id: "newInklingTimeTextField",
+                                name: "time",
+                                label: "Time",
+                                placeHolder: "Optional",
+                                maxLength: 50
+                            },
+                            {
+                                xtype: "textareafield",
+                                id: "newInklingNotesTextArea",
+                                name: "notes",
+                                label: "Notes",
+                                placeHolder: "Optional",
+                                maxLength: 150
+                            }
+                        ]
+                    },
+
+                    // Invited friends
+                    {
+                        xtype: "container",
+                        //top: 200,
+                        title: "Who is invited?",
+                        margin: "0px -10px 10px -10px",
+                        html: [
+                            "<p class='newInklingViewSectionTitle'>Who is invited?</p>",
+                            "<div id='newInklingViewInvitedFriends'>",
+                                "<p><span id='numInvitedFriends'>0</span> friend<span id='numInvitedFriendsPlural'>s</span> invited</p>",
+                                "<img class='disclosureArrow' src='resources/images/disclosureArrow.png' />",
+                            "</div>"
+                        ].join("")
+                    },
             
-            // Share settings
-            {
-                xtype: "container",
-                margin: "0px 0px 0px -10px",
-                html: [
-                    "<div>",
-                        "<p class='newInklingViewSectionTitle'>Who else is this shared with?</p>",
-                    "</div>"
-                   ].join("")
-            },
-            {
-                xtype: "htmlcontainer",
-                id: "newInklingShareOptions",
-                url: inkle.app.baseUrl + "/shareSettingsForm/"
-            },
+                    // Share settings
+                    {
+                        xtype: "container",
+                        //top: 300,
+                        margin: "0px 0px 0px -10px",
+                        html: [
+                            "<div>",
+                                "<p class='newInklingViewSectionTitle'>Who else is this shared with?</p>",
+                            "</div>"
+                           ].join("")
+                    },
+                    {
+                        xtype: "htmlcontainer",
+                        //top: 400,
+                        id: "newInklingShareOptions",
+                        url: inkle.app.baseUrl + "/shareSettingsForm/"
+                    }
+                ]
+            }
         ],
 
         listeners: [
+            // Toolbar buttons
+            {
+                delegate: "#newInklingDoneButton",
+                event: "tap",
+                fn: "onNewInklingDoneButtonTap"
+            },
+            {
+                delegate: "#newInklingCancelButton",
+                event: "tap",
+                fn: "onNewInklingCancelButtonTap"
+            },
+            {
+                delegate: "#newInklingInvitedFriendsBackButton",
+                event: "tap",
+                fn: "onNewInklingInvitedFriendsBackButtonTap"
+            },
+            {
+                delegate: "#newInklingInvitedGroupsButton",
+                event: "tap",
+                fn: "onNewInklingInvitedGroupsButtonTap"
+            },
+
             // Invited friends
             {
                 event: "tap",
                 element: "element",
-                delegate: "#newInklingViewInvitees",
-                fn: "onNewInklingViewInviteesTap"
+                delegate: "#newInklingViewInvitedFriends",
+                fn: "onNewInklingViewInvitedFriendsTap"
             },
-            
-            // Share Settings
+
+            // Share settings
             {
                 event: "tap",
                 element: "element",
@@ -103,26 +176,45 @@ Ext.define("inkle.view.NewInkling", {
                 delegate: "#newInklingShareOptions .selectedGroupsShareSetting",
                 fn: "onSelectedGroupsShareSettingTap"
             },
-        	{
-				event: "tap",
-				element: "element",
-            	delegate: "#newInklingShareOptions .groupShareSetting",
-            	fn: "onGroupShareSettingTap"
-        	},
-        	{
-				event: "tap",
-				element: "element",
-            	delegate: "#newInklingShareOptions .noOneShareSetting",
-            	fn: "onNoOneShareSettingTap"
-        	}
+            {
+                event: "tap",
+                element: "element",
+                delegate: "#newInklingShareOptions .groupShareSetting",
+                fn: "onGroupShareSettingTap"
+            },
+            {
+                event: "tap",
+                element: "element",
+                delegate: "#newInklingShareOptions .noOneShareSetting",
+                fn: "onNoOneShareSettingTap"
+            }
         ]
     },
 
     /* Event firings */
-    onNewInklingViewInviteesTap: function() {
-        this.fireEvent("newInklingInviteesTapped");
+    // Toolbar buttons
+    onNewInklingDoneButtonTap: function() {
+        this.fireEvent("newInklingDoneButtonTapped");
     },
 
+    onNewInklingCancelButtonTap: function() {
+        this.fireEvent("newInklingCancelButtonTapped", "newInklingView");
+    },
+
+    onNewInklingInvitedFriendsBackButtonTap: function() {
+    	this.fireEvent("newInklingInvitedFriendsBackButtonTapped", "newInklingInvitedFriendsView");
+    },
+
+    onNewInklingInvitedGroupsButtonTap: function() {
+    	this.fireEvent("newInklingInvitedGroupsButtonTapped");
+    },
+
+    // Invited friends
+    onNewInklingViewInvitedFriendsTap: function() {
+        this.fireEvent("newInklingInvitedFriendsTapped");
+    },
+
+    // Share settings
     onSelectedGroupsShareSettingTap: function(event, target) {
         var selectionButton = Ext.fly(target);
         this.fireEvent("selectedGroupsShareSettingTapped", selectionButton);
@@ -141,5 +233,5 @@ Ext.define("inkle.view.NewInkling", {
     onForwardingShareSettingTap: function(event, target) {
         var selectionButton = Ext.fly(target);
         this.fireEvent("forwardingShareSettingTapped", selectionButton);
-    },
+    }
 });

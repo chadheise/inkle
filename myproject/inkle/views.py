@@ -602,11 +602,20 @@ def groups_panel_view(request):
         raise Http404()
 
     # Get the current inkling if we are in the invites view
+    """
     if (not auto_set_groups_as_selected):
         try:
             inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         except:
             raise Http404()
+    """
+    
+    # Get the selected groups (if provided)
+    try:
+        selected_group_ids = request.POST["selectedGroupIds"]
+        selected_group_ids = [int(x) for x in selected_group_ids.split(",")]
+    except:
+        selected_group_ids = None
 
     # Create a list to hold the response data
     response_groups = []
@@ -625,13 +634,15 @@ def groups_panel_view(request):
     }
 
     # Determine if the "Not Grouped" group should be selected
+    """
     not_grouped_group["selected"] = True
     if (not auto_set_groups_as_selected):
         for m in not_grouped_members:
             if (not inkling.member_has_pending_invitation(m)):
                 not_grouped_group["selected"] = False
                 break
-
+    """
+    
     # Add the "Not Grouped" group to the response list
     response_groups.append({
         "html": get_group_list_item_panel_html(not_grouped_group, not_grouped_members)
@@ -639,12 +650,15 @@ def groups_panel_view(request):
 
     # Get the HTML for the logged-in member's groups
     for g in groups:
+        g.selected = ((selected_group_ids != None) and (g.id in selected_group_ids))
+        """
         g.selected = True
         if (not auto_set_groups_as_selected):
             for m in g.members.all():
                 if (not inkling.member_has_pending_invitation(m)):
                     g.selected = False
                     break
+        """
 
         response_groups.append({
             "id": g.id,
@@ -1324,16 +1338,59 @@ def inkling_invitations_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-# TODO: I think this can now be removed since invitations have been modeled differently
 @csrf_exempt
 @login_required
 def create_inkling_view(request):
-    """Creates an empty inkling."""
-    # Create a new inkling
+    """Creates a new inkling."""
+    # Get the POST data
+    try:
+        location = request.POST["location"]
+        date = request.POST["date"]
+        time = request.POST["time"]
+        notes = request.POST["notes"]
+        invited_members = request.POST["invitedMemberIds"]
+        if (invited_members):
+            invited_members = [User.objects.get(pk = int(member_id)) for member_id in invited_members.split(",")]
+        # TODO: add shared_with permissions
+    except:
+        raise Http404()
+
+    # Create the new inkling
     inkling = Inkling.objects.create(creator = request.user)
 
-    # Return the new inkling's ID
-    return HttpResponse(inkling.id)
+    # Update the inkling's information
+    if (location):
+        inkling.location = location
+    if (date):
+        date_split = date.split("T")[0].split("-")
+        date = datetime.date(month = int(date_split[1]), day = int(date_split[2]), year = int(date_split[0]))
+        inkling.date = date
+    if (time):
+        inkling.time = time
+    if (notes):
+        inkling.notes = notes
+
+    # Save the inkling
+    inkling.save()
+
+    # Add the inkling to the logged-in member's inklings
+    request.user.get_profile().inklings.add(inkling)
+
+    # Invite the appropriate members to the inkling
+    for m in invited_members:
+        # Make sure the inputted member is a friend of the logged-in member
+        if (m not in request.user.get_profile().friends.all()):
+            raise Http404()
+
+        # Invite the inputted member to the new inkling
+        InklingInvitation.objects.create(sender = request.user, receiver = m, inkling = inkling)
+
+    # Create and return a JSON object
+    response = simplejson.dumps({
+        "success": True
+    })
+
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @csrf_exempt
@@ -1376,57 +1433,6 @@ def update_inkling_view(request):
     return HttpResponse()
 
 
-# TODO: fix this; invites should not occur until the inkling is actually created; therefore, this should no longer work...
-@csrf_exempt
-@login_required
-def num_invited_friends_view(request):
-    """Returns the number of friends who have been invited to the inputted inkling."""
-    # Get the current inkling
-    try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    # Get the number of friends who have been invited to this inkling by the logged-in member
-    num_invited_friends = InklingInvitation.objects.filter(sender = request.user, inkling = inkling).count()
-
-    return HttpResponse(num_invited_friends)
-
-
-@csrf_exempt
-@login_required
-def inkling_invited_friends_view(request):
-    """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
-    # Get the current inkling
-    try:
-        inkling = Inkling.objects.get(pk = request.POST["inklingId"])
-    except:
-        raise Http404()
-
-    # Get the logged-in member's friends
-    friends = list(request.user.get_profile().friends.all())
-
-    # Get a list of the logged-in member's friends
-    response_friends = []
-    for m in friends:
-        m.selected = inkling.member_has_pending_invitation(m)
-
-        html = render_to_string("memberListItem.html", {
-            "m": m,
-            "include_selection_item": True
-        })
-
-        response_friends.append({
-            "id": m.id,
-            "lastName": m.last_name,
-            "html": html
-        })
-
-    # Create and return a JSON object
-    response = simplejson.dumps(response_friends)
-    return HttpResponse(response, mimetype = "application/json")
-
-
 @csrf_exempt
 @login_required
 def inkling_invited_groups_view(request):
@@ -1464,10 +1470,11 @@ def inkling_invited_groups_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
-@login_required
-def invite_group_view(request):
-    """Invites everyone in the inputted group to the inputted inkling."""
+#@csrf_exempt
+#@login_required
+#def invite_group_view(request):
+"""Invites everyone in the inputted group to the inputted inkling."""
+"""
     # Get the inputted inkling and group
     try:
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
@@ -1485,7 +1492,7 @@ def invite_group_view(request):
             InklingInvitation.objects.create(sender = request.user, receiver = m, inkling = inkling)
 
     return HttpResponse()
-
+"""
 
 @csrf_exempt
 @login_required
@@ -1539,25 +1546,21 @@ def invite_member_view(request):
         inkling = Inkling.objects.get(pk = request.POST["inklingId"])
         m = User.objects.get(pk = request.POST["memberId"])
     except:
-        print "bad POST data"
         raise Http404()
-
-    print inkling
-    print m
 
     # Make sure the inputted member is a friend of the logged-in member
     if (m not in request.user.get_profile().friends.all()):
         raise Http404()
 
-    print "c"
-
     # Invite the inputted member to the inputted inkling if they have not already been invited
     if (not inkling.member_has_pending_invitation(m)):
         InklingInvitation.objects.create(sender = request.user, receiver = m, inkling = inkling)
 
-    print "d"
-
-    return HttpResponse()
+    print "here"
+    # Return the number of friends who have been invited to this inkling by the logged-in member
+    num_invited_friends = InklingInvitation.objects.filter(sender = request.user, inkling = inkling).count()
+    print num_invited_friends
+    return HttpResponse(num_invited_friends)
 
 
 @csrf_exempt
@@ -1579,10 +1582,13 @@ def uninvite_member_view(request):
     try:
         invitation = InklingInvitation.objects.get(sender = request.user, receiver = m, inkling = inkling)
         invitation.delete()
+        print "deleted"
     except:
         raise Http404()
 
-    return HttpResponse()
+    # Return the number of friends who have been invited to this inkling by the logged-in member
+    num_invited_friends = InklingInvitation.objects.filter(sender = request.user, inkling = inkling).count()
+    return HttpResponse(num_invited_friends)
 
 
 # TODO: combine this with the other functions which do nearly the same thing...
@@ -1595,18 +1601,28 @@ def friends_view(request):
         mode = request.POST["mode"]
     except:
         raise Http404()
+        
     # Get the list of the logged-in member's friends
     friends = list(request.user.get_profile().friends.all())
 
     # Determine what items to include in the member list item
     include_delete_items = (mode == "friends")
     include_selection_item = (mode == "invite")
+    
+    # Get the selected members (if provided)
+    try:
+        print "a"
+        selected_member_ids = [int(x) for x in request.POST["selectedMemberIds"].split(",")]
+        print selected_member_ids
+    except:
+        selected_member_ids = []
 
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
         m.num_mutual_friends = m.get_profile().get_num_mutual_friends(request.user)
-        
+        m.selected = m.id in selected_member_ids
+
         html = render_to_string("memberListItem.html", {
             "m": m,
             "include_delete_items": include_delete_items,
