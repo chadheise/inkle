@@ -24,6 +24,15 @@ class Group(models.Model):
     def __unicode__(self):
         """String representation for the current group."""
         return "%d: %s (%s)" % (self.id, self.name, self.creator.get_full_name())
+        
+    def get_user_ids(self):
+        """Returns a comma separated list of the user IDs for the users in the current group."""
+        user_ids = ""
+        for m in self.members.all():
+            user_ids += str(m.id) + ","
+        user_ids = user_ids[:-1]
+
+        return user_ids
 
 
 class FeedUpdate(models.Model):

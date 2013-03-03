@@ -1,4 +1,4 @@
-<div class="group" data-groupId="{{ g.id }}">
+<div class="group" data-groupId="{{ g.id }}" data-userIds=" {{ g.get_user_ids }}">
     <!-- Selection button -->
     {% if g.selected %}
         <img class="selectionButton selected" src="resources/images/selected.png">

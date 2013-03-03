@@ -1122,8 +1122,8 @@ $badge-bg-gradient: "matte";
     clear: both;
 }
 
-/* New inkling invitees button */
-#newInklingViewInvitees {
+/* New inkling invited friends button */
+#newInklingViewInvitedFriends {
     border: solid 1px #DDD;
     background-color: #FFFFFF;
     border-radius: 7px;
@@ -1131,11 +1131,11 @@ $badge-bg-gradient: "matte";
     height: 45px;
 }
 
-#newInklingViewInvitees p {
+#newInklingViewInvitedFriends p {
     float: left;
 }
 
-#newInklingViewInvitees .disclosureArrow {
+#newInklingViewInvitedFriends .disclosureArrow {
     float: right;
     margin-top: 5px;
 }
