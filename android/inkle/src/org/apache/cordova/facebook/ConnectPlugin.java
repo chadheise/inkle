@@ -104,7 +104,7 @@ public class ConnectPlugin extends Plugin {
                 this.callbackId = callbackId;
                 Runnable runnable = new Runnable() {
                     public void run() {
-                        me.facebook.authorize(me.cordova.getActivity(), me.permissions, new AuthorizeListener(me));
+                        me.facebook.authorize(cordova.getActivity(), me.permissions, new AuthorizeListener(me));
                     };
                 };
                 this.ctx.runOnUiThread(runnable);
@@ -268,25 +268,20 @@ public class ConnectPlugin extends Plugin {
           	Log.d(TAG, "authorized");
             Log.d(TAG, values.toString());
 
-            Thread t = new Thread(new Runnable() {
-	            public void run() {
-	            	try {
-	            		JSONObject o = new JSONObject(fba.facebook.request("/me"));
-	            		fba.userId = o.getString("id");
-	            		fba.success(getResponse(), fba.callbackId);
-	            	} catch (MalformedURLException e) {
-	            		// TODO Auto-generated catch block
-	            		e.printStackTrace();
-	            	} catch (IOException e) {
-	            		// TODO Auto-generated catch block
-	            		e.printStackTrace();
-	            	} catch (JSONException e) {
-	            		// TODO Auto-generated catch block
-	            		e.printStackTrace();
-	            	}
-	            }
-            });
-            t.start();
+            try {
+                JSONObject o = new JSONObject(this.fba.facebook.request("/me"));
+                this.fba.userId = o.getString("id");
+                this.fba.success(getResponse(), this.fba.callbackId);
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         public void onFacebookError(FacebookError e) {
