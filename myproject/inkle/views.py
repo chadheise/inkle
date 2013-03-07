@@ -1752,14 +1752,8 @@ def people_search_view(request):
     try:
         query = request.POST["query"]
         fbAccessToken = request.POST["fbAccessToken"]
-        timeCalled = request.POST["timeCalled"]
     except:
         raise Http404()
-
-    startTime = datetime.datetime.now()
-    print "START: " + str(startTime) + " - " + str(query)
-    request.user.get_profile().time_last_people_search = startTime
-    request.user.get_profile().save();
 
     # Split the query into words
     query_split = query.split()
@@ -1926,19 +1920,10 @@ def people_search_view(request):
             "facebook_id": facebook_id,
             "relationship": relationship,
             "html": html,
-            "timeCalled": timeCalled,
         })
         
     #print "searchResults " + str(searchResults)
     print len(searchResults)
-    now = datetime.datetime.now()
-    print "    now: " + str(now) + " - " + query
-    print " stored: " + str(request.user.get_profile().time_last_people_search)  + " - " + query
-    if now < request.user.get_profile().time_last_people_search:
-        print "OLD"  + " - " + query
-    else:
-        print "NEW"  + " - " + query
-    print "STOP: " + str(datetime.datetime.now()) + " - " + str(query)
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
