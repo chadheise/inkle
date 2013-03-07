@@ -55,8 +55,7 @@ Ext.define("inkle.view.AddFriends", {
 						"id",
 						"facebook_id",
 						"relationship",
-						"html",
-						"timeCalled",
+						"html"
 					],
 					proxy: {
 						type: "rest",
@@ -66,8 +65,7 @@ Ext.define("inkle.view.AddFriends", {
 						},
 						extraParams: {
 							query: "",
-							fbAccessToken: "",
-							timeCalled: ""
+							fbAccessToken: ""
 						},
 						
 						reader: {
