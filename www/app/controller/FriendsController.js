@@ -733,7 +733,7 @@ Ext.define("inkle.controller.FriendsController", {
     updateAddFriendsSuggestions: function() {
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
         var query = this.getAddFriendsSearchField().getValue().toLowerCase();
-        var currentView = this;
+        var currentView = this; //Store reference to this to get currentQuery in ajax callback
 
         //var fbConnected = false;
         var fbAccessToken = "";
@@ -755,7 +755,6 @@ Ext.define("inkle.controller.FriendsController", {
           }
          });
         
-        //Perform ajax
         Ext.Ajax.request({
     		url: inkle.app.baseUrl + "/peopleSearch/",
     		params: {
@@ -765,30 +764,19 @@ Ext.define("inkle.controller.FriendsController", {
     		success: function(response) {
     		    var friendSuggestions = Ext.JSON.decode(response.responseText);
     		    currentQuery = currentView.getAddFriendsSearchField().getValue().toLowerCase();
-    		    
-    		    if (query == currentQuery ) { //Only refresh the list data if its the
+    
+    		    if (query == currentQuery ) { //Only refresh the list data if the results are for the current query
                     addFriendsStore.removeAll();
-                    addFriendsStore.add(friendSuggestions);
+                    //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
+                    for (var index in friendSuggestions) {
+                        addFriendsStore.add(friendSuggestions[index]);
+                    }
                 }
     		},
         	failure: function(response) {
         		Ext.Msg.alert("Error", response.responseText);
         	}
 		});
-        
-        //Add ajax response
-        
-        //var myVar = addFriendsStore.getProxy();
-        //alert(myVar);
-        //myVar.abortRequest(); //Abort a previous proxy Request
- 		addFriendsStore.setProxy({
-   		    extraParams: {
-   			    query: query,
-   				fbAccessToken: fbAccessToken,
-   			}
-   		});
-		
-		//addFriendsStore.load();
 	},
 	
 	addFriend: function(memberId) {

@@ -1874,8 +1874,8 @@ def people_search_view(request):
         searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
-
-    i = 0
+    searchResults.reverse() #Return in reverse sorted order, so correct order is given after adding to the sencha store
+    
     response_members = []
     for m in searchResults:
         try:
@@ -1922,7 +1922,7 @@ def people_search_view(request):
             "html": html,
         })
         
-    #print "searchResults " + str(searchResults)
+    print "searchResults: " + str(searchResults)
     print len(searchResults)
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
