@@ -76,6 +76,7 @@ $badge-bg-gradient: "matte";
 @include sencha-form;
 @include sencha-msgbox;
 @include sencha-list-pullrefresh;
+@include sencha-loading-spinner; //This is used but not required
 
 
 /***************/

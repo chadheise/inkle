@@ -755,6 +755,7 @@ Ext.define("inkle.controller.FriendsController", {
           }
          });
         
+        Ext.Viewport.setMasked({ xtype: 'loadmask', message: 'Loading...', indicator:true});
         Ext.Ajax.request({
     		url: inkle.app.baseUrl + "/peopleSearch/",
     		params: {
@@ -772,8 +773,10 @@ Ext.define("inkle.controller.FriendsController", {
                         addFriendsStore.add(friendSuggestions[index]);
                     }
                 }
+                Ext.Viewport.setMasked(false);
     		},
         	failure: function(response) {
+        	    Ext.Viewport.setMasked(false);
         		Ext.Msg.alert("Error", response.responseText);
         	}
 		});
