@@ -24,19 +24,13 @@
 	<true/>
 	<key>ExternalHosts</key>
 	<array>
-		<string>fbstatic-a.akamaihd.net</string>
 		<string>chads-macbook-pro.local</string>
-		<string>profile-b.xx.fbcdn.net</string>
-		<string>profile-a.xx.fbcdn.net</string>
-		<string>fbcdn-profile-a.akamaihd.net</string>
+        <string>127.0.0.1</string>
 		<string>*.inkleit.com</string>
-		<string>127.0.0.1</string>
 		<string>*.googleapis.com</string>
-		<string>m.facebook.com</string>
-		<string>graph.facebook.com</string>
-		<string>api.facebook.com</string>
-		<string>\*.fbcdn.net</string>
-		<string>\*.akamaihd.net</string>
+		<string>*.facebook.com</string>
+		<string>*.fbcdn.net</string>
+		<string>*.akamaihd.net</string>
 	</array>
 	<key>Plugins</key>
 	<dict>
