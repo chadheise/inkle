@@ -244,6 +244,7 @@ Ext.define("inkle.controller.FriendsController", {
         var userId = data["id"];
         var facebookId = data["facebook_id"];
         var relationship = data["relationship"];
+        var addFriendsStore = this.getAddFriendsSuggestions().getStore();
         
         //Create the possible action sheet buttons
         var addFriend = {
@@ -255,14 +256,20 @@ Ext.define("inkle.controller.FriendsController", {
             		params: {
             			memberId: userId
             		},
+            		success: function(response) {
+            		    var personRecord = addFriendsStore.findRecord("id", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "pending");
+                        
+                        //Change relationship badge to "Pending"
+                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                        relationshipTag.setHtml('<span class="relationship">Pending</span>');
+            		},
                 	failure: function(response) {
                 		Ext.Msg.alert("Error", response.responseText);
                 	}
         		});
-                
-                //Change relationship badge to "Pending"
-                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                relationshipTag.setHtml('<span class="relationship">Pending</span>');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -291,16 +298,29 @@ Ext.define("inkle.controller.FriendsController", {
                     params: {
                         memberId: userId,
                     },
+                    success: function(response) {
+                        var personRecord = addFriendsStore.findRecord("id", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+                        
+                        //Change relationship badge to "Friend"
+                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                        //relationshipTag.setHtml('');
+                        alert(relationshipTag.down("span"));
+                        //alert(relationshipTag.getHtml());
+                        alert(userId);
+                        relationshipTag.destroy();
+                    },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
                 
-                alert(userId);
                 //Hide relationship tag
                 //var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                alert('yea!');
-                alert(Ext.get("addFriendRelationshipTag"+ userId).child('span').getHtml());
+                //alert('yea!');
+                //alert(Ext.get("addFriendRelationshipTag"+ userId).child('span').getHtml());
                 //alert(Ext.fly("addFriendRelationshipTag"+ userId).child("relationship").getHtml());
                 //Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span>Hi</span>');
                 //alert(Ext.fly("addFriendRelationshipTag"+ userId).getHtml());
@@ -315,11 +335,38 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Accept friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                this.respondToRequest(userId, "accept");
-                
-                //Change relationship badge to "Friend"
-                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                relationshipTag.setHtml('<span class="relationship">Friend</span>');
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/respondToRequest/",
+                    params: {
+                        memberId: userId,
+                        response: "accept"
+                    },
+                    success: function(response) {
+                        var requestsButton = this.getRequestsButton();
+                        numFriendRequests = response.responseText;
+                        if (numFriendRequests != 0) {
+                            requestsButton.setBadgeText(numFriendRequests);
+                        }
+                        else {
+                            requestsButton.setBadgeText("");
+                        }
+                        this.updateFriendsList();
+                        this.updateRequestsList();
+                        
+                        var personRecord = addFriendsStore.findRecord("id", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "friend");
+                        
+                        //Change relationship badge to "Friend"
+                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                        relationshipTag.setHtml('<span class="relationship">Friend</span>');
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.responseText);
+                    },
+                    scope: this
+                });
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -331,11 +378,38 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Ignore friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                this.respondToRequest(userId, "ignore");
-                
-                //Remove relationship badge
-                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                relationshipTag.setHtml('');
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/respondToRequest/",
+                    params: {
+                        memberId: userId,
+                        response: "ignore"
+                    },
+                    success: function(response) {
+                        var requestsButton = this.getRequestsButton();
+                        numFriendRequests = response.responseText;
+                        if (numFriendRequests != 0) {
+                            requestsButton.setBadgeText(numFriendRequests);
+                        }
+                        else {
+                            requestsButton.setBadgeText("");
+                        }
+                        this.updateFriendsList();
+                        this.updateRequestsList();
+                        
+                        var personRecord = addFriendsStore.findRecord("id", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+                        
+                        //Remove relationship badge
+                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                        relationshipTag.setHtml('');
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.responseText);
+                    },
+                    scope: this
+                });
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -352,14 +426,22 @@ Ext.define("inkle.controller.FriendsController", {
                     params: {
                         userId: userId,
                     },
+                    success: function(response) {
+                        var personRecord = addFriendsStore.findRecord("id", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+                        
+                        //alert(personRecord.get("html"));
+                        
+                        //Remove relationship badge
+                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
+                        relationshipTag.setHtml('');
+                    },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
-                
-                //Remove relationship badge
-                var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                relationshipTag.setHtml('');
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
