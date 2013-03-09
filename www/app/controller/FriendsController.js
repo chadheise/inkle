@@ -263,8 +263,7 @@ Ext.define("inkle.controller.FriendsController", {
                         personRecord.set("relationship", "pending");
                         
                         //Change relationship badge to "Pending"
-                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                        relationshipTag.setHtml('<span class="relationship">Pending</span>');
+                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
             		},
                 	failure: function(response) {
                 		Ext.Msg.alert("Error", response.responseText);
@@ -304,26 +303,13 @@ Ext.define("inkle.controller.FriendsController", {
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
                         
-                        //Change relationship badge to "Friend"
-                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                        //relationshipTag.setHtml('');
-                        alert(relationshipTag.down("span"));
-                        //alert(relationshipTag.getHtml());
-                        alert(userId);
-                        relationshipTag.destroy();
+                        //Remove relationship badge
+                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
-                
-                //Hide relationship tag
-                //var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                //alert('yea!');
-                //alert(Ext.get("addFriendRelationshipTag"+ userId).child('span').getHtml());
-                //alert(Ext.fly("addFriendRelationshipTag"+ userId).child("relationship").getHtml());
-                //Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span>Hi</span>');
-                //alert(Ext.fly("addFriendRelationshipTag"+ userId).getHtml());
                 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -359,8 +345,7 @@ Ext.define("inkle.controller.FriendsController", {
                         personRecord.set("relationship", "friend");
                         
                         //Change relationship badge to "Friend"
-                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                        relationshipTag.setHtml('<span class="relationship">Friend</span>');
+                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.responseText);
@@ -402,8 +387,7 @@ Ext.define("inkle.controller.FriendsController", {
                         personRecord.set("relationship", "none");
                         
                         //Remove relationship badge
-                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                        relationshipTag.setHtml('');
+                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.responseText);
@@ -435,8 +419,7 @@ Ext.define("inkle.controller.FriendsController", {
                         //alert(personRecord.get("html"));
                         
                         //Remove relationship badge
-                        var relationshipTag = Ext.fly("addFriendRelationshipTag"+ userId);
-                        relationshipTag.setHtml('');
+                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);

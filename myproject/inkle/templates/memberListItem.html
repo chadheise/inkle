@@ -56,17 +56,22 @@
 	    <input class="ignoreRequestButton" type="button" value="Ignore" />
 	{% endif %}
 	
-	<span id="addFriendRelationshipTag{{m.id}}">
-	{% if m.is_friend %}
-		<span class="relationship">Friend</span>
+	<!-- Relationship Tag -->
+	<!-- Relationship tag can only be included on one page or there will be id conflicts-->
+	{% if include_relationship_tag %} 
+		<span id="addFriendRelationshipTag{{m.id}}">
+		{% if m.is_friend %}
+			<span class="relationship">Friend</span>
+		{% endif %}
+		{% if m.is_pending %}
+			<span class="relationship">Pending</span>
+		{% endif %}
+		{% if m.is_requested %}
+			<span class="relationship">Requested</span>
+		{% endif %}
+		</span>	
 	{% endif %}
-	{% if m.is_pending %}
-		<span class="relationship">Pending</span>
-	{% endif %}
-	{% if m.is_requested %}
-		<span class="relationship">Requested</span>
-	{% endif %}
-	</span>
+	
 	{% if include_facebook_icon %}
 		{%if m.get_profile.facebook_id %}
 			<img class="facebookIcon" src="resources/images/facebookImageTag.png">

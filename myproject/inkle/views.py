@@ -1884,7 +1884,7 @@ def people_search_view(request):
             "m" : m,
             "include_disclosure_arrow" : True,
             "include_facebook_icon" : True,
-            #"member" : member,
+            "include_relationship_tag" : True,
             })
         except:
             raise Http404()
