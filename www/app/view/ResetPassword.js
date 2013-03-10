@@ -1,22 +1,21 @@
 Ext.define("inkle.view.ResetPassword", {
     extend: "Ext.form.Panel",
-    
+
     xtype: "resetPasswordView",
-    
+
     requires: [
         "Ext.form.FieldSet",
         "Ext.field.Password"
     ],
-    
+
     layout: "vbox",
-    
-    config: {        
+
+    config: {
         scrollable: false,
         style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
-        
+
         url: inkle.app.baseUrl + "/resetPassword/",
-        headers : { "cache-control": "no-cache" },
-        
+
         items: [
             // Top toolbar
             {
@@ -57,7 +56,7 @@ Ext.define("inkle.view.ResetPassword", {
                 //top: 0,
                 margin: 10,
                 width: "94%",
-                
+
                 items: [
                     {
                         xtype: "passwordfield",
@@ -88,12 +87,12 @@ Ext.define("inkle.view.ResetPassword", {
             }
         ]
     },
-    
+
     // Event firings
     onResetPasswordBackButtonTap: function() {
         this.fireEvent("resetPasswordBackButtonTapped");
     },
-    
+
     onResetPasswordSubmitButtonTap: function() {
         this.fireEvent("resetPasswordSubmitButtonTapped");
     }

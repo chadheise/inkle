@@ -68,7 +68,28 @@ Ext.application({
     addFriendsTimeStamp: "",
 
     launch: function() {
-        console.log("launching app");
+        //console.log("a");
+        //console.log(Ext.util.Cookies);
+        //console.log("b");
+        // Turn off caching for Ajax requests
+        Ext.Ajax.on("beforerequest", function (connection, options) {
+            //if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {
+                if (typeof(options.headers) == "undefined") {
+                    //options.headers = {"X-CSRFToken": Ext.util.Cookies.get("csrftoken")};
+                    options.headers = {"cache-control": "no-cache"};
+                    //options.headers["X-CSRFToken"] = "testing";
+                    //console.log(options.headers);
+                }
+                else {
+                    //options.headers.extend({"X-CSRFToken": Ext.util.Cookies.get("csrftoken")});
+                    options.headers["cache-control"] = "no-cache";
+                    //options.headers["X-CSRFToken"] = "testing";
+                    //console.log(options.headers);
+                    //options.headers.extend({"cache-control": "no-cache"});
+                }
+            //}
+        }, this);
+
 
         /*var cookieValue = null;
         console.log(document);
@@ -105,9 +126,11 @@ Ext.application({
         // Determine if the user is logged in and show the appropriate page
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/isLoggedIn/",
-            headers: { "cache-control": "no-cache" },
 
             success: function(response) {
+                console.log(document.cookie);
+
+
                 var isLoggedIn = response.responseText;
 
                 // Show the main tab view if they are logged in
@@ -139,6 +162,27 @@ Ext.application({
                 ]);
             }
         });
+
+        // using jQuery
+        /*function getCookie(name) {
+            console.log("getCookie()");
+            var cookieValue = null;
+            console.log(document.cookie);
+            if (document.cookie && document.cookie != "") {
+                console.log(cookies);
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');*/
     }
 
     /*

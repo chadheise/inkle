@@ -1,27 +1,27 @@
 Ext.define("inkle.view.Main", {
     extend: "Ext.tab.Panel",
-    
+
     requires: [
-    	"Ext.TitleBar"
+        "Ext.TitleBar"
     ],
-    
+
     xtype: "mainTabView",
-    
+
     config: {
         tabBarPosition: "bottom",
-        
+
         items: [
             {
-            	xtype: "allInklingsView",
+                xtype: "allInklingsView",
             },
             {
-            	xtype: "myInklingsView"
+                xtype: "myInklingsView"
             },
             {
-            	xtype: "friendsView"
+                xtype: "friendsView"
             },
             {
-            	xtype: "settingsView"
+                xtype: "settingsView"
             }
         ]
     }

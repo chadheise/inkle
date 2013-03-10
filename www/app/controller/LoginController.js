@@ -226,8 +226,6 @@ Ext.define("inkle.controller.LoginController", {
         this.getLoginFormView().submit({
             method: "POST",
 
-            headers : { "cache-control": "no-cache" },
-
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -255,7 +253,7 @@ Ext.define("inkle.controller.LoginController", {
                 FB.api("/me", function(response) {
                     Ext.Ajax.request({
                         url: inkle.app.baseUrl + "/facebookLogin/",
-                        headers : { "cache-control": "no-cache" },
+
                         params: {
                             facebookId: response.id,
                             facebookAccessToken: facebookAccessToken,
@@ -325,8 +323,6 @@ Ext.define("inkle.controller.LoginController", {
         this.getResetPasswordView().submit({
             method: "POST",
 
-            headers : { "cache-control": "no-cache" },
-
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -356,8 +352,6 @@ Ext.define("inkle.controller.LoginController", {
     registerMember: function() {
         this.getRegistrationView().submit({
             method: "POST",
-
-            headers : { "cache-control": "no-cache" },
 
             waitMsg: {
                 xtype: "loadmask",

@@ -1,8 +1,8 @@
 Ext.define("inkle.view.ForgottenPassword", {
     extend: "Ext.form.Panel",
-    
+
     xtype: "forgottenPasswordView",
-   
+
     requires: [
         "Ext.form.FieldSet",
         "Ext.field.Email"
@@ -11,10 +11,9 @@ Ext.define("inkle.view.ForgottenPassword", {
     config: {
         scrollable: false,
         style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #EEEEEE 0%, #999999 100%)",
-        
+
         url: inkle.app.baseUrl + "/forgottenPassword/",
-        headers : { "cache-control": "no-cache" },
-        
+
         items: [
             // Top toolbar
             {
@@ -46,14 +45,14 @@ Ext.define("inkle.view.ForgottenPassword", {
                     "<p id='forgottenPasswordExplanation'>Enter the email address associated with your Inkle account and we will send you an email with a secret PIN. Type in that PIN below to create your new password.</p>"
                 ].join("")
             },
-            
+
             // Forgotten password email form
             {
                 xtype: "fieldset",
                 id: "forgottenPasswordForm",
                 margin: 10,
                 width: "94%",
-                
+
                 items: [
                     {
                         xtype: "emailfield",
@@ -84,12 +83,12 @@ Ext.define("inkle.view.ForgottenPassword", {
             }
         ]
     },
-    
+
     // Event firings
     onForgottenPasswordBackButtonTap: function() {
         this.fireEvent("forgottenPasswordBackButtonTapped");
     },
-    
+
     onForgottenPasswordSubmitButtonTap: function() {
         this.fireEvent("forgottenPasswordSubmitButtonTapped");
     }

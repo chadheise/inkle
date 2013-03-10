@@ -1,16 +1,16 @@
 Ext.define("inkle.view.InviteFacebookFriends", {
 	extend: "Ext.Container",
-	
+
 	xtype: "inviteFacebookFriendsView",
-	
+
 	requires: [
 	    "Ext.dataview.List"
 	],
-	
+
 	config: {
 		layout: "card",
 		scrollable: false,
-		    	
+
     	items: [
     		//Facebook friends list
     	    {
@@ -46,7 +46,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 				}
 			}
     	],
-    	
+
     	listeners: [
             {
 				event: "tap",
@@ -56,7 +56,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
         	}
         ]
     },
-    
+
     // Event firings
     onInviteFriendButtonTap: function(event) {
     	var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");

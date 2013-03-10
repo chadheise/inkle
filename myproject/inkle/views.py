@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 
 # TODO: get rid of the whole csrf_exempt thing
 # CSRF exemple views module
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
 # User authentication
 from django.contrib.auth import authenticate, login, logout
@@ -46,6 +46,7 @@ def raise_404_view(request):
 
 def is_logged_in(request):
     """Returns True if a member is logged in or False otherwise."""
+    print request
     return HttpResponse(request.user.is_authenticated())
 
 
@@ -530,6 +531,7 @@ def link_facebook_account_view(request):
 @login_required
 def all_inklings_view(request):
     """Returns a list of the inklings which the logged-in member's friends are attending."""
+    print request
     # Determine if we should return dated or no-dated inklings
     try:
         onlyIncludeUndatedInklings = request.POST["onlyIncludeUndatedInklings"]
