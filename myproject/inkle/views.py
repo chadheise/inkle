@@ -1861,16 +1861,16 @@ def people_search_view(request):
             personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
 
-    print "inkleFriends"
-    print sorted(inkleFriends, key = lambda m : m.last_name)
-    print "inkleRequested"
-    print sorted(inklePending, key = lambda m : m.last_name)
-    print "facebookInkle"
-    print sorted(facebookInkle, key = lambda m : m.last_name)
-    print "facebookNotInkle"
-    print sorted(facebookNotInkle, key = lambda m : m['last_name'])
-    print "inkleOther"
-    print sorted(inkleOther, key = lambda m : m.last_name)
+    #print "inkleFriends"
+    #print sorted(inkleFriends, key = lambda m : m.last_name)
+    #print "inkleRequested"
+    #print sorted(inklePending, key = lambda m : m.last_name)
+    #print "facebookInkle"
+    #print sorted(facebookInkle, key = lambda m : m.last_name)
+    #print "facebookNotInkle"
+    #print sorted(facebookNotInkle, key = lambda m : m['last_name'])
+    #print "inkleOther"
+    #print sorted(inkleOther, key = lambda m : m.last_name)
 
     searchResults = []
     if inkleFriends:
@@ -1882,15 +1882,19 @@ def people_search_view(request):
     if facebookInkle:
         searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
     if facebookNotInkle:
-        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name'], reverse=True)
+        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name'])
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)
     
     print "-----"
-    #print searchResults
     for result in searchResults:
-        print result
+        try:
+            print result.first_name + " " + result.last_name
+        except:
+            print result['first_name'] + " " + result['last_name'] + " FB"
+    print "*****"
     
+    rank = 0
     response_members = []
     for m in searchResults:
         try:
@@ -1905,7 +1909,8 @@ def people_search_view(request):
             raise Http404()
 
         try: #inkle user
-            userId = m.id 
+            userId = m.id
+            name2 = m.first_name + " " + m.last_name 
             if m.get_profile().facebook_id:
                 facebook_id = m.get_profile().facebook_id
             else:
@@ -1919,7 +1924,8 @@ def people_search_view(request):
             else:
                 relationship = "none"
         except: #Facebook friends not on inkle
-            userId = "none" 
+            userId = "none"
+            name2 = m["first_name"] + " " + m["last_name"]
             facebook_id = m["get_profile"]["facebook_id"]
             if m["is_friend"]:
                 relationship = "friend"
@@ -1931,15 +1937,14 @@ def people_search_view(request):
                 relationship = "facebookOnlyFriend"
             
         response_members.append({
-            "id": userId,
+            "user_id": userId,
             "facebook_id": facebook_id,
             "relationship": relationship,
             "html": html,
+            "rank": rank,
+            "name2" : name2,
         })
-        
-        print "+++++"
-        for r in response_members:
-            print r
+        rank += 1
 
     # Create and return a JSON object
     response = simplejson.dumps(response_members)

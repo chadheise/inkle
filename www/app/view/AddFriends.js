@@ -50,12 +50,19 @@ Ext.define("inkle.view.AddFriends", {
                 itemTpl: [
 					'{ html }'
 				],
+				sorters: [
+                      {
+                        property: "rank",
+                        direction: 'DESC'
+                      },
+                   ],
 				store: {
 					fields: [
-						"id",
+						"user_id",
 						"facebook_id",
 						"relationship",
-						"html"
+						"html",
+						"rank"
 					],
 					proxy: {
 						type: "rest",
