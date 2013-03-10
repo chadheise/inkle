@@ -241,7 +241,7 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     activateAddFriendsActionSheet: function(data) {
-        var userId = data["id"];
+        var userId = data["user_id"];
         var facebookId = data["facebook_id"];
         var relationship = data["relationship"];
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
@@ -257,7 +257,7 @@ Ext.define("inkle.controller.FriendsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = addFriendsStore.findRecord("id", userId);
+            		    var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
@@ -298,7 +298,7 @@ Ext.define("inkle.controller.FriendsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -339,7 +339,7 @@ Ext.define("inkle.controller.FriendsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "friend");
@@ -381,7 +381,7 @@ Ext.define("inkle.controller.FriendsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -411,7 +411,7 @@ Ext.define("inkle.controller.FriendsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
