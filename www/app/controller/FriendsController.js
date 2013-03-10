@@ -835,8 +835,10 @@ Ext.define("inkle.controller.FriendsController", {
                     addFriendsStore.removeAll();
                     //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
                     for (var index in friendSuggestions) {
+                        //alert(friendSuggestions[index].html);
                         addFriendsStore.add(friendSuggestions[index]);
                     }
+                    //this.getAddFriendsSuggestions().add(friendSuggestions[0]);
                 }
                 Ext.Viewport.setMasked(false);
     		},
