@@ -1,15 +1,17 @@
 {% load humanize %}
 
+{% autoescape on %}
 <div class="feedComment">
     {% if user == feed_comment.creator %}
         <img class="floatRight" src="{{ feed_comment.creator.get_profile.get_picture_path }}" />
     {% else %}
         <img src="{{ feed_comment.creator.get_profile.get_picture_path }}" />
     {% endif %}
-    
+
     <div class="feedCommentInfo">
         <p class="creatorName">{{ feed_comment.creator.get_full_name }}</p>
         <p class="text">{{ feed_comment.text }}</p>
         <p class="timestamp">{{ feed_comment.date_created|naturaltime }}</p>
     </div>
 </div>
+{% endautoescape %}

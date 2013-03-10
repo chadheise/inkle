@@ -1,5 +1,6 @@
 {% load humanize %}
 
+{% autoescape on %}
 <div class="feedUpdate">
     {% if feed_update %}
         <!-- Icon -->
@@ -29,3 +30,4 @@
         </div>
     {% endif %}
 </div>
+{% endautoescape %}

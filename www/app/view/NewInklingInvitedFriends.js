@@ -8,7 +8,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         scrollable: false,
 
         items: [
-            // Invited friends list
+            /* Invited friends list */
             {
                 xtype: "list",
                 id: "newInklingInvitedFriendsList",
@@ -41,10 +41,18 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
                         }
                     },
                     autoLoad: false
-                }
+                },
+                plugins: [
+                    {
+                        xclass: "Ext.plugin.PullRefresh",
+                        refreshFn: function(plugin) {
+                            plugin.up().fireEvent("pullToRefresh");
+                        }
+                    }
+                ]
             },
 
-            // Groups list
+            /* Groups list */
             {
                 xtype: "panel",
                 id: "newInklingInvitedGroupsPanel",
@@ -105,6 +113,11 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
                 delegate: "#newInklingInvitedFriendsList",
                 event: "itemtap",
                 fn: "onNewInklingInvitedFriendsListItemTap"
+            },
+            {
+                delegate: "#newInklingInvitedFriendsList",
+                event: "pullToRefresh",
+                fn: "onNewInklingInvitedFriendsListRefresh"
             }
         ]
     },
@@ -115,5 +128,9 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
         if (selectionButton) {
             this.fireEvent("memberSelectionButtonTapped", selectionButton);
         }
+    },
+
+    onNewInklingInvitedFriendsListRefresh: function() {
+        this.fireEvent("newInklingInvitedFriendsListRefreshed");
     }
 });

@@ -6,7 +6,7 @@ Ext.data.JsonP.disableCaching = true;*/
 
 Ext.application({
     name: "inkle",
-    
+
     models: [
     ],
     stores: [
@@ -18,6 +18,7 @@ Ext.application({
         "ForgottenPassword",
         "ResetPassword",
         "Registration",
+        "Offline",
         "AllInklings",
         "MyInklings",
         "NewInkling",
@@ -43,7 +44,7 @@ Ext.application({
         "MyInklingsController",
         "FriendsController",
         "SettingsController"
-	],
+    ],
 
     requires: [
         //"Ext.util.Cookies"
@@ -56,14 +57,14 @@ Ext.application({
         114: "resources/icons/Icon@2x.png",
         144: "resources/icons/Icon~ipad@2x.png"
     },
-    
+
     phoneStartupScreen: "resources/loading/Homescreen.jpg",
     tabletStartupScreen: "resources/loading/Homescreen~ipad.jpg",
-	*/
-	//Set the base url for all server requests
-	//baseUrl: "http://chads-macbook-pro.local:8000",
-	baseUrl: "http://127.0.0.1:8000",
-	
+    */
+    //Set the base url for all server requests
+    //baseUrl: "http://chads-macbook-pro.local:8000",
+    baseUrl: "http://127.0.0.1:8000",
+
     launch: function() {
         console.log("launching app");
 
@@ -99,36 +100,46 @@ Ext.application({
             });
         }*/
 
-		// Determine if the user is logged in
-		var isLoggedIn;
-		Ext.Ajax.request({
-    		async: false,
-    		url: inkle.app.baseUrl + "/isLoggedIn/",
-		    success: function(response) {
-        		isLoggedIn = response.responseText;
-        	},
-        	failure: function(response) {
-        		Ext.Msg.alert("Errors", response.errors);
-        		console.log(response.responseText);
-        	}
-		});
+        // Determine if the user is logged in and show the appropriate page
+        Ext.Ajax.request({
+            url: inkle.app.baseUrl + "/isLoggedIn/",
+            headers: { "cache-control": "no-cache" },
 
-		// Show the main tab view is the user is logged in
-		if (isLoggedIn === "True") {
-			Ext.Viewport.add([
-				{ xtype: "mainTabView" }
-			]);
-		}
-		
-		// Otherwise, show the login view
-		else {
-			Ext.Viewport.add([
-				{ xtype: "loginView" }
-			]);
-		}
+            success: function(response) {
+                var isLoggedIn = response.responseText;
+
+                // Show the main tab view if they are logged in
+                if (isLoggedIn === "True") {
+                    Ext.Viewport.add([
+                        { xtype: "mainTabView" }
+                    ]);
+                }
+
+                // Show the login view if they are not logged in
+                else if (isLoggedIn === "False") {
+                    Ext.Viewport.add([
+                        { xtype: "loginView" }
+                    ]);
+                }
+
+                // Show the offline view if they are offline
+                else {
+                    Ext.Viewport.add([
+                        { xtype: "offlineView" }
+                    ]);
+                }
+            },
+
+            failure: function(response) {
+                // Show the offline view if they are offline
+                Ext.Viewport.add([
+                    { xtype: "offlineView" }
+                ]);
+            }
+        });
     }
 
-	/*
+    /*
     onUpdated: function() {
         Ext.Msg.confirm(
             "Application Update",

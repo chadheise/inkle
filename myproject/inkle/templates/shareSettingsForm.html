@@ -1,42 +1,60 @@
 {% load is_false from extraTags %}
 
+{% autoescape on %}
 <div class="shareSettingsForm">
-    <!-- Selected groups -->
-    <div class="selectedGroupsHeader">
-        <img class="selectedGroupsShareSetting selectionItem" src={% if user.get_profile.shareWithSelectedGroups %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
-        <p>Selected groups</p>
+    <!-- Selected groups header selection button -->
+    <div id="selectedGroupsShareSettingsFormHeader" class="shareSettingsFormHeader">
+        {% if user.get_profile.share_with_selected_groups %}
+            <img id="selectedGroupsSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
+        {% else %}
+            <img id="selectedGroupsSelectionButton" class="selectionButton" src="resources/images/deselected.png" />
+        {% endif %}
+
+        <p class="shareSettingsFormHeaderName">Selected groups</p>
     </div>
+
+    <!-- Individual group selection buttons -->
     {% for g in user.group_set.all %}
         <div class="selectedGroupsGroup">
-            <img id="group{{ g.id }}ShareSetting" class="groupShareSetting selectionItem" groupId="{{ g.id }}"
-				src={% if g.shareByDefault %}
-						{% if user.get_profile.shareWithSelectedGroups %}
-							"resources/images/selected.png"
-						{% else %}
-							"resources/images/fadedselected.png"
-						{% endif %}
-					{% else %}
-						"resources/images/deselected.png"
-					{% endif %}
-			>
-            <p>{{ g.name }}</p>
+            {% if g.share_by_default %}
+                {% if user.get_profile.share_with_selected_groups %}
+                    <img class="groupSelectionButton selectionButton selected" data-groupId="{{ g.id }}" src="resources/images/selected.png" />
+                {% else %}
+                    <img class="groupSelectionButton selectionButton selected disabled" data-groupId="{{ g.id }}" src="resources/images/fadedselected.png" />
+                {% endif %}
+            {% else %}
+                <img class="groupSelectionButton selectionButton" data-groupId="{{ g.id }}" src="resources/images/deselected.png" />
+            {% endif %}
+
+            <p class="shareSettingsFormName">{{ g.name }}</p>
         </div>
-	{% empty %}
-		<div class="noGroupsShareSetting">
-			<p>You do not have any groups.</p>
-			<p>You can create them from the friends tab.</p>
-		</div>	
+    {% empty %}
+        <div class="noGroupsShareSetting">
+            <p>You do not have any groups.</p>
+            <p>You can create them from the friends tab.</p>
+        </div>
     {% endfor %}
 
-    <!-- No one -->
-    <div class="noOne">
-        <img class="noOneShareSetting selectionItem" src={% if user.get_profile.shareWithSelectedGroups|is_false %}"resources/images/selected.png"{% else %}"resources/images/deselected.png"{% endif %}>
-        <p>No one</p>
+    <!-- No one selection button -->
+    <div id="noOneShareSettingsFormHeader" class="shareSettingsFormHeader">
+        {% if user.get_profile.share_with_selected_groups|is_false %}
+            <img id="noOneSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
+        {% else %}
+            <img id="noOneSelectionButton" class="selectionButton" src="resources/images/deselected.png" />
+        {% endif %}
+
+        <p class="shareSettingsFormHeaderName">No one</p>
     </div>
 
-    <!-- Forwarding -->
-    <div class="forwarding">
-        <img class="forwardingShareSetting selectionItem" src={% if user.get_profile.allowInklingAttendeesToShare %}"resources/images/selected.png"{% else %} "resources/images/deselected.png"{% endif %}>
-        <p>Allow people attending to share with others</p>
+    <!-- Forwarding selection button -->
+    <div id="forwardingShareSettingsFormHeader" class="shareSettingsFormHeader">
+        {% if user.get_profile.allow_inkling_attendees_to_share %}
+            <img id="forwardingSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
+        {% else %}
+            <img id="forwardingSelectionButton" class="selectionButton" src="resources/images/deselected.png" />
+        {% endif %}
+
+        <p class="shareSettingsFormHeaderName">Allow people attending to share with others</p>
     </div>
 </div>
+{% endautoescape %}

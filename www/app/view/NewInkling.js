@@ -13,7 +13,7 @@ Ext.define("inkle.view.NewInkling", {
         navigationBar: false,
 
         items: [
-            // Top toolbar
+            /* Top toolbar */
             {
                 xtype: "toolbar",
                 id: "newInklingViewToolbar",
@@ -53,7 +53,7 @@ Ext.define("inkle.view.NewInkling", {
             {
                 xtype: "formpanel",
                 items: [
-                    // Basic info form
+                    /* Basic info form */
                     {
                         xtype: "fieldset",
                         id: "newInklingBasicInfoForm",
@@ -96,10 +96,9 @@ Ext.define("inkle.view.NewInkling", {
                         ]
                     },
 
-                    // Invited friends
+                    /* Invited friends */
                     {
                         xtype: "container",
-                        //top: 200,
                         title: "Who is invited?",
                         margin: "0px -10px 10px -10px",
                         html: [
@@ -110,11 +109,10 @@ Ext.define("inkle.view.NewInkling", {
                             "</div>"
                         ].join("")
                     },
-            
-                    // Share settings
+
+                    /* Share settings */
                     {
                         xtype: "container",
-                        //top: 300,
                         margin: "0px 0px 0px -10px",
                         html: [
                             "<div>",
@@ -124,7 +122,6 @@ Ext.define("inkle.view.NewInkling", {
                     },
                     {
                         xtype: "htmlcontainer",
-                        //top: 400,
                         id: "newInklingShareOptions",
                         url: inkle.app.baseUrl + "/shareSettingsForm/"
                     }
@@ -167,26 +164,26 @@ Ext.define("inkle.view.NewInkling", {
             {
                 event: "tap",
                 element: "element",
-                delegate: "#newInklingShareOptions .forwardingShareSetting",
-                fn: "onForwardingShareSettingTap"
+                delegate: ".shareSettingsForm #selectedGroupsSelectionButton",
+                fn: "onSelectedGroupsSelectionButtonTap"
             },
             {
                 event: "tap",
                 element: "element",
-                delegate: "#newInklingShareOptions .selectedGroupsShareSetting",
-                fn: "onSelectedGroupsShareSettingTap"
+                delegate: ".shareSettingsForm .groupSelectionButton",
+                fn: "onGroupSelectionButtonTap"
             },
             {
                 event: "tap",
                 element: "element",
-                delegate: "#newInklingShareOptions .groupShareSetting",
-                fn: "onGroupShareSettingTap"
+                delegate: ".shareSettingsForm #noOneSelectionButton",
+                fn: "onNoOneSelectionButtonTap"
             },
             {
                 event: "tap",
                 element: "element",
-                delegate: "#newInklingShareOptions .noOneShareSetting",
-                fn: "onNoOneShareSettingTap"
+                delegate: ".shareSettingsForm #forwardingSelectionButton",
+                fn: "onForwardingSelectionButtonTap"
             }
         ]
     },
@@ -215,23 +212,27 @@ Ext.define("inkle.view.NewInkling", {
     },
 
     // Share settings
-    onSelectedGroupsShareSettingTap: function(event, target) {
-        var selectionButton = Ext.fly(target);
-        this.fireEvent("selectedGroupsShareSettingTapped", selectionButton);
+    onSelectedGroupsSelectionButtonTap: function(event, target) {
+        console.log("selectedGroupsSelectionButton tapped");
+        var tappedSelectionButton = Ext.fly(target);
+        this.fireEvent("selectedGroupsSelectionButtonTapped", tappedSelectionButton);
     },
 
-    onGroupShareSettingTap: function(event, target) {
-        var selectionButton = Ext.fly(target);
-        this.fireEvent("groupShareSettingTapped", selectionButton);
+    onGroupSelectionButtonTap: function(event, target) {
+        console.log("groupSelectionButton tapped");
+        var tappedSelectionButton = Ext.fly(target);
+        this.fireEvent("groupSelectionButtonTapped", tappedSelectionButton);
     },
 
-    onNoOneShareSettingTap: function(event, target) {
-        var selectionButton = Ext.fly(target);
-        this.fireEvent("noOneShareSettingTapped", selectionButton);
+    onNoOneSelectionButtonTap: function(event, target) {
+        console.log("noOneSelectionButton tapped");
+        var tappedSelectionButton = Ext.fly(target);
+        this.fireEvent("noOneSelectionButtonTapped", tappedSelectionButton);
     },
 
-    onForwardingShareSettingTap: function(event, target) {
-        var selectionButton = Ext.fly(target);
-        this.fireEvent("forwardingShareSettingTapped", selectionButton);
+    onForwardingSelectionButtonTap: function(event, target) {
+        console.log("forwardingSelectionButton tapped");
+        var tappedSelectionButton = Ext.fly(target);
+        this.fireEvent("forwardingSelectionButtonTapped", tappedSelectionButton);
     }
 });

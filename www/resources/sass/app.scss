@@ -921,7 +921,7 @@ $badge-bg-gradient: "matte";
 /* No dated inklings checkbox */
 #undatedInklingsCheckbox {
     float: left;
-    margin: -5px 0px 0px 4px;
+    margin: 3px 5px 0px 5px;
 }
 
 #undatedInklingsText {
@@ -1116,10 +1116,42 @@ $badge-bg-gradient: "matte";
     font-weight: bold;
 }
 
-/* New inkling invites privacy form */
-/* #newInklingPrivacyForm .selectedGroupsHeader, #newInklingPrivacyForm .noOne,  #newInklingPrivacyForm .forwarding, */
-.shareSettingsForm .selectedGroupsHeader, .shareSettingsForm .noOne, .shareSettingsForm {
+/* Share options */
+.shareSettingsForm .newInklingViewSectionTitle {
+    margin-left: -7px !important;
+}
+
+/* New inkling share settings form */
+.shareSettingsForm .shareSettingsFormHeader {
     clear: both;
+}
+
+.shareSettingsForm .selectionButton {
+    margin: 0px 5px 0px -10px;
+}
+
+.shareSettingsForm .selectedGroupsGroup {
+    clear: both;
+    float: none;
+}
+
+.shareSettingsForm .shareSettingsFormName {
+    margin-left: 55px;
+    padding-top: 5px;
+}
+
+.shareSettingsForm .shareSettingsFormHeaderName {
+    margin-left: 25px;
+    padding-top: 5px;
+}
+
+.shareSettingsForm .groupSelectionButton {
+    float: left;
+    margin-left: 20px;
+}
+
+#forwardingShareSettingsFormHeader {
+    margin-top: 30px;
 }
 
 /* New inkling invited friends button */
@@ -1140,32 +1172,9 @@ $badge-bg-gradient: "matte";
     margin-top: 5px;
 }
 
-/******************/
-/*  FRIENDS VIEW  */
-/******************/
-
-/*#addFriendsSuggestions .x-list-item-label, #groupMembersList .x-list-item-label, #groupInviteesList .x-list-item-label {
-    height: 60px;
-    padding: 5px 55px 5px 5px;
-    margin-right: -50px;
-    border: solid red 1px;
-}
-
-#addFriendsSuggestions .image, #groupMembersList .image {
-    float: left;
-    height: 50px;
-    width: 50px;
-    margin-right: 5px;
-    border: solid green 1px;
-}*/
-
-#friendsView .mutualFriends {
-    float: left;
-}
-
-/****************/
-/* SETTINGS VIEW */
-/****************/
+/*******************/
+/*  SETTINGS VIEW  */
+/*******************/
 #linkFacebookAccountMessage {
     color: $mediumBlue;
     text-align: left;
@@ -1193,7 +1202,7 @@ $badge-bg-gradient: "matte";
     margin: 0px 0px 10px 0px;
 }
 
-.shareSettingsForm p {
+/*.shareSettingsForm p {
     color: $mediumBlue;
     font-size: 18px;
     padding-top: 5px;
@@ -1218,10 +1227,10 @@ $badge-bg-gradient: "matte";
     margin-top: 15px;
 }
 
-/* Used when a user has not created any groups yet*/
+// Used when a user has not created any groups yet
 .shareSettingsForm .noGroupsShareSetting p {
     color: $mediumGray;
     margin-left: 38px;
     font-size: 16px;
     padding: 0px;
-}
+}*/

@@ -1,6 +1,6 @@
 Ext.define("inkle.controller.LoginController", {
     extend: "Ext.app.Controller",
-    
+
     config: {
         refs: {
             // Views
@@ -13,7 +13,7 @@ Ext.define("inkle.controller.LoginController", {
             allInklingsGroupsListPanel: "panel[id=allInklingsGroupsListPanel]",
             allInklingsDatePickerPanel: "panel[id=allInklingsDatePickerPanel]",
             inklingInvitationsPanel: "panel[id=inklingInvitationsPanel]",
-            
+
             // Elements
             loginEmail: "#loginFormEmail",
             loginPassword: "#loginFormPassword",
@@ -30,16 +30,16 @@ Ext.define("inkle.controller.LoginController", {
         control: {
             loginView: {
                 emailLoginButtonTapped: "activateLoginFormView",
-				facebookLoginButtonTapped: "loginWithFacebook",
-				registrationTapped: "activateRegistrationView"
+                facebookLoginButtonTapped: "loginWithFacebook",
+                registrationTapped: "activateRegistrationView"
             },
-            
+
             loginFormView: {
                 loginFormCancelButtonTapped: "activateLoginView",
                 loginFormLoginButtonTapped: "loginWithEmail",
                 forgottenPasswordTapped: "activateForgottenPasswordView"
             },
-            
+
             forgottenPasswordView: {
                 forgottenPasswordBackButtonTapped: "activateLoginFormViewFromForgottenPasswordView",
                 forgottenPasswordSubmitButtonTapped: "submitForgottenPasswordForm"
@@ -54,33 +54,33 @@ Ext.define("inkle.controller.LoginController", {
                 registrationFormCancelButtonTapped: "activateLoginView",
                 registrationFormRegisterButtonTapped: "registerMember"
             },
-            
+
             mainTabView: {
                 activate: "setBadges"
             }
         }
     },
-    
+
     /**********************/
-	/*  HELPER FUNCTIONS  */
-	/**********************/
-	/* Returns the day string associated with the inputted index */
-	getDayString: function(index) {
-		var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-		return days[index];
-	},
-	
-	/* Returns the month string associated with the inputted index */
-	getMonthString: function(index) {
-		months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
-		return months[index];
-	},
-    
+    /*  HELPER FUNCTIONS  */
     /**********************/
-	/*  VIEW TRANSITIONS  */
-	/**********************/
-	/* Creates and activates the login form view */
-	activateLoginFormView: function() {
+    /* Returns the day string associated with the inputted index */
+    getDayString: function(index) {
+        var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        return days[index];
+    },
+
+    /* Returns the month string associated with the inputted index */
+    getMonthString: function(index) {
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+        return months[index];
+    },
+
+    /**********************/
+    /*  VIEW TRANSITIONS  */
+    /**********************/
+    /* Creates and activates the login form view */
+    activateLoginFormView: function() {
         if (this.getLoginFormView())
         {
             Ext.Viewport.animateActiveItem(this.getLoginFormView(), { type: "flip" });
@@ -96,8 +96,8 @@ Ext.define("inkle.controller.LoginController", {
         // Set the focus on the email input
         this.getLoginEmail().focus();
         //windows.scrollTo(0,0);
-	},
-	
+    },
+
     activateForgottenPasswordView: function() {
         if (this.getForgottenPasswordView())
         {
@@ -115,7 +115,7 @@ Ext.define("inkle.controller.LoginController", {
             });
         }
     },
-    
+
     activateResetPasswordView: function(email, pin) {
         var resetPasswordView;
         if (this.getResetPasswordView())
@@ -165,8 +165,8 @@ Ext.define("inkle.controller.LoginController", {
         this.getResetPasswordNewPassword2().setValue("");
     },
 
-	/* Creates and activates the registration view */
-	activateRegistrationView: function() {
+    /* Creates and activates the registration view */
+    activateRegistrationView: function() {
         if (this.getRegistrationView())
         {
             Ext.Viewport.animateActiveItem(this.getRegistrationView(), { type: "flip" });
@@ -181,36 +181,36 @@ Ext.define("inkle.controller.LoginController", {
 
         // Set the focus on the first name input
         this.getRegistrationFirstName().focus();
-	},
-	
-	/* Activates the login view */
-	activateLoginView: function() {
+    },
+
+    /* Activates the login view */
+    activateLoginView: function() {
         Ext.Viewport.animateActiveItem(this.getLoginView(), {
             type: "flip"
         });
-	},
-	
-	/* Creates and activates the main tab view */
+    },
+
+    /* Creates and activates the main tab view */
     activateMainTabView: function() {
         // Destroy the main tab view
-		if (this.getMainTabView()) {
+        if (this.getMainTabView()) {
             this.getMainTabView().destroy();
-		}
-		
-		// Destroy all other components
-		if (this.getAllInklingsGroupsListPanel()) {
+        }
+
+        // Destroy all other components
+        if (this.getAllInklingsGroupsListPanel()) {
             this.getAllInklingsGroupsListPanel().destroy();
-		}
-		if (this.getAllInklingsDatePickerPanel()) {
+        }
+        if (this.getAllInklingsDatePickerPanel()) {
             this.getAllInklingsDatePickerPanel().destroy();
-		}
-		if (this.getInklingInvitationsPanel()) {
+        }
+        if (this.getInklingInvitationsPanel()) {
             this.getInklingInvitationsPanel().destroy();
-		}
-        
+        }
+
         // Create the main tab view
         var mainTabView = Ext.create("inkle.view.Main");
-        
+
         // Animate the main tab view
         Ext.Viewport.animateActiveItem(mainTabView, {
             type: "slide",
@@ -219,14 +219,14 @@ Ext.define("inkle.controller.LoginController", {
     },
 
     /**************/
-	/*  COMMANDS  */
-	/**************/
-	/* Submits the login form */
+    /*  COMMANDS  */
+    /**************/
+    /* Submits the login form */
     loginWithEmail: function() {
-		this.getLoginFormView().submit({
-			method: "POST",
+        this.getLoginFormView().submit({
+            method: "POST",
 
-			headers : { "cache-control": "no-cache" },			
+            headers : { "cache-control": "no-cache" },
 
             waitMsg: {
                 xtype: "loadmask",
@@ -245,9 +245,9 @@ Ext.define("inkle.controller.LoginController", {
             scope: this
         });
     },
-    
+
     /* Logs the user in with Facebook */
-	loginWithFacebook: function() {
+    loginWithFacebook: function() {
         var object = this;
         FB.login(function(response) {
             if (response.authResponse) {
@@ -295,7 +295,7 @@ Ext.define("inkle.controller.LoginController", {
     submitForgottenPasswordForm: function() {
         this.getForgottenPasswordView().submit({
             method: "POST",
-                        
+
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -326,7 +326,7 @@ Ext.define("inkle.controller.LoginController", {
             method: "POST",
 
             headers : { "cache-control": "no-cache" },
-  
+
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -351,13 +351,13 @@ Ext.define("inkle.controller.LoginController", {
             scope: this
         });
     },
-    
+
     /* Registers a new member */
     registerMember: function() {
-		this.getRegistrationView().submit({
-			method: "POST",
+        this.getRegistrationView().submit({
+            method: "POST",
 
-			headers : { "cache-control": "no-cache" },
+            headers : { "cache-control": "no-cache" },
 
             waitMsg: {
                 xtype: "loadmask",
@@ -376,7 +376,7 @@ Ext.define("inkle.controller.LoginController", {
             scope: this
         });
     },
-    
+
     /* Sets the badges in the "My Inklings" and "Friends" tabs */
     setBadges: function() {
         // Set the "My Inklings" tab and inkling invites badges
@@ -394,11 +394,11 @@ Ext.define("inkle.controller.LoginController", {
             },
             scope: this
         });
-        
+
         // Set the "Friends" tab and friends requests badges
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/numFriendRequests/",
-            
+
             success: function(response) {
                 numFriendRequests = response.responseText;
                 if (numFriendRequests != 0) {
@@ -406,11 +406,11 @@ Ext.define("inkle.controller.LoginController", {
                     this.getRequestsButton().setBadgeText(numFriendRequests);
                 }
             },
-            
+
             failure: function(response) {
                 console.log(response.responseText);
             },
-            
+
             scope: this
         });
     }
