@@ -1,4 +1,5 @@
-<div class="group" data-groupId="{{ g.id }}">
+{% autoescape on %}
+<div class="group" data-groupId="{{ g.id }}" {% if g.get_member_ids %}data-memberIds="{{ g.get_member_ids }}"{% endif %}>
     <!-- Selection button -->
     {% if g.selected %}
         <img class="selectionButton selected" src="resources/images/selected.png">
@@ -9,3 +10,4 @@
     <!-- Group name -->
     <p class="groupName">{{ g.name }}</p>
 </div>
+{% endautoescape %}

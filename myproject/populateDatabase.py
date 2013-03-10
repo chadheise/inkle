@@ -12,7 +12,7 @@ def load_members():
         user = User(first_name = data[0], last_name = data[1], username = data[2], email = data[2], is_staff = data[7])
         user.set_password("password")
         user.save()
-        
+
         if (data[6] == "Male"):
             shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
         else:
@@ -26,7 +26,7 @@ def load_friends():
     """Loads the member friendships into the database. """
     for line in open("databaseData/friends.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        
+
         if (data[1].strip()):
             sender = User.objects.get(pk = data[0])
             receiver_ids = [x.strip() for x in data[1].split(",")]
@@ -36,7 +36,7 @@ def load_friends():
 
                 assert (sender != receiver), "Sender and receiver IDs are both %d" % (sender.id)
                 assert (receiver not in sender.get_profile().friends.all()), "Sender (%d) and receiver (%d) are already friends" % (sender.id, receiver.id)
-                
+
                 sender.get_profile().friends.add(receiver)
                 receiver.get_profile().friends.add(sender)
 
@@ -45,7 +45,7 @@ def load_friend_requests():
     """Loads the pending friend requests into the database. """
     for line in open("databaseData/friendRequests.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        
+
         if (data[1].strip()):
             sender = User.objects.get(pk = data[0])
             receiver_ids = [x.strip() for x in data[1].split(",")]
@@ -57,7 +57,7 @@ def load_friend_requests():
                 assert (receiver not in sender.get_profile().friends.all()), "Sender (%d) and receiver (%d) are already friends" % (sender.id, receiver.id)
                 assert (not sender.get_profile().has_pending_friend_request_to(receiver)), "Sender (%d) already has a pending friend request to receiver (%d)" % (sender.id, receiver.id)
                 assert (not receiver.get_profile().has_pending_friend_request_to(sender)), "Receiver (%d) already has a pending friend request to sender (%d)" % (receiver.id, sender.id)
-        
+
                 FriendRequest.objects.create(sender = sender, receiver = receiver)
 
 
@@ -81,10 +81,12 @@ def load_inklings():
         creator = User.objects.get(pk = data[5])
         inkling = Inkling.objects.create(creator = creator, date = datetime.date.today() + datetime.timedelta(days = int(data[1])), location = data[0], time = data[2], notes = data[3])
 
+        # Create the sharing for the creator
         sp = SharingPermission.objects.create(creator = creator, inkling = inkling)
         for m in creator.get_profile().friends.all():
             sp.members.add(m)
 
+        # Create the sharing for each member attending the inkling
         for member_id in [x.strip() for x in data[4].split(",")]:
             member = User.objects.get(pk = member_id)
             member.get_profile().inklings.add(inkling)
@@ -108,7 +110,7 @@ def load_inkling_invites():
 def load_feed_comments():
     for line in open("databaseData/feedComments.txt", "r").readlines()[1:]:
         data = [x.strip() for x in line.split("|")]
-        
+
         creator = User.objects.get(pk = data[1])
         inkling = Inkling.objects.get(pk = data[0])
 

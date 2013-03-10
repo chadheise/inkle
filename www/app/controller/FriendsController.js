@@ -771,21 +771,25 @@ Ext.define("inkle.controller.FriendsController", {
         });
     },
 
-    renameGroup: function(groupId) {
-        var groupName = Ext.fly("group" + groupId + "Name");
-        groupName = groupName.getHtml();
+    renameGroup: function(groupNameInput) {
+        // Get the group name
+        var groupName = groupNameInput.parent().child(".groupName");
+        var groupNameValue = groupName.getHtml();
 
-        var groupNameInput = Ext.fly("group" + groupId + "NameInput");
-        groupNameInputValue = groupNameInput.getValue();
+        // Get the group name input
+        var groupNameInputValue = groupNameInput.getValue();
 
-        if (groupName != groupNameInputValue) {
-            var groupName = Ext.fly("group" + groupId + "Name");
+        // If the value has changed, display it and update the database
+        if (groupNameValue != groupNameInputValue) {
+            // Update the group name dislpayed on the group list item
             groupName.setHtml(groupNameInputValue);
 
+            // Update the database
             Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/renameGroup/",
+                headers : { "cache-control": "no-cache" },
                 params: {
-                    groupId: groupId,
+                    groupId: groupNameInput.parent(".group").getAttribute("data-groupId"),
                     name: groupNameInputValue
                 },
                 failure: function(response) {

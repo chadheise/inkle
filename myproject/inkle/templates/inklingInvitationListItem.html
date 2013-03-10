@@ -1,7 +1,8 @@
+{% autoescape on %}
 <div class="inklingInvitation" data-invitationId="{{ invitation.id }}" data-inklingId="{{ invitation.inkling.id }}">
     <!-- Location -->
     <p class="location">{{ invitation.inkling.location|default:"Location TBD" }}</p>
-    
+
     <!-- Time -->
     {% if invitation.inkling.time %}
         <p class="time">{{ invitation.inkling.time }}</p>
@@ -20,3 +21,4 @@
     <!-- Disclosure arrow -->
     <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
 </div>
+{% endautoescape %}
