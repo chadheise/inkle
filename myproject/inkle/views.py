@@ -1816,7 +1816,7 @@ def people_search_view(request):
         elif m.get_profile().has_pending_friend_request_to(request.user):
             m.is_requested = True
             inkleRequested.append(m)
-        else:  #If the member matches the search query but is not friends with the user and a request is not pending
+        elif not m.get_profile().facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
             inkleOther.append(m)
 
     for fbFriend in fbData["data"]:
@@ -1861,6 +1861,17 @@ def people_search_view(request):
             personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
 
+    print "inkleFriends"
+    print sorted(inkleFriends, key = lambda m : m.last_name)
+    print "inkleRequested"
+    print sorted(inklePending, key = lambda m : m.last_name)
+    print "facebookInkle"
+    print sorted(facebookInkle, key = lambda m : m.last_name)
+    print "facebookNotInkle"
+    print sorted(facebookNotInkle, key = lambda m : m['last_name'])
+    print "inkleOther"
+    print sorted(inkleOther, key = lambda m : m.last_name)
+
     searchResults = []
     if inkleFriends:
         searchResults += sorted(inkleFriends, key = lambda m : m.last_name)
@@ -1871,10 +1882,14 @@ def people_search_view(request):
     if facebookInkle:
         searchResults += sorted(facebookInkle, key = lambda m : m.last_name)
     if facebookNotInkle:
-        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name']) 
+        searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name'], reverse=True)
     if inkleOther:
-        searchResults += sorted(inkleOther, key = lambda m : m.last_name)          
-    searchResults.reverse() #Return in reverse sorted order, so correct order is given after adding to the sencha store
+        searchResults += sorted(inkleOther, key = lambda m : m.last_name)
+    
+    print "-----"
+    #print searchResults
+    for result in searchResults:
+        print result
     
     response_members = []
     for m in searchResults:
@@ -1922,8 +1937,10 @@ def people_search_view(request):
             "html": html,
         })
         
-    print "searchResults: " + str(searchResults)
-    print len(searchResults)
+        print "+++++"
+        for r in response_members:
+            print r
+
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
