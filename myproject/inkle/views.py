@@ -1790,7 +1790,7 @@ def people_search_view(request):
             try:
                 fbResponse = urllib2.urlopen(fbRequest).read()
             except Exception, e:
-                print "except2: " + str(e)
+                print "Error reading facebook response: " + str(e)
             fbData = simplejson.loads(fbResponse)      
 
     # Create lists for storing member objects or dictionaries for each type
@@ -1838,8 +1838,6 @@ def people_search_view(request):
                 personData["last_name"] = fbFriend["last_name"]
                 personData["get_profile"] = {}
                 personData["get_profile"]["facebook_id"] = fbFriend["uid"]
-                #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
-                #personData["id"] = "fb" + str(fbFriend["uid"])
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
@@ -1852,25 +1850,12 @@ def people_search_view(request):
             personData["last_name"] = fbFriend["last_name"]
             personData["get_profile"] = {}
             personData["get_profile"]["facebook_id"] = fbFriend["uid"]
-            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
-            #personData["id"] = "fb" + str(fbFriend["uid"])
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
             personData["is_requested"] = False
             personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
-
-    #print "inkleFriends"
-    #print sorted(inkleFriends, key = lambda m : m.last_name)
-    #print "inkleRequested"
-    #print sorted(inklePending, key = lambda m : m.last_name)
-    #print "facebookInkle"
-    #print sorted(facebookInkle, key = lambda m : m.last_name)
-    #print "facebookNotInkle"
-    #print sorted(facebookNotInkle, key = lambda m : m['last_name'])
-    #print "inkleOther"
-    #print sorted(inkleOther, key = lambda m : m.last_name)
 
     searchResults = []
     if inkleFriends:
@@ -1886,15 +1871,6 @@ def people_search_view(request):
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)
     
-    print "-----"
-    for result in searchResults:
-        try:
-            print result.first_name + " " + result.last_name
-        except:
-            print result['first_name'] + " " + result['last_name'] + " FB"
-    print "*****"
-    
-    rank = 0
     response_members = []
     for m in searchResults:
         try:
@@ -1940,11 +1916,8 @@ def people_search_view(request):
             "user_id": userId,
             "facebook_id": facebook_id,
             "relationship": relationship,
-            "html": html,
-            "rank": rank,
-            "name2" : name2,
+            "html": html
         })
-        rank += 1
 
     # Create and return a JSON object
     response = simplejson.dumps(response_members)

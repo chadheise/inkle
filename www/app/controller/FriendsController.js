@@ -834,32 +834,7 @@ Ext.define("inkle.controller.FriendsController", {
     
     		    if (query == currentQuery ) { //Only refresh the list data if the results are for the current query
                     addFriendsStore.removeAll();
-                    //addFriendsList.removeAll(true); //Remove and destroy all previous suggestions
-                    //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
-                    var friendList;
-                    for (var index in friendSuggestions) {
-                        addFriendsStore.add(friendSuggestions[index]);
-                        //addFriendsList.add(friendSuggestions[index]);    
-                    }
-                    /*for (var j in addFriendsStore) {
-                        friendList += " - ";
-                        friendList += addFriendsStore.getAt(j).name2;
-                        friendList += addFriendsStore.getAt(j).rank;
-                    }
-                    alert("ok");
-                    alert(friendList);*/
-                    /*for (var i in addFriendsList.getItems()) {
-                        alert(addFriendsList.items[i]);
-                    }*/
-                    ///alert(friendList);
-                    //addFriendsStore.sort('rank', 'DESC');
-                    //addFriendsList.refresh();
-                    /*var friendList2;
-                    for (var i in addFriendsList) {
-                        friendList2 += " + ";
-                        friendList2 += addFriendsList[i].relationship;
-                    }
-                    alert(friendList2);*/
+                    addFriendsStore.add(friendSuggestions);
                 }
                 Ext.Viewport.setMasked(false);
     		},
