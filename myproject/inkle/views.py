@@ -1664,8 +1664,8 @@ def people_search_view(request):
             try:
                 fbResponse = urllib2.urlopen(fbRequest).read()
             except Exception, e:
-                print "except2: " + str(e)
-            fbData = simplejson.loads(fbResponse)
+                print "Error reading facebook response: " + str(e)
+            fbData = simplejson.loads(fbResponse)      
 
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
@@ -1690,7 +1690,7 @@ def people_search_view(request):
         elif m.has_pending_friend_request_to(request.user):
             m.is_requested = True
             inkleRequested.append(m)
-        else:  #If the member matches the search query but is not friends with the user and a request is not pending
+        elif not m.get_profile().facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
             inkleOther.append(m)
 
     for fbFriend in fbData["data"]:
@@ -1712,8 +1712,6 @@ def people_search_view(request):
                 personData["last_name"] = fbFriend["last_name"]
                 personData["get_profile"] = {}
                 personData["get_profile"]["facebook_id"] = fbFriend["uid"]
-                #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
-                #personData["id"] = "fb" + str(fbFriend["uid"])
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
@@ -1726,8 +1724,6 @@ def people_search_view(request):
             personData["last_name"] = fbFriend["last_name"]
             personData["get_profile"] = {}
             personData["get_profile"]["facebook_id"] = fbFriend["uid"]
-            #Users not on inkle don't have an id so use their facebook id pre-pending with 'fb' instead
-            #personData["id"] = "fb" + str(fbFriend["uid"])
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
@@ -1748,8 +1744,6 @@ def people_search_view(request):
         searchResults += sorted(facebookNotInkle, key = lambda m : m['last_name'])
     if inkleOther:
         searchResults += sorted(inkleOther, key = lambda m : m.last_name)
-    searchResults.reverse() #Return in reverse sorted order, so correct order is given after adding to the sencha store
-
     response_members = []
     for m in searchResults:
         try:
@@ -1790,14 +1784,12 @@ def people_search_view(request):
                 relationship = "facebookOnlyFriend"
 
         response_members.append({
-            "id": userId,
+            "user_id": userId,
             "facebook_id": facebook_id,
             "relationship": relationship,
-            "html": html,
+            "html": html
         })
 
-    print "searchResults: " + str(searchResults)
-    print len(searchResults)
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")

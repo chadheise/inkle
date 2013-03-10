@@ -91,10 +91,8 @@ Ext.define("inkle.controller.FriendsController", {
     activateFriendsView: function(source) {
         // If coming from the add friends view, slide that view away
         if (source == "addFriendsView") {
-            //this.getAddFriendsSearchField().setValue(""); //Clear search field
-            ///this.getAddFriendsSuggestions()
-            ///this.getAddFriendsSuggestions().getStore().removeAll();
-            ///this.getAddFriendsSuggestions().getStore().load();
+            this.getAddFriendsSearchField().setValue(""); //Clear search field
+            this.getAddFriendsSuggestions().getStore().removeAll(); //Clear search results from store
             Ext.Viewport.animateActiveItem(this.getMainTabView(), {
                 type: "slide",
                 direction: "down"
@@ -241,7 +239,7 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     activateAddFriendsActionSheet: function(data) {
-        var userId = data["id"];
+        var userId = data["user_id"];
         var facebookId = data["facebook_id"];
         var relationship = data["relationship"];
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
@@ -257,7 +255,7 @@ Ext.define("inkle.controller.FriendsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = addFriendsStore.findRecord("id", userId);
+            		    var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
@@ -298,7 +296,7 @@ Ext.define("inkle.controller.FriendsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -339,7 +337,7 @@ Ext.define("inkle.controller.FriendsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "friend");
@@ -381,7 +379,7 @@ Ext.define("inkle.controller.FriendsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -411,7 +409,7 @@ Ext.define("inkle.controller.FriendsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("id", userId);
+                        var personRecord = addFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -800,6 +798,7 @@ Ext.define("inkle.controller.FriendsController", {
 
     updateAddFriendsSuggestions: function() {
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
+        var addFriendsList = this.getAddFriendsSuggestions();
         var query = this.getAddFriendsSearchField().getValue().toLowerCase();
         var currentView = this; //Store reference to this to get currentQuery in ajax callback
 
@@ -836,10 +835,7 @@ Ext.define("inkle.controller.FriendsController", {
 
     		    if (query == currentQuery ) { //Only refresh the list data if the results are for the current query
                     addFriendsStore.removeAll();
-                    //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
-                    for (var index in friendSuggestions) {
-                        addFriendsStore.add(friendSuggestions[index]);
-                    }
+                    addFriendsStore.add(friendSuggestions);
                 }
                 Ext.Viewport.setMasked(false);
     		},
