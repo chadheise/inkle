@@ -212,7 +212,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 	    var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();
 	    if (allInklingsDatePickerPanel.getHidden()) {
 	    	allInklingsDatePickerPanel.showBy(this.getAllInklingsDateButton());
-	    	this.getAllInklingsDateButton().setCls("x-button-pressed");
+	    	this.getAllInklingsDateButton().addCls("x-button-pressed");
     	}
     	else {
     		allInklingsDatePickerPanel.hide();
@@ -252,7 +252,7 @@ Ext.define("inkle.controller.AllInklingsController", {
 	    var allInklingsGroupsListPanel = this.getAllInklingsGroupsListPanel();
 	    if (allInklingsGroupsListPanel.getHidden()) {
 	    	allInklingsGroupsListPanel.showBy(this.getAllInklingsGroupsButton());
-	    	this.getAllInklingsGroupsButton().setCls("x-button-pressed");
+	    	this.getAllInklingsGroupsButton().addCls("x-button-pressed");
     	}
     	else {
     		allInklingsGroupsListPanel.hide();

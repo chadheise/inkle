@@ -396,8 +396,8 @@ Ext.define("inkle.view.Friends", {
 
     // Groups list name input blur
     onGroupNameInputBlurred: function(event, target) {
-        var groupId = Ext.fly(target).parent(".group").getAttribute("data-groupId");
-        this.fireEvent("groupNameInputBlurred", groupId);
+        var groupNameInput = event.getTarget(".groupNameInput", 10, true);
+        this.fireEvent("groupNameInputBlurred", groupNameInput);
     },
 
     onIgnoreRequestButtonTap: function(event, target) {

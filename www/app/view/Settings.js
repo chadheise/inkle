@@ -1,22 +1,22 @@
 Ext.define("inkle.view.Settings", {
 	extend: "Ext.navigation.View",
-	
+
 	xtype: "settingsView",
-	
+
     requires: [
     	"Ext.dataview.List"
     ],
-	
+
 	config: {
 		// Tab information
 		title: "Settings",
 		iconCls: "settingsIcon",
-    	
+
     	// Layout information
     	layout: "card",
     	navigationBar: false,
     	//scrollable: true,
-    	
+
     	items: [
     		// Top toolbar
     		{
@@ -75,7 +75,7 @@ Ext.define("inkle.view.Settings", {
                     },
                 ]
     		},
-    		
+
     		// Main content list
     		{
     			xtype: "list",
@@ -97,7 +97,7 @@ Ext.define("inkle.view.Settings", {
 				}
     		},
     	],
-    	
+
     	listeners: [
 			{
             	delegate: "#settingsLogoutButton",
@@ -139,10 +139,10 @@ Ext.define("inkle.view.Settings", {
             	event: "tap",
             	fn: "onChangeEmailSubmitButtonTap"
         	},
-        	
+
         ]
 	},
-	
+
 	// Event firings
 	onSettingsLogoutButtonTap: function() {
         this.fireEvent("settingsLogoutButtonTapped");
