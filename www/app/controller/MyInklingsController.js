@@ -288,7 +288,7 @@ Ext.define("inkle.controller.MyInklingsController", {
             var newInklingView = this.getNewInklingView();
             Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/createInkling/",
-                headers: { "cache-control": "no-cache" },
+
                 method: "POST",
 
                 params: {
@@ -543,7 +543,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         // If the logged in member has been invited to at least one inkling, unhide the inkling invites button and set its text
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/numInklingInvitations/",
-            headers: { "cache-control": "no-cache" },
+
             success: function(response) {
                 numInklingInvites = response.responseText;
                 if (numInklingInvites != 0) {
@@ -672,7 +672,7 @@ Ext.define("inkle.controller.MyInklingsController", {
         console.log(invitationResponse);
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/respondToInklingInvitation/",
-            headers: { "cache-control": "no-cache" },
+
             params: {
                 invitationId: invitationId,
                 response: invitationResponse

@@ -1,6 +1,6 @@
 Ext.define("inkle.controller.SettingsController", {
     extend: "Ext.app.Controller",
-    
+
     config: {
         refs: {
             settingsView: "settingsView",
@@ -13,7 +13,7 @@ Ext.define("inkle.controller.SettingsController", {
             shareSettingsView: "shareSettingsView",
             changePasswordView: "changePasswordView",
             changeEmailView: "changeEmailView",
-            
+
             // Toolbar buttons
             settingsLogoutButton: "#settingsLogoutButton",
             inviteFacebookFriendsBackButton: "#inviteFacebookFriendsBackButton",
@@ -32,21 +32,21 @@ Ext.define("inkle.controller.SettingsController", {
             settingsView: {
                 settingsLogoutButtonTapped: "logout",
                 settingsEditButtonTapped: "editSettings",
-                
+
                 inviteFacebookFriendsTapped: "inviteFacebookFriends",
                 inviteFacebookFriendsBackButtonTapped: "inviteFacebookFriendsBack",
-                
+
                 shareSettingsTapped: "shareSettings",
                 shareSettingsBackButtonTapped: "shareSettingsBack",
-                
+
                 changePasswordTapped: "loadChangePasswordView",
                 changePasswordBackButtonTapped: "changePasswordBack",
                 changePasswordSubmitButtonTapped: "changePassword",
-                
+
                 changeEmailTapped: "loadChangeEmailView",
                 changeEmailBackButtonTapped: "changeEmailBack",
                 changeEmailSubmitButtonTapped: "changeEmail",
-                
+
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
@@ -63,22 +63,22 @@ Ext.define("inkle.controller.SettingsController", {
            	},
         }
     },
-	
+
 	initializeSettingsView: function() {
-    
+
         //Determine if the user is logged in with facebook
         var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
             if (response.status === 'connected') {
                 fbAccessToken = response.authResponse.accessToken;
             } else if (response.status === 'not_authorized') {
-                // the user is logged in to Facebook, 
+                // the user is logged in to Facebook,
                 // but has not authenticated your app
             } else {
                 // the user isn't logged in to Facebook.
             }
         });
-    
+
         // Update the settings list based on whether or not the user is logged in with facebook
         var settingsListStore = this.getSettingsList().getStore();
         if (fbAccessToken != "") {
@@ -101,7 +101,7 @@ Ext.define("inkle.controller.SettingsController", {
         }
         //settingsListStore.load();
     },
-	
+
 	/* Transitions */
     activateLoginView: function() {
     	// Destroy the old login view, if it exists
@@ -114,14 +114,14 @@ Ext.define("inkle.controller.SettingsController", {
         if (this.getRegistrationView()) {
             this.getRegistrationView().destroy();
         }
-        
+
         // Create the login view
         var loginView = Ext.create("inkle.view.Login");
-        
+
         // Animate the login view
         Ext.Viewport.animateActiveItem(loginView, { type: "slide", direction: "down" });
     },
-	
+
     changePasswordBack: function() {
         this.getSettingsView().pop();
         this.getChangePasswordBackButton().hide();
@@ -134,7 +134,7 @@ Ext.define("inkle.controller.SettingsController", {
         FB.logout(function(response) {
           // user is now logged out
         });
-    
+
 		Ext.Ajax.request({
 			async: false,
 			url: inkle.app.baseUrl + "/logout/",
@@ -145,18 +145,18 @@ Ext.define("inkle.controller.SettingsController", {
         		Ext.Msg.alert("Error", response.errors);
 			}
 		});
-		
+
 		// Active the login view
 		this.activateLoginView();
     },
- 
+
     inviteFriend: function(memberId) {
 		var inviteFriendButton = Ext.fly("member" + memberId + "InviteFriendButton");
-		
+
 		inviteFriendButton.set({
 			"value" : "Sent"
 		});
-		
+
 	    //var fbConnected = false;
 		var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
@@ -164,26 +164,26 @@ Ext.define("inkle.controller.SettingsController", {
             // the user is logged in and has authenticated your
             // app, and response.authResponse supplies
             // the user's ID, a valid access token, a signed
-            // request, and the time the access token 
+            // request, and the time the access token
             // and signed request each expire
                 //fbConnected = true;
                 //var uid = response.authResponse.userID;
             fbAccessToken = response.authResponse.accessToken;
           } else if (response.status === 'not_authorized') {
-            // the user is logged in to Facebook, 
+            // the user is logged in to Facebook,
             // but has not authenticated your app
           } else {
             // the user isn't logged in to Facebook.
           }
          });
-		
+
 		Ext.Ajax.request({
 		    // THIS INCLUDES THE CLEINT_SECRET AND SHOULD NOT BE VISIBLE TO USERS - May need to hide on server side
     		url: "https://graph.facebook.com/oauth/access_token?client_id=355653434520396&client_secret=e6df96d1801e704fecd7cb3fea71b944&grant_type=client_credentials",
         	success: function(response) {
                 appAccessToken = response.responseText.replace("access_token=", "");
         	    fbId = memberId.replace("fb","");
-        		
+
         		var postData = {
         		    access_token: fbAccessToken,
         		    //body: 'body',
@@ -197,7 +197,7 @@ Ext.define("inkle.controller.SettingsController", {
                     console.log(response);
                     FB.login(function() {
                       if (response.authResponse) {
-                        // user gave permission        
+                        // user gave permission
                       } else {
                         // user did not give permission
                       }
@@ -206,14 +206,14 @@ Ext.define("inkle.controller.SettingsController", {
                     alert("A message inviting them to inkle has been posted to their facebook feed.");
                   }
                 });
-        	
+
         	},
         	failure: function(response) {
         		alert("Error", response.responseText);
         	}
 		});
 	},
- 
+
     /* Logs the user in with facbeook and links their existing account to facebook */
 	linkFacebookAccount: function() {
         var object = this;
@@ -256,25 +256,25 @@ Ext.define("inkle.controller.SettingsController", {
     },
 
 	inviteFacebookFriends: function() {
-        
+
         var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
             if (response.status === 'connected') {
                 fbAccessToken = response.authResponse.accessToken;
             } else if (response.status === 'not_authorized') {
-                // the user is logged in to Facebook, 
+                // the user is logged in to Facebook,
                 // but has not authenticated your app
             } else {
                 // the user isn't logged in to Facebook.
             }
         });
-        
+
         if (fbAccessToken != "") {
             // Push the invite facebook friends view onto the settings view
             this.getSettingsView().push({
         	    xtype: "inviteFacebookFriendsView"
             });
-            
+
             // Update the invite facebook friends list
             var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
             inviteFacebookFriendsListStore.setProxy({
@@ -294,15 +294,15 @@ Ext.define("inkle.controller.SettingsController", {
         //Update buttons
         this.getSettingsLogoutButton().hide();
         this.getInviteFacebookFriendsBackButton().show();
-         
+
     },
- 
+
     inviteFacebookFriendsBack: function() {
         this.getSettingsView().pop();
         this.getInviteFacebookFriendsBackButton().hide();
         this.getSettingsLogoutButton().show();
     },
-    
+
     shareSettings: function() {
         // Push the share settings view
         this.getSettingsView().push({
@@ -312,13 +312,13 @@ Ext.define("inkle.controller.SettingsController", {
         this.getSettingsLogoutButton().hide();
         this.getShareSettingsBackButton().show();
     },
-    
+
     shareSettingsBack: function() {
         this.getSettingsView().pop();
         this.getShareSettingsBackButton().hide();
         this.getSettingsLogoutButton().show();
     },
-    
+
     loadChangePasswordView: function() {
         // Push the change password view
         this.getSettingsView().push({
@@ -359,14 +359,14 @@ Ext.define("inkle.controller.SettingsController", {
     editSettings: function() {
         console.log("editSettings");
     },
-    
+
     /*Share Settings */
     selectSelectedGroupsShareSetting: function(selectedGroupsShareSetting) {
         //Only make ajax call if the item was not selected
 	    if (selectedGroupsShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/setShareSetting/",
-                headers : { "cache-control": "no-cache" },
+
                 params: {
                     setting: "shareWithSelectedGroups",
                     value: "true"
@@ -374,7 +374,7 @@ Ext.define("inkle.controller.SettingsController", {
                 success: function(response) {
                     //Only change selection images if call was a success
                     selectedGroupsShareSetting.set({
-            	       "src": "resources/images/selected.png" 
+            	       "src": "resources/images/selected.png"
             	    });
 
             	    Ext.get('shareSettingsOptions').select('img.groupShareSetting').each(function() {
@@ -397,7 +397,7 @@ Ext.define("inkle.controller.SettingsController", {
             });
         }
 	},
-	
+
 	toggleGroupShareSetting: function(groupShareSetting) {
     	var value = "true";
     	if (groupShareSetting.getAttribute("src") == "resources/images/selected.png") {
@@ -410,7 +410,7 @@ Ext.define("inkle.controller.SettingsController", {
             //Only make ajax call if the selectedGroupsShareSetting is selected
     	    Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/setShareSetting/",
-                headers : { "cache-control": "no-cache" },
+
                 params: {
                     setting: "shareGroupByDefault",
                     value: value,
@@ -436,13 +436,13 @@ Ext.define("inkle.controller.SettingsController", {
             });
 	    }
 	},
-	
+
 	selectNoOneShareSetting: function(noOneShareSetting) {
 	    //Only make ajax call if the item was not selected
 	    if (noOneShareSetting.getAttribute("src") == "resources/images/deselected.png") {
     	    Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/setShareSetting/",
-                headers : { "cache-control": "no-cache" },
+
                 params: {
                     setting: "shareWithSelectedGroups",
                     value: "false"
@@ -450,7 +450,7 @@ Ext.define("inkle.controller.SettingsController", {
                 success: function(response) {
                     //Only change selection images if call was a success
                     noOneShareSetting.set({
-            	       "src": "resources/images/selected.png" 
+            	       "src": "resources/images/selected.png"
             	    });
 
             	    Ext.get('shareSettingsOptions').select('img.groupShareSetting').each(function() {
@@ -473,17 +473,17 @@ Ext.define("inkle.controller.SettingsController", {
             });
         }
 	},
-	
+
 	toggleForwardingShareSetting: function(forwardingShareSetting) {
 	    var value = "true";
 	    if (forwardingShareSetting.getAttribute("src") == "resources/images/selected.png") {
 			value = "false";
 	    }
-	    
+
 	    //Only make ajax call if the item was not selected
 	    Ext.Ajax.request({
             url: inkle.app.baseUrl + "/setShareSetting/",
-            headers : { "cache-control": "no-cache" },
+
             params: {
                 setting: "allowInklingAttendeesToShare",
                 value: value
@@ -507,11 +507,11 @@ Ext.define("inkle.controller.SettingsController", {
             scope: this
         });
 	},
-    
+
     changePassword: function() {
         this.getChangePasswordView().submit({
 			method: "POST",
-			headers : { "cache-control": "no-cache" },	
+
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
@@ -534,11 +534,11 @@ Ext.define("inkle.controller.SettingsController", {
             scope: this
         });
     },
-    
+
     changeEmail: function() {
         this.getChangeEmailView().submit({
 			method: "POST",
-			headers : { "cache-control": "no-cache" },
+
             waitMsg: {
                 xtype: "loadmask",
                 message: "Processing",
