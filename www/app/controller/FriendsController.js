@@ -800,6 +800,7 @@ Ext.define("inkle.controller.FriendsController", {
 
     updateAddFriendsSuggestions: function() {
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
+        var addFriendsList = this.getAddFriendsSuggestions();
         var query = this.getAddFriendsSearchField().getValue().toLowerCase();
         var currentView = this; //Store reference to this to get currentQuery in ajax callback
 
@@ -836,10 +837,7 @@ Ext.define("inkle.controller.FriendsController", {
 
     		    if (query == currentQuery ) { //Only refresh the list data if the results are for the current query
                     addFriendsStore.removeAll();
-                    //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
-                    for (var index in friendSuggestions) {
-                        addFriendsStore.add(friendSuggestions[index]);
-                    }
+                    addFriendsStore.add(friendSuggestions);
                 }
                 Ext.Viewport.setMasked(false);
     		},
