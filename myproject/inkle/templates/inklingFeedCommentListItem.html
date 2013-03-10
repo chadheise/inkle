@@ -3,9 +3,9 @@
 {% autoescape on %}
 <div class="feedComment">
     {% if user == feed_comment.creator %}
-        <img class="floatRight" src="{{ feed_comment.creator.get_profile.get_picture_path }}" />
+        <img class="floatRight" src="{{ feed_comment.creator.get_picture_path }}" />
     {% else %}
-        <img src="{{ feed_comment.creator.get_profile.get_picture_path }}" />
+        <img src="{{ feed_comment.creator.get_picture_path }}" />
     {% endif %}
 
     <div class="feedCommentInfo">

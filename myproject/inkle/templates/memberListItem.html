@@ -1,5 +1,5 @@
 {% autoescape on %}
-<div class="member" data-memberId={%if m.id %}"{{m.id}}"{% else %}""{% endif %} data-facebookId={%if m.get_profile.facebook_id %}"{{m.get_profile.facebook_id}}"{% else %}""{% endif %}>
+<div class="member" data-memberId={%if m.id %}"{{m.id}}"{% else %}""{% endif %} data-facebookId={%if m.facebook_id %}"{{m.facebook_id}}"{% else %}""{% endif %}>
     <!-- Delete lock -->
     {% if include_delete_items %}
         <img class="deleteLock" src="resources/images/delete.png">
@@ -15,7 +15,7 @@
     {% endif %}
 
     <!-- Member image -->
-    <img class="memberImage" src="{{ m.get_profile.get_picture_path }}">
+    <img class="memberImage" src="{{ m.get_picture_path }}">
 
     <!-- Member info -->
     <div class="memberInfo">
@@ -40,7 +40,7 @@
 
     <!-- Add friend buttons -->
     {% if include_add_friend_buttons %}
-        {% if m in user.get_profile.friends.all %}
+        {% if m in user.friends.all %}
             <input class="isFriendButton" type="button" value="Friends" />
         {% else %}
             {% if m == user %}
@@ -74,7 +74,7 @@
 	{% endif %}
 
 	{% if include_facebook_icon %}
-		{%if m.get_profile.facebook_id %}
+		{%if m.facebook_id %}
 			<img class="facebookIcon" src="resources/images/facebookImageTag.png">
 		{% endif %}
 	{% endif %}
