@@ -797,6 +797,7 @@ Ext.define("inkle.controller.FriendsController", {
 
     updateAddFriendsSuggestions: function() {
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
+        var addFriendsList = this.getAddFriendsSuggestions();
         var query = this.getAddFriendsSearchField().getValue().toLowerCase();
         var currentView = this; //Store reference to this to get currentQuery in ajax callback
 
@@ -833,12 +834,32 @@ Ext.define("inkle.controller.FriendsController", {
     
     		    if (query == currentQuery ) { //Only refresh the list data if the results are for the current query
                     addFriendsStore.removeAll();
+                    //addFriendsList.removeAll(true); //Remove and destroy all previous suggestions
                     //addFriendsStore.add(friendSuggestions); //This doesn't add all the list items for an unknown reason
+                    var friendList;
                     for (var index in friendSuggestions) {
-                        //alert(friendSuggestions[index].html);
                         addFriendsStore.add(friendSuggestions[index]);
+                        //addFriendsList.add(friendSuggestions[index]);    
                     }
-                    //this.getAddFriendsSuggestions().add(friendSuggestions[0]);
+                    /*for (var j in addFriendsStore) {
+                        friendList += " - ";
+                        friendList += addFriendsStore.getAt(j).name2;
+                        friendList += addFriendsStore.getAt(j).rank;
+                    }
+                    alert("ok");
+                    alert(friendList);*/
+                    /*for (var i in addFriendsList.getItems()) {
+                        alert(addFriendsList.items[i]);
+                    }*/
+                    ///alert(friendList);
+                    //addFriendsStore.sort('rank', 'DESC');
+                    //addFriendsList.refresh();
+                    /*var friendList2;
+                    for (var i in addFriendsList) {
+                        friendList2 += " + ";
+                        friendList2 += addFriendsList[i].relationship;
+                    }
+                    alert(friendList2);*/
                 }
                 Ext.Viewport.setMasked(false);
     		},
