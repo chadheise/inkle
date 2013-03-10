@@ -13,7 +13,7 @@ class Group(models.Model):
     members = models.ManyToManyField(User, related_name = "groups_member_of")
 
     # Share with this group by default
-    shareByDefault = models.BooleanField(default=True)
+    share_by_default = models.BooleanField(default=True)
 
     # Metadata
     date_created = models.DateTimeField(auto_now_add = True)
@@ -24,15 +24,19 @@ class Group(models.Model):
     def __unicode__(self):
         """String representation for the current group."""
         return "%d: %s (%s)" % (self.id, self.name, self.creator.get_full_name())
-        
-    def get_user_ids(self):
-        """Returns a comma separated list of the user IDs for the users in the current group."""
-        user_ids = ""
-        for m in self.members.all():
-            user_ids += str(m.id) + ","
-        user_ids = user_ids[:-1]
 
-        return user_ids
+    def get_member_ids(self):
+        """Returns a comma separated list of the member IDs for the members in the current group."""
+        member_ids = ""
+        first = True
+        for m in self.members.all():
+            if (first):
+                member_ids += str(m.id)
+                first = False
+            else:
+                member_ids += "," + str(m.id)
+
+        return member_ids
 
 
 class FeedUpdate(models.Model):
@@ -149,8 +153,7 @@ class Inkling(models.Model):
     notes = models.CharField(max_length = 200, blank = True)
 
     # Sharing
-    allow_sharing = models.BooleanField()
-    shared_with = models.ManyToManyField(User, related_name = "inklings_shared_with")
+    allow_share_forwarding = models.BooleanField()
 
     # Managers
     objects = models.Manager()
@@ -255,8 +258,8 @@ class UserProfile(models.Model):
     inklings = models.ManyToManyField(Inkling)
 
     # Inkling default share settings
-    shareWithSelectedGroups = models.BooleanField(default=True)
-    allowInklingAttendeesToShare = models.BooleanField(default=False)
+    share_with_selected_groups = models.BooleanField(default=True)
+    allow_inkling_attendees_to_share = models.BooleanField(default=False)
     # Group share settings are part of the Group object
 
     # Password reset information

@@ -1,5 +1,6 @@
 {% load humanize %}
 
+{% autoescape on %}
 <div class="view" id="inklingView">
     <!-- Inkling header -->
     <div id="inklingHeader">
@@ -53,7 +54,7 @@
                     <p>{{ num_other_members_attending }} others attending</p>
                 {% endif %}
             {% endif %}
-            
+
             <div class="clear"></div>
         </div>
 
@@ -65,7 +66,7 @@
             {% empty %}
                 <div>No pending invitations</div>
             {% endfor %}
-        
+
             {% if members_awaiting_reply %}
                 <!-- Disclosure arrow -->
                 {% if members_awaiting_reply|length <= 4 %}
@@ -92,3 +93,4 @@
         {% endif %}
     </div>
 </div>
+{% endautoescape %}

@@ -25,7 +25,7 @@ urlpatterns = patterns(
     (r"^groupsMainContent/$", "groups_main_content_view"),
     (r"^groupsPanel/$", "groups_panel_view"),
 
-    # All Inklings
+    # All inklings
     (r"^allInklings/$", "all_inklings_view"),
     (r"^inkling/$", "inkling_view"),
     (r"^editInkling/$", "edit_inkling_view"),
@@ -36,19 +36,15 @@ urlpatterns = patterns(
     (r"^inklingMembersAwaitingReply/$", "inkling_members_awaiting_reply_view"),
     (r"^addFeedComment/$", "add_feed_comment_view"),
 
+    # My inklings
     (r"^myInklings/$", "my_inklings_view"),
     (r"^createInkling/$", "create_inkling_view"),
     (r"^updateInkling/$", "update_inkling_view"),
-    (r"^numInvitedFriends/$", "num_invited_friends_view"),
-    (r"^inklingInvitedFriends/$", "inkling_invited_friends_view"),
-    (r"^inviteMember/$", "invite_member_view"),
-    (r"^uninviteMember/$", "uninvite_member_view"),
-    (r"^inviteGroup/$", "invite_group_view"),
-    (r"^uninviteGroup/$", "uninvite_group_view"),
     (r"^numInklingInvitations/$", "num_inkling_invitations_view"),
     (r"^inklingInvitations/$", "inkling_invitations_view"),
     (r"^respondToInklingInvitation/$", "respond_to_inkling_invitation_view"),
 
+    # Friends
     (r"^friends/$", "friends_view"),
     (r"^friendRequests/$", "friend_requests_view"),
     (r"^numFriendRequests/$", "num_friend_requests_view"),
@@ -69,8 +65,5 @@ urlpatterns = patterns(
     (r"^changePassword/$", "change_password_view"),
     (r"^changeEmail/$", "change_email_view"),
     (r"^inviteFacebookFriendsView/$", "invite_facebook_friends_view"),
-
     (r"^facebookPost/$", "facebook_post"),
-
-    (r"^profile/$", "profile_view"),
 )

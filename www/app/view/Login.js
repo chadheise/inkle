@@ -1,13 +1,13 @@
 Ext.define("inkle.view.Login", {
-	extend: "Ext.Panel",
-	
-	xtype: "loginView",
+    extend: "Ext.Panel",
+
+    xtype: "loginView",
 
     config: {
-		scrollable: false,
-		style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
-		
-		items: [
+        scrollable: false,
+        style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
+
+        items: [
 
             {
                 xtype: "container",
@@ -51,9 +51,9 @@ Ext.define("inkle.view.Login", {
                     "<div>"
                 ].join("")
             }
-		],
+        ],
 
-		listeners: [
+        listeners: [
             {
                 delegate: "#facebookLoginButton",
                 event: "tap",
@@ -71,10 +71,10 @@ Ext.define("inkle.view.Login", {
                 fn: "onRegistrationTap"
             }
         ]
-	},
-	
-	// Event firings
-	onFacebookLoginButtonTap: function() {
+    },
+
+    // Event firings
+    onFacebookLoginButtonTap: function() {
         this.fireEvent("facebookLoginButtonTapped");
     },
     onEmailLoginButtonTap: function() {

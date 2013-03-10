@@ -1,5 +1,6 @@
 {% load humanize %}
 
+{% autoescape on %}
 <div class="view" id="inklingView">
     <!-- Inkling name and number of attendees -->
     <div id="inklingHeader">
@@ -12,11 +13,11 @@
         <div class="banner">Basic Information</div>
         <div class="infoContainer">
             <div class="time">
-                <span class="basicInfoLabel">Time</span>: 
+                <span class="basicInfoLabel">Time</span>:
                 <input id="time" type="text" value="{{ inkling.time|default:'' }}" />
             </div>
             <div class="category">
-                <span class="basicInfoLabel">Category</span>: 
+                <span class="basicInfoLabel">Category</span>:
                 <input id="category" type="text" value="{{ inkling.category|default:'' }}" />
             </div>
             <div class="clear"></div>
@@ -40,3 +41,4 @@
         </div>
     </div>
 </div>
+{% endautoescape %}

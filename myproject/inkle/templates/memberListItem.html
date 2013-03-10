@@ -1,3 +1,4 @@
+{% autoescape on %}
 <div class="member" data-memberId={%if m.id %}"{{m.id}}"{% else %}""{% endif %} data-facebookId={%if m.get_profile.facebook_id %}"{{m.get_profile.facebook_id}}"{% else %}""{% endif %}>
     <!-- Delete lock -->
     {% if include_delete_items %}
@@ -50,29 +51,30 @@
         {% endif %}
     {% endif %}
 
-	<!-- Friend request buttons -->
-	{% if include_friend_request_buttons %}
-	    <input class="acceptRequestButton" type="button" value="Accept" />
-	    <input class="ignoreRequestButton" type="button" value="Ignore" />
-	{% endif %}
-	
-	{% if m.is_friend %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Friend</span>
-	{% endif %}
-	{% if m.is_pending %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Pending</span>
-	{% endif %}
-	{% if m.is_requested %}
-		<span id="addFriendRelationshipTag{{m.id}}" class="relationship">Requested</span>
-	{% endif %}
-	<span id="addFriendRelationshipTag{{m.id}}"></span>
-	{% if include_facebook_icon %}
-		{%if m.get_profile.facebook_id %}
-			<img class="facebookIcon" src="resources/images/facebookIcon.png">
-		{% endif %}
-	{% endif %}
+    <!-- Friend request buttons -->
+    {% if include_friend_request_buttons %}
+        <input class="acceptRequestButton" type="button" value="Accept" />
+        <input class="ignoreRequestButton" type="button" value="Ignore" />
+    {% endif %}
+
+    {% if m.is_friend %}
+        <span id="addFriendRelationshipTag{{m.id}}" class="relationship">Friend</span>
+    {% endif %}
+    {% if m.is_pending %}
+        <span id="addFriendRelationshipTag{{m.id}}" class="relationship">Pending</span>
+    {% endif %}
+    {% if m.is_requested %}
+        <span id="addFriendRelationshipTag{{m.id}}" class="relationship">Requested</span>
+    {% endif %}
+    <span id="addFriendRelationshipTag{{m.id}}"></span>
+    {% if include_facebook_icon %}
+        {%if m.get_profile.facebook_id %}
+            <img class="facebookIcon" src="resources/images/facebookIcon.png">
+        {% endif %}
+    {% endif %}
     <!-- Disclosure arrow -->
     {% if include_disclosure_arrow %}
         <img class="disclosureArrow" src="resources/images/disclosureArrow.png" />
     {% endif %}
 </div>
+{% endautoescape %}
