@@ -35,7 +35,14 @@ Ext.define("inkle.view.AddFriends", {
                 id: "addFriendsSearchField",
                 name: "query",
                 placeHolder: "Search for new friends",
-                height: 20
+                height: 20,
+                useClearIcon: true,
+                onClearIconTap: function() {
+                    if (!this.disabled) {
+                        this.setValue(''); //Clear the search field
+                        this.fireEvent('keyup', this); //Treat a clear as a keyup to clear store data                  
+                    }
+                }
             },
 
             // Suggestions list
@@ -52,7 +59,7 @@ Ext.define("inkle.view.AddFriends", {
 				],
 				store: {
 					fields: [
-						"id",
+						"user_id",
 						"facebook_id",
 						"relationship",
 						"html"
@@ -91,8 +98,8 @@ Ext.define("inkle.view.AddFriends", {
             fn: "onAddFriendsSearchFieldKeyUp"
         },
         {
-            delegate: "#addFriendsSearchField",
-            event: "change",
+            delegate: "#addFriendsSearchField.clearIconContainerEl",
+            event: "tap",
             fn: "onAddFriendsSearchFieldKeyUp"
         },
         {
