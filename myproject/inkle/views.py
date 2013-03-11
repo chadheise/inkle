@@ -114,8 +114,7 @@ def facebook_login_view(request):
 
     # Get the user with the inputted Facebook ID
     try:
-        user_profile = Member.objects.get(facebook_id = facebook_id)
-        user = user_profile.user
+        user = Member.objects.get(facebook_id = facebook_id)
         if (not user.is_active):
             user = None
     except:
@@ -464,8 +463,7 @@ def link_facebook_account_view(request):
 
     # Check if the user has separate email and Facebook accounts already and tell them that they cannot currently be merged
     try:
-        user_profile = Member.objects.get(facebook_id = facebook_id)
-        user = user_profile.user
+        user = Member.objects.get(facebook_id = facebook_id)
         if (user.is_active):
             response_error = "An inkle account already exists for that Facebook user."
     except:
@@ -1665,7 +1663,7 @@ def people_search_view(request):
                 fbResponse = urllib2.urlopen(fbRequest).read()
             except Exception, e:
                 print "Error reading facebook response: " + str(e)
-            fbData = simplejson.loads(fbResponse)      
+            fbData = simplejson.loads(fbResponse)
 
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
@@ -1690,7 +1688,7 @@ def people_search_view(request):
         elif m.has_pending_friend_request_to(request.user):
             m.is_requested = True
             inkleRequested.append(m)
-        elif not m.get_profile().facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
+        elif not m.facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
             inkleOther.append(m)
 
     for fbFriend in fbData["data"]:
@@ -1710,25 +1708,22 @@ def people_search_view(request):
                 personData = {} #Create dictionary for facebook friend data
                 personData["first_name"] = fbFriend["first_name"]
                 personData["last_name"] = fbFriend["last_name"]
-                personData["get_profile"] = {}
-                personData["get_profile"]["facebook_id"] = fbFriend["uid"]
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
                 personData["is_requested"] = False
-                personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
+                personData["get_picture_path"] = fbFriend["pic_square"]
                 facebookNotInkle.append(personData)
         else: #If the facebook friend is not an inkle member
             personData = {} #Create dictionary for facebook friend data
             personData["first_name"] = fbFriend["first_name"]
             personData["last_name"] = fbFriend["last_name"]
-            personData["get_profile"] = {}
-            personData["get_profile"]["facebook_id"] = fbFriend["uid"]
+            personData["facebook_id"] = fbFriend["uid"]
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
             personData["is_requested"] = False
-            personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
+            personData["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
 
     searchResults = []
@@ -1773,7 +1768,7 @@ def people_search_view(request):
                 relationship = "none"
         except: #Facebook friends not on inkle
             userId = "none"
-            facebook_id = m["get_profile"]["facebook_id"]
+            facebook_id = m["facebook_id"]
             if m["is_friend"]:
                 relationship = "friend"
             elif m["is_pending"]:

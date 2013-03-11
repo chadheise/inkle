@@ -24,9 +24,6 @@ def load_members():
         else:
             shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(member.id) + ".jpg")
 
-        #user_profile = MemberProfile(user = user, birthday = datetime.date(day = int(data[3]), month = int(data[4]), year = int(data[5])), gender = data[6])
-        #user_profile.save()
-
 
 def load_friends():
     """Loads the member friendships into the database. """
