@@ -62,8 +62,8 @@ Ext.application({
     tabletStartupScreen: "resources/loading/Homescreen~ipad.jpg",
     */
     //Set the base url for all server requests
-    //baseUrl: "http://chads-macbook-pro.local:8000",
-    baseUrl: "http://127.0.0.1:8000",
+    baseUrl: "http://chads-macbook-pro.local:8000",
+    //baseUrl: "http://127.0.0.1:8000",
 
     addFriendsTimeStamp: "",
 
