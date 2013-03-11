@@ -48,7 +48,7 @@ def send_password_reset_email(user):
         If you didn't request to have your password reset, don't worry - just disregard this message.
 
     Thanks,
-    The Inkle team""" % (user.first_name, user.get_profile().password_reset_pin)
+    The Inkle team""" % (user.first_name, user.password_reset_pin)
 
     # Specify the HTML body
     body_html = """<html>
@@ -65,7 +65,7 @@ def send_password_reset_email(user):
             <p>Thanks,<br />
             The Inkle team</p>
         </body>
-    </html>""" % (user.first_name, user.get_profile().password_reset_pin)
+    </html>""" % (user.first_name, user.password_reset_pin)
 
     # Send the email
     send_email(from_address, to_addresses, subject, body_text, body_html)
