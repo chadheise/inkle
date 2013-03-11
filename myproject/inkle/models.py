@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, UserManager
 
 from datetime import date
 from settings import STATIC_URL
@@ -8,9 +8,9 @@ from settings import STATIC_URL
 class Group(models.Model):
     """Group class definition."""
     # General information
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey("Member")
     name = models.CharField(max_length = 50)
-    members = models.ManyToManyField(User, related_name = "groups_member_of")
+    members = models.ManyToManyField("Member", related_name = "groups_member_of")
 
     # Share with this group by default
     share_by_default = models.BooleanField(default=True)
@@ -42,7 +42,7 @@ class Group(models.Model):
 class FeedUpdate(models.Model):
     """FeedUpdate class definition."""
     # General information
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey("Member")
     inkling = models.ForeignKey("Inkling")
     update_type = models.CharField(max_length = 10)
     updated_to = models.CharField(max_length = 200)
@@ -82,7 +82,7 @@ class FeedUpdate(models.Model):
 class FeedComment(models.Model):
     """FeedComment class definition."""
     # General information
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey("Member")
     inkling = models.ForeignKey("Inkling")
     text = models.CharField(max_length = 150)
 
@@ -100,8 +100,8 @@ class FeedComment(models.Model):
 class InklingInvitation(models.Model):
     """InklingInvitation class definition."""
     # General information
-    sender = models.ForeignKey(User, related_name = "inkling_invitations_sent")
-    receiver = models.ForeignKey(User, related_name = "inkling_invitations_received")
+    sender = models.ForeignKey("Member", related_name = "inkling_invitations_sent")
+    receiver = models.ForeignKey("Member", related_name = "inkling_invitations_received")
     inkling = models.ForeignKey("Inkling")
     status = models.CharField(max_length = 10, default = "pending")
 
@@ -118,8 +118,8 @@ class InklingInvitation(models.Model):
 class SharingPermission(models.Model):
     """SharingPermission class definition."""
     # General information
-    creator = models.ForeignKey(User, related_name = "sharing_permissions_created")
-    members = models.ManyToManyField(User, related_name = "sharing_permissions_allowed", blank = True)
+    creator = models.ForeignKey("Member", related_name = "sharing_permissions_created")
+    members = models.ManyToManyField("Member", related_name = "sharing_permissions_allowed", blank = True)
     inkling = models.ForeignKey("Inkling")
 
     # Metadata
@@ -146,7 +146,7 @@ class CurrentInklingManager(models.Manager):
 class Inkling(models.Model):
     """Inkling class definition."""
     # General information
-    creator = models.ForeignKey(User, related_name = "inklings_created")
+    creator = models.ForeignKey("Member", related_name = "inklings_created")
     location = models.CharField(max_length = 50, blank = True)
     date = models.DateField(blank = True, null = True)
     time = models.CharField(max_length = 30, blank = True)
@@ -199,14 +199,12 @@ class Inkling(models.Model):
 
     def get_members_attending(self):
         """Returns a list of all the members attending the current inkling."""
-        members_attending = []
-        for m in self.userprofile_set.all():
-            members_attending.append(m.user)
+        members_attending = [m for m in self.member_set.all()]
         return members_attending
 
     def get_num_members_attending(self):
         """Returns the number of members attending the current inkling."""
-        return self.userprofile_set.count()
+        return self.member_set.count()
 
     def get_members_awaiting_reply(self):
         """Returns a list of all the members who have been invited but have not responded to the current inkling."""
@@ -227,8 +225,8 @@ class Inkling(models.Model):
 class FriendRequest(models.Model):
     """FriendRequest class definition."""
     # General information
-    sender = models.ForeignKey(User, related_name = "friend_requests_sent")
-    receiver = models.ForeignKey(User, related_name = "friend_requests_received")
+    sender = models.ForeignKey("Member", related_name = "friend_requests_sent")
+    receiver = models.ForeignKey("Member", related_name = "friend_requests_received")
     status = models.CharField(max_length = 10, default = "pending")
 
     # Metadata
@@ -241,10 +239,9 @@ class FriendRequest(models.Model):
         return "%d: %s (%s to %s)" % (self.id, self.status, self.sender.get_full_name(), self.receiver.get_full_name())
 
 
-class UserProfile(models.Model):
-    """UserProfile class definition which extends the built-in Django User class:
+class Member(AbstractUser):
+    """Member class definition which extends the built-in Django AbstractUser class:
        id, username, password, first_name, last_name, email, is_staff, is_active, is_superuser, last_login, and date_joined"""
-    user = models.ForeignKey(User, unique = True)
 
     # General information
     gender = models.CharField(max_length = 1, choices=(("m", "Male"), ("f", "Female")), blank = True, null = True)
@@ -252,7 +249,7 @@ class UserProfile(models.Model):
     facebook_id = models.BigIntegerField(blank = True, null = True, unique = True)
 
     # Friends
-    friends = models.ManyToManyField(User, related_name = "user_friends")
+    friends = models.ManyToManyField("self", related_name = "user_friends")
 
     # Inklings
     inklings = models.ManyToManyField(Inkling)
@@ -266,7 +263,7 @@ class UserProfile(models.Model):
     password_reset_pin = models.IntegerField(default = -1)
 
     # Managers
-    objects = models.Manager()
+    objects = UserManager()
 
     # Metadata
     date_last_modified = models.DateTimeField(auto_now = True)
@@ -274,7 +271,7 @@ class UserProfile(models.Model):
     # Class methods
     def __unicode__(self):
         """String representation for the current member."""
-        return "%d: %s (profile)" % (self.id, self.user.get_full_name())
+        return "%d: %s" % (self.id, self.get_full_name())
 
     def is_facebook_member(self):
         """Returns True if the current member logged in using Facebook or False otherwise."""
@@ -282,7 +279,7 @@ class UserProfile(models.Model):
 
     def get_num_mutual_friends(self, m):
         """Returns the number of mutual friends the current member has with the inputted member."""
-        return len(self.user.get_profile().friends.filter(is_active = True) & m.get_profile().friends.filter(is_active = True))
+        return len(self.friends.filter(is_active = True) & m.friends.filter(is_active = True))
 
     def has_pending_friend_request_to(self, m):
         """Returns True if the current memeber has a pending friend request to the inputted member."""
@@ -293,4 +290,4 @@ class UserProfile(models.Model):
         if (self.is_facebook_member()):
             return "https://graph.facebook.com/" + str(self.facebook_id) + "/picture"
         else:
-            return "http://127.0.0.1:8000/static/media/images/members/" + str(self.user.id) + ".jpg"
+            return "http://127.0.0.1:8000/static/media/images/members/" + str(self.id) + ".jpg"

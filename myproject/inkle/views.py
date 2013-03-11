@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 
 # TODO: get rid of the whole csrf_exempt thing
 # CSRF exemple views module
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 
 # User authentication
 from django.contrib.auth import authenticate, login, logout
@@ -46,7 +46,6 @@ def raise_404_view(request):
 
 def is_logged_in(request):
     """Returns True if a member is logged in or False otherwise."""
-    print request
     return HttpResponse(request.user.is_authenticated())
 
 
@@ -57,8 +56,8 @@ def email_login_view(request):
     try:
         email = request.POST["email"]
         password = request.POST["password"]
-    except KeyError as e:
-        return HttpResponse("Error accessing request POST data: " + e.message)
+    except KeyError as error:
+        return HttpResponse("Error accessing request POST data: " + error)
 
     # Create a string to hold the login error
     response_error = ""
@@ -74,13 +73,13 @@ def email_login_view(request):
     # Log in the member if their email and password are correct
     if (not response_error):
         try:
-            user = User.objects.get(email = email)
+            user = Member.objects.get(email = email)
             user = authenticate(username = user.username, password = password)
             if (user and user.is_active):
                 login(request, user)
             else:
                 response_error = "Invalid login combination"
-        except:
+        except Exception as error:
             response_error = "Invalid login combination"
 
     # Create and return a JSON object
@@ -115,28 +114,28 @@ def facebook_login_view(request):
 
     # Get the user with the inputted Facebook ID
     try:
-        user_profile = UserProfile.objects.get(facebook_id = facebook_id)
-        user = user_profile.user
+        user = Member.objects.get(facebook_id = facebook_id)
         if (not user.is_active):
             user = None
     except:
         user = None
 
-    print user
-
     # If there already is a Facebook user, skip this
     if (not user):
         try:
             # If there is a non-Facebook user with the inputted username, return an error
-            user = User.objects.filter(is_active = True).get(email = email)
+            user = Member.objects.filter(is_active = True).get(email = email)
             response_error = "A user with that email address already exists. Link your account to Facebook in the settings tab."
         except:
             # If there is no Facebook or non-Facebook user already created, create it
-            user = User(
+            user = Member(
                 first_name = first_name,
                 last_name = last_name,
                 username = email,
-                email = email
+                email = email,
+                facebook_id = facebook_id,
+                birthday = birthday,
+                gender = gender
             )
 
             # Set the user's password as unusable since they are a Facebook user and don't have a password
@@ -149,15 +148,6 @@ def facebook_login_view(request):
             else:
                 shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
 
-            # Create a user profile for the user
-            user_profile = UserProfile(
-                user = user,
-                facebook_id = facebook_id,
-                birthday = birthday,
-                gender = gender
-            )
-            user_profile.save()
-
     # If there is a user object and no errors, authenticate the user
     if (user and not response_error):
         user = authenticate(facebook_id = facebook_id, facebook_access_token = facebook_access_token)
@@ -165,9 +155,6 @@ def facebook_login_view(request):
             login(request, user)
         else:
             response_error = "Invalid login"
-
-    print response_error
-    print response_error == ""
 
     # Create and return a JSON object
     response = simplejson.dumps({
@@ -207,23 +194,23 @@ def forgotten_password_view(request):
     if (not response_error):
         # Get the user with the inputted email
         try:
-            user = User.objects.get(email = email)
+            user = Member.objects.get(email = email)
         except:
             user = None
 
         if (user):
             # If a PIN is provided, validate it
             if (pin):
-                if ((not user.get_profile().is_facebook_member()) and (pin == str(user.get_profile().password_reset_pin)) and (len(pin) == 6)):
+                if ((not user.is_facebook_member()) and (pin == str(user.password_reset_pin)) and (len(pin) == 6)):
                     pin_validated = True
                 else:
                     response_error = "Invalid PIN"
 
             # Otherwise, if the user is not a Facebook member, send them an email with their new PIN
             else:
-                if (not user.get_profile().is_facebook_member()):
-                    user.get_profile().password_reset_pin = random.randint(100000, 999999)
-                    user.get_profile().save()
+                if (not user.is_facebook_member()):
+                    user.password_reset_pin = random.randint(100000, 999999)
+                    user.save()
                     send_password_reset_email(user)
 
     # Create and return a JSON object
@@ -316,14 +303,14 @@ def registration_view(request):
         response_error = "Email not specified"
     elif (not is_email(email)):
         response_error = "Invalid email format"
-    elif (User.objects.filter(email = email)):
+    elif (Member.objects.filter(email = email)):
         response_error = "Email not valid."
 
     # Make sure the username is less than 30 characters and do a trick to ensure it is unique
     elif (len(username) > 30):
         username = username[0:30]
         first = True
-        while (User.objects.filter(username = username)):
+        while (Member.objects.filter(username = username)):
             if (first):
                 username = username[0:27] + "000"
                 first = False
@@ -349,11 +336,13 @@ def registration_view(request):
     # If the registration form is valid, create a new member with the provided POST data
     if (not response_error):
         # Create a new user
-        user = User(
+        user = Member(
             first_name = first_name,
             last_name = last_name,
             username = username,
-            email = email
+            email = email,
+            birthday = datetime.date(day = day, month = month, year = year),
+            gender = gender
         )
         user.set_password(password)
         user.save()
@@ -363,14 +352,6 @@ def registration_view(request):
             shutil.copyfile("inkle/static/media/images/main/man.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
         else:
             shutil.copyfile("inkle/static/media/images/main/woman.jpg", "inkle/static/media/images/members/" + str(user.id) + ".jpg")
-
-        # Create a user profile for the user
-        user_profile = UserProfile(
-            user = user,
-            birthday = datetime.date(day = day, month = month, year = year),
-            gender = gender
-        )
-        user_profile.save()
 
         # Log the user in
         user = authenticate(username = username, password = password)
@@ -393,7 +374,7 @@ def get_members_from_groups(member, group_ids):
     for group_id in group_ids:
         # If the group ID is -1, add all the members who are in none of the logged-in member's groups
         if (group_id == "-1"):
-            not_grouped_members = list(member.get_profile().friends.all())
+            not_grouped_members = list(member.friends.all())
             for g in member.group_set.all():
                 for m in g.members.all():
                     if (m in not_grouped_members):
@@ -418,7 +399,7 @@ def get_inkling_list_item_html(inkling, member):
     num_members_attending = inkling.get_num_members_attending() # TODO: make this into a template tag
     num_members_attending_thumbnails = min(num_members_attending, 5)   # TODO: make 5 a global variable
     members_attending = list(inkling.get_members_attending())[0 : num_members_attending_thumbnails]
-    inkling.is_member_attending = inkling in member.get_profile().inklings.all()
+    inkling.is_member_attending = inkling in member.inklings.all()
 
     # Get the HTML for the inkling list item
     html = render_to_string("inklingListItem.html", {
@@ -469,7 +450,6 @@ def get_group_list_item_panel_html(group, group_members = None):
 @login_required
 def link_facebook_account_view(request):
     """Links an existing user account to a facebook account."""
-    print "a"
     # Create a string to hold the login error
     response_error = ""
 
@@ -483,8 +463,7 @@ def link_facebook_account_view(request):
 
     # Check if the user has separate email and Facebook accounts already and tell them that they cannot currently be merged
     try:
-        user_profile = UserProfile.objects.get(facebook_id = facebook_id)
-        user = user_profile.user
+        user = Member.objects.get(facebook_id = facebook_id)
         if (user.is_active):
             response_error = "An inkle account already exists for that Facebook user."
     except:
@@ -497,26 +476,13 @@ def link_facebook_account_view(request):
 
         # Otherwise, convert their email account to a Facebook one
         else:
-            request.user.get_profile().facebook_id = facebook_id
+            request.user.facebook_id = facebook_id
             request.user.set_unusable_password()
-            request.user.get_profile().save()
+            request.user.save()
             request.user.save()
 
             # Log the user out and require them to log in with Facebook
             logout(request)
-    """try:
-
-        user = authenticate(facebook_id = facebook_id, facebook_access_token = facebook_access_token)
-        if (user and user.is_active):
-            login(request, user)
-        else:
-            response_error = "Invalid login"
-        fbRequest = "https://graph.facebook.com/me?access_token=" + facebookAccessToken
-        fbResponse = urllib2.urlopen(fbRequest).read()  # Will throw an exception if access token can't be validated
-        request.session["facebook_access_token"] = facebookAccessToken
-        fbData = simplejson.loads(fbResponse)
-    except Exception, e:
-        response_error = "Could not authenticate with facebook"""
 
     # Create and return a JSON object
     response = simplejson.dumps({
@@ -531,7 +497,6 @@ def link_facebook_account_view(request):
 @login_required
 def all_inklings_view(request):
     """Returns a list of the inklings which the logged-in member's friends are attending."""
-    print request
     # Determine if we should return dated or no-dated inklings
     try:
         onlyIncludeUndatedInklings = request.POST["onlyIncludeUndatedInklings"]
@@ -557,7 +522,7 @@ def all_inklings_view(request):
             selected_group_ids = selected_group_ids.split(",")[:-1]
         members = get_members_from_groups(request.user, selected_group_ids)
     else:
-        members = list(request.user.get_profile().friends.filter(is_active = True))
+        members = list(request.user.friends.filter(is_active = True))
 
     # Append the logged-in member to the members list
     members.append(request.user)
@@ -565,7 +530,7 @@ def all_inklings_view(request):
     # Get the inklings the members are attending on the specified date
     inklings = []
     for m in members:
-        for i in m.get_profile().inklings.filter(date = date):
+        for i in m.inklings.filter(date = date):
             if i not in inklings:
                 if (m == request.user):
                     inklings.append(i)
@@ -650,7 +615,7 @@ def groups_panel_view(request):
 
 def get_not_grouped_members(member, groups = None, as_string = False):
     # Get a list of the not grouped members
-    not_grouped_members = list(member.get_profile().friends.all())
+    not_grouped_members = list(member.friends.all())
     for g in groups:
         for m in g.members.all():
             if (m in not_grouped_members):
@@ -734,7 +699,7 @@ def inkling_view(request):
     # Get the members who are attending the inkling
     i = 0
     members_attending = []
-    if (inkling in request.user.get_profile().inklings.all()):
+    if (inkling in request.user.inklings.all()):
         members_attending.append(request.user)
         i = 1
 
@@ -809,11 +774,11 @@ def set_share_setting_view(request):
     groups = list(request.user.group_set.all())
 
     if (setting == validSettings[0]):
-        request.user.get_profile().share_with_selected_groups = value
-        request.user.get_profile().save()
+        request.user.share_with_selected_groups = value
+        request.user.save()
     elif (setting == validSettings[1]):
-        request.user.get_profile().allow_inkling_attendees_to_share = value
-        request.user.get_profile().save()
+        request.user.allow_inkling_attendees_to_share = value
+        request.user.save()
     elif (setting == validSettings[2]):
         #Ensure the group belongs to the logged in member
         try:
@@ -901,11 +866,11 @@ def reset_password_view(request):
         response_error = "New password and confirm password do not match"
 
     if (not response_error): #If there is no error with supplying the required data
-        user = User.objects.get(email = email)
-        if ((not user.get_profile().is_facebook_member()) and (pin == str(user.get_profile().password_reset_pin)) and (len(pin) == 6)):
+        user = Member.objects.get(email = email)
+        if ((not user.is_facebook_member()) and (pin == str(user.password_reset_pin)) and (len(pin) == 6)):
             user.set_password(newPassword1)
-            user.get_profile().password_reset_pin = -1
-            user.get_profile().save()
+            user.password_reset_pin = -1
+            user.save()
             user.save()
 
     # Create and return a JSON object
@@ -948,7 +913,7 @@ def change_email_view(request):
         response_error = "Invalid email format"
     elif (request.user.email != currentEmail):
         response_error = "Current email not valid"
-    elif (User.objects.filter(email = newEmail1)):
+    elif (Member.objects.filter(email = newEmail1)):
         response_error = "New email not valid."
 
     if (not response_error): #If there is no error with supplying the required data
@@ -983,7 +948,7 @@ def respond_to_inkling_invitation_view(request):
 
     # Add the inkling corresponding to the current invitation to the logged-in member's inklings if they accepted it
     if (response == "accepted"):
-        request.user.get_profile().inklings.add(invitation.inkling)
+        request.user.inklings.add(invitation.inkling)
 
     # Return the number of pending inkling invitations for the logged-in member
     return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
@@ -1058,7 +1023,7 @@ def join_inkling_view(request):
         raise Http404()
 
     # Add the inkling to the logged-in member's inklings
-    request.user.get_profile().inklings.add(inkling)
+    request.user.inklings.add(inkling)
 
     return HttpResponse()
 
@@ -1131,7 +1096,7 @@ def inkling_members_attending_view(request):
     # Create a list to hold all the members attending the current inkling
     response_members_attending = []
     for m in inkling.get_members_attending():
-        m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.num_mutual_friends = request.user.get_num_mutual_friends(m)
 
         html = render_to_string("memberListItem.html", {
             "m": m
@@ -1161,7 +1126,7 @@ def inkling_members_awaiting_reply_view(request):
     # Create a list to hold all the members awaiting reply to the current inkling
     response_members_awaiting_reply = []
     for m in inkling.get_members_awaiting_reply():
-        m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.num_mutual_friends = request.user.get_num_mutual_friends(m)
 
         html = render_to_string("memberListItem.html", {
             "m": m
@@ -1214,7 +1179,7 @@ def my_inklings_view(request):
 
     # Get a list of all the inklings the logged-in member is attending today
     response_inklings = []
-    for i in request.user.get_profile().inklings.filter(date = today):
+    for i in request.user.inklings.filter(date = today):
         response_inklings.append({
             "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
@@ -1224,7 +1189,7 @@ def my_inklings_view(request):
         })
 
     # Get a list of all the inklings the logged-in member is attending tomorrow
-    for i in request.user.get_profile().inklings.filter(date__gt = today).filter(date__lte = tomorrow):
+    for i in request.user.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
         response_inklings.append({
             "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
@@ -1234,7 +1199,7 @@ def my_inklings_view(request):
         })
 
     # Get a list of all the inklings the logged-in member is attending this week
-    for i in request.user.get_profile().inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
+    for i in request.user.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
         response_inklings.append({
             "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
@@ -1244,7 +1209,7 @@ def my_inklings_view(request):
         })
 
     # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
-    future_inklings = list(request.user.get_profile().inklings.filter(date__gte = this_week))
+    future_inklings = list(request.user.inklings.filter(date__gte = this_week))
     future_inklings.sort(key = lambda i : i.date)
     for i in future_inklings:
         response_inklings.append({
@@ -1256,7 +1221,7 @@ def my_inklings_view(request):
         })
 
     # Get a list of all the inklings the logged-in member is attending which do not have a date
-    for i in request.user.get_profile().inklings.filter(date__exact = None):
+    for i in request.user.inklings.filter(date__exact = None):
         response_inklings.append({
             "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
@@ -1373,12 +1338,12 @@ def create_inkling_view(request):
     inkling.save()
 
     # Add the inkling to the logged-in member's inklings
-    request.user.get_profile().inklings.add(inkling)
+    request.user.inklings.add(inkling)
 
     # Invite the appropriate members to the inkling
     for m in invited_members:
         # Make sure the inputted member is a friend of the logged-in member
-        if (m not in request.user.get_profile().friends.all()):
+        if (m not in request.user.friends.all()):
             raise Http404()
 
         # Invite the current member to the new inkling
@@ -1392,9 +1357,6 @@ def create_inkling_view(request):
 
     # Save the sharing permission object
     sp.save()
-
-    print sp
-    print sp.members.all()
 
     # Create and return a JSON object
     response = simplejson.dumps({
@@ -1439,7 +1401,7 @@ def update_inkling_view(request):
     inkling.save()
 
     # Add the inkling to the logged-in member's inklings
-    request.user.get_profile().inklings.add(inkling)
+    request.user.inklings.add(inkling)
 
     return HttpResponse()
 
@@ -1493,7 +1455,7 @@ def friends_view(request):
         raise Http404()
 
     # Get the list of the logged-in member's friends
-    friends = list(request.user.get_profile().friends.all())
+    friends = list(request.user.friends.all())
 
     # Determine what items to include in the member list item
     include_delete_items = (mode == "friends")
@@ -1508,7 +1470,7 @@ def friends_view(request):
     # Get the HTML for each of the logged-in member's friends
     response_friends = []
     for m in friends:
-        m.num_mutual_friends = m.get_profile().get_num_mutual_friends(request.user)
+        m.num_mutual_friends = m.get_num_mutual_friends(request.user)
         m.selected = m.id in selected_member_ids
 
         html = render_to_string("memberListItem.html", {
@@ -1540,7 +1502,7 @@ def friend_requests_view(request):
     response_friend_requests = []
     for r in friend_requests:
         m = r.sender
-        m.num_mutual_friends = m.get_profile().get_num_mutual_friends(request.user)
+        m.num_mutual_friends = m.get_num_mutual_friends(request.user)
 
         html = render_to_string("memberListItem.html", {
             "m": m,
@@ -1593,13 +1555,13 @@ def invite_facebook_friends_view(request):
     for fbFriend in fbData["data"]:
         if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
             #Get inkle user from facebook user id
-            inkleUser = User.objects.get(facebook_id = fbFriend["uid"]) #Will throw error if no member object exists with the given facebook_id
+            inkleUser = Member.objects.get(facebook_id = fbFriend["uid"]) #Will throw error if no member object exists with the given facebook_id
             if inkleUser not in request.user.friends.all(): #If the facebook friend is not an inkle friend
                 inkleUser.is_friend = False
                 inkleUser.is_pending = request.user.has_pending_friend_request_to(inkleFriend)
             else: #If the facebook friend is an inkle friend
                 inkleUser.is_friend = True
-            inkleUser.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(inkleFriend)
+            inkleUser.num_mutual_friends = request.user.get_num_mutual_friends(inkleFriend)
             facebookInkleFriends.append(inkleUser)
         else: #If the facebook friend is not an inkle member
             personData = {} #Create dictionary for facebook friend data
@@ -1670,10 +1632,10 @@ def people_search_view(request):
 
     # If the query is only one word long, match the members' first or last names alone
     if (len(query_split) == 1):
-        members = User.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
+        members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
     # If the query is two words long, match the members' first and last names
     elif (len(query_split) == 2):
-        members = User.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
+        members = Member.objects.filter((Q(first_name__istartswith = query_split[0]) & Q(last_name__istartswith = query_split[1])) | (Q(first_name__istartswith = query_split[1]) & Q(last_name__istartswith = query_split[0])))
     # If the query is more than two words long, return no results
     else:
         members = []
@@ -1701,7 +1663,7 @@ def people_search_view(request):
                 fbResponse = urllib2.urlopen(fbRequest).read()
             except Exception, e:
                 print "Error reading facebook response: " + str(e)
-            fbData = simplejson.loads(fbResponse)      
+            fbData = simplejson.loads(fbResponse)
 
     # Create lists for storing member objects or dictionaries for each type
     # of connection a member can have to the user
@@ -1713,20 +1675,20 @@ def people_search_view(request):
     facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
 
     for m in members:
-        m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.num_mutual_friends = request.user.get_num_mutual_friends(m)
         m.is_friend = False #Default to false
         m.is_pending = False #Default to false
         m.is_requested = False #Default to false
-        if m in request.user.get_profile().friends.all(): #If the member is a friend of the user
+        if m in request.user.friends.all(): #If the member is a friend of the user
             m.is_friend = True
             inkleFriends.append(m)
-        elif request.user.get_profile().has_pending_friend_request_to(m):
+        elif request.user.has_pending_friend_request_to(m):
             m.is_pending = True
             inklePending.append(m)
-        elif m.get_profile().has_pending_friend_request_to(request.user):
+        elif m.has_pending_friend_request_to(request.user):
             m.is_requested = True
             inkleRequested.append(m)
-        elif not m.get_profile().facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
+        elif not m.facebook_id:  #If the member matches the search query but is not friends with the user and a request is not pending, and they are not a facebook user
             inkleOther.append(m)
 
     for fbFriend in fbData["data"]:
@@ -1735,36 +1697,33 @@ def people_search_view(request):
             #don't have an inkle account or have not linked their inkle account to facebook
             try:
                 #Get inkle user from facebook user id
-                inkleFriend = UserProfile.objects.get(facebook_id = fbFriend["uid"]).user
+                inkleFriend = Member.objects.get(facebook_id = fbFriend["uid"]).user
                 if inkleFriend not in inkleFriends: #If the facebook friend is not an inkle friend (inkle friends have already been gathered)
-                    inkleFriend.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(inkleFriend)
+                    inkleFriend.num_mutual_friends = request.user.get_num_mutual_friends(inkleFriend)
                     inkleFriend.is_friend = False
-                    inkleFriend.is_pending = request.user.get_profile().has_pending_friend_request_to(inkleFriend)
-                    inkleFriend.is_requested = inkleFriend.get_profile().has_pending_friend_request_to(request.user)
+                    inkleFriend.is_pending = request.user.has_pending_friend_request_to(inkleFriend)
+                    inkleFriend.is_requested = inkleFriend.has_pending_friend_request_to(request.user)
                     facebookInkle.append(inkleFriend)
             except:
                 personData = {} #Create dictionary for facebook friend data
                 personData["first_name"] = fbFriend["first_name"]
                 personData["last_name"] = fbFriend["last_name"]
-                personData["get_profile"] = {}
-                personData["get_profile"]["facebook_id"] = fbFriend["uid"]
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
                 personData["is_requested"] = False
-                personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
+                personData["get_picture_path"] = fbFriend["pic_square"]
                 facebookNotInkle.append(personData)
         else: #If the facebook friend is not an inkle member
             personData = {} #Create dictionary for facebook friend data
             personData["first_name"] = fbFriend["first_name"]
             personData["last_name"] = fbFriend["last_name"]
-            personData["get_profile"] = {}
-            personData["get_profile"]["facebook_id"] = fbFriend["uid"]
+            personData["facebook_id"] = fbFriend["uid"]
             personData["num_mutual_friends"] = 0
             personData["is_friend"] = False
             personData["is_pending"] = False
             personData["is_requested"] = False
-            personData["get_profile"]["get_picture_path"] = fbFriend["pic_square"]
+            personData["get_picture_path"] = fbFriend["pic_square"]
             facebookNotInkle.append(personData)
 
     searchResults = []
@@ -1795,8 +1754,8 @@ def people_search_view(request):
 
         try: #inkle user
             userId = m.id
-            if m.get_profile().facebook_id:
-                facebook_id = m.get_profile().facebook_id
+            if m.facebook_id:
+                facebook_id = m.facebook_id
             else:
                 facebook_id = "none"
             if m.is_friend:
@@ -1809,7 +1768,7 @@ def people_search_view(request):
                 relationship = "none"
         except: #Facebook friends not on inkle
             userId = "none"
-            facebook_id = m["get_profile"]["facebook_id"]
+            facebook_id = m["facebook_id"]
             if m["is_friend"]:
                 relationship = "friend"
             elif m["is_pending"]:
@@ -1871,12 +1830,12 @@ def add_friend_view(request):
     """Sends a friend request from the logged-in member to the inputted member."""
     # Get the member to whom the logged-in member is sending the friend request
     try:
-        m = User.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
     # Make sure the two members are not already friends and no friend request already exists
-    if ((m in request.user.get_profile().friends.all()) or (request.user.get_profile().has_pending_friend_request_to(m))):
+    if ((m in request.user.friends.all()) or (request.user.has_pending_friend_request_to(m))):
         raise Http404()
 
     # Send a friend request from the logged-in member
@@ -1890,13 +1849,13 @@ def respond_to_request_view(request):
     """Implements the logged-in member's response to a friend request from the inputted memeber."""
     # Get the member who sent the request and the logged-in member's response to it
     try:
-        m = User.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
         response = request.POST["response"]
     except:
         raise Http404()
 
     # Make sure the two members are not already friends, there is not already a reciprocal friend request, and the friend request actually exists
-    if ((m in request.user.get_profile().friends.all()) or (request.user.get_profile().has_pending_friend_request_to(m)) or (not m.get_profile().has_pending_friend_request_to(request.user))):
+    if ((m in request.user.friends.all()) or (request.user.has_pending_friend_request_to(m)) or (not m.has_pending_friend_request_to(request.user))):
         raise Http404()
 
     # Get the friend request
@@ -1905,8 +1864,7 @@ def respond_to_request_view(request):
 
     # Add the friendship if the logged in member accepted the request
     if (response == "accept"):
-        request.user.get_profile().friends.add(m)
-        m.get_profile().friends.add(request.user)
+        request.user.friends.add(m)
         friend_request.status = "accepted"
     else:
         friend_request.status = "declined"
@@ -1923,12 +1881,12 @@ def revoke_request_view(request):
     """Revokes the logged-in member's friend request to the inputted memeber."""
     # Get the member who sent the request and the logged-in member's response to it
     try:
-        m = User.objects.get(pk = request.POST["userId"])
+        m = Member.objects.get(pk = request.POST["userId"])
     except:
         raise Http404()
 
     # Make sure the friend request actually exists
-    if (not request.user.get_profile().has_pending_friend_request_to(m)):
+    if (not request.user.has_pending_friend_request_to(m)):
         raise Http404()
 
     # Get the friend request
@@ -1957,12 +1915,12 @@ def remove_friend_view(request):
     """Removes a friend from the logged-in member's friends list."""
     # Get the member who is to be removed from the logged-in member's friends list
     try:
-        m = User.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
     # Make sure the two members are actually friends
-    if (m not in request.user.get_profile().friends.all()):
+    if (m not in request.user.friends.all()):
         raise Http404()
 
     # Remove the inputted member from the logged-in member's groups
@@ -1971,15 +1929,12 @@ def remove_friend_view(request):
             group.members.remove(m)
 
     # Remove the inputted member from the logged-in member's friends list
-    request.user.get_profile().friends.remove(m)
+    request.user.friends.remove(m)
 
     # Remove the logged-in member from the inputted member's groups
     for group in m.group_set.all():
         if (request.user in group.members.all()):
             group.members.remove(request.user)
-
-    # Remove the logged-in member from the inputted member's friends list
-    m.get_profile().friends.remove(request.user)
 
     return HttpResponse()
 
@@ -2019,7 +1974,7 @@ def group_members_view(request):
         raise Http404()
 
     # Get a list of the logged-in members friends
-    friends = list(request.user.get_profile().friends.all())
+    friends = list(request.user.friends.all())
     friends.sort(key = lambda m : m.last_name)  # TODO: try to remove this and just use a sencha sorter
 
     # Get only the "Not Grouped" members if necessary
@@ -2032,7 +1987,7 @@ def group_members_view(request):
     # Get the HTML for each of the logged-in member's friends' list item (and whether or not they are in the inputted group)
     response_friends = []
     for m in friends:
-        m.num_mutual_friends = request.user.get_profile().get_num_mutual_friends(m)
+        m.num_mutual_friends = request.user.get_num_mutual_friends(m)
 
         m.selected = (group != None) and (m in group.members.all())
         html = render_to_string("memberListItem.html", {
@@ -2058,7 +2013,7 @@ def add_to_group_view(request):
     # Get the inputted group and the member to add to it
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
-        m = User.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
@@ -2079,7 +2034,7 @@ def remove_from_group_view(request):
     # Get the inputted group and the member to remove from it
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
-        m = User.objects.get(pk = request.POST["memberId"])
+        m = Member.objects.get(pk = request.POST["memberId"])
     except:
         raise Http404()
 
@@ -2116,10 +2071,6 @@ def rename_group_view(request):
     except:
         raise Http404()
 
-    print group
-    print name
-    print group.name
-
     # Make sure the group belongs to the logged-in member
     if (group.creator != request.user):
         raise Http404()
@@ -2127,8 +2078,6 @@ def rename_group_view(request):
     # Update and save the inputted group's name
     group.name = name
     group.save()
-
-    print group.name
 
     # Return the new group's ID
     # TODO: get rid of this?

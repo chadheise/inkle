@@ -154,11 +154,26 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-    }
+    },
+    "filters": {
+         "require_debug_false": {
+             "()": "django.utils.log.RequireDebugFalse"
+         }
+     },
+     "handlers": {
+         "mail_admins": {
+             "level": "ERROR",
+             "filters": ["require_debug_false"],
+             "class": "django.utils.log.AdminEmailHandler"
+         }
+     },
 }
 
+# Custom authentication model
+AUTH_USER_MODEL = "inkle.Member"
+
 # User authentication
-AUTH_PROFILE_MODULE = "inkle.UserProfile"
+#AUTH_PROFILE_MODULE = "inkle.UserProfile"
 LOGIN_URL = "/raise404/"
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
