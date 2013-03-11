@@ -4,7 +4,7 @@
 <div class="shareSettingsForm">
     <!-- Selected groups header selection button -->
     <div id="selectedGroupsShareSettingsFormHeader" class="shareSettingsFormHeader">
-        {% if user.get_profile.share_with_selected_groups %}
+        {% if user.share_with_selected_groups %}
             <img id="selectedGroupsSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
         {% else %}
             <img id="selectedGroupsSelectionButton" class="selectionButton" src="resources/images/deselected.png" />
@@ -17,7 +17,7 @@
     {% for g in user.group_set.all %}
         <div class="selectedGroupsGroup">
             {% if g.share_by_default %}
-                {% if user.get_profile.share_with_selected_groups %}
+                {% if user.share_with_selected_groups %}
                     <img class="groupSelectionButton selectionButton selected" data-groupId="{{ g.id }}" src="resources/images/selected.png" />
                 {% else %}
                     <img class="groupSelectionButton selectionButton selected disabled" data-groupId="{{ g.id }}" src="resources/images/fadedselected.png" />
@@ -37,7 +37,7 @@
 
     <!-- No one selection button -->
     <div id="noOneShareSettingsFormHeader" class="shareSettingsFormHeader">
-        {% if user.get_profile.share_with_selected_groups|is_false %}
+        {% if user.share_with_selected_groups|is_false %}
             <img id="noOneSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
         {% else %}
             <img id="noOneSelectionButton" class="selectionButton" src="resources/images/deselected.png" />
@@ -48,7 +48,7 @@
 
     <!-- Forwarding selection button -->
     <div id="forwardingShareSettingsFormHeader" class="shareSettingsFormHeader">
-        {% if user.get_profile.allow_inkling_attendees_to_share %}
+        {% if user.allow_inkling_attendees_to_share %}
             <img id="forwardingSelectionButton" class="selectionButton selected" src="resources/images/selected.png" />
         {% else %}
             <img id="forwardingSelectionButton" class="selectionButton" src="resources/images/deselected.png" />

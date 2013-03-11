@@ -33,7 +33,7 @@
         <div class="infoContainer">
             <div id="membersAttendingPictures">
                 {% for m in members_attending %}
-                    <img class="memberPicture" src="{{ m.get_profile.get_picture_path }}" memberName="{{ m.get_full_name }}" />
+                    <img class="memberPicture" src="{{ m.get_picture_path }}" memberName="{{ m.get_full_name }}" />
                 {% empty %}
                     <div>No attendees</div>
                 {% endfor %}
@@ -62,7 +62,7 @@
         <div class="banner">Awaiting</div>
         <div class="infoContainer">
             {% for m in members_awaiting_reply %}
-                <img class="memberPicture" src="{{ m.get_profile.get_picture_path }}" memberName="{{ m.get_full_name }}" />
+                <img class="memberPicture" src="{{ m.get_picture_path }}" memberName="{{ m.get_full_name }}" />
             {% empty %}
                 <div>No pending invitations</div>
             {% endfor %}
