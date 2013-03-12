@@ -4,16 +4,14 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 
-# TODO: get rid of the whole csrf_exempt thing
-# CSRF exemple views module
-from django.views.decorators.csrf import csrf_exempt
-
 # User authentication
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 # JSON module
 from django.utils import simplejson
+
 # URL module
 import urllib2
 
@@ -49,7 +47,12 @@ def is_logged_in(request):
     return HttpResponse(request.user.is_authenticated())
 
 
-@csrf_exempt
+@ensure_csrf_cookie
+def get_csrf_token_view(request):
+    """Returns the CSRF token for the current session."""
+    return HttpResponse(request.META["CSRF_COOKIE"])
+
+
 def email_login_view(request):
     """Logs in a non-Facebook member or returns a login error."""
     # Get the inputted email and password
@@ -91,7 +94,6 @@ def email_login_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 def facebook_login_view(request):
     """Logs in a Facebook member or returns a login error."""
     # Get the Facebook information sent via POST
@@ -171,7 +173,6 @@ def logout_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 def forgotten_password_view(request):
     """Sends a PIN to the inputted email address so they can reset their password."""
     # Get the POST data
@@ -252,7 +253,6 @@ def is_thirteen(month, day, year):
     return (age < 13)
 
 
-@csrf_exempt
 def registration_view(request):
     """Registers a new member."""
     # Get the POST data
@@ -446,7 +446,6 @@ def get_group_list_item_panel_html(group, group_members = None):
     return html
 
 
-@csrf_exempt
 @login_required
 def link_facebook_account_view(request):
     """Links an existing user account to a facebook account."""
@@ -493,7 +492,6 @@ def link_facebook_account_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def all_inklings_view(request):
     """Returns a list of the inklings which the logged-in member's friends are attending."""
@@ -559,7 +557,6 @@ def all_inklings_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def groups_panel_view(request):
     """Returns a list of the logged-in member's groups (with HTML for the panel)."""
@@ -636,7 +633,6 @@ def get_not_grouped_members(member, groups = None, as_string = False):
     return not_grouped_members
 
 
-@csrf_exempt
 @login_required
 def groups_main_content_view(request):
     """Returns a list of the logged-in member's groups (with HTML for the main content window)."""
@@ -675,7 +671,6 @@ def groups_main_content_view(request):
 
 
 # TODO: either delete this if it is not being used or update the function comment for it
-@csrf_exempt
 @login_required
 def inkling_view(request):
     """Returns the HTML for a single inkling"""
@@ -741,7 +736,6 @@ def inkling_view(request):
     )
 
 
-@csrf_exempt
 @login_required
 def share_settings_form_view(request):
     """Returns the HTML for a the share settings form."""
@@ -751,7 +745,6 @@ def share_settings_form_view(request):
         context_instance = RequestContext(request))
 
 
-@csrf_exempt
 @login_required
 def set_share_setting_view(request):
     """Sets a users share settings"""
@@ -797,7 +790,6 @@ def set_share_setting_view(request):
     return HttpResponse("True")
 
 
-@csrf_exempt
 @login_required
 def change_password_view(request):
     """Allows a user to change their password."""
@@ -842,7 +834,7 @@ def change_password_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
+@login_required
 def reset_password_view(request):
     """Allows a user to reset their password."""
     # Get the POST data
@@ -882,7 +874,6 @@ def reset_password_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def change_email_view(request):
     """Allows a user to change their email."""
@@ -931,7 +922,7 @@ def change_email_view(request):
 
     return HttpResponse(response, mimetype = "application/json")
 
-@csrf_exempt
+
 @login_required
 def respond_to_inkling_invitation_view(request):
     """Responds the logged-in member to the an inkling invitation."""
@@ -955,7 +946,6 @@ def respond_to_inkling_invitation_view(request):
 
 
 # TODO: possible get rid of this
-@csrf_exempt
 @login_required
 def edit_inkling_view(request):
     """Returns the HTML for editing an inkling."""
@@ -971,7 +961,6 @@ def edit_inkling_view(request):
         context_instance = RequestContext(request))
 
 
-@csrf_exempt
 @login_required
 def save_inkling_view(request):
     """Saves any changes to an inkling and returns the HTML for that inkling's page."""
@@ -1012,7 +1001,6 @@ def save_inkling_view(request):
         context_instance = RequestContext(request) )
 
 
-@csrf_exempt
 @login_required
 def join_inkling_view(request):
     """Adds the logged in member to an inkling."""
@@ -1028,7 +1016,6 @@ def join_inkling_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 @login_required
 def inkling_feed_view(request):
     """Returns a list of the feed updates and comments for the inputted inkling."""
@@ -1083,7 +1070,6 @@ def inkling_feed_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def inkling_members_attending_view(request):
     """Returns a list of the members who are attending the inputted inkling."""
@@ -1113,7 +1099,6 @@ def inkling_members_attending_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def inkling_members_awaiting_reply_view(request):
     """Returns a list of the members who have been invited to the inputted inkling but have not responded yet."""
@@ -1143,7 +1128,6 @@ def inkling_members_awaiting_reply_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def add_feed_comment_view(request):
     """Adds a new comment to the inputted inkling's feed."""
@@ -1160,8 +1144,6 @@ def add_feed_comment_view(request):
     return HttpResponse()
 
 
-# TODO: remove csrf_exempt?
-@csrf_exempt
 @login_required
 def my_inklings_view(request):
     """Returns a list of the inklings which the logged-in member is attending."""
@@ -1242,7 +1224,6 @@ def num_inkling_invitations_view(request):
     return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
 
 
-@csrf_exempt
 @login_required
 def inkling_invitations_view(request):
     """Returns a list of the inkling invitations to which the logged-in member has not yet responded."""
@@ -1291,7 +1272,6 @@ def inkling_invitations_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def create_inkling_view(request):
     """Creates a new inkling."""
@@ -1366,7 +1346,6 @@ def create_inkling_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def update_inkling_view(request):
     """Updates the inputted inklings details."""
@@ -1406,7 +1385,6 @@ def update_inkling_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 @login_required
 def inkling_invited_groups_view(request):
     """Returns a list of the logged-in member's friends (and whether or not they are invited to the inputted inkling)."""
@@ -1444,7 +1422,6 @@ def inkling_invited_groups_view(request):
 
 
 # TODO: combine this with the other functions which do nearly the same thing...
-@csrf_exempt
 @login_required
 def friends_view(request):
     """Returns a list of the logged-in member's friends."""
@@ -1490,7 +1467,6 @@ def friends_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def friend_requests_view(request):
     """Returns a list of the logged-in member's friend requests."""
@@ -1519,14 +1495,12 @@ def friend_requests_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def num_friend_requests_view(request):
     """Returns the number of pending friend requests the logged-in member has."""
     return HttpResponse(request.user.friend_requests_received.filter(status = "pending").count())
 
 
-@csrf_exempt
 @login_required
 def invite_facebook_friends_view(request):
     """Returns a list of a member's facebook friends so they can invite or add them"""
@@ -1616,7 +1590,6 @@ def invite_facebook_friends_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def people_search_view(request):
     """Returns a list of member's who match the inputted query."""
@@ -1790,7 +1763,6 @@ def people_search_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def facebook_post(request):
     """Posts an invitation message on a users facebook feed"""
@@ -1824,7 +1796,6 @@ def facebook_post(request):
 
 
 # TODO: rename as send_friend_request_view
-@csrf_exempt
 @login_required
 def add_friend_view(request):
     """Sends a friend request from the logged-in member to the inputted member."""
@@ -1843,7 +1814,7 @@ def add_friend_view(request):
 
     return HttpResponse()
 
-@csrf_exempt
+
 @login_required
 def respond_to_request_view(request):
     """Implements the logged-in member's response to a friend request from the inputted memeber."""
@@ -1875,7 +1846,7 @@ def respond_to_request_view(request):
     # Return the number of pending friend requests for the logged-in member
     return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
 
-@csrf_exempt
+
 @login_required
 def revoke_request_view(request):
     """Revokes the logged-in member's friend request to the inputted memeber."""
@@ -1909,7 +1880,7 @@ def revoke_request_view(request):
     # Return the number of pending friend requests for the logged-in member
     return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
 
-@csrf_exempt
+
 @login_required
 def remove_friend_view(request):
     """Removes a friend from the logged-in member's friends list."""
@@ -1939,7 +1910,6 @@ def remove_friend_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 @login_required
 def delete_group_view(request):
     """Deletes one of the logged-in member's groups."""
@@ -1959,7 +1929,6 @@ def delete_group_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 @login_required
 def group_members_view(request):
     """Returns a list of the logged-in member's friends and if they are in the inputted group."""
@@ -2006,7 +1975,6 @@ def group_members_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-@csrf_exempt
 @login_required
 def add_to_group_view(request):
     """Adds the inputted member to the inputted group."""
@@ -2027,7 +1995,6 @@ def add_to_group_view(request):
     return HttpResponse()
 
 
-@csrf_exempt
 @login_required
 def remove_from_group_view(request):
     """Removes the inputted member from the inputted group."""
@@ -2048,8 +2015,6 @@ def remove_from_group_view(request):
     return HttpResponse()
 
 
-# TODO: Remove csrf_exempt
-@csrf_exempt
 @login_required
 def create_group_view(request):
     """Creates a new group and adds it to the logged-in member's groups."""
@@ -2060,7 +2025,6 @@ def create_group_view(request):
     return HttpResponse(group.id)
 
 
-@csrf_exempt
 @login_required
 def rename_group_view(request):
     """Renames the inputted group."""
