@@ -171,32 +171,8 @@ LOGGING = {
 
 # Custom authentication model
 AUTH_USER_MODEL = "inkle.Member"
-
-# User authentication
-#AUTH_PROFILE_MODULE = "inkle.UserProfile"
 LOGIN_URL = "/raise404/"
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "inkle.backend.FacebookAuthenticationBackend"
 )
-# TODO: get rid of this?
-#Added for Django_facebook integration
-"""
-FACEBOOK_APP_ID = 355653434520396
-FACEBOOK_APP_SECRET = "	e6df96d1801e704fecd7cb3fea71b944"
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django_facebook.context_processors.facebook',
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.tz',
-    'django.contrib.messages.context_processors.messages',
-)
-
-AUTHENTICATION_BACKENDS = (
-    'django_facebook.auth_backends.FacebookBackend',
-    'django.contrib.auth.backends.ModelBackend',
-) """

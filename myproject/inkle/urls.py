@@ -8,6 +8,7 @@ from django.conf.urls import *
 urlpatterns = patterns(
     "myproject.inkle.views",
 
+    (r"^getCsrfToken/$", "get_csrf_token_view"),
     (r"^raise404/$", "raise_404_view"),
 
     # Login, logout, and registration
