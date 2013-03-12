@@ -47,7 +47,6 @@ Ext.application({
     ],
 
     requires: [
-        //"Ext.util.Cookies"
     ],
 
     /*
@@ -61,128 +60,72 @@ Ext.application({
     phoneStartupScreen: "resources/loading/Homescreen.jpg",
     tabletStartupScreen: "resources/loading/Homescreen~ipad.jpg",
     */
+
     //Set the base url for all server requests
     //baseUrl: "http://chads-macbook-pro.local:8000",
     baseUrl: "http://127.0.0.1:8000",
 
-    addFriendsTimeStamp: "",
-
+    /* Application launch */
     launch: function() {
-        //console.log("a");
-        //console.log(Ext.util.Cookies);
-        //console.log("b");
-        // Turn off caching for Ajax requests
-        Ext.Ajax.on("beforerequest", function (connection, options) {
-            //if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {
-                if (typeof(options.headers) == "undefined") {
-                    //options.headers = {"X-CSRFToken": Ext.util.Cookies.get("csrftoken")};
-                    options.headers = {"cache-control": "no-cache"};
-                    //options.headers["X-CSRFToken"] = "testing";
-                    //console.log(options.headers);
-                }
-                else {
-                    //options.headers.extend({"X-CSRFToken": Ext.util.Cookies.get("csrftoken")});
-                    options.headers["cache-control"] = "no-cache";
-                    //options.headers["X-CSRFToken"] = "testing";
-                    //console.log(options.headers);
-                    //options.headers.extend({"cache-control": "no-cache"});
-                }
-            //}
-        }, this);
-
-
-        /*var cookieValue = null;
-        console.log(document);
-        console.log(document.cookie);
-        if (document.cookie && document.cookie != '') {
-            console.log("a");
-            var cookies = document.cookie.split(';');
-            console.log("a");
-            for (var i = 0; i < cookies.length; i++) {
-                console.log("b");
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        console.log(cookieValue);*/
-
-        // Add csrf token to every ajax request
-        //var csrf_token = document.getElementsByName("csrf-token")[0].getAttribute("content");
-        //console.log(csrf_token);
-        /*var token = Ext.util.Cookies.get("csrftoken");
-        console.log(token);
-        if(!token){
-            Ext.Error.raise("Missing csrftoken cookie");
-        } else {
-            Ext.Ajax.defaultHeaders = Ext.apply(Ext.Ajax.defaultHeaders || {}, {
-                "X-CSRFToken": token
-            });
-        }*/
-
-        // Determine if the user is logged in and show the appropriate page
         Ext.Ajax.request({
-            url: inkle.app.baseUrl + "/isLoggedIn/",
+            url: inkle.app.baseUrl + "/getCsrfToken/",
 
-            success: function(response) {
-                console.log(document.cookie);
+            callback: function(a, b, response) {
+                // Get the CSRF token
+                var csrfToken = response.responseText;
 
+                // Turn off caching and set the CSRF token for all Ajax requests
+                Ext.Ajax.on("beforerequest", function (connection, options) {
+                    if (typeof(options.headers) == "undefined") {
+                        options.headers = {
+                            "cache-control": "no-cache",
+                            "X-CSRFToken": csrfToken
+                        };
+                    }
+                    else {
+                        options.headers["cache-control"] = "no-cache";
+                        options.headers["X-CSRFToken"] = csrfToken;
+                    }
+                }, this);
 
-                var isLoggedIn = response.responseText;
+                // Determine if the user is logged in and show the appropriate page
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/isLoggedIn/",
 
-                // Show the main tab view if they are logged in
-                if (isLoggedIn === "True") {
-                    Ext.Viewport.add([
-                        { xtype: "mainTabView" }
-                    ]);
-                }
+                    success: function(response) {
+                        var isLoggedIn = response.responseText;
 
-                // Show the login view if they are not logged in
-                else if (isLoggedIn === "False") {
-                    Ext.Viewport.add([
-                        { xtype: "loginView" }
-                    ]);
-                }
+                        // Show the main tab view if they are logged in
+                        if (isLoggedIn === "True") {
+                            Ext.Viewport.add([
+                                { xtype: "mainTabView" }
+                            ]);
+                        }
 
-                // Show the offline view if they are offline
-                else {
-                    Ext.Viewport.add([
-                        { xtype: "offlineView" }
-                    ]);
-                }
-            },
+                        // Show the login view if they are not logged in
+                        else if (isLoggedIn === "False") {
+                            Ext.Viewport.add([
+                                { xtype: "loginView" }
+                            ]);
+                        }
 
-            failure: function(response) {
-                // Show the offline view if they are offline
-                Ext.Viewport.add([
-                    { xtype: "offlineView" }
-                ]);
+                        // Show the offline view if they are offline
+                        else {
+                            Ext.Viewport.add([
+                                { xtype: "offlineView" }
+                            ]);
+                        }
+                    },
+
+                    failure: function(response) {
+                        // Show the offline view if they are offline
+                        Ext.Viewport.add([
+                            { xtype: "offlineView" }
+                        ]);
+                    }
+                });
             }
         });
-
-        // using jQuery
-        /*function getCookie(name) {
-            console.log("getCookie()");
-            var cookieValue = null;
-            console.log(document.cookie);
-            if (document.cookie && document.cookie != "") {
-                console.log(cookies);
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');*/
     }
 
     /*
