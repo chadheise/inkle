@@ -356,7 +356,7 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewEditGroupsButtonTap: function() {
         this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
     },
-    
+
     onFriendsViewEditGroupsDoneButtonTap: function() {
         this.fireEvent("friendsViewEditGroupsDoneButtonTapped", "uneditable");
     },
@@ -368,7 +368,7 @@ Ext.define("inkle.view.Friends", {
     onGroupMembersViewBackButtonTap: function() {
         this.fireEvent("groupMembersViewBackButtonTapped", /* source = */ "groupMembersView");
     },
-    
+
     // List disclosure/itemtap
     onFriendsViewFriendsListItemTap: function(friendsList, index, target, record, event, options) {
         var deleteLock = Ext.fly(event.getTarget(".deleteLock"));

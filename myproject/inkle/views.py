@@ -544,8 +544,9 @@ def all_inklings_view(request):
     response_inklings = []
     for i in inklings:
         response_inklings.append({
-            "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
+            "inklingId": i.id,
+            "attendingGroupIds": i.get_groups_attending_inkling(request.user),
             "numMembersAttending": i.get_num_members_attending()
         })
 
@@ -581,7 +582,7 @@ def groups_panel_view(request):
     groups.sort(key = lambda g : g.name)
 
     # Get a list of the logged-in member's not grouped friends
-    not_grouped_members = get_not_grouped_members(request.user, groups, True)
+    not_grouped_members = request.user.get_not_grouped_members(groups, True)
 
     # Create the "Not Grouped" group
     not_grouped_group = {
@@ -610,29 +611,6 @@ def groups_panel_view(request):
     return HttpResponse(response, mimetype = "application/json")
 
 
-def get_not_grouped_members(member, groups = None, as_string = False):
-    # Get a list of the not grouped members
-    not_grouped_members = list(member.friends.all())
-    for g in groups:
-        for m in g.members.all():
-            if (m in not_grouped_members):
-                not_grouped_members.remove(m)
-
-    # Convert the list to a string if requested
-    if (as_string):
-        not_grouped_members_string = ""
-        first = True
-        for m in not_grouped_members:
-            if (first):
-                not_grouped_members_string += str(m.id)
-                first = False
-            else:
-                not_grouped_members_string += "," + str(m.id)
-        not_grouped_members = not_grouped_members_string
-
-    return not_grouped_members
-
-
 @login_required
 def groups_main_content_view(request):
     """Returns a list of the logged-in member's groups (with HTML for the main content window)."""
@@ -644,7 +622,7 @@ def groups_main_content_view(request):
     groups.sort(key = lambda g : g.name)
 
     # Get a list of the logged-in member's not grouped friends
-    not_grouped_members = get_not_grouped_members(request.user, groups)
+    not_grouped_members = request.user.get_not_grouped_members(groups)
 
     # Create the "Not Grouped" group
     not_grouped_group = {
