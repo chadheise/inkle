@@ -62,11 +62,12 @@ Ext.application({
     */
 
     //Set the base url for all server requests
-    baseUrl: "http://chads-macbook-pro.local:8000",
-    //baseUrl: "http://127.0.0.1:8000",
+    //aseUrl: "http://chads-macbook-pro.local:8000",
+    baseUrl: "http://127.0.0.1:8000",
 
     /* Application launch */
     launch: function() {
+        console.log("launching app");
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/getCsrfToken/",
 

@@ -1,14 +1,14 @@
 Ext.define("inkle.view.MyInklings", {
 	extend: "Ext.navigation.View",
-	
+
 	xtype: "myInklingsView",
-	
-	config: {        
+
+	config: {
 		title: "My Inklings",
 		iconCls: "myInklingsIcon",
-    	
+
     	navigationBar: false,
-    	
+
     	items: [
             // Top toolbar
             {
@@ -114,7 +114,7 @@ Ext.define("inkle.view.MyInklings", {
                     }
                 ]
     		},
-    		
+
     		// My inklings list
     		{
     			xtype: "list",
@@ -158,7 +158,7 @@ Ext.define("inkle.view.MyInklings", {
                     }
                 ]
     		},
-    		
+
     		// Inkling invitations
         	{
         		xtype: "panel",
@@ -202,7 +202,7 @@ Ext.define("inkle.view.MyInklings", {
                         ]
 					}
 				],
-				
+
 				listeners: [
 					{
                         delegate: "#inklingInvitationsList",
@@ -210,7 +210,7 @@ Ext.define("inkle.view.MyInklings", {
                         fn: "onInklingInvitationItemTap"
                     }
 				],
-				
+
                 onInklingInvitationItemTap: function(inklingInvitationsList, index, target, record, event, options) {
                     var buttonTarget = Ext.fly(event.getTarget("input[type='button']"));
                     if (!buttonTarget) {
@@ -232,7 +232,7 @@ Ext.define("inkle.view.MyInklings", {
                 }
 			}
     	],
-    	
+
     	listeners: [
     	    {
         	    delegate: "#myInklingsList",
@@ -311,7 +311,7 @@ Ext.define("inkle.view.MyInklings", {
             }
         ]
 	},
-	
+
 	// Event firings
 	onMyInklingsListRefresh: function() {
         this.fireEvent("myInklingsListRefreshed");
@@ -320,28 +320,28 @@ Ext.define("inkle.view.MyInklings", {
     onInklingInvitationsListRefresh: function() {
         this.fireEvent("inklingInvitationsListRefreshed");
     },
-	
+
 	onInklingInvitationsButtonTap: function() {
 		this.fireEvent("inklingInvitationsButtonTapped");
 	},
-	
+
     onNewInklingButtonTap: function() {
         this.fireEvent("newInklingButtonTapped", "myInklingsView");
     },
-    
+
     onInviteResponseBackButtonTap: function() {
     	this.fireEvent("onInviteResponseBackButtonTapped");
     },
-    
+
     onMyInklingsInklingBackButtonTap: function() {
         this.fireEvent("myInklingsInklingBackButtonTapped");
     },
-    
+
     onMyInklingsInklingItemTap: function(myInklingsList, index, target, record, event, options) {
         var tappedInklingId = event.getTarget(".inklingListItem").getAttribute("data-inklingId");
         this.fireEvent("inklingTapped", tappedInklingId, /* source = */ "myInklings");
     },
-    
+
     onBackToInklingButtonTap: function() {
         this.fireEvent("backToInklingButtonTapped");
     },
@@ -349,19 +349,19 @@ Ext.define("inkle.view.MyInklings", {
     onNewInklingCancelButtonTap: function() {
         this.fireEvent("newInklingCancelButtonTapped");
     },
-    
+
     onNewInklingDoneButtonTap: function() {
         this.fireEvent("newInklingDoneButtonTapped");
     },
-    
+
     onInklingInviteesDoneButtonTap: function() {
     	this.fireEvent("inklingInviteesDoneButtonTapped");
     },
-    
+
     onNewInklingInvitedFriendsBackButtonTap: function() {
     	this.fireEvent("newInklingInvitedFriendsBackButtonTapped", "newInklingInvitedFriendsView");
     },
-    
+
     onNewInklingInvitedGroupsButtonTap: function() {
     	this.fireEvent("newInklingInvitedGroupsButtonTapped");
     },

@@ -199,8 +199,7 @@ class Inkling(models.Model):
 
     def get_members_attending(self):
         """Returns a list of all the members attending the current inkling."""
-        members_attending = [m for m in self.member_set.all()]
-        return members_attending
+        return [m for m in self.member_set.all()]
 
     def get_num_members_attending(self):
         """Returns the number of members attending the current inkling."""
@@ -220,6 +219,34 @@ class Inkling(models.Model):
     def member_has_pending_invitation(self, m):
         """Returns True if the inputted member has a pending invitation to the current inkling or False otherwise."""
         return(bool(m.inkling_invitations_received.filter(inkling = self, status = "pending")))
+
+    def get_groups_attending_inkling(self, member):
+        """Returns a comma-separated string of the inputted member's groups who are attending the current inkling."""
+        # Get a list of the members attending the current inkling
+        inkling_members = self.get_members_attending()
+
+        # Get a set of the groups to which the attending members belong
+        group_ids_set = set()
+        for m in inkling_members:
+            groups = m.groups_member_of.filter(creator = member)
+            if (groups):
+                for g in groups:
+                    group_ids_set.add(g.id)
+            else:
+                group_ids_set.add(-1)
+
+        # Convert the group IDs set to a string
+        inkling_groups = ""
+        first = True
+        for g_id in group_ids_set:
+            if (first):
+                inkling_groups += str(g_id)
+                first = False
+            else:
+                inkling_groups += "," + str(g_id)
+
+        return inkling_groups
+
 
 
 class FriendRequest(models.Model):
@@ -284,6 +311,29 @@ class Member(AbstractUser):
     def has_pending_friend_request_to(self, m):
         """Returns True if the current memeber has a pending friend request to the inputted member."""
         return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))
+
+    def get_not_grouped_members(self, groups = None, as_string = False):
+        """Returns a list of the current member's friends who are not in any of the current member's groups."""
+        # Get a list of the not grouped members
+        not_grouped_members = list(self.friends.all())
+        for g in groups:
+            for m in g.members.all():
+                if (m in not_grouped_members):
+                    not_grouped_members.remove(m)
+
+        # Convert the list to a string if requested
+        if (as_string):
+            not_grouped_members_string = ""
+            first = True
+            for m in not_grouped_members:
+                if (first):
+                    not_grouped_members_string += str(m.id)
+                    first = False
+                else:
+                    not_grouped_members_string += "," + str(m.id)
+            not_grouped_members = not_grouped_members_string
+
+        return not_grouped_members
 
     def get_picture_path(self):
         """Returns the path to the current member's picture."""
