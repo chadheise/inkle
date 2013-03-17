@@ -44,18 +44,22 @@ def raise_404_view(request):
 
 def is_logged_in(request):
     """Returns True if a member is logged in or False otherwise."""
+    print "Inside is_logged_in"
+    print request.user.is_authenticated()
     return HttpResponse(request.user.is_authenticated())
 
 
 @ensure_csrf_cookie
 def get_csrf_token_view(request):
     """Returns the CSRF token for the current session."""
+    print "csrf view"
     return HttpResponse(request.META["CSRF_COOKIE"])
 
 
 def email_login_view(request):
     """Logs in a non-Facebook member or returns a login error."""
     # Get the inputted email and password
+    print "email login view"
     try:
         email = request.POST["email"]
         password = request.POST["password"]
