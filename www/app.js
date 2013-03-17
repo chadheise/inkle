@@ -62,7 +62,7 @@ Ext.application({
     */
 
     //Set the base url for all server requests
-    //baseUrl: "http://chads-macbook-pro.local:8000",
+    //baseUrl: "http://chads-macbook-pro.local:8000", //Used for testing from Chad's iPhone
     //baseUrl: "http://127.0.0.1:8000",
     baseUrl: "http://10.0.1.27:8000", //Used for android emulator on Chad's mac
 
@@ -74,9 +74,7 @@ Ext.application({
             callback: function(a, b, response) {
                 // Get the CSRF token
                 var csrfToken = response.responseText;
-                alert("callback");
-                alert(csrfToken);
-                alert(inkle.app.baseUrl);
+
                 // Turn off caching and set the CSRF token for all Ajax requests
                 Ext.Ajax.on("beforerequest", function (connection, options) {
                     if (typeof(options.headers) == "undefined") {
