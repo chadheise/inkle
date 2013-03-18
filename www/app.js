@@ -35,7 +35,8 @@ Ext.application({
         "LinkFacebookAccount",
         "ShareSettings",
         "ChangePassword",
-        "ChangeEmail"
+        "ChangeEmail",
+        "WalkThrough",
     ],
     controllers: [
         "LoginController",
