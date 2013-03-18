@@ -16,6 +16,8 @@ Ext.define("inkle.controller.AllInklingsController", {
             allInklingsDateButton: "#allInklingsDateButton",
             allInklingsGroupsButton: "#allInklingsGroupsButton",
             allInklingsAddCommentButton: "#allInklingsAddCommentButton",
+            inklingInvitationsButton: "#inklingInvitationsButton",
+            friendRequestsButton: "#friendsViewRequestsButton",
 
             // Elements
             allInklingsList: "#allInklingsList",
@@ -37,16 +39,17 @@ Ext.define("inkle.controller.AllInklingsController", {
         control: {
             allInklingsView: {
                 // View transitions
-                inklingTapped: "activateInklingView",
+                inklingTapped: "transitionToInklingView",
 
                 // Commands
                 allInklingsDateButtonTapped: "toggleDatePickerVisibility",
                 allInklingsGroupsButtonTapped: "toggleGroupsListVisibility",
                 //allInklingsGroupsPickerChanged: "changeGroup",
-
-                deactivate: "hideAllInklingsPanels",
-                activeitemchange: "hideAllInklingsPanels",
                 allInklingsListRefreshed: "reloadAllInklingsList",
+
+                // Tab events
+                deactivate: "deactivateAllInklingsView",
+                activeitemchange: "activeItemChangeAllInklingsView",
                 initialize: "initializeAllInklingsView",
             },
 
@@ -64,9 +67,8 @@ Ext.define("inkle.controller.AllInklingsController", {
     /**********************/
     /*  VIEW TRANSITIONS  */
     /**********************/
-
-    /* Activates the inkling view from the all inklings view */
-    activateInklingView: function (inklingId, isMemberAttending) {
+    /* Transitions to the inkling view */
+    transitionToInklingView: function (inklingId, isMemberAttending) {
         // Display the appropriate top toolbar buttons
         this.getAllInklingsGroupsButton().hide();
         this.getAllInklingsDateButton().hide();
@@ -98,15 +100,16 @@ Ext.define("inkle.controller.AllInklingsController", {
         this.getAllInklingsViewToolbar().setTitle("Inkling");
     },
 
+
     /**********************/
     /*  HELPER FUNCTIONS  */
     /**********************/
-
     /* Returns the day string associated with the inputted index */
     getDayOfWeekString: function(index) {
         var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         return days[index];
     },
+
 
     /* Returns the month string associated with the inputted index */
     getMonthString: function(index) {
@@ -114,9 +117,11 @@ Ext.define("inkle.controller.AllInklingsController", {
         return months[index];
     },
 
+
     updateDate: function(date) {
         this.getAllInklingsDatePicker().setValue(date);
     },
+
 
     /*******************/
     /*  LIST UPDATING  */
@@ -195,9 +200,10 @@ Ext.define("inkle.controller.AllInklingsController", {
     },
 
 
-    /**************/
-    /*  COMMANDS  */
-    /**************/
+    /****************/
+    /*  TAB EVENTS  */
+    /****************/
+    /* Initializes the all inklings view */
     initializeAllInklingsView: function() {
         var today = new Date();
         var dayOfWeek = this.getDayOfWeekString(today.getDay());
@@ -221,6 +227,22 @@ Ext.define("inkle.controller.AllInklingsController", {
         allInklingsListStore.load();
     },
 
+
+    /* Deactivates the all inklings view */
+    deactivateAllInklingsView: function() {
+        this.hideAllInklingsPanels();
+    },
+
+
+    /* Cleans up the all inklings view when it's active item is changed */
+    activeItemChangeAllInklingsView: function() {
+        this.hideAllInklingsPanels();
+    },
+
+
+    /**************/
+    /*  COMMANDS  */
+    /**************/
     /* Hides the all inklings panels */
     hideAllInklingsPanels: function() {
         var allInklingsDatePickerPanel = this.getAllInklingsDatePickerPanel();

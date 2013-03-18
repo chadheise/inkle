@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 # User authentication
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 # JSON module
 from django.utils import simplejson
@@ -53,6 +53,7 @@ def get_csrf_token_view(request):
     return HttpResponse(request.META["CSRF_COOKIE"])
 
 
+@csrf_exempt
 def email_login_view(request):
     """Logs in a non-Facebook member or returns a login error."""
     # Get the inputted email and password
@@ -904,23 +905,53 @@ def change_email_view(request):
 @login_required
 def respond_to_inkling_invitation_view(request):
     """Responds the logged-in member to the an inkling invitation."""
-    # Get the inputted inkling and the response
+    # Get the inputted inkling, response, and today's date
     try:
         invitation = request.user.inkling_invitations_received.get(pk = request.POST["invitationId"])
-        response = request.POST["response"]
+        invitation_response = request.POST["invitationResponse"]
+        timezone_offset = int(request.POST["timezoneOffset"])
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
     except (InklingInvitation.DoesNotExist, KeyError) as e:
         raise Http404()
 
     # Update the invitation's status
-    invitation.status = response
+    invitation.status = invitation_response
     invitation.save()
 
+    # Create a variable to hold the response
+    response = []
+
     # Add the inkling corresponding to the current invitation to the logged-in member's inklings if they accepted it
-    if (response == "accepted"):
+    if (invitation_response == "accepted"):
         request.user.inklings.add(invitation.inkling)
 
+        # Create several date objects
+        tomorrow = today + datetime.timedelta(days = 1)
+        this_week = today + datetime.timedelta(days = 6)
+
+        # Get the inkling's grouping index
+        if (invitation.inkling.date == today):
+            grouping_index = 0
+        elif (invitation.inkling.date <= tomorrow):
+            grouping_index = 1
+        elif (invitation.inkling.date <= this_week):
+            grouping_index = 2
+        else:
+            grouping_index = 3
+
+        # Create and return a JSON object
+        response = {
+            "inklingId": invitation.inkling.id,
+            "html": get_inkling_list_item_html(invitation.inkling, request.user),
+            "groupingIndex": grouping_index
+        }
+
+    print response
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
     # Return the number of pending inkling invitations for the logged-in member
-    return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
+    #return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
 
 
 # TODO: possible get rid of this
@@ -1141,31 +1172,28 @@ def my_inklings_view(request):
     response_inklings = []
     for i in request.user.inklings.filter(date = today):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Today",
-            "groupIndex": 0
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 0
         })
 
     # Get a list of all the inklings the logged-in member is attending tomorrow
     for i in request.user.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Tomorrow",
-            "groupIndex": 1
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 1
         })
 
     # Get a list of all the inklings the logged-in member is attending this week
     for i in request.user.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "This Week",
-            "groupIndex": 2
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 2
         })
 
     # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
@@ -1173,21 +1201,19 @@ def my_inklings_view(request):
     future_inklings.sort(key = lambda i : i.date)
     for i in future_inklings:
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Future",
-            "groupIndex": 3
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 3
         })
 
     # Get a list of all the inklings the logged-in member is attending which do not have a date
     for i in request.user.inklings.filter(date__exact = None):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Future",
-            "groupIndex": 3
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 3
         })
 
     # Create and return a JSON object
