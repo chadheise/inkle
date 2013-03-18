@@ -60,10 +60,6 @@ Ext.define("inkle.controller.FriendsController", {
                 friendsViewGroupsListRefreshed: "updateGroupsList",
                 friendsViewRequestsListRefreshed: "updateRequestsList",
 
-                // View activation
-                activate: "hideFriendsTabBadge",
-                deactivate: "showFriendsTabBadge",
-
                 // Miscellaneous
                 deleteLockTapped: "toggleDeleteLock",
                 groupNameInputBlurred: "renameGroup"
@@ -952,33 +948,5 @@ Ext.define("inkle.controller.FriendsController", {
     /* Updates the requests list */
     updateRequestsList: function() {
         this.getRequestsList().getStore().load();
-    },
-
-    /****************/
-    /*  TAB BADGES  */
-    /****************/
-    /* Hides the "Friends" tab badge */
-    hideFriendsTabBadge: function() {
-        this.getMainTabView().getTabBar().getAt(2).setBadgeText("");
-    },
-
-    /* Shows the "Friends" tab badge */
-    showFriendsTabBadge: function() {
-        Ext.Ajax.request({
-            url: inkle.app.baseUrl + "/numFriendRequests/",
-
-            success: function(response) {
-                numFriendRequests = response.responseText;
-                if (numFriendRequests != 0) {
-                    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
-                    this.getRequestsButton().setBadgeText(numFriendRequests);
-                }
-            },
-
-            failure: function(response) {
-                console.log(response.responseText);
-            },
-            scope: this
-        });
     },
 });

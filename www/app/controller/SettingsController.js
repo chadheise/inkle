@@ -65,7 +65,6 @@ Ext.define("inkle.controller.SettingsController", {
     },
 
 	initializeSettingsView: function() {
-
         //Determine if the user is logged in with facebook
         var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {

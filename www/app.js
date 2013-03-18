@@ -38,6 +38,7 @@ Ext.application({
         "ChangeEmail"
     ],
     controllers: [
+        "MainTabController",
         "LoginController",
         "AllInklingsController",
         "InklingController",
@@ -127,6 +128,17 @@ Ext.application({
                 });
             }
         });
+
+        var _this = this;
+        document.addEventListener("resume", function(){
+            _this.resume();
+        });
+
+        // TODO: add online/offline events
+    },
+
+    resume: function() {
+        console.log("resume");
     }
 
     /*

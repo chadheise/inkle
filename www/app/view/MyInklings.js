@@ -1,15 +1,15 @@
 Ext.define("inkle.view.MyInklings", {
-	extend: "Ext.navigation.View",
+    extend: "Ext.navigation.View",
 
-	xtype: "myInklingsView",
+    xtype: "myInklingsView",
 
-	config: {
-		title: "My Inklings",
-		iconCls: "myInklingsIcon",
+    config: {
+        title: "My Inklings",
+        iconCls: "myInklingsIcon",
 
-    	navigationBar: false,
+        navigationBar: false,
 
-    	items: [
+        items: [
             // Top toolbar
             {
                 xtype: "toolbar",
@@ -25,40 +25,26 @@ Ext.define("inkle.view.MyInklings", {
                         pressedCls: ["toolbarButtonPressed", "toolbarButtonEnvelopePressed"],
                     },
                     {
-                		xtype: "button",
-                		ui: "back",
-                		text: "My Inklings",
-                		itemId: "inviteResponseBackButton",
-                		hidden: true
-                	},
-                	{
-                		xtype: "button",
-                		ui: "back",
-                		text: "Inkling",
-                		itemId: "backToInklingButton",
-                		hidden: true
-                	},
-                	{
-                		xtype: "button",
-                		ui: "back",
-                		text: "My Inklings",
-                		itemId: "myInklingsInklingBackButton",
-                		hidden: true
-                	},
-                	/*{
-                		xtype: "button",
-                		ui: "action",
-                		text: "Cancel",
-                		itemId: "newInklingCancelButton",
-                		hidden: true
-                	},
-                	{
-                		xtype: "button",
-                		ui: "back",
-                		text: "New Inkling",
-                		itemId: "newInklingInvitedFriendsBackButton",
-                		hidden: true
-                	},*/
+                        xtype: "button",
+                        ui: "back",
+                        text: "My Inklings",
+                        itemId: "inviteResponseBackButton",
+                        hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        ui: "back",
+                        text: "Inkling",
+                        itemId: "backToInklingButton",
+                        hidden: true
+                    },
+                    {
+                        xtype: "button",
+                        ui: "back",
+                        text: "My Inklings",
+                        itemId: "myInklingsInklingBackButton",
+                        hidden: true
+                    },
                     { xtype: "spacer" },
                     {
                         xtype: "button",
@@ -83,72 +69,69 @@ Ext.define("inkle.view.MyInklings", {
                         itemId: "inklingFeedButton",
                         hidden: true
                     },
-                    /*{
+                    {
                         xtype: "button",
                         ui: "action",
                         text: "Done",
-                        itemId: "newInklingDoneButton",
+                        itemId: "inklingInviteesDoneButton",
                         hidden: true
-                	},*/
-                	{
-                		xtype: "button",
-                		ui: "action",
-                		text: "Done",
-                		itemId: "inklingInviteesDoneButton",
-                		hidden: true
-                	},
-                	/*{
-                		xtype: "button",
-                		ui: "action",
-                		text: "Groups",
-                		itemId: "newInklingInvitedGroupsButton",
-                		hidden: true
-                	},*/
+                    },
                     {
                         xtype: "button",
                         ui: "action",
                         itemId: "myInklingsAddCommentButton",
                         cls: ["toolbarButton", "toolbarButtonPlus"],
-                		pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
+                        pressedCls: ["toolbarButtonPressed", "toolbarButtonPlusPressed"],
                         hidden: true
                     }
                 ]
-    		},
+            },
 
-    		// My inklings list
-    		{
-    			xtype: "list",
-				id: "myInklingsList",
+            // My inklings list
+            {
+                xtype: "list",
+                id: "myInklingsList",
                 cls: "inklingsList",
-				loadingText: "Loading inklings...",
-				emptyText: "<div class='emptyListText'>No inklings</div>",
-				disableSelection: true,
-				grouped: true,
-				itemTpl: [
-					"{ html }"
-				],
-				store: {
-					fields: [
-						"id",
-						"html",
-						"group",
-						"groupIndex"
-					],
-					proxy: {
-						type: "ajax",
-						actionMethods: {
-							read: "POST"
-						},
-						url: inkle.app.baseUrl + "/myInklings/"
-					},
-					grouper: {
-					    sortProperty: "groupIndex",
+                loadingText: "Loading inklings...",
+                emptyText: "<div class='emptyListText'>No inklings</div>",
+                disableSelection: true,
+                grouped: true,
+                itemTpl: [
+                    "{ html }"
+                ],
+                store: {
+                    fields: [
+                        "inklingId",
+                        "html",
+                        "groupingIndex"
+                    ],
+                    proxy: {
+                        type: "ajax",
+                        actionMethods: {
+                            read: "POST"
+                        },
+                        url: inkle.app.baseUrl + "/myInklings/"
+                    },
+                    grouper: {
+                        sortProperty: "groupIndex",
                         groupFn: function(record) {
-                            return record.get("group");
+                            var groupingIndex = record.get("groupingIndex");
+                            if (groupingIndex == 0) {
+                                return "Today";
+                            }
+                            else if (groupingIndex == 1) {
+                                return "Tomorrow";
+                            }
+                            else if (groupingIndex == 2) {
+                                return "This Week";
+                            }
+                            else if (groupingIndex == 3) {
+                                return "Future";
+                            }
                         }
                     },
-					autoLoad: false
-				},
+                    autoLoad: false
+                },
                 plugins: [
                     {
                         xclass: "Ext.plugin.PullRefresh",
@@ -157,41 +140,41 @@ Ext.define("inkle.view.MyInklings", {
                         }
                     }
                 ]
-    		},
+            },
 
-    		// Inkling invitations
-        	{
-        		xtype: "panel",
-        		id: "inklingInvitationsPanel",
+            // Inkling invitations
+            {
+                xtype: "panel",
+                id: "inklingInvitationsPanel",
                 cls: "inklingInvitationsList",
-        		hidden: true,
-        		top: 0,
-        		width: 300,
-        		height: 275,
-        		layout: "fit",
-        		items: [
-        			{
-						xtype: "list",
-						id: "inklingInvitationsList",
-						loadingText: "Loading invitations...",
-						emptyText: "<div class='emptyListText'>No invitations</div>",
-						disableSelection: true,
-						itemTpl: "{ html }",
-						store: {
-							fields: [
+                hidden: true,
+                top: 0,
+                width: 300,
+                height: 275,
+                layout: "fit",
+                items: [
+                    {
+                        xtype: "list",
+                        id: "inklingInvitationsList",
+                        loadingText: "Loading invitations...",
+                        emptyText: "<div class='emptyListText'>No invitations</div>",
+                        disableSelection: true,
+                        itemTpl: "{ html }",
+                        store: {
+                            fields: [
                                 "invitationId",
-								"inklingId",
-								"html"
-							],
-							proxy: {
+                                "inklingId",
+                                "html"
+                            ],
+                            proxy: {
                                 type: "ajax",
                                 url: inkle.app.baseUrl + "/inklingInvitations/",
                                 actionMethods: {
                                     read: "POST"
                                 }
                             },
-							autoLoad: false
-						},
+                            autoLoad: false
+                        },
                         plugins: [
                             {
                                 xclass: "Ext.plugin.PullRefresh",
@@ -200,16 +183,16 @@ Ext.define("inkle.view.MyInklings", {
                                 }
                             }
                         ]
-					}
-				],
+                    }
+                ],
 
-				listeners: [
-					{
+                listeners: [
+                    {
                         delegate: "#inklingInvitationsList",
                         event: "itemtap",
                         fn: "onInklingInvitationItemTap"
                     }
-				],
+                ],
 
                 onInklingInvitationItemTap: function(inklingInvitationsList, index, target, record, event, options) {
                     var buttonTarget = Ext.fly(event.getTarget("input[type='button']"));
@@ -220,80 +203,80 @@ Ext.define("inkle.view.MyInklings", {
                     else {
                         var tappedInvitationId = record.getData()["invitationId"];
                         if (buttonTarget.hasCls("acceptInklingInvitationButton")) {
-                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "accepted");
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, record, /* response = */ "accepted");
                         }
                         else if (buttonTarget.hasCls("ignoreInklingInvitationButton")) {
-                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "ignored");
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, record, /* response = */ "ignored");
                         }
                         else if (buttonTarget.hasCls("hideInklingInvitationButton")) {
-                            this.fireEvent("invitationButtonTapped", tappedInvitationId, /* response = */ "hidden");
+                            this.fireEvent("invitationButtonTapped", tappedInvitationId, record, /* response = */ "hidden");
                         }
                     }
                 }
-			}
-    	],
+            }
+        ],
 
-    	listeners: [
-    	    {
-        	    delegate: "#myInklingsList",
-        	    event: "pullToRefresh",
-        	    fn: "onMyInklingsListRefresh"
-        	},
+        listeners: [
+            {
+                delegate: "#myInklingsList",
+                event: "pullToRefresh",
+                fn: "onMyInklingsListRefresh"
+            },
             {
                 delegate: "#inklingInvitationsList",
                 event: "pullToRefresh",
                 fn: "onInklingInvitationsListRefresh"
             },
-    		{
-    			delegate: "#inklingInvitationsButton",
-            	event: "tap",
-            	fn: "onInklingInvitationsButtonTap"
-    		},
-			{
-            	delegate: "#newInklingButton",
-            	event: "tap",
-            	fn: "onNewInklingButtonTap"
-        	},
-        	{
-            	delegate: "#inviteResponseBackButton",
-            	event: "tap",
-            	fn: "onInviteResponseBackButtonTap"
-        	},
-        	{
-            	delegate: "#myInklingsInklingBackButton",
-            	event: "tap",
-            	fn: "onMyInklingsInklingBackButtonTap"
-        	},
-        	{
-            	delegate: "#newInklingCancelButton",
-            	event: "tap",
-            	fn: "onNewInklingCancelButtonTap"
-        	},
-        	{
-            	delegate: "#newInklingInvitedFriendsBackButton",
-            	event: "tap",
-            	fn: "onNewInklingInvitedFriendsBackButtonTap"
-        	},
-        	{
-            	delegate: "#newInklingDoneButton",
-            	event: "tap",
-            	fn: "onNewInklingDoneButtonTap"
-        	},
-        	{
-            	delegate: "#inklingInviteesDoneButton",
-            	event: "tap",
-            	fn: "onInklingInviteesDoneButtonTap"
-        	},
-        	{
-        		delegate: "#newInklingInvitedGroupsButton",
-            	event: "tap",
-            	fn: "onNewInklingInvitedGroupsButtonTap"
-        	},
-        	{
+            {
+                delegate: "#inklingInvitationsButton",
+                event: "tap",
+                fn: "onInklingInvitationsButtonTap"
+            },
+            {
+                delegate: "#newInklingButton",
+                event: "tap",
+                fn: "onNewInklingButtonTap"
+            },
+            {
+                delegate: "#inviteResponseBackButton",
+                event: "tap",
+                fn: "onInviteResponseBackButtonTap"
+            },
+            {
+                delegate: "#myInklingsInklingBackButton",
+                event: "tap",
+                fn: "onMyInklingsInklingBackButtonTap"
+            },
+            {
+                delegate: "#newInklingCancelButton",
+                event: "tap",
+                fn: "onNewInklingCancelButtonTap"
+            },
+            {
+                delegate: "#newInklingInvitedFriendsBackButton",
+                event: "tap",
+                fn: "onNewInklingInvitedFriendsBackButtonTap"
+            },
+            {
+                delegate: "#newInklingDoneButton",
+                event: "tap",
+                fn: "onNewInklingDoneButtonTap"
+            },
+            {
+                delegate: "#inklingInviteesDoneButton",
+                event: "tap",
+                fn: "onInklingInviteesDoneButtonTap"
+            },
+            {
+                delegate: "#newInklingInvitedGroupsButton",
+                event: "tap",
+                fn: "onNewInklingInvitedGroupsButtonTap"
+            },
+            {
                 delegate: "#myInklingsList",
                 event: "itemtap",
                 fn: "onMyInklingsInklingItemTap"
-        	},
+            },
             {
                 delegate: "#backToInklingButton",
                 event: "tap",
@@ -310,10 +293,10 @@ Ext.define("inkle.view.MyInklings", {
                 fn: "onAddCommentButtonTapped"
             }
         ]
-	},
+    },
 
-	// Event firings
-	onMyInklingsListRefresh: function() {
+    // Event firings
+    onMyInklingsListRefresh: function() {
         this.fireEvent("myInklingsListRefreshed");
     },
 
@@ -321,16 +304,16 @@ Ext.define("inkle.view.MyInklings", {
         this.fireEvent("inklingInvitationsListRefreshed");
     },
 
-	onInklingInvitationsButtonTap: function() {
-		this.fireEvent("inklingInvitationsButtonTapped");
-	},
+    onInklingInvitationsButtonTap: function() {
+        this.fireEvent("inklingInvitationsButtonTapped");
+    },
 
     onNewInklingButtonTap: function() {
         this.fireEvent("newInklingButtonTapped", "myInklingsView");
     },
 
     onInviteResponseBackButtonTap: function() {
-    	this.fireEvent("onInviteResponseBackButtonTapped");
+        this.fireEvent("onInviteResponseBackButtonTapped");
     },
 
     onMyInklingsInklingBackButtonTap: function() {
@@ -355,15 +338,15 @@ Ext.define("inkle.view.MyInklings", {
     },
 
     onInklingInviteesDoneButtonTap: function() {
-    	this.fireEvent("inklingInviteesDoneButtonTapped");
+        this.fireEvent("inklingInviteesDoneButtonTapped");
     },
 
     onNewInklingInvitedFriendsBackButtonTap: function() {
-    	this.fireEvent("newInklingInvitedFriendsBackButtonTapped", "newInklingInvitedFriendsView");
+        this.fireEvent("newInklingInvitedFriendsBackButtonTapped", "newInklingInvitedFriendsView");
     },
 
     onNewInklingInvitedGroupsButtonTap: function() {
-    	this.fireEvent("newInklingInvitedGroupsButtonTapped");
+        this.fireEvent("newInklingInvitedGroupsButtonTapped");
     },
 
     onInklingFeedButtonTap: function() {
