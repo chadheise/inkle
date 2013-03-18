@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workbench progressCount="21" version="2.0">
 <workbenchAdvisor/>
-<window height="799" width="1198" x="-1" y="22">
+<window height="799" width="1198" x="7" y="22">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="250"/>
@@ -16,7 +16,7 @@
 <coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="100" y="22"/>
 <coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="62" y="22"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="62" y="22"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="98" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="54" y="22"/>
 <coolItem id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.wst.xml.ui.design.DesignToolBar" itemType="typeToolBarContribution" x="54" y="22"/>
 <coolItem id="org.eclipse.debug.ui.launch.toolbar" itemType="typeToolBarContribution" x="-1" y="-1"/>
@@ -49,7 +49,7 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MainActivity.java" partName="MainActivity.java" path="/Users/chadheise/Sites/inkle/android/inkle/src/com/inkleit/inkle/MainActivity.java" title="MainActivity.java" tooltip="inkle/src/com/inkleit/inkle/MainActivity.java" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MainActivity.java" partName="MainActivity.java" path="/Users/chadheise/Sites/inkle/android/inkle/src/com/inkleit/inkle/MainActivity.java" title="MainActivity.java" tooltip="inkle/src/com/inkleit/inkle/MainActivity.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/inkle/src/com/inkleit/inkle/MainActivity.java"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="427" selectionTopPixel="0"/>
 </editor>
@@ -71,12 +71,15 @@
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/inkle/gen/com/inkleit/inkle/R.java"/>
 <editorState selectionHorizontalPixel="0" selectionLength="8" selectionOffset="747" selectionTopPixel="0"/>
 </editor>
-<editor id="org.eclipse.ui.DefaultTextEditor" name="AndroidManifest.xml" partName="AndroidManifest.xml" path="/Users/chadheise/Sites/inkle/android/inkle/AndroidManifest.xml" title="AndroidManifest.xml" tooltip="inkle/AndroidManifest.xml" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.ui.DefaultTextEditor" name="AndroidManifest.xml" partName="AndroidManifest.xml" path="/Users/chadheise/Sites/inkle/android/inkle/AndroidManifest.xml" title="AndroidManifest.xml" tooltip="inkle/AndroidManifest.xml" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/inkle/AndroidManifest.xml"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="624" selectionTopPixel="221"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="285" selectionTopPixel="331"/>
 </editor>
 </editors>
 <views>
+<view id="org.eclipse.ui.views.ProgressView" partName="Progress">
+<viewState/>
+</view>
 <view id="org.eclipse.jdt.ui.TypesView" partName="Types">
 <viewState org.eclipse.jdt.ui.browsing.typestoeditor="1" workingSetName="">
 <customFilters userDefinedPatternsEnabled="false">&#x0A;<xmlDefinedFilters>&#x0A;<child filterId="org.eclipse.jdt.ui.TypesView.ClassFilter" isEnabled="false"/>
@@ -116,9 +119,7 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Errors (2 items)"/>
-<category IMemento.internal.id="Warnings"/>
-<category IMemento.internal.id="Errors"/>
+<category IMemento.internal.id="Warnings (39 items)"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="445"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -173,7 +174,7 @@
 <view id="com.android.ide.eclipse.ddms.views.AllocTrackerView" partName="Allocation Tracker"/>
 <view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc"/>
 </views>
-<perspectives activePart="com.android.ide.eclipse.ddms.views.LogCatView" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
+<perspectives activePart="org.eclipse.jdt.ui.PackageExplorer" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="0" fixed="0" version="0.016">
 <descriptor class="com.android.ide.eclipse.ddms.Perspective" id="com.android.ide.eclipse.ddms.Perspective" label="DDMS"/>
 <alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
@@ -307,6 +308,7 @@
 <view id="org.eclipse.jdt.ui.SourceView"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="com.android.ide.eclipse.ddms.views.LogCatView"/>
+<view id="org.eclipse.ui.views.ProgressView"/>
 <fastViewBars/>
 <layout>
 <mainWindow>
@@ -338,15 +340,16 @@
 <page content="org.eclipse.jdt.ui.SourceView" label="Declaration"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="com.android.ide.eclipse.ddms.views.LogCatView" label="LogCat"/>
+<page content="org.eclipse.ui.views.ProgressView" label="Progress"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
-<page content="org.eclipse.ui.views.ProgressView" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
 <part id="3"/>
 <part id="4"/>
+<part id="5"/>
 </presentation>
 </folder>
 </info>
@@ -475,8 +478,6 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/inkle/src/com/inkleit/inkle/MainActivity.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" path="/inkle/AndroidManifest.xml"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/inkle/res/xml/config.xml"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" path="/inkle/AndroidManifest.xml"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/inkle/src/com/inkleit/inkle/MainActivity.java"/>
@@ -497,122 +498,124 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/inkle/res/xml/config.xml"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/inkle/src/com/facebook/android/FbDialog.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" path="/inkle/AndroidManifest.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/inkle/res/xml/config.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" path="/inkle/AndroidManifest.xml"/>
 </editors>
-<item historyLabel="MainActivity.java" index="0">
-<position info="not_deleted" x="427" y="0"/>
-</item>
+<item historyLabel="config.xml" index="0"/>
 <item historyLabel="inkle Manifest" index="1"/>
-<item historyLabel="MainActivity.java" index="0">
+<item historyLabel="MainActivity.java" index="2">
 <position info="not_deleted" x="427" y="0"/>
 </item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="inkle Manifest" index="3"/>
-<item historyLabel="MainActivity.java" index="4">
-<position info="not_deleted" x="427" y="0"/>
-</item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="ConnectPlugin.java" index="5">
+<item historyLabel="config.xml" index="0"/>
+<item historyLabel="ConnectPlugin.java" index="3">
 <position info="not_deleted" x="776" y="13"/>
 </item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="ConnectPlugin.java" index="6">
+<item historyLabel="config.xml" index="0"/>
+<item historyLabel="ConnectPlugin.java" index="4">
 <position/>
 </item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="ConnectPlugin.java" index="6">
+<item historyLabel="config.xml" index="0"/>
+<item historyLabel="ConnectPlugin.java" index="4">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="3" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="8">
+<item historyLabel="FbDialog.java" index="6">
 <position info="not_deleted" x="3821" y="0"/>
 </item>
-<item historyLabel="ConnectPlugin.java" index="6">
+<item historyLabel="ConnectPlugin.java" index="4">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="config.xml" index="0"/>
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="3665" y="0"/>
 </item>
-<item historyLabel="config.xml" index="2"/>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="config.xml" index="0"/>
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="1318" y="0"/>
 </item>
-<item historyLabel="ConnectPlugin.java" index="6">
+<item historyLabel="ConnectPlugin.java" index="4">
 <position info="not_deleted" x="4469" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="1318" y="0"/>
 </item>
-<item historyLabel="R.java" index="9">
+<item historyLabel="R.java" index="7">
 <position info="not_deleted" x="710" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="3966" y="0"/>
 </item>
-<item historyLabel="R.java" index="9">
+<item historyLabel="R.java" index="7">
 <position info="not_deleted" x="747" y="8"/>
 </item>
-<item historyLabel="FbDialog.java" index="7">
+<item historyLabel="FbDialog.java" index="5">
 <position info="not_deleted" x="3966" y="0"/>
 </item>
-<item historyLabel="R.java" index="9">
+<item historyLabel="R.java" index="7">
 <position info="not_deleted" x="747" y="8"/>
 </item>
-<item historyLabel="FbDialog.java" index="10">
+<item historyLabel="FbDialog.java" index="8">
 <position info="not_deleted" x="4409" y="0"/>
 </item>
-<item historyLabel="project.properties" index="11">
+<item historyLabel="project.properties" index="9">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="10">
+<item historyLabel="FbDialog.java" index="8">
 <position info="not_deleted" x="4409" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="12"/>
-<item historyLabel="config.xml" index="13"/>
-<item historyLabel="MainActivity.java" index="14">
+<item historyLabel="inkle Manifest" index="10"/>
+<item historyLabel="config.xml" index="11"/>
+<item historyLabel="MainActivity.java" index="12">
 <position info="not_deleted" x="427" y="0"/>
 </item>
-<item historyLabel="AndroidManifest.xml" index="15">
+<item historyLabel="AndroidManifest.xml" index="13">
 <position info="not_deleted" x="172" y="26"/>
 </item>
-<item historyLabel="MainActivity.java" index="14">
+<item historyLabel="MainActivity.java" index="12">
 <position info="not_deleted" x="427" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="16">
+<item historyLabel="inkle Manifest" index="14">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="config.xml" index="13"/>
-<item historyLabel="config.xml" index="17"/>
-<item historyLabel="config.xml" index="13"/>
-<item historyLabel="MainActivity.java" index="18">
+<item historyLabel="config.xml" index="11"/>
+<item historyLabel="config.xml" index="15"/>
+<item historyLabel="config.xml" index="11"/>
+<item historyLabel="MainActivity.java" index="16">
 <position info="not_deleted" x="427" y="0"/>
 </item>
-<item historyLabel="config.xml" index="19"/>
-<item historyLabel="FbDialog.java" index="20">
+<item historyLabel="config.xml" index="17"/>
+<item historyLabel="FbDialog.java" index="18">
 <position info="not_deleted" x="3" y="0"/>
 </item>
-<item historyLabel="FbDialog.java" index="20">
+<item historyLabel="FbDialog.java" index="18">
 <position info="not_deleted" x="4409" y="0"/>
 </item>
-<item historyLabel="config.xml" index="19"/>
-<item historyLabel="inkle Manifest" index="21">
+<item historyLabel="config.xml" index="17"/>
+<item historyLabel="inkle Manifest" index="19">
 <position info="not_deleted" x="624" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="21">
+<item historyLabel="inkle Manifest" index="19">
 <position info="not_deleted" x="624" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="21">
+<item historyLabel="inkle Manifest" index="19">
 <position info="not_deleted" x="624" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="21">
+<item historyLabel="inkle Manifest" index="19">
 <position info="not_deleted" x="624" y="0"/>
 </item>
-<item historyLabel="inkle Manifest" index="21"/>
-<item historyLabel="config.xml" index="19"/>
-<item active="true" historyLabel="MainActivity.java" index="18">
+<item historyLabel="inkle Manifest" index="19"/>
+<item historyLabel="config.xml" index="17"/>
+<item historyLabel="MainActivity.java" index="16">
 <position info="not_deleted" x="427" y="0"/>
+</item>
+<item historyLabel="config.xml" index="20"/>
+<item historyLabel="MainActivity.java" index="16">
+<position info="not_deleted" x="427" y="0"/>
+</item>
+<item active="true" historyLabel="AndroidManifest.xml" index="21">
+<position info="not_deleted" x="624" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
