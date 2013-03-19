@@ -1608,7 +1608,8 @@ def invite_facebook_friends_view(request):
             "m" : m,
             "include_disclosure_arrow" : False,
             "include_facebook_icon" : True,
-            "include_relationship_tag" : True, #This causes problems due to duplicate IDs
+            "include_relationship_tag" : True,
+            "relationship_tag_source" : "inviteFacebookFriends", #This must be unique per view as it is used to generate IDs for the relationship tag
             })
         except:
             raise Http404()
@@ -1706,7 +1707,7 @@ def people_search_view(request):
     inklePending = [] #Users of inkle who have a pending request from the user
     inkleRequested = [] #Users of inkle who have requested to be friends with the user
     inkleOther = [] #Users of inkle who are are not friends with the user and do not have a pending request
-    facebookInkle = [] #Users of inkle who are facebook friends with the user
+    facebookInkle = [] #Users of inkle who are facebook friends with the user but for which there is no relationship or pending relationship o inkle
     facebookNotInkle = [] #Facebook friends of the user who are not members of inkle
 
     for m in members:
@@ -1733,7 +1734,8 @@ def people_search_view(request):
             try:
                 #Get inkle user from facebook user id
                 inkleFriend = Member.objects.get(facebook_id = fbFriend["uid"]).user
-                if inkleFriend not in inkleFriends: #If the facebook friend is not an inkle friend (inkle friends have already been gathered)
+                #If the facebook friend does not already have a relationship or pending relationship with the user
+                if (inkleFriend not in inkleFriends) and (inkleFriend not in inklePending) and (inkleFriend not in inkleRequested): 
                     inkleFriend.num_mutual_friends = request.user.get_num_mutual_friends(inkleFriend)
                     inkleFriend.is_friend = False
                     inkleFriend.is_pending = request.user.has_pending_friend_request_to(inkleFriend)
@@ -1783,6 +1785,7 @@ def people_search_view(request):
             "include_disclosure_arrow" : True,
             "include_facebook_icon" : True,
             "include_relationship_tag" : True,
+            "relationship_tag_source" : "addFriends", #This must be unique per view as it is used to generate IDs for the relationship tag
             })
         except:
             raise Http404()
