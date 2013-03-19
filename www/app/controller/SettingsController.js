@@ -50,7 +50,6 @@ Ext.define("inkle.controller.SettingsController", {
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
-           		inviteFriendButtonTapped: "inviteFriend",
            		inviteFacebookFriendsViewListItemTapped: "activateFacebookFriendsActionSheet",
            	},
            	linkFacebookAccountView: {
@@ -219,7 +218,7 @@ Ext.define("inkle.controller.SettingsController", {
         var userId = data["user_id"];
         var facebookId = data["facebook_id"];
         var relationship = data["relationship"];
-        var addFriendsStore = this.getAddFriendsSuggestions().getStore();
+        var inviteFacebookFriendsStore = this.getInviteFacebookFriendsList().getStore();
 
         //Create the possible action sheet buttons
         var addFriend = {
@@ -232,22 +231,22 @@ Ext.define("inkle.controller.SettingsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = addFriendsStore.findRecord("user_id", userId);
+            		    var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
 
                         //Change relationship badge to "Pending"
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
             		},
                 	failure: function(response) {
                 		Ext.Msg.alert("Error", response.responseText);
                 	}
         		});
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -257,9 +256,9 @@ Ext.define("inkle.controller.SettingsController", {
             handler: function(button, event) {
                 this.inviteFriend(facebookId);
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -273,22 +272,22 @@ Ext.define("inkle.controller.SettingsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
 
                         //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -314,13 +313,13 @@ Ext.define("inkle.controller.SettingsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "friend");
 
                         //Change relationship badge to "Friend"
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.responseText);
@@ -328,9 +327,9 @@ Ext.define("inkle.controller.SettingsController", {
                     scope: this
                 });
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -356,13 +355,13 @@ Ext.define("inkle.controller.SettingsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
 
                         //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.responseText);
@@ -370,9 +369,9 @@ Ext.define("inkle.controller.SettingsController", {
                     scope: this
                 });
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -386,7 +385,7 @@ Ext.define("inkle.controller.SettingsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -394,16 +393,16 @@ Ext.define("inkle.controller.SettingsController", {
                         //alert(personRecord.get("html"));
 
                         //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
                     }
                 });
 
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -411,9 +410,9 @@ Ext.define("inkle.controller.SettingsController", {
             text: "Cancel",
             cls: "actionSheetCancelButton",
             handler: function(button, event) {
-                var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
-                addFriendsActionSheet.hide();
-                addFriendsActionSheet.destroy();
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
             },
             scope: this
         };
@@ -439,14 +438,27 @@ Ext.define("inkle.controller.SettingsController", {
         }
 
         // Create the action sheet
-        var addFriendsActionSheet = Ext.create("Ext.ActionSheet", {
-            id: "addFriendsActionSheet",
+        var inviteFacebookFriendsActionSheet = Ext.create("Ext.ActionSheet", {
+            id: "inviteFacebookFriendsActionSheet",
             items: actionSheetItems,
         });
 
         // Add the action sheet to the viewport
-        Ext.Viewport.add(addFriendsActionSheet);
-        addFriendsActionSheet.show();
+        Ext.Viewport.add(inviteFacebookFriendsActionSheet);
+        inviteFacebookFriendsActionSheet.show();
+    },
+
+    inviteFriend: function(facebookId) {
+	    FB.ui({
+            method: 'feed',
+            to: String(facebookId),
+            message: 'This is the message ',
+            link: "http://www.inkleit.com",
+            //picture: //link to a picture of inkle logo
+            name: "Join inkle!",
+            caption: "www.inkleit.com",
+            description: 'inkle makes it easy to plan dinners, hangouts, meetups, and other social events with your friends!',
+        });
     },
 
     /* Logs the user in with facbeook and links their existing account to facebook */
