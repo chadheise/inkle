@@ -58,9 +58,8 @@
 	{% endif %}
 
 	<!-- Relationship Tag -->
-	<!-- Relationship tag can only be included on one page or there will be id conflicts-->
 	{% if include_relationship_tag %}
-		<span id="addFriendRelationshipTag{{m.id}}">
+		<span id="{{relationship_tag_source}}RelationshipTag{{m.id}}">
 		{% if m.is_friend %}
 			<span class="relationship">Friend</span>
 		{% endif %}
