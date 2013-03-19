@@ -1589,7 +1589,6 @@ def invite_facebook_friends_view(request):
     inkleIndex = 0
     facebookIndex = 0
     while (inkleIndex < len(facebookInkleSorted) and facebookIndex < len(facebookNotInkleSorted)):
-        print "inside while"
         if facebookNotInkleSorted[facebookIndex]["last_name"] < facebookInkleSorted[inkleIndex].last_name:
             facebookFriends.append(facebookNotInkleSorted[facebookIndex])
             facebookIndex += 1
@@ -1745,6 +1744,7 @@ def people_search_view(request):
                 personData = {} #Create dictionary for facebook friend data
                 personData["first_name"] = fbFriend["first_name"]
                 personData["last_name"] = fbFriend["last_name"]
+                personData["facebook_id"] = fbFriend["uid"]
                 personData["num_mutual_friends"] = 0
                 personData["is_friend"] = False
                 personData["is_pending"] = False
@@ -1854,8 +1854,8 @@ def facebook_post(request):
             fbResponse = urllib2.urlopen(postInfo).read()
         except Exception, e:
             print "except2: " + str(e)
-        fbData = simplejson.loads(fbResponse)
-        print fbData
+        #fbData = simplejson.loads(fbResponse)
+        #print fbData
     return HttpResponse()
 
 
