@@ -97,12 +97,15 @@ class FeedComment(models.Model):
         else:
             return "%d: %d - %s... (%s)" % (self.id, self.inkling.id, self.text[:17].strip(), self.creator.get_full_name())
 
+
 class InklingInvitation(models.Model):
     """InklingInvitation class definition."""
     # General information
     sender = models.ForeignKey("Member", related_name = "inkling_invitations_sent")
     receiver = models.ForeignKey("Member", related_name = "inkling_invitations_received")
     inkling = models.ForeignKey("Inkling")
+
+    # Status can be "pending", "accepted", "ignored", or "missed"
     status = models.CharField(max_length = 10, default = "pending")
 
     # Metadata
@@ -228,12 +231,18 @@ class Inkling(models.Model):
         # Get a set of the groups to which the attending members belong
         group_ids_set = set()
         for m in inkling_members:
-            groups = m.groups_member_of.filter(creator = member)
-            if (groups):
-                for g in groups:
-                    group_ids_set.add(g.id)
+            # Add a "self" group ID to specify that the logged-in member is attending the inkling
+            if (m == member):
+                group_ids_set.add("self")
+
+            # Otherwise, add the attending member's groups to the attending groups list
             else:
-                group_ids_set.add(-1)
+                groups = m.groups_member_of.filter(creator = member)
+                if (groups):
+                    for g in groups:
+                        group_ids_set.add(g.id)
+                else:
+                    group_ids_set.add(-1)
 
         # Convert the group IDs set to a string
         inkling_groups = ""
@@ -254,6 +263,8 @@ class FriendRequest(models.Model):
     # General information
     sender = models.ForeignKey("Member", related_name = "friend_requests_sent")
     receiver = models.ForeignKey("Member", related_name = "friend_requests_received")
+
+    # Status can be "pending", "accepted", or "ignored"
     status = models.CharField(max_length = 10, default = "pending")
 
     # Metadata

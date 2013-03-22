@@ -174,6 +174,9 @@ Ext.define("inkle.controller.AllInklingsController", {
             }
         });
 
+        // Add in an entry to get the logged-in member's inklings
+        selectedGroupIds.push("self");
+
         // Clear the all inklings list's filter
         var allInklingsListStore = this.getAllInklingsList().getStore();
         allInklingsListStore.clearFilter();
@@ -190,7 +193,6 @@ Ext.define("inkle.controller.AllInklingsController", {
                         break;
                     }
                 }
-
                 return !hideInkling;
            }
         });

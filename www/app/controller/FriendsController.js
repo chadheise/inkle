@@ -166,7 +166,7 @@ Ext.define("inkle.controller.FriendsController", {
                     text: "Accept",
                     cls: "actionSheetNormalButton",
                     handler: function(button, event) {
-                        this.respondToRequest(memberId, "accept");
+                        this.respondToRequest(memberId, "accepted");
 
                         var friendRequestsActionSheet = Ext.getCmp("friendRequestsActionSheet");
                         friendRequestsActionSheet.hide();
@@ -180,7 +180,7 @@ Ext.define("inkle.controller.FriendsController", {
                     text: "Ignore",
                     cls: "actionSheetNormalButton",
                     handler: function(button, event) {
-                        this.respondToRequest(memberId, "ignore");
+                        this.respondToRequest(memberId, "ignored");
 
                         var friendRequestsActionSheet = Ext.getCmp("friendRequestsActionSheet");
                         friendRequestsActionSheet.hide();
@@ -208,14 +208,42 @@ Ext.define("inkle.controller.FriendsController", {
         friendRequestsActionSheet.show();
     },
 
-    respondToRequest: function(memberId, response) {
+    respondToRequest: function(memberId, friendRequestResponse) {
+        console.log(friendRequestResponse);
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/respondToRequest/",
             params: {
                 memberId: memberId,
-                response: response
+                response: friendRequestResponse
             },
             success: function(response) {
+                // Update the friend request button's badge
+                var friendRequestsButton = this.getRequestsButton();
+                var numFriendRequests = parseInt(friendRequestsButton) - 1;
+                if (numFriendRequests != 0) {
+                    friendRequestsButton.setBadgeText(numFriendRequests.toString());
+                }
+                else {
+                    friendRequestsButton.setBadgeText("");
+                }
+
+                // Remove the tapped friend request from the friend requests list
+                //this.getRequestsList().getStore().remove(record);
+
+                // If the inkling invitation has been accepted, add it to the my inklings list
+                if (friendRequestResponse == "accepted") {
+                    var responseText = Ext.JSON.decode(response.responseText);
+                    this.getRequestsList().getStore().add({
+                        "inklingId": responseText["inklingId"],
+                        "html": responseText["html"],
+                        "groupingIndex": responseText["groupingIndex"]
+                    });
+                    this.getMyInklingsList().getStore().sort("groupingIndex");
+                }
+
+
+
+
                 var requestsButton = this.getRequestsButton();
                 numFriendRequests = response.responseText;
                 if (numFriendRequests != 0) {
@@ -315,37 +343,15 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Accept friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                Ext.Ajax.request({
-                    url: inkle.app.baseUrl + "/respondToRequest/",
-                    params: {
-                        memberId: userId,
-                        response: "accept"
-                    },
-                    success: function(response) {
-                        var requestsButton = this.getRequestsButton();
-                        numFriendRequests = response.responseText;
-                        if (numFriendRequests != 0) {
-                            requestsButton.setBadgeText(numFriendRequests);
-                        }
-                        else {
-                            requestsButton.setBadgeText("");
-                        }
-                        this.updateFriendsList();
-                        this.updateRequestsList();
+                this.respondToRequest(memberId, "accepted");
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("user_id", userId);
 
-                        //Change relationship field in store
-                        personRecord.set("relationship", "friend");
+                //Change relationship field in store
+                personRecord.set("relationship", "friend");
 
-                        //Change relationship badge to "Friend"
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
-                    },
-                    failure: function(response) {
-                        Ext.Msg.alert("Error", response.responseText);
-                    },
-                    scope: this
-                });
+                //Change relationship badge to "Friend"
+                Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -357,37 +363,15 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Ignore friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                Ext.Ajax.request({
-                    url: inkle.app.baseUrl + "/respondToRequest/",
-                    params: {
-                        memberId: userId,
-                        response: "ignore"
-                    },
-                    success: function(response) {
-                        var requestsButton = this.getRequestsButton();
-                        numFriendRequests = response.responseText;
-                        if (numFriendRequests != 0) {
-                            requestsButton.setBadgeText(numFriendRequests);
-                        }
-                        else {
-                            requestsButton.setBadgeText("");
-                        }
-                        this.updateFriendsList();
-                        this.updateRequestsList();
+                this.respondToRequest(memberId, "ignored");
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("user_id", userId);
 
-                        //Change relationship field in store
-                        personRecord.set("relationship", "none");
+                //Change relationship field in store
+                personRecord.set("relationship", "none");
 
-                        //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
-                    },
-                    failure: function(response) {
-                        Ext.Msg.alert("Error", response.responseText);
-                    },
-                    scope: this
-                });
+                //Remove relationship badge
+                Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();

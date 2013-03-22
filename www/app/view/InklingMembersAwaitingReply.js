@@ -1,15 +1,15 @@
 Ext.define("inkle.view.InklingMembersAwaitingReply", {
 	extend: "Ext.Container",
-	
+
 	xtype: "inklingMembersAwaitingReply",
-	
+
     requires: [
     	"Ext.dataview.List"
     ],
-	
+
 	config: {
 	    layout: "card",
-	    
+
 	    items: [
 	        {
                 xtype: "list",
@@ -25,7 +25,7 @@ Ext.define("inkle.view.InklingMembersAwaitingReply", {
                 ],
                 store: {
                     fields: [
-                        "id",
+                        "memberId",
                         "lastName",
                         "html"
                     ],
@@ -42,7 +42,7 @@ Ext.define("inkle.view.InklingMembersAwaitingReply", {
                         }
                     },
                     autoLoad: false
-                },				
+                },
                 plugins: [
                     {
                         xclass: "Ext.plugin.PullRefresh",

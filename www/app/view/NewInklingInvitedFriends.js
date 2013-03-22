@@ -21,7 +21,7 @@ Ext.define("inkle.view.NewInklingInvitedFriends", {
                 itemTpl: "{ html }",
                 store: {
                     fields: [
-                        "id",
+                        "memberId",
                         "lastName",
                         "html"
                     ],
