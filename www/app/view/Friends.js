@@ -140,7 +140,7 @@ Ext.define("inkle.view.Friends", {
                         ],
                         store: {
                             fields: [
-                                "id",
+                                "memberId",
                                 "lastName",
                                 "html"
                             ],
@@ -219,7 +219,7 @@ Ext.define("inkle.view.Friends", {
                         ],
                         store: {
                             fields: [
-                                "id",
+                                "requestId",
                                 "html"
                             ],
                             proxy: {
@@ -376,7 +376,7 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", friendsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewFriendsListItemTapped", record.getData()["id"]);
+            this.fireEvent("friendsViewFriendsListItemTapped", record.getData()["memberId"]);
         }
     },
 
@@ -386,12 +386,12 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", groupsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
+            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["memberId"]);
         }
     },
 
     onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
-        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["id"]);
+        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["memberId"]);
     },
 
     // Groups list name input blur

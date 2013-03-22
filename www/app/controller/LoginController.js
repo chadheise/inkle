@@ -53,10 +53,6 @@ Ext.define("inkle.controller.LoginController", {
             registrationView: {
                 registrationFormCancelButtonTapped: "activateLoginView",
                 registrationFormRegisterButtonTapped: "registerMember"
-            },
-
-            mainTabView: {
-                activate: "setBadges"
             }
         }
     },
@@ -365,44 +361,6 @@ Ext.define("inkle.controller.LoginController", {
 
             failure: function(form, response) {
                 Ext.Msg.alert("Error", response.error);
-            },
-
-            scope: this
-        });
-    },
-
-    /* Sets the badges in the "My Inklings" and "Friends" tabs */
-    setBadges: function() {
-        // Set the "My Inklings" tab and inkling invites badges
-        Ext.Ajax.request({
-            url: inkle.app.baseUrl + "/numInklingInvitations/",
-            success: function(response) {
-                numInklingInvites = response.responseText;
-                if (numInklingInvites != 0) {
-                    this.getMainTabView().getTabBar().getAt(1).setBadgeText(numInklingInvites);
-                    this.getInklingInvitationsButton().setBadgeText(numInklingInvites);
-                }
-            },
-            failure: function(response) {
-                console.log(response.responseText);
-            },
-            scope: this
-        });
-
-        // Set the "Friends" tab and friends requests badges
-        Ext.Ajax.request({
-            url: inkle.app.baseUrl + "/numFriendRequests/",
-
-            success: function(response) {
-                numFriendRequests = response.responseText;
-                if (numFriendRequests != 0) {
-                    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
-                    this.getRequestsButton().setBadgeText(numFriendRequests);
-                }
-            },
-
-            failure: function(response) {
-                console.log(response.responseText);
             },
 
             scope: this

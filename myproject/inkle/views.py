@@ -931,7 +931,9 @@ def respond_to_inkling_invitation_view(request):
         this_week = today + datetime.timedelta(days = 6)
 
         # Get the inkling's grouping index
-        if (invitation.inkling.date == today):
+        if (inkling.date == None):
+            grouping_index = 3
+        elif (invitation.inkling.date == today):
             grouping_index = 0
         elif (invitation.inkling.date <= tomorrow):
             grouping_index = 1
@@ -947,11 +949,8 @@ def respond_to_inkling_invitation_view(request):
             "groupingIndex": grouping_index
         }
 
-    print response
     response = simplejson.dumps(response)
     return HttpResponse(response, mimetype = "application/json")
-    # Return the number of pending inkling invitations for the logged-in member
-    #return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
 
 
 # TODO: possible get rid of this
@@ -1287,6 +1286,16 @@ def create_inkling_view(request):
         time = request.POST["time"]
         notes = request.POST["notes"]
 
+        # Date information
+        timezone_offset = int(request.POST["timezoneOffset"])
+        date_picker_day = int(request.POST["datePickerDay"])
+        date_picker_month = int(request.POST["datePickerMonth"])
+        date_picker_year = int(request.POST["datePickerYear"])
+        date_picker_date = datetime.date(month = date_picker_month, day = date_picker_day, year = date_picker_year)
+        only_include_undated_inklings = request.POST["onlyIncludeUndatedInklings"]
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
+
         # Invited members
         invited_members = request.POST["invitedMemberIds"]
         if (invited_members):
@@ -1342,11 +1351,40 @@ def create_inkling_view(request):
     # Save the sharing permission object
     sp.save()
 
-    # Create and return a JSON object
-    response = simplejson.dumps({
-        "success": True
-    })
+    # Create a variable to hold the return inkling information
+    response = []
 
+    # Create several date objects
+    tomorrow = today + datetime.timedelta(days = 1)
+    this_week = today + datetime.timedelta(days = 6)
+
+    # Get the inkling's grouping index
+    if (inkling.date == None):
+        grouping_index = 3
+    elif (inkling.date == today):
+        grouping_index = 0
+    elif (inkling.date <= tomorrow):
+        grouping_index = 1
+    elif (inkling.date <= this_week):
+        grouping_index = 2
+    else:
+        grouping_index = 3
+
+    # Determine if the date picker date matches the new inkling's date
+    if (inkling.date == None):
+        add_to_all_inklings_view = only_include_undated_inklings == "true"
+    else:
+        add_to_all_inklings_view = date_picker_date == inkling.date
+
+    # Create and return a JSON object
+    response = {
+        "inklingId": inkling.id,
+        "html": get_inkling_list_item_html(inkling, request.user),
+        "groupingIndex": grouping_index,
+        "addToAllInklingsView": add_to_all_inklings_view
+    }
+
+    response = simplejson.dumps(response)
     return HttpResponse(response, mimetype = "application/json")
 
 
@@ -1461,7 +1499,7 @@ def friends_view(request):
         })
 
         response_friends.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1490,7 +1528,7 @@ def friend_requests_view(request):
         })
 
         response_friend_requests.append({
-            "id": m.id,
+            "requestId": m.id,
             "html": html
         })
 
@@ -1825,7 +1863,7 @@ def respond_to_request_view(request):
     # Get the member who sent the request and the logged-in member's response to it
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
-        response = request.POST["response"]
+        friend_request_response = request.POST["response"]
     except:
         raise Http404()
 
@@ -1834,21 +1872,35 @@ def respond_to_request_view(request):
         raise Http404()
 
     # Get the friend request
-    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were ignored, accepted, or revoked)
     friend_request = FriendRequest.objects.get(sender = m, receiver = request.user, status = "pending")
 
-    # Add the friendship if the logged in member accepted the request
-    if (response == "accept"):
+    # update the friend request's status
+    friend_request.status = friend_request_response
+
+    # Add the friendship if the logged-in member accepted the request
+    if (friend_request.status == "accepted"):
         request.user.friends.add(m)
-        friend_request.status = "accepted"
-    else:
-        friend_request.status = "declined"
 
     # Save the updated friend request
     friend_request.save()
 
-    # Return the number of pending friend requests for the logged-in member
-    return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
+        # Create a variable to hold the response
+    response = []
+
+    # Create and return a JSON object
+    if (friend_request.status == "accepted"):
+        response_friends.append({
+            "memberId": m.id,
+            "lastName": m.last_name,
+            "html": render_to_string("memberListItem.html", {
+                "m": m,
+                "include_delete_items": True
+            })
+        })
+
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @login_required
@@ -1865,7 +1917,7 @@ def revoke_request_view(request):
         raise Http404()
 
     # Get the friend request
-    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were ignored, accepted, or revoked)
     friend_request = FriendRequest.objects.get(sender = request.user, receiver = m, status = "pending")
 
     # Set the status as "revoked""

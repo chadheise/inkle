@@ -26,7 +26,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 				],
 				store: {
 					fields: [
-						"id",
+						"memberId",
 						"lastName",
 						"html"
 					],

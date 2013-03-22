@@ -22,9 +22,10 @@ Ext.define("inkle.controller.MyInklingsController", {
 
             shareWithSelect: "#shareWithSelect",
 
-
+            allInklingsDatePicker: "#allInklingsDatePicker",
             newInklingInvitedGroupsList: "#newInklingInvitedGroupsList",
 
+            allInklingsList: "#allInklingsList",
             myInklingsList: "#myInklingsList",
 
             // Top toolbars
@@ -315,6 +316,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 
         // If the new inkling form is valid, create a new inkling
         else {
+            // Get today's date
+            var today = new Date();
+
+            // Get the selected date
+            var datePickerDate = this.getAllInklingsDatePicker().getValue();
+
+            // Create a new inkling
             var newInklingView = this.getNewInklingView();
             Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/createInkling/",
@@ -326,19 +334,45 @@ Ext.define("inkle.controller.MyInklingsController", {
                     date: date,
                     time: time,
                     notes: notes,
+                    timezoneOffset: today.getTimezoneOffset(),
+                    datePickerDay: datePickerDate.getDate(),
+                    datePickerMonth: datePickerDate.getMonth() + 1,
+                    datePickerYear: datePickerDate.getFullYear(),
+                    onlyIncludeUndatedInklings: Ext.fly(Ext.query("#undatedInklingsCheckbox")[0]).hasCls("selected"),
                     invitedMemberIds: newInklingView.getData()["invitedMemberIds"],
                     groupsSharedWith: this.getGroupsSharedWith(),
                     allowShareFowarding: Ext.fly("forwardingSelectionButton").hasCls("selected")
                 },
 
                 success: function(response) {
-                    // Update and activate the my inklings list
+                    // Decode the response text
+                    var responseText = Ext.JSON.decode(response.responseText);
+
+                    // Add the new inkling to the my inklings list
+                    this.getMyInklingsList().getStore().add({
+                        "inklingId": responseText["inklingId"],
+                        "html": responseText["html"],
+                        "groupingIndex": responseText["groupingIndex"]
+                    });
+                    this.getMyInklingsList().getStore().sort("groupingIndex");
+
+                    // Add the new inkling to the all inklings list if the date's match up
+                    if (responseText["addToAllInklingsView"])
+                    {
+                        this.getAllInklingsList().getStore().add({
+                            "inklingId": responseText["inklingId"],
+                            "html": responseText["html"],
+                            "attendingGroupIds": ""
+                        });
+                    }
+
                     // TODO: put the activate in the update's callback?
-                    this.updateMyInklingsList();
+                    // Transition back to the my inklings view
                     this.transitionToMyInklingsView("newInklingView");
                 },
 
                 failure: function(response) {
+                    // TODO: get rid of console.logs and add Ext.Msg.alerts everywhere
                     Ext.Msg.alert("Error", "Cannot create a new inkling. Please try again later.");
                 },
 
@@ -688,12 +722,13 @@ Ext.define("inkle.controller.MyInklingsController", {
 
             success: function(response) {
                 // Update the inkling invitation button's badge
-                var numInklingInvitations = parseInt(this.getInklingInvitationsButton().getBadgeText()) - 1;
+                var inklingInvitationsButton = this.getInklingInvitationsButton();
+                var numInklingInvitations = parseInt(inklingInvitationsButton.getBadgeText()) - 1;
                 if (numInklingInvitations != 0) {
-                    this.getInklingInvitationsButton().setBadgeText(numInklingInvitations.toString());
+                    inklingInvitationsButton.setBadgeText(numInklingInvitations.toString());
                 }
                 else {
-                    this.getInklingInvitationsButton().setBadgeText("");
+                    inklingInvitationsButton.setBadgeText("");
                 }
 
                 // Remove the tapped inkling invitation from the inkling invitations list
