@@ -15,36 +15,24 @@ Ext.define("inkle.view.WalkThrough", {
 
             items: [
                 {
-                    html : '<ul><li>I want to do something</li>' +
-                        '<li>Get info about event: location, time, etc</li>' +
-                        '</ul>' +
-                        '<p>Location icon, calendar icon</p>' +
-                        '<p>My Inkling "+" image</p>',
+                    html : "<h1>Get the ball rolling</h1>" +
+                        "<p>Create an inkling to propose an activity to your friends. Provide as much or as little information as you have.</p>",
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
                 },
                 {
-                    html : '<ul><li>Invite People</li>' +
-                        '<li>Groups</li>' +
-                        '<li>Sharing</li>' +
-                        '</ul>' +
-                        '<p>Friends icon</p>' +
-                        '<p>Groups panel on invite friends page</p>',
+                    html : "<h1>Spread the word</h1>" +
+                        "<p>Invite your friends individually or by custom groups. Easily control who can and cannot see what you're doing.</p>",
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
                 },
                 {
-                    html : '<ul><li>Chat/Fill in details</li>' +
-                        '<li>Feed</li>' +
-                        '<li>Inkling details</li>' +
-                        '</ul>' +
-                        '<p>Feed icon</p>' +
-                        '<p>Feed list image</p>',
+                    html : "<h1>Collaborate on the details</h1>" +
+                        "<p>Ditch the mass text messages. Chat with your friends and collectively update the plan, all in one place.</p>",
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
                 },
                 {
-                    html : '<ul><li>All/My Inklings</li>' +
-                        '</ul>' +
-                        '<p>inkling icon</p>' +
-                        '<p>All inkling/my inkling tabs image</p>',
+                    html : "<h1>Organize and discover</h1>" +
+                        "<p>Explore what your friends are up to.</p>" +
+                        "<p>Get notified of changes to your upcoming inklings.",
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
                 }
             ],

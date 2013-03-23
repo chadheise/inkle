@@ -464,7 +464,9 @@ Ext.define("inkle.controller.FriendsController", {
             id: "addFriendsActionSheet",
             items: actionSheetItems,
         });
-
+        alert(userId);
+        alert(facebookId);
+        alert(relationship);
         // Add the action sheet to the viewport
         Ext.Viewport.add(addFriendsActionSheet);
         addFriendsActionSheet.show();
