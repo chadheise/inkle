@@ -22,6 +22,13 @@ Ext.define("inkle.controller.SettingsController", {
             changePasswordSubmitButton: "#changePasswordSubmitButton",
             changeEmailBackButton: "#changeEmailBackButton",
             changeEmailSubmitButton: "#changeEmailSubmitButton",
+            
+            // Top toolbar segmented buttons
+            requestsButton: "#friendsViewRequestsButton",
+            
+            // Lists
+            friendsList: "#friendsViewFriendsList",
+            requestsList: "#friendsViewRequestsList",
 
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
@@ -243,7 +250,7 @@ Ext.define("inkle.controller.SettingsController", {
                 		Ext.Msg.alert("Error", response.responseText);
                 	}
         		});
-
+        		
                 var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
                 inviteFacebookFriendsActionSheet.hide();
                 inviteFacebookFriendsActionSheet.destroy();
@@ -303,6 +310,7 @@ Ext.define("inkle.controller.SettingsController", {
                     },
                     success: function(response) {
                         var requestsButton = this.getRequestsButton();
+
                         numFriendRequests = response.responseText;
                         if (numFriendRequests != 0) {
                             requestsButton.setBadgeText(numFriendRequests);
@@ -310,15 +318,16 @@ Ext.define("inkle.controller.SettingsController", {
                         else {
                             requestsButton.setBadgeText("");
                         }
+
                         this.updateFriendsList();
                         this.updateRequestsList();
-
+                        
                         var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "friend");
 
-                        //Change relationship badge to "Friend"
+                        //Change relationship badge to "Friend" 
                         Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
                     },
                     failure: function(response) {
@@ -808,5 +817,18 @@ Ext.define("inkle.controller.SettingsController", {
 
             scope: this
         });
+    },
+    
+    /******************/
+    /*  UPDATE LISTS  */
+    /******************/
+    /* Updates the friends list */
+    updateFriendsList: function() {
+        this.getFriendsList().getStore().load();
+    },
+
+    /* Updates the requests list */
+    updateRequestsList: function() {
+        this.getRequestsList().getStore().load();
     },
 });

@@ -1524,58 +1524,11 @@ def invite_facebook_friends_view(request):
                 print "Error reading facebook response: " + str(e)
             fbData = simplejson.loads(fbResponse)
 
-    # Create lists for storing member objects or dictionaries for each type
-    # of connection a member can have to the user
-    facebookInkle = [] #Facebook friends who are on inkle
-    facebookNotInkle = [] #Facebook friends who are not on inkle
-
-    for fbFriend in fbData["data"]:
-        if fbFriend["is_app_user"]: #If the facebook friend is an inkle member
-            #Use try block in case they have authenticated the inkle app on facebook but
-            #don't have an inkle account or have not linked their inkle account to facebook
-            try:
-                #Get inkle user from facebook user id
-                inkleUser = Member.objects.get(facebook_id = fbFriend["uid"]).user
-                if inkleUser in request.user.friends.all():
-                    m.num_mutual_friends = request.user.get_num_mutual_friends(m)
-                    m.is_friend = True
-                    m.is_pending = False
-                    m.is_requested = False
-                    facebookInkle.append(m)
-                elif inkleUser in request.user.get_pending_friends():
-                    m.num_mutual_friends = request.user.get_num_mutual_friends(m)
-                    m.is_friend = False
-                    m.is_pending = True
-                    m.is_requested = False
-                    facebookInkle.append(m)
-                elif inkleUser in request.user.get_friends_who_have_requested():
-                    m.num_mutual_friends = request.user.get_num_mutual_friends(m)
-                    m.is_friend = False
-                    m.is_pending = False
-                    m.is_requested = True
-                    facebookInkle.append(m)
-            except:
-                personData = {} #Create dictionary for facebook friend data
-                personData["first_name"] = fbFriend["first_name"]
-                personData["last_name"] = fbFriend["last_name"]
-                personData["facebook_id"] = fbFriend["uid"]
-                personData["num_mutual_friends"] = 0
-                personData["is_friend"] = False
-                personData["is_pending"] = False
-                personData["is_requested"] = False
-                personData["get_picture_path"] = fbFriend["pic_square"]
-                facebookNotInkle.append(personData)
-        else: #If the facebook friend is not an inkle member
-            personData = {} #Create dictionary for facebook friend data
-            personData["first_name"] = fbFriend["first_name"]
-            personData["last_name"] = fbFriend["last_name"]
-            personData["facebook_id"] = fbFriend["uid"]
-            personData["num_mutual_friends"] = 0
-            personData["is_friend"] = False
-            personData["is_pending"] = False
-            personData["is_requested"] = False
-            personData["get_picture_path"] = fbFriend["pic_square"]
-            facebookNotInkle.append(personData)
+    facebookFriendsTuple = getFriendsFromFacebookData(request.user, fbData)
+    #Facebook friends who are also inkle users
+    facebookInkle = facebookFriendsTuple[0] + facebookFriendsTuple[1] + facebookFriendsTuple[2] + facebookFriendsTuple[3] 
+    #Facebook friends of the user who are not members of inkle
+    facebookNotInkle = facebookFriendsTuple[4]
 
     facebookInkleSorted = []
     facebookNotInkleSorted = []
@@ -1928,6 +1881,7 @@ def add_friend_view(request):
 @login_required
 def respond_to_request_view(request):
     """Implements the logged-in member's response to a friend request from the inputted memeber."""
+
     # Get the member who sent the request and the logged-in member's response to it
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
