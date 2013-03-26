@@ -78,6 +78,16 @@ $badge-bg-gradient: "matte";
 @include sencha-list-pullrefresh;
 @include sencha-loading-spinner; //This is used but not required
 
+/***************/
+/* Walkthrough */
+/***************/
+
+.spreadTheWord {
+	background: url("../images/walkthrough/spreadTheWord.png") !important;
+	width: 290px;
+	height: 330px;
+	vertical-align: center;
+}
 
 /***************/
 /*  TAB ICONS  */

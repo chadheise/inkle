@@ -20,6 +20,10 @@ Ext.define("inkle.view.WalkThrough", {
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
                 },
                 {
+                  html: '<div class="spreadTheWord"></div>',
+                  style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
+                },
+                {
                     html : "<h1>Spread the word</h1>" +
                         "<p>Invite your friends individually or by custom groups. Easily control who can and cannot see what you're doing.</p>",
                     style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
