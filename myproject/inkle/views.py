@@ -587,7 +587,7 @@ def groups_panel_view(request):
 
     # Create the "Not Grouped" group
     not_grouped_group = {
-        "id": -1,
+        "groupId": -1,
         "name": "Not Grouped",
         "selected": ((auto_set_groups_as_selected) or (-1 in selected_group_ids)),
         "get_member_ids": not_grouped_members
@@ -603,7 +603,7 @@ def groups_panel_view(request):
         g.selected = ((auto_set_groups_as_selected) or (g.id in selected_group_ids))
 
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
             "html": get_group_list_item_panel_html(g)
         })
 
@@ -633,14 +633,16 @@ def groups_main_content_view(request):
 
     # Add the "Not Grouped" group to the response list
     response_groups.append({
-        "id": not_grouped_group["id"],
+        "groupId": not_grouped_group["id"],
+        "groupName": "*" + not_grouped_group["name"],
         "html": get_group_list_item_main_content_html(not_grouped_group, not_grouped_members)
     })
 
     # Get the HTML for the logged-in member's groups
     for g in groups:
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
+            "groupName": g.name,
             "html": get_group_list_item_main_content_html(g)
         })
 
@@ -1097,7 +1099,7 @@ def inkling_members_attending_view(request):
         })
 
         response_members_attending.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1126,7 +1128,7 @@ def inkling_members_awaiting_reply_view(request):
         })
 
         response_members_awaiting_reply.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1454,7 +1456,7 @@ def inkling_invited_groups_view(request):
         })
 
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
             "html": html
         })
 
@@ -1622,7 +1624,7 @@ def invite_facebook_friends_view(request):
             personId = m["id"]
             lastName = m["last_name"]
         response_friends.append({
-            "id": personId,
+            "memberId": personId,
             "lastName": lastName,
             "html": html
         })
@@ -1794,8 +1796,8 @@ def people_search_view(request):
                 relationship = "facebookOnlyFriend"
 
         response_members.append({
-            "user_id": userId,
-            "facebook_id": facebook_id,
+            "memberId": userId,
+            "facebookId": facebook_id,
             "relationship": relationship,
             "html": html
         })
@@ -2021,7 +2023,7 @@ def group_members_view(request):
         })
 
         response_friends.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -2077,8 +2079,16 @@ def create_group_view(request):
     # Create a new group with no name
     group = Group.objects.create(creator = request.user, name = "")
 
-    # Return the new group's ID
-    return HttpResponse(group.id)
+    # Create a response object for the new group
+    response = {
+        "groupId": group.id,
+        "groupName": "",
+        "html": get_group_list_item_main_content_html(group)
+    }
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @login_required

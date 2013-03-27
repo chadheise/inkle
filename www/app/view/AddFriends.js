@@ -1,12 +1,12 @@
 Ext.define("inkle.view.AddFriends", {
 	extend: "Ext.Container",
-	
+
 	xtype: "addFriendsView",
-	
+
 	requires: [
 		"Ext.field.Search"
 	],
-	
+
 	config: {
         // Layout information
 		layout: "vbox",
@@ -40,7 +40,7 @@ Ext.define("inkle.view.AddFriends", {
                 onClearIconTap: function() {
                     if (!this.disabled) {
                         this.setValue(''); //Clear the search field
-                        this.fireEvent('keyup', this); //Treat a clear as a keyup to clear store data                  
+                        this.fireEvent('keyup', this); //Treat a clear as a keyup to clear store data
                     }
                 }
             },
@@ -59,8 +59,8 @@ Ext.define("inkle.view.AddFriends", {
 				],
 				store: {
 					fields: [
-						"user_id",
-						"facebook_id",
+						"memberId",
+						"facebookId",
 						"relationship",
 						"html"
 					],
@@ -74,13 +74,13 @@ Ext.define("inkle.view.AddFriends", {
 							query: "",
 							fbAccessToken: ""
 						},
-						
+
 						reader: {
 							type: "json",
 							rootProperty: "people"
 						}
 					},
-					
+
 					autoLoad: true
 				}
             }
@@ -121,26 +121,26 @@ Ext.define("inkle.view.AddFriends", {
         },
         ]
     },
-    
+
     // Event firings
 	onAddFriendsViewDoneButtonTapped: function() {
         this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
     },
-	
+
 	onAddFriendsSearchFieldKeyUp: function() {
         this.fireEvent("addFriendsSearchFieldKeyedUp");
     },
-    
+
     onAddFriendButtonTap: function(event) {
         var tappedId = event.getTarget(".addFriendButton").getAttribute("memberId");
         this.fireEvent("addFriendButtonTapped", tappedId);
     },
-    
+
     onInviteFriendButtonTap: function(event) {
         var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
         this.fireEvent("inviteFriendButtonTapped", tappedId);
     },
-    
+
     onAddFriendsListItemTap: function(requestsList, index, target, record, event, options) {
         this.fireEvent("addFriendsViewListItemTapped", record.getData());
     },

@@ -207,7 +207,7 @@ Ext.define("inkle.view.AllInklings", {
                         itemTpl: "{ html }",
                         store: {
                             fields: [
-                                "id",
+                                "groupId",
                                 "html"
                             ],
                             proxy: {

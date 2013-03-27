@@ -45,14 +45,14 @@ Ext.define("inkle.controller.FriendsController", {
                 // Top toolbar buttons
                 friendsViewRemoveFriendsButtonTapped: "toggleEditFriendsList",
                 friendsViewRemoveFriendsDoneButtonTapped: "toggleEditFriendsList",
-                friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
+                friendsViewAddFriendsButtonTapped: "transitionToAddFriendsView",
                 friendsViewEditGroupsButtonTapped: "toggleEditGroupsList",
                 friendsViewEditGroupsDoneButtonTapped: "toggleEditGroupsList",
                 friendsViewCreateGroupButtonTapped: "createGroup",
-                groupMembersViewBackButtonTapped: "activateFriendsView",
+                groupMembersViewBackButtonTapped: "transitionToFriendsView",
 
                 // List disclosure/itemtap
-                friendsViewGroupsListItemTapped: "activateGroupMembersView",
+                friendsViewGroupsListItemTapped: "transitionToGroupMembersView",
                 friendsViewRequestsListItemTapped: "activateRequestsActionSheet",
 
                 // Pull to refresh
@@ -66,7 +66,7 @@ Ext.define("inkle.controller.FriendsController", {
             },
 
             addFriendsView: {
-                addFriendsViewDoneButtonTapped: "activateFriendsView",
+                addFriendsViewDoneButtonTapped: "transitionToFriendsView",
                 addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
                 addFriendButtonTapped: "addFriend",
                 inviteFriendButtonTapped: "inviteFriend",
@@ -82,9 +82,8 @@ Ext.define("inkle.controller.FriendsController", {
     /**********************/
     /*  VIEW TRANSITIONS  */
     /**********************/
-
-    /* Activates the friends view */
-    activateFriendsView: function(source) {
+    /* Transitions to the friends view */
+    transitionToFriendsView: function(source) {
         // If coming from the add friends view, slide that view away
         if (source == "addFriendsView") {
             this.getAddFriendsSearchField().setValue(""); //Clear search field
@@ -112,8 +111,8 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
-    /* Activates the add friends view */
-    activateAddFriendsView: function() {
+    /* Transitions to the add friends view */
+    transitionToAddFriendsView: function() {
         if (this.getAddFriendsView())
         {
             Ext.Viewport.animateActiveItem(this.getAddFriendsView(), {
@@ -131,8 +130,8 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
-    /* Activates the group members */
-    activateGroupMembersView: function(groupId) {
+    /* Transitions to the group members view */
+    transitionToGroupMembersView: function(groupId) {
         if (!this.getEditGroupsButton().isHidden()) {
             this.getFriendsView().push({
                 xtype: "groupMembersView",
@@ -155,6 +154,9 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
+    /**************/
+    /*  COMMANDS  */
+    /**************/
     activateRequestsActionSheet: function(memberId) {
         // Create the action sheet
         var friendRequestsActionSheet = Ext.create("Ext.ActionSheet", {
@@ -263,8 +265,8 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     activateAddFriendsActionSheet: function(data) {
-        var userId = data["user_id"];
-        var facebookId = data["facebook_id"];
+        var userId = data["memberId"];
+        var facebookId = data["facebookId"];
         var relationship = data["relationship"];
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
 
@@ -279,7 +281,7 @@ Ext.define("inkle.controller.FriendsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = addFriendsStore.findRecord("user_id", userId);
+            		    var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
@@ -320,7 +322,7 @@ Ext.define("inkle.controller.FriendsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -345,7 +347,7 @@ Ext.define("inkle.controller.FriendsController", {
             handler: function(button, event) {
                 this.respondToRequest(memberId, "accepted");
 
-                var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                 //Change relationship field in store
                 personRecord.set("relationship", "friend");
@@ -365,7 +367,7 @@ Ext.define("inkle.controller.FriendsController", {
             handler: function(button, event) {
                 this.respondToRequest(memberId, "ignored");
 
-                var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                 //Change relationship field in store
                 personRecord.set("relationship", "none");
@@ -389,7 +391,7 @@ Ext.define("inkle.controller.FriendsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -729,22 +731,26 @@ Ext.define("inkle.controller.FriendsController", {
     createGroup: function() {
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/createGroup/",
-            success: function(response) {
-                groupId = response.responseText;
 
-                // Re-load the groups list, put it in edit mode, and set the focus on the new group's input field
-                this.getGroupsList().getStore().load({
-                    callback: function(records, operation, success) {
-                        this.toggleEditGroupsList("editable");
-                        Ext.fly("group" + groupId + "NameInput").dom.focus();
-                    },
-                    scope: this
+            success: function(response) {
+                // Add the new group to the groups list and re-sort it
+                var responseText = Ext.JSON.decode(response.responseText);
+                this.getGroupsList().getStore().add({
+                    "groupId": responseText["groupId"],
+                    "groupName": responseText["groupName"],
+                    "html": responseText["html"]
                 });
+                this.getGroupsList().getStore().sort();
+
+                // Make the groups list editable and set the focus to the new group's input
+                this.toggleEditGroupsList("editable");
+                Ext.fly("group" + groupId + "NameInput").dom.focus();
             },
+
             failure: function(response) {
-                Ext.Msg.alert("Error", "Group not created");
-                console.log(response.responseText);
+                Ext.Msg.alert("Error", "Group not created. Please try again later.");
             },
+
             scope: this
         });
     },
@@ -756,6 +762,8 @@ Ext.define("inkle.controller.FriendsController", {
 
         // Get the group name input
         var groupNameInputValue = groupNameInput.getValue();
+
+        // TODO: update this record's groupName attribute so sorting works properly
 
         // If the value has changed, display it and update the database
         if (groupNameValue != groupNameInputValue) {
