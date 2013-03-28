@@ -18,6 +18,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 				id: "inviteFacebookFriendsList",
 				loadingText: "Loading facebook friends...",
 				emptyText: "<div class='emptyListText'>No facebook friends</div>",
+				cls: "membersList",
 				grouped: true,
 				disableSelection: true,
 				indexBar: true,
@@ -28,7 +29,9 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 					fields: [
 						"memberId",
 						"lastName",
-						"html"
+                        "facebookId",
+                        "relationship",
+                        "html"
 					],
 					proxy: {
 						type: "ajax",
@@ -53,7 +56,12 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 				element: "element",
 				delegate: ".inviteFriendButton",
 				fn: "onInviteFriendButtonTap"
-        	}
+        	},
+        	{
+                delegate: "#inviteFacebookFriendsList",
+                event: "itemtap",
+                fn: "onInviteFacebookFriendsListItemTap"
+            },
         ]
     },
 
@@ -61,5 +69,9 @@ Ext.define("inkle.view.InviteFacebookFriends", {
     onInviteFriendButtonTap: function(event) {
     	var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
         this.fireEvent("inviteFriendButtonTapped", tappedId);
-    }
+    },
+
+    onInviteFacebookFriendsListItemTap: function(requestsList, index, target, record, event, options) {
+        this.fireEvent("inviteFacebookFriendsViewListItemTapped", record.getData());
+    },
 });

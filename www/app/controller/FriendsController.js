@@ -68,8 +68,6 @@ Ext.define("inkle.controller.FriendsController", {
             addFriendsView: {
                 addFriendsViewDoneButtonTapped: "transitionToFriendsView",
                 addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
-                addFriendButtonTapped: "addFriend",
-                inviteFriendButtonTapped: "inviteFriend",
                 addFriendsViewListItemTapped: "activateAddFriendsActionSheet",
             },
 
@@ -287,7 +285,7 @@ Ext.define("inkle.controller.FriendsController", {
                         personRecord.set("relationship", "pending");
 
                         //Change relationship badge to "Pending"
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
+                        Ext.fly("addFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
             		},
                 	failure: function(response) {
                 		Ext.Msg.alert("Error", response.responseText);
@@ -328,7 +326,7 @@ Ext.define("inkle.controller.FriendsController", {
                         personRecord.set("relationship", "none");
 
                         //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
+                        Ext.fly("addFriendsRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
@@ -399,7 +397,7 @@ Ext.define("inkle.controller.FriendsController", {
                         //alert(personRecord.get("html"));
 
                         //Remove relationship badge
-                        Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
+                        Ext.fly("addFriendsRelationshipTag"+ userId).setHtml("");
                     },
                     failure: function(response) {
                         Ext.Msg.alert("Error", response.error);
@@ -830,24 +828,6 @@ Ext.define("inkle.controller.FriendsController", {
     		},
         	failure: function(response) {
         	    Ext.Viewport.setMasked(false);
-        		Ext.Msg.alert("Error", response.responseText);
-        	}
-		});
-	},
-
-	addFriend: function(memberId) {
-		var addFriendButton = Ext.fly("member" + memberId + "AddFriendButton");
-
-		addFriendButton.set({
-			"value" : "Pending"
-		});
-
-		Ext.Ajax.request({
-    		url: inkle.app.baseUrl + "/addFriend/",
-    		params: {
-    			memberId: memberId
-    		},
-        	failure: function(response) {
         		Ext.Msg.alert("Error", response.responseText);
         	}
 		});

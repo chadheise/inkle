@@ -161,6 +161,9 @@ Ext.define("inkle.view.Settings", {
         else if (selectedSetting == "sharing") {
             this.fireEvent("shareSettingsTapped");
         }
+        else if (selectedSetting = "inviteFacebookFriends") {
+            this.fireEvent("inviteFacebookFriendsTapped");
+        }
         else {
             alert(selectedSetting);
         }

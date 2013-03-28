@@ -1,16 +1,16 @@
 Ext.define("inkle.view.AddFriends", {
-	extend: "Ext.Container",
+    extend: "Ext.Container",
 
-	xtype: "addFriendsView",
+    xtype: "addFriendsView",
 
-	requires: [
-		"Ext.field.Search"
-	],
+    requires: [
+        "Ext.field.Search"
+    ],
 
-	config: {
+    config: {
         // Layout information
-		layout: "vbox",
-		scrollable: false,
+        layout: "vbox",
+        scrollable: false,
 
         items: [
             // Top toolbar
@@ -55,34 +55,34 @@ Ext.define("inkle.view.AddFriends", {
                 emptyText: "<p class='emptyListText'>No matches</p>",
                 disableSelection: true,
                 itemTpl: [
-					'{ html }'
-				],
-				store: {
-					fields: [
-						"memberId",
-						"facebookId",
-						"relationship",
-						"html"
-					],
-					proxy: {
-						type: "rest",
-						url: inkle.app.baseUrl + "/peopleSearch/",
-						actionMethods: {
-							read: "POST"
-						},
-						extraParams: {
-							query: "",
-							fbAccessToken: ""
-						},
+                    '{ html }'
+                ],
+                store: {
+                    fields: [
+                        "memberId",
+                        "facebookId",
+                        "relationship",
+                        "html"
+                    ],
+                    proxy: {
+                        type: "rest",
+                        url: inkle.app.baseUrl + "/peopleSearch/",
+                        actionMethods: {
+                            read: "POST"
+                        },
+                        extraParams: {
+                            query: "",
+                            fbAccessToken: ""
+                        },
 
-						reader: {
-							type: "json",
-							rootProperty: "people"
-						}
-					},
+                        reader: {
+                            type: "json",
+                            rootProperty: "people"
+                        }
+                    },
 
-					autoLoad: true
-				}
+                    autoLoad: true
+                }
             }
         ],
 
@@ -103,18 +103,6 @@ Ext.define("inkle.view.AddFriends", {
             fn: "onAddFriendsSearchFieldKeyUp"
         },
         {
-            event: "tap",
-            element: "element",
-            delegate: ".addFriendButton",
-            fn: "onAddFriendButtonTap"
-        },
-        {
-            event: "tap",
-            element: "element",
-            delegate: ".inviteFriendButton",
-            fn: "onInviteFriendButtonTap"
-        },
-        {
             delegate: "#addFriendsList",
             event: "itemtap",
             fn: "onAddFriendsListItemTap"
@@ -123,11 +111,11 @@ Ext.define("inkle.view.AddFriends", {
     },
 
     // Event firings
-	onAddFriendsViewDoneButtonTapped: function() {
+    onAddFriendsViewDoneButtonTapped: function() {
         this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
     },
 
-	onAddFriendsSearchFieldKeyUp: function() {
+    onAddFriendsSearchFieldKeyUp: function() {
         this.fireEvent("addFriendsSearchFieldKeyedUp");
     },
 

@@ -35,7 +35,8 @@ Ext.application({
         "LinkFacebookAccount",
         "ShareSettings",
         "ChangePassword",
-        "ChangeEmail"
+        "ChangeEmail",
+        "WalkThrough",
     ],
     controllers: [
         "MainTabController",
@@ -63,7 +64,7 @@ Ext.application({
     */
 
     //Set the base url for all server requests
-    //aseUrl: "http://chads-macbook-pro.local:8000",
+    //baseUrl: "http://chads-macbook-pro.local:8000", //Used for testing from Chad's iPhone
     baseUrl: "http://127.0.0.1:8000",
 
     /* Application launch */

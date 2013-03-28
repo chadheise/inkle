@@ -319,9 +319,19 @@ class Member(AbstractUser):
         """Returns the number of mutual friends the current member has with the inputted member."""
         return len(self.friends.filter(is_active = True) & m.friends.filter(is_active = True))
 
+    def get_pending_friends(self):
+        "Returns all the members the user has a pending request to"
+        requests = FriendRequest.objects.filter(sender = self, status = "pending")
+        return [r.receiver for r in requests]
+
     def has_pending_friend_request_to(self, m):
         """Returns True if the current memeber has a pending friend request to the inputted member."""
         return bool(FriendRequest.objects.filter(sender = self, receiver = m, status = "pending"))
+
+    def get_friends_who_have_requested(self):
+        "Returns all the users who have requested the user be their friend"
+        requests = FriendRequest.objects.filter(receiver = self, status = "pending")
+        return [r.sender for r in requests]
 
     def get_not_grouped_members(self, groups = None, as_string = False):
         """Returns a list of the current member's friends who are not in any of the current member's groups."""

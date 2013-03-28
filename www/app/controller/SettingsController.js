@@ -23,6 +23,13 @@ Ext.define("inkle.controller.SettingsController", {
             changeEmailBackButton: "#changeEmailBackButton",
             changeEmailSubmitButton: "#changeEmailSubmitButton",
 
+            // Top toolbar segmented buttons
+            requestsButton: "#friendsViewRequestsButton",
+
+            // Lists
+            friendsList: "#friendsViewFriendsList",
+            requestsList: "#friendsViewRequestsList",
+
             // Other
             linkFacebookAccountMessage: "#linkFacebookAccountMessage",
             settingsList: "#settingsList",
@@ -50,7 +57,7 @@ Ext.define("inkle.controller.SettingsController", {
                 initialize: "initializeSettingsView"
             },
             inviteFacebookFriendsView: {
-           		inviteFriendButtonTapped: "inviteFriend",
+           		inviteFacebookFriendsViewListItemTapped: "activateFacebookFriendsActionSheet",
            	},
            	linkFacebookAccountView: {
            	    linkFacebookAccountTapped: "linkFacebookAccount",
@@ -212,6 +219,255 @@ Ext.define("inkle.controller.SettingsController", {
         	}
 		});
 	},
+
+    activateFacebookFriendsActionSheet: function(data) {
+        var userId = data["memberId"];
+        var facebookId = data["facebookId"];
+        var relationship = data["relationship"];
+        var inviteFacebookFriendsStore = this.getInviteFacebookFriendsList().getStore();
+
+        //Create the possible action sheet buttons
+        var addFriend = {
+            text: "Add Friend",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+        		Ext.Ajax.request({
+            		url: inkle.app.baseUrl + "/addFriend/",
+            		params: {
+            			memberId: userId
+            		},
+            		success: function(response) {
+            		    var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "pending");
+
+                        //Change relationship badge to "Pending"
+                        Ext.fly("inviteFacebookFriendsRelationshipTag" + userId).setHtml('<span class="relationship">Pending</span>');
+            		},
+                	failure: function(response) {
+                		Ext.Msg.alert("Error", response.responseText);
+                	}
+        		});
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var inviteFacebookFriend = {
+            text: " Invite on facebook",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                this.inviteFriend(facebookId);
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var removeFriend = {
+            text: "Remove friend",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/removeFriend/",
+                    params: {
+                        memberId: userId,
+                    },
+                    success: function(response) {
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+
+                        //Remove relationship badge
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.error);
+                    }
+                });
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var acceptRequest = {
+            text: "Accept friend request",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/respondToRequest/",
+                    params: {
+                        memberId: userId,
+                        response: "accept"
+                    },
+                    success: function(response) {
+                        var requestsButton = this.getRequestsButton();
+
+                        numFriendRequests = response.responseText;
+                        if (numFriendRequests != 0) {
+                            requestsButton.setBadgeText(numFriendRequests);
+                        }
+                        else {
+                            requestsButton.setBadgeText("");
+                        }
+
+                        this.updateFriendsList();
+                        this.updateRequestsList();
+
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "friend");
+
+                        //Change relationship badge to "Friend"
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.responseText);
+                    },
+                    scope: this
+                });
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var ignoreRequest = {
+            text: "Ignore friend request",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/respondToRequest/",
+                    params: {
+                        memberId: userId,
+                        response: "ignore"
+                    },
+                    success: function(response) {
+                        var requestsButton = this.getRequestsButton();
+                        numFriendRequests = response.responseText;
+                        if (numFriendRequests != 0) {
+                            requestsButton.setBadgeText(numFriendRequests);
+                        }
+                        else {
+                            requestsButton.setBadgeText("");
+                        }
+                        this.updateFriendsList();
+                        this.updateRequestsList();
+
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+
+                        //Remove relationship badge
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.responseText);
+                    },
+                    scope: this
+                });
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var revokeRequest = {
+            text: "Revoke my friend request",
+            cls: "actionSheetNormalButton",
+            handler: function(button, event) {
+                Ext.Ajax.request({
+                    url: inkle.app.baseUrl + "/revokeRequest/",
+                    params: {
+                        userId: userId,
+                    },
+                    success: function(response) {
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
+
+                        //Change relationship field in store
+                        personRecord.set("relationship", "none");
+
+                        //alert(personRecord.get("html"));
+
+                        //Remove relationship badge
+                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml("");
+                    },
+                    failure: function(response) {
+                        Ext.Msg.alert("Error", response.error);
+                    }
+                });
+
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+        var cancel = {
+            text: "Cancel",
+            cls: "actionSheetCancelButton",
+            handler: function(button, event) {
+                var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
+                inviteFacebookFriendsActionSheet.hide();
+                inviteFacebookFriendsActionSheet.destroy();
+            },
+            scope: this
+        };
+
+        //Add the appropriate buttons to the action sheet item list
+        var actionSheetItems = [];
+        if (userId != "none") { //The person is an inkle user
+            if (relationship == "friend") {
+                actionSheetItems = [removeFriend, cancel];
+            }
+            else if (relationship == "pending") {
+                actionSheetItems = [revokeRequest, cancel];
+            }
+            else if (relationship == "requested") {
+                actionSheetItems = [acceptRequest, ignoreRequest, cancel];
+            }
+            else {
+                actionSheetItems = [addFriend, cancel];
+            }
+        }
+        else { //The person is not an inkle user (only on facebook)
+            actionSheetItems = [inviteFacebookFriend, cancel];
+        }
+
+        // Create the action sheet
+        var inviteFacebookFriendsActionSheet = Ext.create("Ext.ActionSheet", {
+            id: "inviteFacebookFriendsActionSheet",
+            items: actionSheetItems,
+        });
+
+        // Add the action sheet to the viewport
+        Ext.Viewport.add(inviteFacebookFriendsActionSheet);
+        inviteFacebookFriendsActionSheet.show();
+    },
+
+    inviteFriend: function(facebookId) {
+	    FB.ui({
+            method: 'feed',
+            to: String(facebookId),
+            message: 'This is the message ',
+            link: "http://www.inkleit.com",
+            //picture: //link to a picture of inkle logo
+            name: "Join inkle!",
+            caption: "www.inkleit.com",
+            description: 'inkle makes it easy to plan dinners, hangouts, meetups, and other social events with your friends!',
+        });
+    },
 
     /* Logs the user in with facbeook and links their existing account to facebook */
 	linkFacebookAccount: function() {
@@ -560,5 +816,18 @@ Ext.define("inkle.controller.SettingsController", {
 
             scope: this
         });
+    },
+
+    /******************/
+    /*  UPDATE LISTS  */
+    /******************/
+    /* Updates the friends list */
+    updateFriendsList: function() {
+        this.getFriendsList().getStore().load();
+    },
+
+    /* Updates the requests list */
+    updateRequestsList: function() {
+        this.getRequestsList().getStore().load();
     },
 });
