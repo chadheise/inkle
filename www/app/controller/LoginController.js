@@ -7,6 +7,7 @@ Ext.define("inkle.controller.LoginController", {
             loginView: "loginView",
             loginFormView: "loginFormView",
             registrationView: "registrationView",
+            walkThroughView: "walkThroughView",
             forgottenPasswordView: "forgottenPasswordView",
             resetPasswordView: "resetPasswordView",
             mainTabView: "mainTabView",
@@ -31,7 +32,8 @@ Ext.define("inkle.controller.LoginController", {
             loginView: {
                 emailLoginButtonTapped: "activateLoginFormView",
                 facebookLoginButtonTapped: "loginWithFacebook",
-                registrationTapped: "activateRegistrationView"
+                registrationTapped: "activateRegistrationView",
+                tourTapped: "activateWalkThroughView",
             },
 
             loginFormView: {
@@ -177,6 +179,21 @@ Ext.define("inkle.controller.LoginController", {
 
         // Set the focus on the first name input
         this.getRegistrationFirstName().focus();
+    },
+
+    /* Creates and activates the walk through view */
+    activateWalkThroughView: function() {
+        if (this.getWalkThroughView())
+        {
+            Ext.Viewport.animateActiveItem(this.getWalkThroughView(), { type: "flip" });
+        }
+        else
+        {
+            var walkThroughView = Ext.create("inkle.view.WalkThrough");
+            Ext.Viewport.animateActiveItem(walkThroughView, {
+                type: "flip"
+            });
+        }
     },
 
     /* Activates the login view */

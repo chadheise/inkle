@@ -69,6 +69,12 @@ Ext.define("inkle.view.Login", {
                 delegate: "#registration",
                 event: "tap",
                 fn: "onRegistrationTap"
+            },
+            {
+                element: "element",
+                delegate: "#tour",
+                event: "tap",
+                fn: "onTourTap"
             }
         ]
     },
@@ -82,5 +88,8 @@ Ext.define("inkle.view.Login", {
     },
     onRegistrationTap: function() {
         this.fireEvent("registrationTapped");
+    },
+    onTourTap: function() {
+        this.fireEvent("tourTapped");
     }
 });
