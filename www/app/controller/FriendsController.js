@@ -742,6 +742,7 @@ Ext.define("inkle.controller.FriendsController", {
                 });
                 this.getGroupsList().getStore().sort();
 
+                // TODO: make the focusing part work!
                 // Make the groups list editable and set the focus to the new group's input
                 this.toggleEditGroupsList("editable");
                 Ext.fly("group" + groupId + "NameInput").dom.focus();
