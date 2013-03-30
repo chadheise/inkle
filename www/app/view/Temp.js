@@ -20,9 +20,16 @@ Ext.define("inkle.view.Temp", {
                 id: "loginButtonsPanel",
                 flex: 2,
                 html: [
-                    "<img id='facebookLoginButton' src='resources/images/facebookLogin.png' />",
-                    "<img id='emailLoginButton' src='resources/images/emailLogin.png' />",
-                    "<img id='signUpButton' src='resources/images/emailLogin.png' />"
+                    //"<img id='facebookLoginButton' src='resources/images/facebookLogin.png' />",
+                    "<a id='facebookLoginButton' href='#'>",
+                        "<img src='resources/images/facebookLogin.png' />",
+                    "</a>",
+                    "<a id='emailLoginButton' href='#'>",
+                        "<img src='resources/images/emailLogin.png' />",
+                    "</a>",
+                    "<a id='signUpButton' href='#'>",
+                        "<img src='resources/images/emailLogin.png' />",
+                    "</a>"
                 ].join("")
             }
             /*
