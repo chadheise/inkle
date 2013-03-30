@@ -1,21 +1,31 @@
-Ext.define("inkle.view.Login", {
-    extend: "Ext.Panel",
+Ext.define("inkle.view.Temp", {
+    extend: "Ext.Container",
 
-    xtype: "loginView",
+    xtype: "tempView",
 
     config: {
+        layout: "vbox",
+        fullscreen: "true",
         scrollable: false,
         style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 
         items: [
             {
-                xtype: "container",
-                html: [
-                    "<center>",
-                    "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 80%;' />",
-                    "</center>"
-                ].join("")
+                xtype: "walkthroughView",
+                id: "loginWalkthrough",
+                flex: 5
             },
+            {
+                xtype: "panel",
+                id: "loginButtonsPanel",
+                flex: 2,
+                html: [
+                    "<img id='facebookLoginButton' src='resources/images/facebookLogin.png' />",
+                    "<img id='emailLoginButton' src='resources/images/emailLogin.png' />",
+                    "<img id='signUpButton' src='resources/images/emailLogin.png' />"
+                ].join("")
+            }
+            /*
             {
                 xtype: "container",
                 centered: true,
@@ -41,7 +51,6 @@ Ext.define("inkle.view.Login", {
                 ]
             },
 
-            /* Footer */
             {
                 xtype: "container",
                 html: [
@@ -50,8 +59,12 @@ Ext.define("inkle.view.Login", {
                     "<div>"
                 ].join("")
             }
+            */
         ],
 
+        /***************/
+        /*  LISTENERS  */
+        /***************/
         listeners: [
             {
                 delegate: "#facebookLoginButton",
@@ -68,27 +81,22 @@ Ext.define("inkle.view.Login", {
                 delegate: "#registration",
                 event: "tap",
                 fn: "onRegistrationTap"
-            },
-            {
-                element: "element",
-                delegate: "#tour",
-                event: "tap",
-                fn: "onTourTap"
             }
         ]
     },
 
-    // Event firings
+    /*******************/
+    /*  EVENT FIRINGS  */
+    /*******************/
     onFacebookLoginButtonTap: function() {
         this.fireEvent("facebookLoginButtonTapped");
     },
+
     onEmailLoginButtonTap: function() {
         this.fireEvent("emailLoginButtonTapped");
     },
+
     onRegistrationTap: function() {
         this.fireEvent("registrationTapped");
-    },
-    onTourTap: function() {
-        this.fireEvent("tourTapped");
     }
 });
