@@ -114,25 +114,18 @@
         if ([[options objectForKey:key] isKindOfClass:[NSString class]]) {
             [params setObject:[options objectForKey:key] forKey:key];
         } else {
-            SBJSON *jsonWriter = [[SBJSON new] autorelease];
+            SBJSON *jsonWriter = [SBJSON new];
             NSString *paramString = [jsonWriter stringWithObject:[options objectForKey:key]];
             [params setObject:paramString forKey:key];
         }
     }
 	[facebook dialog:method andParams:params andDelegate:self];
-    [method release];
-    [params release];
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
     NSString* callback = [pluginResult toSuccessCallbackString:callbackId];
     [super writeJavascript:[NSString stringWithFormat:@"setTimeout(function() { %@; }, 0);", callback]];
 }
 
-- (void) dealloc
-{
-    self.facebook = nil;
-    [super dealloc];
-}
 
 - (NSDictionary*) responseObject
 {
@@ -165,7 +158,7 @@
                          @"userID", 
                          nil]];
     } else {
-        sessionDict = [[NSDictionary new] autorelease];
+        sessionDict = [NSDictionary new];
     }
     
     NSDictionary* statusDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
