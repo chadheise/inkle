@@ -51,7 +51,6 @@ $badge-bg-gradient: "matte";
 }
 
 .x-list-pullrefresh-arrow {
-    /*background: center center theme_image("default", "refreshArrow.png") no-repeat !important;*/
     background: center center url("../images/refreshArrow.png") no-repeat !important;
 }
 
@@ -216,25 +215,9 @@ $badge-bg-gradient: "matte";
 }
 
 
-/***************************/
-/*  LOGIN & LARGE BUTTONS  */
-/***************************/
-.facebookLoginButton {
-    background: url("../images/facebookLogin.png") !important;
-}
-
-.facebookLoginDarkButton {
-    background: url("../images/facebookLoginDark.png") !important;
-}
-
-.emailLoginButton {
-    background: url("../images/emailLogin.png") !important;
-}
-
-.emailLoginDarkButton {
-    background: url("../images/emailLoginDark.png") !important;
-}
-
+/*******************/
+/*  LARGE BUTTONS  */
+/*******************/
 .changePasswordButton {
     background: url("../images/changePassword.png") !important;
 }
