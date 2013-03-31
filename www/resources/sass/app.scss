@@ -369,6 +369,7 @@ $badge-bg-gradient: "matte";
 /* Facebook login button */
 #facebookLoginButton {
     background: url("../images/facebookLogin.png");
+	background-size: cover;
     width: 290px;
     height: 50px;
     margin: 2px 0px 12px 0px;
@@ -383,6 +384,7 @@ $badge-bg-gradient: "matte";
 /* Email login button */
 #emailLoginButton {
     background: url("../images/emailLogin.png");
+	background-size: cover;
     width: 139px;
     height: 50px;
     border: none;
@@ -396,6 +398,7 @@ $badge-bg-gradient: "matte";
 /* Sign up button */
 #signUpButton {
     background: url("../images/emailSignUp.png");
+	background-size: cover;
     width: 139px;
     height: 50px;
     margin-left: 12px;
