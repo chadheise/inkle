@@ -36,8 +36,7 @@ Ext.application({
         "ShareSettings",
         "ChangePassword",
         "ChangeEmail",
-        "Walkthrough",
-        "Temp"  // TODO: get rid of this
+        "Walkthrough"
     ],
     controllers: [
         "MainTabController",
@@ -109,7 +108,7 @@ Ext.application({
                         // Show the login view if they are not logged in
                         else if (isLoggedIn === "False") {
                             Ext.Viewport.add([
-                                { xtype: "tempView" } // TODO: change back to loginView
+                                { xtype: "loginView" }
                             ]);
                         }
 
