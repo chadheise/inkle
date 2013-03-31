@@ -1,16 +1,16 @@
 Ext.define("inkle.view.AddFriends", {
-	extend: "Ext.Container",
-	
-	xtype: "addFriendsView",
-	
-	requires: [
-		"Ext.field.Search"
-	],
-	
-	config: {
+    extend: "Ext.Container",
+
+    xtype: "addFriendsView",
+
+    requires: [
+        "Ext.field.Search"
+    ],
+
+    config: {
         // Layout information
-		layout: "vbox",
-		scrollable: false,
+        layout: "vbox",
+        scrollable: false,
 
         items: [
             // Top toolbar
@@ -40,7 +40,7 @@ Ext.define("inkle.view.AddFriends", {
                 onClearIconTap: function() {
                     if (!this.disabled) {
                         this.setValue(''); //Clear the search field
-                        this.fireEvent('keyup', this); //Treat a clear as a keyup to clear store data                  
+                        this.fireEvent('keyup', this); //Treat a clear as a keyup to clear store data
                     }
                 }
             },
@@ -55,34 +55,34 @@ Ext.define("inkle.view.AddFriends", {
                 emptyText: "<p class='emptyListText'>No matches</p>",
                 disableSelection: true,
                 itemTpl: [
-					'{ html }'
-				],
-				store: {
-					fields: [
-						"user_id",
-						"facebook_id",
-						"relationship",
-						"html"
-					],
-					proxy: {
-						type: "rest",
-						url: inkle.app.baseUrl + "/peopleSearch/",
-						actionMethods: {
-							read: "POST"
-						},
-						extraParams: {
-							query: "",
-							fbAccessToken: ""
-						},
-						
-						reader: {
-							type: "json",
-							rootProperty: "people"
-						}
-					},
-					
-					autoLoad: true
-				}
+                    '{ html }'
+                ],
+                store: {
+                    fields: [
+                        "memberId",
+                        "facebookId",
+                        "relationship",
+                        "html"
+                    ],
+                    proxy: {
+                        type: "rest",
+                        url: inkle.app.baseUrl + "/peopleSearch/",
+                        actionMethods: {
+                            read: "POST"
+                        },
+                        extraParams: {
+                            query: "",
+                            fbAccessToken: ""
+                        },
+
+                        reader: {
+                            type: "json",
+                            rootProperty: "people"
+                        }
+                    },
+
+                    autoLoad: true
+                }
             }
         ],
 
@@ -109,16 +109,26 @@ Ext.define("inkle.view.AddFriends", {
         },
         ]
     },
-    
+
     // Event firings
-	onAddFriendsViewDoneButtonTapped: function() {
+    onAddFriendsViewDoneButtonTapped: function() {
         this.fireEvent("addFriendsViewDoneButtonTapped", /* source = */ "addFriendsView");
     },
-	
-	onAddFriendsSearchFieldKeyUp: function() {
+
+    onAddFriendsSearchFieldKeyUp: function() {
         this.fireEvent("addFriendsSearchFieldKeyedUp");
     },
-    
+
+    onAddFriendButtonTap: function(event) {
+        var tappedId = event.getTarget(".addFriendButton").getAttribute("memberId");
+        this.fireEvent("addFriendButtonTapped", tappedId);
+    },
+
+    onInviteFriendButtonTap: function(event) {
+        var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
+        this.fireEvent("inviteFriendButtonTapped", tappedId);
+    },
+
     onAddFriendsListItemTap: function(requestsList, index, target, record, event, options) {
         this.fireEvent("addFriendsViewListItemTapped", record.getData());
     },

@@ -24,7 +24,7 @@ Ext.define("inkle.view.GroupMembers", {
                 ],
                 store: {
                     fields: [
-                        "id",
+                        "memberId",
                         "lastName",
                         "html"
                     ],
@@ -59,7 +59,7 @@ Ext.define("inkle.view.GroupMembers", {
         ]
     },
 
-    // Event firings    
+    // Event firings
     onGroupMembersListItemTap: function(groupMembersList, index, target, record, event, options) {
         var selectionButton = Ext.fly(event.getTarget(".selectionButton"));
         if (selectionButton) {

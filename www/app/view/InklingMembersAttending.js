@@ -1,15 +1,15 @@
 Ext.define("inkle.view.InklingMembersAttending", {
 	extend: "Ext.Container",
-	
+
 	xtype: "inklingMembersAttending",
-	
+
     requires: [
     	"Ext.dataview.List"
     ],
-	
+
 	config: {
 	    layout: "card",
-	    
+
 	    items: [
 	        {
                 xtype: "list",
@@ -25,7 +25,7 @@ Ext.define("inkle.view.InklingMembersAttending", {
                 ],
                 store: {
                     fields: [
-                        "id",
+                        "memberId",
                         "lastName",
                         "html"
                     ],
@@ -42,7 +42,7 @@ Ext.define("inkle.view.InklingMembersAttending", {
                         }
                     },
                     autoLoad: false
-                },				
+                },
                 plugins: [
                     {
                         xclass: "Ext.plugin.PullRefresh",

@@ -22,10 +22,10 @@ Ext.define("inkle.controller.SettingsController", {
             changePasswordSubmitButton: "#changePasswordSubmitButton",
             changeEmailBackButton: "#changeEmailBackButton",
             changeEmailSubmitButton: "#changeEmailSubmitButton",
-            
+
             // Top toolbar segmented buttons
             requestsButton: "#friendsViewRequestsButton",
-            
+
             // Lists
             friendsList: "#friendsViewFriendsList",
             requestsList: "#friendsViewRequestsList",
@@ -72,7 +72,6 @@ Ext.define("inkle.controller.SettingsController", {
     },
 
 	initializeSettingsView: function() {
-
         //Determine if the user is logged in with facebook
         var fbAccessToken = "";
 		FB.getLoginStatus(function(response) {
@@ -222,8 +221,8 @@ Ext.define("inkle.controller.SettingsController", {
 	},
 
     activateFacebookFriendsActionSheet: function(data) {
-        var userId = data["user_id"];
-        var facebookId = data["facebook_id"];
+        var userId = data["memberId"];
+        var facebookId = data["facebookId"];
         var relationship = data["relationship"];
         var inviteFacebookFriendsStore = this.getInviteFacebookFriendsList().getStore();
 
@@ -238,19 +237,19 @@ Ext.define("inkle.controller.SettingsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
+            		    var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
 
                         //Change relationship badge to "Pending"
-                        Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Pending</span>');
+                        Ext.fly("inviteFacebookFriendsRelationshipTag" + userId).setHtml('<span class="relationship">Pending</span>');
             		},
                 	failure: function(response) {
                 		Ext.Msg.alert("Error", response.responseText);
                 	}
         		});
-        		
+
                 var inviteFacebookFriendsActionSheet = Ext.getCmp("inviteFacebookFriendsActionSheet");
                 inviteFacebookFriendsActionSheet.hide();
                 inviteFacebookFriendsActionSheet.destroy();
@@ -279,7 +278,7 @@ Ext.define("inkle.controller.SettingsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -321,13 +320,13 @@ Ext.define("inkle.controller.SettingsController", {
 
                         this.updateFriendsList();
                         this.updateRequestsList();
-                        
-                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
+
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "friend");
 
-                        //Change relationship badge to "Friend" 
+                        //Change relationship badge to "Friend"
                         Ext.fly("inviteFacebookFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
                     },
                     failure: function(response) {
@@ -364,7 +363,7 @@ Ext.define("inkle.controller.SettingsController", {
                         this.updateFriendsList();
                         this.updateRequestsList();
 
-                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -394,7 +393,7 @@ Ext.define("inkle.controller.SettingsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = inviteFacebookFriendsStore.findRecord("user_id", userId);
+                        var personRecord = inviteFacebookFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -818,7 +817,7 @@ Ext.define("inkle.controller.SettingsController", {
             scope: this
         });
     },
-    
+
     /******************/
     /*  UPDATE LISTS  */
     /******************/

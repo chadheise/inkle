@@ -51,7 +51,6 @@ $badge-bg-gradient: "matte";
 }
 
 .x-list-pullrefresh-arrow {
-    /*background: center center theme_image("default", "refreshArrow.png") no-repeat !important;*/
     background: center center url("../images/refreshArrow.png") no-repeat !important;
 }
 
@@ -77,17 +76,6 @@ $badge-bg-gradient: "matte";
 @include sencha-msgbox;
 @include sencha-list-pullrefresh;
 @include sencha-loading-spinner; //This is used but not required
-
-/***************/
-/* Walkthrough */
-/***************/
-
-.spreadTheWord {
-	background: url("../images/walkthrough/spreadTheWord.png") !important;
-	width: 290px;
-	height: 330px;
-	vertical-align: center;
-}
 
 /***************/
 /*  TAB ICONS  */
@@ -183,10 +171,10 @@ $badge-bg-gradient: "matte";
     color: #FFFFFF !important;
 }
 
+
 /*************/
 /*  BUTTONS  */
 /*************/
-
 .x-button {
     color: $darkestGreen !important;
     border-color: $darkestGreen !important;
@@ -226,25 +214,10 @@ $badge-bg-gradient: "matte";
     box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
-/******************************/
-/*   LOGIN & LARGE BUTTONS    */
-/******************************/
-.facebookLoginButton {
-    background: url("../images/facebookLogin.png") !important;
-}
 
-.facebookLoginDarkButton {
-    background: url("../images/facebookLoginDark.png") !important;
-}
-
-.emailLoginButton {
-    background: url("../images/emailLogin.png") !important;
-}
-
-.emailLoginDarkButton {
-    background: url("../images/emailLoginDark.png") !important;
-}
-
+/*******************/
+/*  LARGE BUTTONS  */
+/*******************/
 .changePasswordButton {
     background: url("../images/changePassword.png") !important;
 }
@@ -261,9 +234,10 @@ $badge-bg-gradient: "matte";
     background: url("../images/changeEmailDark.png") !important;
 }
 
-/**************************/
-/*   TOOLBAR BUTTONS      */
-/**************************/
+
+/*********************/
+/*  TOOLBAR BUTTONS  */
+/*********************/
 
 .toolbarButtonGear {
     background: url("../images/toolbarButtons/gear.png") !important;
@@ -345,26 +319,95 @@ $badge-bg-gradient: "matte";
     box-shadow: inset 0px 5px 5px #002200 !important;
 }
 
-/***********/
-/*  LOGIN  */
-/***********/
-#loginFooter {
-    color: #FFFFFF;
-    position: fixed;
-    width: 100%;
-    bottom: 0px;
+
+/*************************/
+/*  LOGIN / WALKTHROUGH  */
+/*************************/
+/* Main inkle logo */
+#outerWalkthroughLogoContainer {
+    position: static;
     text-align: center;
-    height: 100px;
 }
 
-#registration {
-    margin-right: 10px;
+#innerWalkthroughLogoContainer {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 62px;
+    margin-top: -40px;      // margin-top should be (height / 2) + 9 to account for the ..... at the bottom
 }
 
-#tour {
-    margin-left: 10px;
+#walkthroughLogo {
+    width: 250px;
+    // TODO: height: ##px;
 }
 
+/* Walkthrough instruction images */
+.outerWalkthroughInstructionContainer {
+    position: static;
+    text-align: center;
+}
+
+.innerWalkthroughInstructionContainer {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 290px;
+    margin-top: -154px;     // margin-top should be (height / 2) + 9 to account for the ..... at the bottom
+}
+
+.walkthroughInstruction {
+    height: 290px;
+    width: 290px;
+}
+
+/* Login buttons container */
+#loginButtonsContainer {
+    text-align: center;
+}
+
+/* Facebook login button */
+#facebookLoginButton {
+    background: url("../images/facebookLogin.png");
+    width: 290px;
+    height: 50px;
+    margin: 2px 0px 12px 0px;
+    border: none;
+    border-radius: 5px;
+}
+
+#facebookLoginButton:active {
+    background: url("../images/facebookLoginDark.png");
+}
+
+/* Email login button */
+#emailLoginButton {
+    background: url("../images/emailLogin.png");
+    width: 139px;
+    height: 50px;
+    border: none;
+    border-radius: 5px;
+}
+
+#emailLoginButton:active {
+    background: url("../images/emailLoginDark.png");
+}
+
+/* Sign up button */
+#signUpButton {
+    background: url("../images/emailSignUp.png");
+    width: 139px;
+    height: 50px;
+    margin-left: 12px;
+    border: none;
+    border-radius: 5px;
+}
+
+#signUpButton:active {
+    background: url("../images/emailSignUpDark.png");
+}
+
+/* Forgotten password */
 #forgottenPassword {
     float: right;
     color: $mediumBlue;
@@ -378,6 +421,7 @@ $badge-bg-gradient: "matte";
     padding: 5px;
     text-align: justify;
 }
+
 
 /***********/
 /*  LISTS  */

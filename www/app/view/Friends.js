@@ -140,7 +140,7 @@ Ext.define("inkle.view.Friends", {
                         ],
                         store: {
                             fields: [
-                                "id",
+                                "memberId",
                                 "lastName",
                                 "html"
                             ],
@@ -184,7 +184,8 @@ Ext.define("inkle.view.Friends", {
                         ],
                         store: {
                             fields: [
-                                "id",
+                                "groupId",
+                                "groupName",
                                 "html"
                             ],
                             proxy: {
@@ -194,6 +195,28 @@ Ext.define("inkle.view.Friends", {
                                 },
                                 url: inkle.app.baseUrl + "/groupsMainContent/"
                             },
+                            sorters: [
+                                {
+                                    // Sort by group name (always putting the "Not Grouped" (id = -1) group first)
+                                    sorterFn: function(record1, record2) {
+                                        var groupId1 = record1.data.groupId;
+                                        var groupId2 = record2.data.groupId;
+
+                                        var groupName1 = record1.data.groupName;
+                                        var groupName2 = record2.data.groupName;
+
+                                        if (groupId1 == -1) {
+                                            return -1;
+                                        }
+                                        else if (groupId2 == -1) {
+                                            return 1;
+                                        }
+                                        else {
+                                            return groupName1 > groupName2 ? 1 : (groupName1 == groupName2 ? 0 : -1);
+                                        }
+                                    }
+                                }
+                            ],
                             autoLoad: true
                         },
                         plugins: [
@@ -219,7 +242,7 @@ Ext.define("inkle.view.Friends", {
                         ],
                         store: {
                             fields: [
-                                "id",
+                                "requestId",
                                 "html"
                             ],
                             proxy: {
@@ -356,7 +379,7 @@ Ext.define("inkle.view.Friends", {
     onFriendsViewEditGroupsButtonTap: function() {
         this.fireEvent("friendsViewEditGroupsButtonTapped", "editable");
     },
-    
+
     onFriendsViewEditGroupsDoneButtonTap: function() {
         this.fireEvent("friendsViewEditGroupsDoneButtonTapped", "uneditable");
     },
@@ -368,7 +391,7 @@ Ext.define("inkle.view.Friends", {
     onGroupMembersViewBackButtonTap: function() {
         this.fireEvent("groupMembersViewBackButtonTapped", /* source = */ "groupMembersView");
     },
-    
+
     // List disclosure/itemtap
     onFriendsViewFriendsListItemTap: function(friendsList, index, target, record, event, options) {
         var deleteLock = Ext.fly(event.getTarget(".deleteLock"));
@@ -376,7 +399,7 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", friendsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewFriendsListItemTapped", record.getData()["id"]);
+            this.fireEvent("friendsViewFriendsListItemTapped", record.getData()["memberId"]);
         }
     },
 
@@ -386,12 +409,12 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", groupsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["id"]);
+            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["memberId"]);
         }
     },
 
     onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
-        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["id"]);
+        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["memberId"]);
     },
 
     // Groups list name input blur
