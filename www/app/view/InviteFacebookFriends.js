@@ -27,9 +27,9 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 				],
 				store: {
 					fields: [
-						"last_name",
-						"user_id",
-                        "facebook_id",
+						"memberId",
+						"lastName",
+                        "facebookId",
                         "relationship",
                         "html"
 					],
@@ -42,7 +42,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
 					},
 					grouper: {
 						groupFn: function(record) {
-							return record.get("last_name").substr(0, 1);
+							return record.get("lastName").substr(0, 1);
 						}
 					},
 					autoLoad: false
@@ -70,7 +70,7 @@ Ext.define("inkle.view.InviteFacebookFriends", {
     	var tappedId = event.getTarget(".inviteFriendButton").getAttribute("memberId");
         this.fireEvent("inviteFriendButtonTapped", tappedId);
     },
-    
+
     onInviteFacebookFriendsListItemTap: function(requestsList, index, target, record, event, options) {
         this.fireEvent("inviteFacebookFriendsViewListItemTapped", record.getData());
     },

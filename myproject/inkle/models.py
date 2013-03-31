@@ -97,12 +97,15 @@ class FeedComment(models.Model):
         else:
             return "%d: %d - %s... (%s)" % (self.id, self.inkling.id, self.text[:17].strip(), self.creator.get_full_name())
 
+
 class InklingInvitation(models.Model):
     """InklingInvitation class definition."""
     # General information
     sender = models.ForeignKey("Member", related_name = "inkling_invitations_sent")
     receiver = models.ForeignKey("Member", related_name = "inkling_invitations_received")
     inkling = models.ForeignKey("Inkling")
+
+    # Status can be "pending", "accepted", "ignored", or "missed"
     status = models.CharField(max_length = 10, default = "pending")
 
     # Metadata
@@ -199,8 +202,7 @@ class Inkling(models.Model):
 
     def get_members_attending(self):
         """Returns a list of all the members attending the current inkling."""
-        members_attending = [m for m in self.member_set.all()]
-        return members_attending
+        return [m for m in self.member_set.all()]
 
     def get_num_members_attending(self):
         """Returns the number of members attending the current inkling."""
@@ -221,12 +223,48 @@ class Inkling(models.Model):
         """Returns True if the inputted member has a pending invitation to the current inkling or False otherwise."""
         return(bool(m.inkling_invitations_received.filter(inkling = self, status = "pending")))
 
+    def get_groups_attending_inkling(self, member):
+        """Returns a comma-separated string of the inputted member's groups who are attending the current inkling."""
+        # Get a list of the members attending the current inkling
+        inkling_members = self.get_members_attending()
+
+        # Get a set of the groups to which the attending members belong
+        group_ids_set = set()
+        for m in inkling_members:
+            # Add a "self" group ID to specify that the logged-in member is attending the inkling
+            if (m == member):
+                group_ids_set.add("self")
+
+            # Otherwise, add the attending member's groups to the attending groups list
+            else:
+                groups = m.groups_member_of.filter(creator = member)
+                if (groups):
+                    for g in groups:
+                        group_ids_set.add(g.id)
+                else:
+                    group_ids_set.add(-1)
+
+        # Convert the group IDs set to a string
+        inkling_groups = ""
+        first = True
+        for g_id in group_ids_set:
+            if (first):
+                inkling_groups += str(g_id)
+                first = False
+            else:
+                inkling_groups += "," + str(g_id)
+
+        return inkling_groups
+
+
 
 class FriendRequest(models.Model):
     """FriendRequest class definition."""
     # General information
     sender = models.ForeignKey("Member", related_name = "friend_requests_sent")
     receiver = models.ForeignKey("Member", related_name = "friend_requests_received")
+
+    # Status can be "pending", "accepted", or "ignored"
     status = models.CharField(max_length = 10, default = "pending")
 
     # Metadata
@@ -294,6 +332,29 @@ class Member(AbstractUser):
         "Returns all the users who have requested the user be their friend"
         requests = FriendRequest.objects.filter(receiver = self, status = "pending")
         return [r.sender for r in requests]
+
+    def get_not_grouped_members(self, groups = None, as_string = False):
+        """Returns a list of the current member's friends who are not in any of the current member's groups."""
+        # Get a list of the not grouped members
+        not_grouped_members = list(self.friends.all())
+        for g in groups:
+            for m in g.members.all():
+                if (m in not_grouped_members):
+                    not_grouped_members.remove(m)
+
+        # Convert the list to a string if requested
+        if (as_string):
+            not_grouped_members_string = ""
+            first = True
+            for m in not_grouped_members:
+                if (first):
+                    not_grouped_members_string += str(m.id)
+                    first = False
+                else:
+                    not_grouped_members_string += "," + str(m.id)
+            not_grouped_members = not_grouped_members_string
+
+        return not_grouped_members
 
     def get_picture_path(self):
         """Returns the path to the current member's picture."""

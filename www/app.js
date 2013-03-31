@@ -36,9 +36,10 @@ Ext.application({
         "ShareSettings",
         "ChangePassword",
         "ChangeEmail",
-        "WalkThrough",
+        "Walkthrough"
     ],
     controllers: [
+        "MainTabController",
         "LoginController",
         "AllInklingsController",
         "InklingController",
@@ -65,10 +66,10 @@ Ext.application({
     //Set the base url for all server requests
     //baseUrl: "http://chads-macbook-pro.local:8000", //Used for testing from Chad's iPhone
     baseUrl: "http://127.0.0.1:8000",
-    //baseUrl: "http://10.0.1.27:8000", //Used for android emulator on Chad's mac
 
     /* Application launch */
     launch: function() {
+        console.log("launching app");
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/getCsrfToken/",
 
@@ -89,7 +90,7 @@ Ext.application({
                         options.headers["X-CSRFToken"] = csrfToken;
                     }
                 }, this);
-                
+
                 // Determine if the user is logged in and show the appropriate page
                 Ext.Ajax.request({
                     url: inkle.app.baseUrl + "/isLoggedIn/",
@@ -128,6 +129,17 @@ Ext.application({
                 });
             }
         });
+
+        var _this = this;
+        document.addEventListener("resume", function(){
+            _this.resume();
+        });
+
+        // TODO: add online/offline events
+    },
+
+    resume: function() {
+        console.log("resume");
     }
 
     /*

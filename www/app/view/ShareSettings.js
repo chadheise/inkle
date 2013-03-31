@@ -1,15 +1,15 @@
 Ext.define("inkle.view.ShareSettings", {
 	extend: "Ext.form.Panel",
-	
+
 	xtype: "shareSettingsView",
-	
+
 	requires: [
 		"Ext.field.Select"
 	],
-	
+
 	config: {
 		scrollable: true,
-		
+
 		items: [
 		    {
     	        xtype: "container",
@@ -27,7 +27,7 @@ Ext.define("inkle.view.ShareSettings", {
 			    url: inkle.app.baseUrl + "/shareSettingsForm/"
 			},
 		],
-    	
+
     	// Listeners
     	listeners: [
 			{
@@ -81,28 +81,28 @@ Ext.define("inkle.view.ShareSettings", {
         	}
         ]
     },
-	
+
 	// Event firings
     onNewInklingViewInviteesTap: function() {
         this.fireEvent("newInklingInviteesTapped");
     },
-    
+
     /*Share Settings Event Firings*/
     onSelectedGroupsShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("selectedGroupsShareSettingTapped", selectionButton);
     },
-    
+
     onGroupShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("groupShareSettingTapped", selectionButton);
     },
-    
+
     onNoOneShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("noOneShareSettingTapped", selectionButton);
     },
-    
+
     onForwardingShareSettingTap: function(event, target) {
     	var selectionButton = Ext.fly(target);
     	this.fireEvent("forwardingShareSettingTapped", selectionButton);

@@ -45,14 +45,14 @@ Ext.define("inkle.controller.FriendsController", {
                 // Top toolbar buttons
                 friendsViewRemoveFriendsButtonTapped: "toggleEditFriendsList",
                 friendsViewRemoveFriendsDoneButtonTapped: "toggleEditFriendsList",
-                friendsViewAddFriendsButtonTapped: "activateAddFriendsView",
+                friendsViewAddFriendsButtonTapped: "transitionToAddFriendsView",
                 friendsViewEditGroupsButtonTapped: "toggleEditGroupsList",
                 friendsViewEditGroupsDoneButtonTapped: "toggleEditGroupsList",
                 friendsViewCreateGroupButtonTapped: "createGroup",
-                groupMembersViewBackButtonTapped: "activateFriendsView",
+                groupMembersViewBackButtonTapped: "transitionToFriendsView",
 
                 // List disclosure/itemtap
-                friendsViewGroupsListItemTapped: "activateGroupMembersView",
+                friendsViewGroupsListItemTapped: "transitionToGroupMembersView",
                 friendsViewRequestsListItemTapped: "activateRequestsActionSheet",
 
                 // Pull to refresh
@@ -60,17 +60,13 @@ Ext.define("inkle.controller.FriendsController", {
                 friendsViewGroupsListRefreshed: "updateGroupsList",
                 friendsViewRequestsListRefreshed: "updateRequestsList",
 
-                // View activation
-                activate: "hideFriendsTabBadge",
-                deactivate: "showFriendsTabBadge",
-
                 // Miscellaneous
                 deleteLockTapped: "toggleDeleteLock",
                 groupNameInputBlurred: "renameGroup"
             },
 
             addFriendsView: {
-                addFriendsViewDoneButtonTapped: "activateFriendsView",
+                addFriendsViewDoneButtonTapped: "transitionToFriendsView",
                 addFriendsSearchFieldKeyedUp: "updateAddFriendsSuggestions",
                 addFriendsViewListItemTapped: "activateAddFriendsActionSheet",
             },
@@ -84,9 +80,8 @@ Ext.define("inkle.controller.FriendsController", {
     /**********************/
     /*  VIEW TRANSITIONS  */
     /**********************/
-
-    /* Activates the friends view */
-    activateFriendsView: function(source) {
+    /* Transitions to the friends view */
+    transitionToFriendsView: function(source) {
         // If coming from the add friends view, slide that view away
         if (source == "addFriendsView") {
             this.getAddFriendsSearchField().setValue(""); //Clear search field
@@ -114,8 +109,8 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
-    /* Activates the add friends view */
-    activateAddFriendsView: function() {
+    /* Transitions to the add friends view */
+    transitionToAddFriendsView: function() {
         if (this.getAddFriendsView())
         {
             Ext.Viewport.animateActiveItem(this.getAddFriendsView(), {
@@ -133,8 +128,8 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
-    /* Activates the group members */
-    activateGroupMembersView: function(groupId) {
+    /* Transitions to the group members view */
+    transitionToGroupMembersView: function(groupId) {
         if (!this.getEditGroupsButton().isHidden()) {
             this.getFriendsView().push({
                 xtype: "groupMembersView",
@@ -157,6 +152,9 @@ Ext.define("inkle.controller.FriendsController", {
         }
     },
 
+    /**************/
+    /*  COMMANDS  */
+    /**************/
     activateRequestsActionSheet: function(memberId) {
         // Create the action sheet
         var friendRequestsActionSheet = Ext.create("Ext.ActionSheet", {
@@ -168,7 +166,7 @@ Ext.define("inkle.controller.FriendsController", {
                     text: "Accept",
                     cls: "actionSheetNormalButton",
                     handler: function(button, event) {
-                        this.respondToRequest(memberId, "accept");
+                        this.respondToRequest(memberId, "accepted");
 
                         var friendRequestsActionSheet = Ext.getCmp("friendRequestsActionSheet");
                         friendRequestsActionSheet.hide();
@@ -182,7 +180,7 @@ Ext.define("inkle.controller.FriendsController", {
                     text: "Ignore",
                     cls: "actionSheetNormalButton",
                     handler: function(button, event) {
-                        this.respondToRequest(memberId, "ignore");
+                        this.respondToRequest(memberId, "ignored");
 
                         var friendRequestsActionSheet = Ext.getCmp("friendRequestsActionSheet");
                         friendRequestsActionSheet.hide();
@@ -210,14 +208,42 @@ Ext.define("inkle.controller.FriendsController", {
         friendRequestsActionSheet.show();
     },
 
-    respondToRequest: function(memberId, response) {
+    respondToRequest: function(memberId, friendRequestResponse) {
+        console.log(friendRequestResponse);
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/respondToRequest/",
             params: {
                 memberId: memberId,
-                response: response
+                response: friendRequestResponse
             },
             success: function(response) {
+                // Update the friend request button's badge
+                var friendRequestsButton = this.getRequestsButton();
+                var numFriendRequests = parseInt(friendRequestsButton) - 1;
+                if (numFriendRequests != 0) {
+                    friendRequestsButton.setBadgeText(numFriendRequests.toString());
+                }
+                else {
+                    friendRequestsButton.setBadgeText("");
+                }
+
+                // Remove the tapped friend request from the friend requests list
+                //this.getRequestsList().getStore().remove(record);
+
+                // If the inkling invitation has been accepted, add it to the my inklings list
+                if (friendRequestResponse == "accepted") {
+                    var responseText = Ext.JSON.decode(response.responseText);
+                    this.getRequestsList().getStore().add({
+                        "inklingId": responseText["inklingId"],
+                        "html": responseText["html"],
+                        "groupingIndex": responseText["groupingIndex"]
+                    });
+                    this.getMyInklingsList().getStore().sort("groupingIndex");
+                }
+
+
+
+
                 var requestsButton = this.getRequestsButton();
                 numFriendRequests = response.responseText;
                 if (numFriendRequests != 0) {
@@ -237,8 +263,8 @@ Ext.define("inkle.controller.FriendsController", {
     },
 
     activateAddFriendsActionSheet: function(data) {
-        var userId = data["user_id"];
-        var facebookId = data["facebook_id"];
+        var userId = data["memberId"];
+        var facebookId = data["facebookId"];
         var relationship = data["relationship"];
         var addFriendsStore = this.getAddFriendsSuggestions().getStore();
 
@@ -253,7 +279,7 @@ Ext.define("inkle.controller.FriendsController", {
             			memberId: userId
             		},
             		success: function(response) {
-            		    var personRecord = addFriendsStore.findRecord("user_id", userId);
+            		    var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "pending");
@@ -294,7 +320,7 @@ Ext.define("inkle.controller.FriendsController", {
                         memberId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -317,37 +343,15 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Accept friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                Ext.Ajax.request({
-                    url: inkle.app.baseUrl + "/respondToRequest/",
-                    params: {
-                        memberId: userId,
-                        response: "accept"
-                    },
-                    success: function(response) {
-                        var requestsButton = this.getRequestsButton();
-                        numFriendRequests = response.responseText;
-                        if (numFriendRequests != 0) {
-                            requestsButton.setBadgeText(numFriendRequests);
-                        }
-                        else {
-                            requestsButton.setBadgeText("");
-                        }
-                        this.updateFriendsList();
-                        this.updateRequestsList();
+                this.respondToRequest(memberId, "accepted");
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("memberId", userId);
 
-                        //Change relationship field in store
-                        personRecord.set("relationship", "friend");
+                //Change relationship field in store
+                personRecord.set("relationship", "friend");
 
-                        //Change relationship badge to "Friend"
-                        Ext.fly("addFriendsRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
-                    },
-                    failure: function(response) {
-                        Ext.Msg.alert("Error", response.responseText);
-                    },
-                    scope: this
-                });
+                //Change relationship badge to "Friend"
+                Ext.fly("addFriendRelationshipTag"+ userId).setHtml('<span class="relationship">Friend</span>');
 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -359,37 +363,15 @@ Ext.define("inkle.controller.FriendsController", {
             text: "Ignore friend request",
             cls: "actionSheetNormalButton",
             handler: function(button, event) {
-                Ext.Ajax.request({
-                    url: inkle.app.baseUrl + "/respondToRequest/",
-                    params: {
-                        memberId: userId,
-                        response: "ignore"
-                    },
-                    success: function(response) {
-                        var requestsButton = this.getRequestsButton();
-                        numFriendRequests = response.responseText;
-                        if (numFriendRequests != 0) {
-                            requestsButton.setBadgeText(numFriendRequests);
-                        }
-                        else {
-                            requestsButton.setBadgeText("");
-                        }
-                        this.updateFriendsList();
-                        this.updateRequestsList();
+                this.respondToRequest(memberId, "ignored");
 
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                var personRecord = addFriendsStore.findRecord("memberId", userId);
 
-                        //Change relationship field in store
-                        personRecord.set("relationship", "none");
+                //Change relationship field in store
+                personRecord.set("relationship", "none");
 
-                        //Remove relationship badge
-                        Ext.fly("addFriendsRelationshipTag"+ userId).setHtml("");
-                    },
-                    failure: function(response) {
-                        Ext.Msg.alert("Error", response.responseText);
-                    },
-                    scope: this
-                });
+                //Remove relationship badge
+                Ext.fly("addFriendRelationshipTag"+ userId).setHtml("");
 
                 var addFriendsActionSheet = Ext.getCmp("addFriendsActionSheet");
                 addFriendsActionSheet.hide();
@@ -407,7 +389,7 @@ Ext.define("inkle.controller.FriendsController", {
                         userId: userId,
                     },
                     success: function(response) {
-                        var personRecord = addFriendsStore.findRecord("user_id", userId);
+                        var personRecord = addFriendsStore.findRecord("memberId", userId);
 
                         //Change relationship field in store
                         personRecord.set("relationship", "none");
@@ -747,22 +729,27 @@ Ext.define("inkle.controller.FriendsController", {
     createGroup: function() {
         Ext.Ajax.request({
             url: inkle.app.baseUrl + "/createGroup/",
-            success: function(response) {
-                groupId = response.responseText;
 
-                // Re-load the groups list, put it in edit mode, and set the focus on the new group's input field
-                this.getGroupsList().getStore().load({
-                    callback: function(records, operation, success) {
-                        this.toggleEditGroupsList("editable");
-                        Ext.fly("group" + groupId + "NameInput").dom.focus();
-                    },
-                    scope: this
+            success: function(response) {
+                // Add the new group to the groups list and re-sort it
+                var responseText = Ext.JSON.decode(response.responseText);
+                this.getGroupsList().getStore().add({
+                    "groupId": responseText["groupId"],
+                    "groupName": responseText["groupName"],
+                    "html": responseText["html"]
                 });
+                this.getGroupsList().getStore().sort();
+
+                // TODO: make the focusing part work!
+                // Make the groups list editable and set the focus to the new group's input
+                this.toggleEditGroupsList("editable");
+                Ext.fly("group" + groupId + "NameInput").dom.focus();
             },
+
             failure: function(response) {
-                Ext.Msg.alert("Error", "Group not created");
-                console.log(response.responseText);
+                Ext.Msg.alert("Error", "Group not created. Please try again later.");
             },
+
             scope: this
         });
     },
@@ -774,6 +761,8 @@ Ext.define("inkle.controller.FriendsController", {
 
         // Get the group name input
         var groupNameInputValue = groupNameInput.getValue();
+
+        // TODO: update this record's groupName attribute so sorting works properly
 
         // If the value has changed, display it and update the database
         if (groupNameValue != groupNameInputValue) {
@@ -932,33 +921,5 @@ Ext.define("inkle.controller.FriendsController", {
     /* Updates the requests list */
     updateRequestsList: function() {
         this.getRequestsList().getStore().load();
-    },
-
-    /****************/
-    /*  TAB BADGES  */
-    /****************/
-    /* Hides the "Friends" tab badge */
-    hideFriendsTabBadge: function() {
-        this.getMainTabView().getTabBar().getAt(2).setBadgeText("");
-    },
-
-    /* Shows the "Friends" tab badge */
-    showFriendsTabBadge: function() {
-        Ext.Ajax.request({
-            url: inkle.app.baseUrl + "/numFriendRequests/",
-
-            success: function(response) {
-                numFriendRequests = response.responseText;
-                if (numFriendRequests != 0) {
-                    this.getMainTabView().getTabBar().getAt(2).setBadgeText(numFriendRequests);
-                    this.getRequestsButton().setBadgeText(numFriendRequests);
-                }
-            },
-
-            failure: function(response) {
-                console.log(response.responseText);
-            },
-            scope: this
-        });
     },
 });

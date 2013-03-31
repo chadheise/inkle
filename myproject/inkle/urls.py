@@ -22,7 +22,6 @@ urlpatterns = patterns(
     (r"^linkFacebookAccount/$", "link_facebook_account_view"),
 
     # Common
-    (r"^groups/$", "groups_view"),
     (r"^groupsMainContent/$", "groups_main_content_view"),
     (r"^groupsPanel/$", "groups_panel_view"),
 

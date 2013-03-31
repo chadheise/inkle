@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 # User authentication
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 # JSON module
 from django.utils import simplejson
@@ -53,6 +53,7 @@ def get_csrf_token_view(request):
     return HttpResponse(request.META["CSRF_COOKIE"])
 
 
+@csrf_exempt
 def email_login_view(request):
     """Logs in a non-Facebook member or returns a login error."""
     # Get the inputted email and password
@@ -544,8 +545,9 @@ def all_inklings_view(request):
     response_inklings = []
     for i in inklings:
         response_inklings.append({
-            "id": i.id,
             "html": get_inkling_list_item_html(i, request.user),
+            "inklingId": i.id,
+            "attendingGroupIds": i.get_groups_attending_inkling(request.user),
             "numMembersAttending": i.get_num_members_attending()
         })
 
@@ -581,11 +583,11 @@ def groups_panel_view(request):
     groups.sort(key = lambda g : g.name)
 
     # Get a list of the logged-in member's not grouped friends
-    not_grouped_members = get_not_grouped_members(request.user, groups, True)
+    not_grouped_members = request.user.get_not_grouped_members(groups, True)
 
     # Create the "Not Grouped" group
     not_grouped_group = {
-        "id": -1,
+        "groupId": -1,
         "name": "Not Grouped",
         "selected": ((auto_set_groups_as_selected) or (-1 in selected_group_ids)),
         "get_member_ids": not_grouped_members
@@ -601,36 +603,13 @@ def groups_panel_view(request):
         g.selected = ((auto_set_groups_as_selected) or (g.id in selected_group_ids))
 
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
             "html": get_group_list_item_panel_html(g)
         })
 
     # Create and return a JSON object
     response = simplejson.dumps(response_groups)
     return HttpResponse(response, mimetype = "application/json")
-
-
-def get_not_grouped_members(member, groups = None, as_string = False):
-    # Get a list of the not grouped members
-    not_grouped_members = list(member.friends.all())
-    for g in groups:
-        for m in g.members.all():
-            if (m in not_grouped_members):
-                not_grouped_members.remove(m)
-
-    # Convert the list to a string if requested
-    if (as_string):
-        not_grouped_members_string = ""
-        first = True
-        for m in not_grouped_members:
-            if (first):
-                not_grouped_members_string += str(m.id)
-                first = False
-            else:
-                not_grouped_members_string += "," + str(m.id)
-        not_grouped_members = not_grouped_members_string
-
-    return not_grouped_members
 
 
 @login_required
@@ -644,7 +623,7 @@ def groups_main_content_view(request):
     groups.sort(key = lambda g : g.name)
 
     # Get a list of the logged-in member's not grouped friends
-    not_grouped_members = get_not_grouped_members(request.user, groups)
+    not_grouped_members = request.user.get_not_grouped_members(groups)
 
     # Create the "Not Grouped" group
     not_grouped_group = {
@@ -654,14 +633,16 @@ def groups_main_content_view(request):
 
     # Add the "Not Grouped" group to the response list
     response_groups.append({
-        "id": not_grouped_group["id"],
+        "groupId": not_grouped_group["id"],
+        "groupName": "*" + not_grouped_group["name"],
         "html": get_group_list_item_main_content_html(not_grouped_group, not_grouped_members)
     })
 
     # Get the HTML for the logged-in member's groups
     for g in groups:
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
+            "groupName": g.name,
             "html": get_group_list_item_main_content_html(g)
         })
 
@@ -926,23 +907,52 @@ def change_email_view(request):
 @login_required
 def respond_to_inkling_invitation_view(request):
     """Responds the logged-in member to the an inkling invitation."""
-    # Get the inputted inkling and the response
+    # Get the inputted inkling, response, and today's date
     try:
         invitation = request.user.inkling_invitations_received.get(pk = request.POST["invitationId"])
-        response = request.POST["response"]
+        invitation_response = request.POST["invitationResponse"]
+        timezone_offset = int(request.POST["timezoneOffset"])
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
     except (InklingInvitation.DoesNotExist, KeyError) as e:
         raise Http404()
 
     # Update the invitation's status
-    invitation.status = response
+    invitation.status = invitation_response
     invitation.save()
 
+    # Create a variable to hold the response
+    response = []
+
     # Add the inkling corresponding to the current invitation to the logged-in member's inklings if they accepted it
-    if (response == "accepted"):
+    if (invitation_response == "accepted"):
         request.user.inklings.add(invitation.inkling)
 
-    # Return the number of pending inkling invitations for the logged-in member
-    return HttpResponse(request.user.inkling_invitations_received.filter(status = "pending").count() + request.user.inkling_invitations_received.filter(status = "missed").count())
+        # Create several date objects
+        tomorrow = today + datetime.timedelta(days = 1)
+        this_week = today + datetime.timedelta(days = 6)
+
+        # Get the inkling's grouping index
+        if (inkling.date == None):
+            grouping_index = 3
+        elif (invitation.inkling.date == today):
+            grouping_index = 0
+        elif (invitation.inkling.date <= tomorrow):
+            grouping_index = 1
+        elif (invitation.inkling.date <= this_week):
+            grouping_index = 2
+        else:
+            grouping_index = 3
+
+        # Create and return a JSON object
+        response = {
+            "inklingId": invitation.inkling.id,
+            "html": get_inkling_list_item_html(invitation.inkling, request.user),
+            "groupingIndex": grouping_index
+        }
+
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 # TODO: possible get rid of this
@@ -1089,7 +1099,7 @@ def inkling_members_attending_view(request):
         })
 
         response_members_attending.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1118,7 +1128,7 @@ def inkling_members_awaiting_reply_view(request):
         })
 
         response_members_awaiting_reply.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1163,31 +1173,28 @@ def my_inklings_view(request):
     response_inklings = []
     for i in request.user.inklings.filter(date = today):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Today",
-            "groupIndex": 0
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 0
         })
 
     # Get a list of all the inklings the logged-in member is attending tomorrow
     for i in request.user.inklings.filter(date__gt = today).filter(date__lte = tomorrow):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Tomorrow",
-            "groupIndex": 1
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 1
         })
 
     # Get a list of all the inklings the logged-in member is attending this week
     for i in request.user.inklings.filter(date__gt = tomorrow).filter(date__lte = this_week):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "This Week",
-            "groupIndex": 2
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 2
         })
 
     # Get a list of all the inklings the logged-in member is attending in the future (and sort them by date)
@@ -1195,21 +1202,19 @@ def my_inklings_view(request):
     future_inklings.sort(key = lambda i : i.date)
     for i in future_inklings:
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Future",
-            "groupIndex": 3
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 3
         })
 
     # Get a list of all the inklings the logged-in member is attending which do not have a date
     for i in request.user.inklings.filter(date__exact = None):
         response_inklings.append({
-            "id": i.id,
+            "inklingId": i.id,
             "html": get_inkling_list_item_html(i, request.user),
-            "numMembersAttending": i.get_num_members_attending(),
-            "group": "Future",
-            "groupIndex": 3
+            #"numMembersAttending": i.get_num_members_attending(),
+            "groupingIndex": 3
         })
 
     # Create and return a JSON object
@@ -1283,6 +1288,16 @@ def create_inkling_view(request):
         time = request.POST["time"]
         notes = request.POST["notes"]
 
+        # Date information
+        timezone_offset = int(request.POST["timezoneOffset"])
+        date_picker_day = int(request.POST["datePickerDay"])
+        date_picker_month = int(request.POST["datePickerMonth"])
+        date_picker_year = int(request.POST["datePickerYear"])
+        date_picker_date = datetime.date(month = date_picker_month, day = date_picker_day, year = date_picker_year)
+        only_include_undated_inklings = request.POST["onlyIncludeUndatedInklings"]
+        today = datetime.datetime.now() - datetime.timedelta(minutes = timezone_offset)
+        today = today.date()
+
         # Invited members
         invited_members = request.POST["invitedMemberIds"]
         if (invited_members):
@@ -1338,11 +1353,40 @@ def create_inkling_view(request):
     # Save the sharing permission object
     sp.save()
 
-    # Create and return a JSON object
-    response = simplejson.dumps({
-        "success": True
-    })
+    # Create a variable to hold the return inkling information
+    response = []
 
+    # Create several date objects
+    tomorrow = today + datetime.timedelta(days = 1)
+    this_week = today + datetime.timedelta(days = 6)
+
+    # Get the inkling's grouping index
+    if (inkling.date == None):
+        grouping_index = 3
+    elif (inkling.date == today):
+        grouping_index = 0
+    elif (inkling.date <= tomorrow):
+        grouping_index = 1
+    elif (inkling.date <= this_week):
+        grouping_index = 2
+    else:
+        grouping_index = 3
+
+    # Determine if the date picker date matches the new inkling's date
+    if (inkling.date == None):
+        add_to_all_inklings_view = only_include_undated_inklings == "true"
+    else:
+        add_to_all_inklings_view = date_picker_date == inkling.date
+
+    # Create and return a JSON object
+    response = {
+        "inklingId": inkling.id,
+        "html": get_inkling_list_item_html(inkling, request.user),
+        "groupingIndex": grouping_index,
+        "addToAllInklingsView": add_to_all_inklings_view
+    }
+
+    response = simplejson.dumps(response)
     return HttpResponse(response, mimetype = "application/json")
 
 
@@ -1412,7 +1456,7 @@ def inkling_invited_groups_view(request):
         })
 
         response_groups.append({
-            "id": g.id,
+            "groupId": g.id,
             "html": html
         })
 
@@ -1457,7 +1501,7 @@ def friends_view(request):
         })
 
         response_friends.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -1486,7 +1530,7 @@ def friend_requests_view(request):
         })
 
         response_friend_requests.append({
-            "id": m.id,
+            "requestId": m.id,
             "html": html
         })
 
@@ -1526,7 +1570,7 @@ def invite_facebook_friends_view(request):
 
     facebookFriendsTuple = getFriendsFromFacebookData(request.user, fbData)
     #Facebook friends who are also inkle users
-    facebookInkle = facebookFriendsTuple[0] + facebookFriendsTuple[1] + facebookFriendsTuple[2] + facebookFriendsTuple[3] 
+    facebookInkle = facebookFriendsTuple[0] + facebookFriendsTuple[1] + facebookFriendsTuple[2] + facebookFriendsTuple[3]
     #Facebook friends of the user who are not members of inkle
     facebookNotInkle = facebookFriendsTuple[4]
 
@@ -1536,7 +1580,7 @@ def invite_facebook_friends_view(request):
         facebookInkleSorted = sorted(facebookInkle, key = lambda m : m.last_name)
     if facebookNotInkle:
         facebookNotInkleSorted = sorted(facebookNotInkle, key = lambda m : m['last_name'])
-    
+
     #Merge the two lists into one
     facebookFriends = []
     inkleIndex = 0
@@ -1552,7 +1596,7 @@ def invite_facebook_friends_view(request):
         facebookFriends += facebookInkleSorted[inkleIndex:]
     if facebookIndex < len(facebookNotInkleSorted):
         facebookFriends += facebookNotInkleSorted[facebookIndex:]
-    
+
     response_members = []
     for m in facebookFriends:
         try:
@@ -1583,6 +1627,7 @@ def invite_facebook_friends_view(request):
                 relationship = "none"
         except: #Facebook friends not on inkle
             lastName = m["last_name"]
+
             userId = "none"
             facebook_id = m["facebook_id"]
             if m["is_friend"]:
@@ -1595,15 +1640,16 @@ def invite_facebook_friends_view(request):
                 relationship = "facebookOnlyFriend"
 
         response_members.append({
-            "last_name": lastName,
-            "user_id": userId,
-            "facebook_id": facebook_id,
+            "memberId": userId,
+            "lastName": lastName,
+            "facebookId": facebook_id,
             "relationship": relationship,
             "html": html
         })
     # Create and return a JSON object
     response = simplejson.dumps(response_members)
     return HttpResponse(response, mimetype = "application/json")
+
 
 @login_required
 def people_search_view(request):
@@ -1654,7 +1700,7 @@ def people_search_view(request):
     facebookInkleOther = facebookFriendsTuple[3]
      #Facebook friends of the user who are not members of inkle
     facebookNotInkle = facebookFriendsTuple[4]
-    
+
     # If the query is only one word long, match the members' first or last names alone
     if (len(query_split) == 1):
         members = Member.objects.filter(Q(first_name__istartswith = query) | Q(last_name__istartswith = query))
@@ -1664,7 +1710,7 @@ def people_search_view(request):
     # If the query is more than two words long, return no results
     else:
         members = []
-    
+
     inkleFriendsTuple = categorizeInkleMembers(request.user, members, facebookFriendsTuple)
     #Users of inkle who are inkle friends with the user but not on facebook
     inkleFriends = inkleFriendsTuple[0]
@@ -1733,8 +1779,8 @@ def people_search_view(request):
                 relationship = "facebookOnlyFriend"
 
         response_members.append({
-            "user_id": userId,
-            "facebook_id": facebook_id,
+            "memberId": userId,
+            "facebookId": facebook_id,
             "relationship": relationship,
             "html": html
         })
@@ -1749,7 +1795,7 @@ def getFriendsFromFacebookData(member, fbData):
     the third is a list of facebook friends who have a pending friend request to the user,
     the fourth is a list of facebook friends who are on inkle but have no relationship to the user,
     and the fifth is a list of facebook friends not on inkle inkle."""
-    
+
     facebookInkleFriends = []
     facebookInklePending = []
     facebookInkleRequested = []
@@ -1777,7 +1823,7 @@ def getFriendsFromFacebookData(member, fbData):
                 facebookInkleUser.is_requested = True
                 facebookInkleRequested.append(facebookInkleUser)
             else:
-                facebookInkleOther.append(facebookInkleUser)  
+                facebookInkleOther.append(facebookInkleUser)
         except Exception, e:
             personData = {} #Create dictionary for facebook friend data
             personData["first_name"] = fbFriend["first_name"]
@@ -1792,22 +1838,22 @@ def getFriendsFromFacebookData(member, fbData):
     return (facebookInkleFriends, facebookInklePending, facebookInkleRequested, facebookInkleOther, facebookNotInkle)
 
 def categorizeInkleMembers(member, memberList, facebookFriendsTuple):
-    """Returns a categorized tuple of inkle users not on facebook. The first item is a list of inkle friends, 
+    """Returns a categorized tuple of inkle users not on facebook. The first item is a list of inkle friends,
     the second is a list of members who the user has a pending request to,
     the third is a list of members who have a pending request to the user,
     and the fourth is a list of all other inkle members"""
-    
+
     inkleFriends = []
     inklePending = []
     inkleRequested = []
     inkleOther = []
-    
+
     facebookInkleFriends = facebookFriendsTuple[0]
     facebookInklePending = facebookFriendsTuple[1]
     facebookInkleRequested = facebookFriendsTuple[2]
     facebookInkleOther = facebookFriendsTuple[3]
     facebookNotInkle = facebookFriendsTuple[4]
-    
+
     for m in memberList:
         m.num_mutual_friends = member.get_num_mutual_friends(m)
         m.is_friend = False #Default to false
@@ -1885,7 +1931,7 @@ def respond_to_request_view(request):
     # Get the member who sent the request and the logged-in member's response to it
     try:
         m = Member.objects.get(pk = request.POST["memberId"])
-        response = request.POST["response"]
+        friend_request_response = request.POST["response"]
     except:
         raise Http404()
 
@@ -1894,21 +1940,35 @@ def respond_to_request_view(request):
         raise Http404()
 
     # Get the friend request
-    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were ignored, accepted, or revoked)
     friend_request = FriendRequest.objects.get(sender = m, receiver = request.user, status = "pending")
 
-    # Add the friendship if the logged in member accepted the request
-    if (response == "accept"):
+    # update the friend request's status
+    friend_request.status = friend_request_response
+
+    # Add the friendship if the logged-in member accepted the request
+    if (friend_request.status == "accepted"):
         request.user.friends.add(m)
-        friend_request.status = "accepted"
-    else:
-        friend_request.status = "declined"
 
     # Save the updated friend request
     friend_request.save()
 
-    # Return the number of pending friend requests for the logged-in member
-    return HttpResponse(FriendRequest.objects.filter(receiver = request.user, status = "pending").count())
+        # Create a variable to hold the response
+    response = []
+
+    # Create and return a JSON object
+    if (friend_request.status == "accepted"):
+        response_friends.append({
+            "memberId": m.id,
+            "lastName": m.last_name,
+            "html": render_to_string("memberListItem.html", {
+                "m": m,
+                "include_delete_items": True
+            })
+        })
+
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @login_required
@@ -1925,7 +1985,7 @@ def revoke_request_view(request):
         raise Http404()
 
     # Get the friend request
-    # There should only be one pending request at any time but there may be multiple requests (old ones that were declined, accepted, or revoked)
+    # There should only be one pending request at any time but there may be multiple requests (old ones that were ignored, accepted, or revoked)
     friend_request = FriendRequest.objects.get(sender = request.user, receiver = m, status = "pending")
 
     # Set the status as "revoked""
@@ -2029,7 +2089,7 @@ def group_members_view(request):
         })
 
         response_friends.append({
-            "id": m.id,
+            "memberId": m.id,
             "lastName": m.last_name,
             "html": html
         })
@@ -2085,8 +2145,16 @@ def create_group_view(request):
     # Create a new group with no name
     group = Group.objects.create(creator = request.user, name = "")
 
-    # Return the new group's ID
-    return HttpResponse(group.id)
+    # Create a response object for the new group
+    response = {
+        "groupId": group.id,
+        "groupName": "",
+        "html": get_group_list_item_main_content_html(group)
+    }
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
 
 
 @login_required
