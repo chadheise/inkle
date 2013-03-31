@@ -1,94 +1,76 @@
 Ext.define("inkle.view.Login", {
-    extend: "Ext.Panel",
+    extend: "Ext.Container",
 
     xtype: "loginView",
 
     config: {
+        layout: "vbox",
+        fullscreen: "true",
         scrollable: false,
         style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
 
+        /***********/
+        /*  ITEMS  */
+        /***********/
         items: [
+            /* Walkthrough */
             {
-                xtype: "container",
-                html: [
-                    "<center>",
-                    "   <img src='resources/images/logoWhite.png' style='padding-top: 50px; padding-bottom: 60px; width: 80%;' />",
-                    "</center>"
-                ].join("")
-            },
-            {
-                xtype: "container",
-                centered: true,
-                items: [
-                    {
-                        xtype: "button",
-                        id: "facebookLoginButton",
-                        cls: "facebookLoginButton",
-                        pressedCls: "facebookLoginDarkButton",
-                        margin: 15,
-                        height: 50,
-                        width: 230
-                    },
-                    {
-                        xtype: "button",
-                        id: "emailLoginButton",
-                        cls: "emailLoginButton",
-                        pressedCls: "emailLoginDarkButton",
-                        margin: 15,
-                        height: 50,
-                        width: 230
-                    }
-                ]
+                xtype: "walkthroughView",
+                id: "walkthroughCarousel",
+                flex: 1
             },
 
-            /* Footer */
+            /* Login buttons */
             {
                 xtype: "container",
+                id: "loginButtonsContainer",
+                height: 122,
                 html: [
-                    "<div id='loginFooter'>",
-                    "   <span id='registration'>Sign Up</span>  |  <span id='tour'>Take a Tour</span>",
-                    "<div>"
+                    // The div around the FB button gives it display: block while also keeping it centered
+                    "<div><input id='facebookLoginButton' type='button' /></div>",
+                    "<input id='emailLoginButton' type='button' />",
+                    "<input id='signUpButton' type='button' />"
                 ].join("")
             }
         ],
 
+        /***************/
+        /*  LISTENERS  */
+        /***************/
         listeners: [
             {
                 delegate: "#facebookLoginButton",
+                element: "element",
                 event: "tap",
                 fn: "onFacebookLoginButtonTap"
             },
             {
                 delegate: "#emailLoginButton",
+                element: "element",
                 event: "tap",
                 fn: "onEmailLoginButtonTap"
             },
             {
+                delegate: "#signUpButton",
                 element: "element",
-                delegate: "#registration",
                 event: "tap",
-                fn: "onRegistrationTap"
-            },
-            {
-                element: "element",
-                delegate: "#tour",
-                event: "tap",
-                fn: "onTourTap"
+                fn: "onSignUpButtonTap"
             }
         ]
     },
 
-    // Event firings
+    /*******************/
+    /*  EVENT FIRINGS  */
+    /*******************/
     onFacebookLoginButtonTap: function() {
         this.fireEvent("facebookLoginButtonTapped");
     },
+
     onEmailLoginButtonTap: function() {
         this.fireEvent("emailLoginButtonTapped");
     },
-    onRegistrationTap: function() {
-        this.fireEvent("registrationTapped");
-    },
-    onTourTap: function() {
-        this.fireEvent("tourTapped");
+
+    onSignUpButtonTap: function() {
+        this.fireEvent("signUpButtonTapped");
     }
 });
