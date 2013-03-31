@@ -63,7 +63,6 @@ Ext.define("inkle.view.Login", {
     /*  EVENT FIRINGS  */
     /*******************/
     onFacebookLoginButtonTap: function() {
-        alert('here');
         this.fireEvent("facebookLoginButtonTapped");
     },
 
