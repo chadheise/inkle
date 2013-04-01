@@ -600,6 +600,9 @@ Ext.define("inkle.controller.SettingsController", {
                     var newOffset = offset + limit;
                     context.loadFacebookFriends(context, fbAccessToken, limit, newOffset);
                 }
+                else {
+                    inviteFacebookFriendsListStore.sort("lastName", "ASC"); //Once all the friends are loaded, ensure they are perfectly sorted
+                }
     		},
         	failure: function(response) {
         		Ext.Msg.alert("Error", response.responseText);
