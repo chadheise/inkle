@@ -666,7 +666,7 @@ def inkling_view(request):
 
     # Determine if the inkling has already occured (to see if it is still editable)
     inkling.is_frozen = False
-    if (today > inkling.date):
+    if (inkling.date and (today > inkling.date)):
         inkling.is_frozen = True
 
     # Set the number of member pictures to show for each section
