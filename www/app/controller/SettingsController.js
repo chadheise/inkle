@@ -538,6 +538,36 @@ Ext.define("inkle.controller.SettingsController", {
                 }
     		});
             inviteFacebookFriendsListStore.load();
+            
+            /*var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
+            var letterGroups = new Array();
+            letterGroups[0] = "abc";
+            letterGroups[1] = "def";
+            letterGroups[2] = "ghi";
+            letterGroups[3] = "jkl";
+            letterGroups[4] = "mno";
+            letterGroups[5] = "pqr";
+            letterGroups[6] = "stuv";
+            letterGroups[7] = "wxyz";
+
+            for (var i=0; i<letterGroups.length; i++)
+            {
+                Ext.Ajax.request({
+            		url: inkle.app.baseUrl + "/inviteFacebookFriendsView/",
+            		params: {
+           				fbAccessToken: fbAccessToken,
+           				startsWith: letterGroups[i]
+            		},
+            		success: function(response) {
+            		    var facebookFriends = Ext.JSON.decode(response.responseText);
+                        inviteFacebookFriendsListStore.add(facebookFriends);
+            		},
+                	failure: function(response) {
+                		Ext.Msg.alert("Error", response.responseText);
+                	}
+        		});
+        	}*/
+            
         }
         else {
             // Push the view to link their account to facebook
