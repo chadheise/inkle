@@ -1549,6 +1549,8 @@ def invite_facebook_friends_view(request):
     """Returns a list of the user's facebook friends"""
     try:
         fbAccessToken = request.POST["fbAccessToken"]
+        limit = request.POST["limit"]
+        offset = request.POST["offset"]
         #startsWith = request.POST["startsWith"]
         #if ((len(startsWith) != 3) and (len(startsWith) != 4)): #Could also allow length to be 0 to allow all facebook friends to be retrieved at once
         #    raise Http404()
@@ -1570,6 +1572,9 @@ def invite_facebook_friends_view(request):
         #    else:
         #        fbQuery += str("OR strpos(lower(last_name), '" + startsWith[3] + "') == 0)")
         #fbQuery += "AND is_app_user=0" #Use this to only return non-inkle users or set to 1 to return only inkle users
+        fbQuery += str("LIMIT " + str(limit) + " ")
+        fbQuery += str("OFFSET " + str(offset))
+        print fbQuery
 
         if fbQuery:
             fbRequest = fbUrl + urllib2.quote(fbQuery) + "&access_token=" + fbAccessToken
