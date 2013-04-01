@@ -532,12 +532,12 @@ Ext.define("inkle.controller.SettingsController", {
 
             // Update the invite facebook friends list
             var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
-            inviteFacebookFriendsListStore.setProxy({
+            /*inviteFacebookFriendsListStore.setProxy({
                 extraParams: {
                     fbAccessToken: fbAccessToken
                 }
     		});
-            inviteFacebookFriendsListStore.load();
+            inviteFacebookFriendsListStore.load();*/
             
             /*var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
             var letterGroups = new Array();
@@ -567,6 +567,8 @@ Ext.define("inkle.controller.SettingsController", {
                 	}
         		});
         	}*/
+        	
+        	this.loadFacebookFriends(this, fbAccessToken, 50, 0);
             
         }
         else {
@@ -580,6 +582,29 @@ Ext.define("inkle.controller.SettingsController", {
         this.getSettingsLogoutButton().hide();
         this.getInviteFacebookFriendsBackButton().show();
 
+    },
+
+    loadFacebookFriends: function(context, fbAccessToken, limit, offset) {
+        var inviteFacebookFriendsListStore = this.getInviteFacebookFriendsList().getStore();
+        Ext.Ajax.request({
+    		url: inkle.app.baseUrl + "/inviteFacebookFriendsView/",
+    		params: {
+   				fbAccessToken: fbAccessToken,
+   				limit: limit,
+   				offset: offset,
+    		},
+    		success: function(response) {
+    		    facebookFriends = Ext.JSON.decode(response.responseText);
+                if (facebookFriends != "") {
+                    inviteFacebookFriendsListStore.add(facebookFriends);
+                    var newOffset = offset + limit;
+                    context.loadFacebookFriends(context, fbAccessToken, limit, newOffset);
+                }
+    		},
+        	failure: function(response) {
+        		Ext.Msg.alert("Error", response.responseText);
+        	}
+		});
     },
 
     inviteFacebookFriendsBack: function() {
