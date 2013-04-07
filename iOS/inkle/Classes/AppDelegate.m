@@ -55,7 +55,7 @@
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
  */
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{    
+{
     NSURL* url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
     NSString* invokeString = nil;
     
@@ -106,6 +106,13 @@
     [self.window addSubview:self.viewController.view];
     [self.window makeKeyAndVisible];
     
+    /**************************************************************************************************/
+    // Let the device know we want to receive push notifications
+	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    /**************************************************************************************************/
+    
+    
     return YES;
 }
 
@@ -131,5 +138,17 @@
 {
 	[super dealloc];
 }
+
+/**************************************************************************************************/
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
+{
+	NSLog(@"My token is: %@", deviceToken);
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+	NSLog(@"Failed to get token, error: %@", error);
+}
+/**************************************************************************************************/
 
 @end
