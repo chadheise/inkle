@@ -21,7 +21,7 @@
 @interface FacebookConnectPlugin : CDVPlugin < FBSessionDelegate, FBRequestDelegate, FBDialogDelegate > {
 }
 
-@property (nonatomic, retain) Facebook *facebook;
+@property (nonatomic, strong) Facebook *facebook;
 @property (nonatomic, copy) NSString* loginCallbackId;
 
 - (NSDictionary*) responseObject;
