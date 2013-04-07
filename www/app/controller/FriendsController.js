@@ -27,10 +27,11 @@ Ext.define("inkle.controller.FriendsController", {
             groupMembersViewBackButton: "#groupMembersViewBackButton",
 
             // Lists
-            friendsList: "#friendsViewFriendsList",
-            groupsList: "#friendsViewGroupsList",
+            friendsViewFriendsList: "#friendsViewFriendsList",
+            friendsViewGroupsList: "#friendsViewGroupsList",
             groupMembersList: "#groupMembersList",
-            requestsList: "#friendsViewRequestsList",
+            friendsViewRequestsList: "#friendsViewRequestsList",
+            allInklingsGroupsList: "#allInklingsGroupsList",
 
             // Elements
             addFriendsSearchField: "#addFriendsSearchField",
@@ -228,12 +229,12 @@ Ext.define("inkle.controller.FriendsController", {
                 }
 
                 // Remove the tapped friend request from the friend requests list
-                //this.getRequestsList().getStore().remove(record);
+                //this.getFriendsViewRequestsList().getStore().remove(record);
 
                 // If the inkling invitation has been accepted, add it to the my inklings list
                 if (friendRequestResponse == "accepted") {
                     var responseText = Ext.JSON.decode(response.responseText);
-                    this.getRequestsList().getStore().add({
+                    this.getFriendsViewRequestsList().getStore().add({
                         "inklingId": responseText["inklingId"],
                         "html": responseText["html"],
                         "groupingIndex": responseText["groupingIndex"]
@@ -681,8 +682,14 @@ Ext.define("inkle.controller.FriendsController", {
                             memberId: tappedId
                         },
                         success: function(response) {
-                            // Remove the tapped record from the store
+                            // Remove the tapped record from the friend's tab groups list store
                             tappedRecord.stores[0].remove(tappedRecord);
+
+                            // Remove the same group from the all inklings groups panel
+                            if (url == inkle.app.baseUrl + "/deleteGroup/") {
+                                var groupRecord = this.getAllInklingsGroupsList().getStore().findRecord("groupId", tappedId);
+                                this.getAllInklingsGroupsList().getStore().remove(groupRecord);
+                            }
 
                             // Destroy the delete lock
                             deleteLock.destroy();
@@ -693,7 +700,8 @@ Ext.define("inkle.controller.FriendsController", {
                         },
                         scope: this
                     });
-                }
+                },
+                scope: this
             });
 
             // Add the delete button to the list item
@@ -731,19 +739,30 @@ Ext.define("inkle.controller.FriendsController", {
             url: inkle.app.baseUrl + "/createGroup/",
 
             success: function(response) {
-                // Add the new group to the groups list and re-sort it
+                // Decode the JSON data
                 var responseText = Ext.JSON.decode(response.responseText);
-                this.getGroupsList().getStore().add({
+
+                // Add the new group to the friends tab groups list and re-sort it
+                this.getFriendsViewGroupsList().getStore().add({
                     "groupId": responseText["groupId"],
                     "groupName": responseText["groupName"],
-                    "html": responseText["html"]
+                    "html": responseText["htmlMainContent"]
                 });
-                this.getGroupsList().getStore().sort();
+                this.getFriendsViewGroupsList().getStore().sort();
 
-                // TODO: make the focusing part work!
                 // Make the groups list editable and set the focus to the new group's input
                 this.toggleEditGroupsList("editable");
-                Ext.fly("group" + groupId + "NameInput").dom.focus();
+
+                // TODO: put the new group's name input into focus
+                //Ext.fly("group" + repsonseText["groupName"] + "NameInput").dom.focus();
+
+                // Add the new group to the all inkling tab groups list panel and re-sort it
+                this.getAllInklingsGroupsList().getStore().add({
+                    "groupId": responseText["groupId"],
+                    "groupName": responseText["groupName"],
+                    "html": responseText["htmlPanel"]
+                });
+                this.getAllInklingsGroupsList().getStore().sort();
             },
 
             failure: function(response) {
@@ -754,6 +773,7 @@ Ext.define("inkle.controller.FriendsController", {
         });
     },
 
+    /* Renames the inputted group and updates the groups associated records */
     renameGroup: function(groupNameInput) {
         // Get the group name
         var groupName = groupNameInput.parent().child(".groupName");
@@ -762,23 +782,55 @@ Ext.define("inkle.controller.FriendsController", {
         // Get the group name input
         var groupNameInputValue = groupNameInput.getValue();
 
-        // TODO: update this record's groupName attribute so sorting works properly
-
         // If the value has changed, display it and update the database
         if (groupNameValue != groupNameInputValue) {
-            // Update the group name dislpayed on the group list item
-            groupName.setHtml(groupNameInputValue);
+            // Get the current group's ID
+            var groupId = groupNameInput.parent(".group").getAttribute("data-groupId");
 
-            // Update the database
+            // Determine the selected state of the all inklings group list item
+            var allInklingsGroupHtml = Ext.query("#allInklingsGroupsList [data-groupId='" + groupId + "']")[0];
+            var selected = Ext.fly(allInklingsGroupHtml).down(".selectionButton").hasCls("selected");
+
+            // Update the group's name in the database and in the record's list
             Ext.Ajax.request({
                 url: inkle.app.baseUrl + "/renameGroup/",
+
                 params: {
-                    groupId: groupNameInput.parent(".group").getAttribute("data-groupId"),
-                    name: groupNameInputValue
+                    groupId: groupId,
+                    name: groupNameInputValue,
+                    selected: selected
                 },
+
+                success: function(response) {
+                    // Decode the JSON data
+                    var responseText = Ext.JSON.decode(response.responseText);
+
+                    // Update the group name dislpayed on the group list item
+                    groupName.setHtml(groupNameInputValue);
+
+                    // Update this record's groupName attribute so sorting works properly
+                    var groupRecord = this.getFriendsViewGroupsList().getStore().findRecord("groupId", groupId);
+                    groupRecord.setData({
+                        "groupId": groupId,
+                        "groupName": groupNameInputValue,
+                        "html": responseText["htmlMainContent"]
+                    });
+
+                    // Rename the group in the all inkling tab groups list panel and re-sort the store
+                    groupRecord = this.getAllInklingsGroupsList().getStore().findRecord("groupId", groupId);
+                    groupRecord.setData({
+                        "groupId": groupId,
+                        "groupName": groupNameInputValue,
+                        "html": responseText["htmlPanel"]
+                    });
+                    this.getAllInklingsGroupsList().getStore().sort();
+                },
+
                 failure: function(response) {
                     Ext.Msg.alert("Errors", response.errors);
-                }
+                },
+
+                scope: this
             });
         }
     },
@@ -899,12 +951,12 @@ Ext.define("inkle.controller.FriendsController", {
     /******************/
     /* Updates the friends list */
     updateFriendsList: function() {
-        this.getFriendsList().getStore().load();
+        this.getFriendsViewFriendsList().getStore().load();
     },
 
     /* Updates the groups list */
     updateGroupsList: function(groupId) {
-        this.getGroupsList().getStore().load();
+        this.getFriendsViewGroupsList().getStore().load();
     },
 
     /* Updates the group members list according to the inputted group ID */
@@ -920,6 +972,6 @@ Ext.define("inkle.controller.FriendsController", {
 
     /* Updates the requests list */
     updateRequestsList: function() {
-        this.getRequestsList().getStore().load();
+        this.getFriendsViewRequestsList().getStore().load();
     },
 });
