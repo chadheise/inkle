@@ -54,7 +54,7 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
                            delegate:(id<FBRequestDelegate>) delegate
                          requestURL:(NSString *) url {
     
-    FBRequest* request = [[FBRequest alloc] init];
+    FBRequest* request = [[[FBRequest alloc] init] autorelease];
     request.delegate = delegate;
     request.url = url;
     request.httpMethod = httpMethod;
@@ -93,14 +93,15 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
             continue;
         }
         
-        NSString* escaped_value = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
+        NSString* escaped_value = (NSString *)CFURLCreateStringByAddingPercentEscapes(
                                                                                       NULL, /* allocator */
                                                                                       (CFStringRef)[params objectForKey:key],
                                                                                       NULL, /* charactersToLeaveUnescaped */
                                                                                       (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                                                      kCFStringEncodingUTF8));
+                                                                                      kCFStringEncodingUTF8);
         
         [pairs addObject:[NSString stringWithFormat:@"%@=%@", key, escaped_value]];
+        [escaped_value release];
     }
     NSString* query = [pairs componentsJoinedByString:@"&"];
     
@@ -185,9 +186,10 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
  */
 - (id)parseJsonResponse:(NSData *)data error:(NSError **)error {
     
-    NSString* responseString = [[NSString alloc] initWithData:data
-                                                      encoding:NSUTF8StringEncoding];
-    SBJSON *jsonParser = [SBJSON new];
+    NSString* responseString = [[[NSString alloc] initWithData:data
+                                                      encoding:NSUTF8StringEncoding]
+                                autorelease];
+    SBJSON *jsonParser = [[SBJSON new] autorelease];
     if ([responseString isEqualToString:@"true"]) {
         return [NSDictionary dictionaryWithObject:@"true" forKey:@"result"];
     } else if ([responseString isEqualToString:@"false"]) {
@@ -325,6 +327,12 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
  */
 - (void)dealloc {
     [_connection cancel];
+    [_connection release];
+    [_responseText release];
+    [_url release];
+    [_httpMethod release];
+    [_params release];
+    [super dealloc];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

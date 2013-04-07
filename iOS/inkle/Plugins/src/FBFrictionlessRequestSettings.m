@@ -22,8 +22,8 @@
 //
 @interface FBFrictionlessRequestSettings ()
 
-@property (readwrite, strong) NSArray *     allowedRecipients;
-@property (readwrite, strong) FBRequest*    activeRequest;
+@property (readwrite, retain) NSArray *     allowedRecipients;
+@property (readwrite, retain) FBRequest*    activeRequest;
 
 @end
 
@@ -39,7 +39,7 @@
 - (id)init {
     if (self = [super init]) {
         // start life with an empty frictionless cache
-        self.allowedRecipients = [[NSArray alloc] init];
+        self.allowedRecipients = [[[NSArray alloc] init] autorelease];
     }
     return self;
 }
@@ -65,9 +65,9 @@
     self.activeRequest = nil;
     
     if (ids == nil) {
-        self.allowedRecipients = [[NSArray alloc] init];
+        self.allowedRecipients = [[[NSArray alloc] init] autorelease];
     } else {
-        self.allowedRecipients = [[NSArray alloc] initWithArray:ids];
+        self.allowedRecipients = [[[NSArray alloc] initWithArray:ids] autorelease];
     }
 }
 
@@ -122,7 +122,7 @@
     self.activeRequest = nil;
 
     int items = [[result objectForKey: @"data"] count];
-    NSMutableArray* recipients = [[NSMutableArray alloc] initWithCapacity: items];
+    NSMutableArray* recipients = [[[NSMutableArray alloc] initWithCapacity: items] autorelease];
         
     for (int i = 0; i < items; i++) {
         [recipients addObject: [[[result objectForKey: @"data"] 
@@ -146,6 +146,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // NSObject
 
+- (void)dealloc {    
+    self.activeRequest = nil;
+    self.allowedRecipients = nil;
+    [super dealloc];
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private helpers
