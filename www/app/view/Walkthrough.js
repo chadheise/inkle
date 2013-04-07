@@ -62,32 +62,24 @@ Ext.define("inkle.view.Walkthrough", {
                 ].join("")
             }
 
-            // TODO: delete this commented out code
             /*
-            {
-                html: [
-                    "<h1>Get the ball rolling</h1>",
-                    "<p>Create an inkling to propose an activity to your friends. Provide as much or as little information as you have.</p>"
-                ].join("")
-            },
-            {
-                html : "<h1>Spread the word</h1>" +
-                    "<p>Invite your friends individually or by custom groups. Easily control who can and cannot see what you're doing.</p>",
-                //style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
-            },
+                TODO: delete this comment
 
-            {
-                html : "<h1>Collaborate on the details</h1>" +
-                    "<p>Ditch the mass text messages. Chat with your friends and collectively update the plan, all in one place.</p>",
-                //style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
-            },
+                GET THE BALL ROLLING
+                Create an inkling to propose an activity to your friends. Provide as much or as little information as you have.
+                Image: My inkling + button
 
-            {
-                html : "<h1>Organize and discover</h1>" +
-                    "<p>Explore what your friends are up to.</p>" +
-                    "<p>Get notified of changes to your upcoming inklings.",
-                //style: "background-image: -webkit-radial-gradient(center, circle farthest-corner, #288D42 0%, #1A492B 100%)",
-            }
+                SPREAD THE WORD
+                Invite your friends individually or by custom groups. Easily control who can and cannot see what you're doing.
+                Image: Groups panel on invite friends
+
+                COLLABORATE ON THE DETAILS
+                Ditch the mass text messages. Chat with your friends and collectively update the plan, all in one place.
+                Image: Inkling feed
+
+                ORGANIZE AND DISCOVER
+                Explore what your friends are up to. Get notified of changes to your upcoming inklings.
+                Image: Tab bar
             */
         ]
     }
