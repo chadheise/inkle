@@ -208,6 +208,7 @@ Ext.define("inkle.view.AllInklings", {
                         store: {
                             fields: [
                                 "groupId",
+                                "groupName",
                                 "html"
                             ],
                             proxy: {
@@ -220,6 +221,30 @@ Ext.define("inkle.view.AllInklings", {
                                     autoSetGroupsAsSelected: "true"
                                 }
                             },
+                            sorters: [
+                                {
+                                    sorterFn: function(record1, record2) {
+                                        var groupId1 = record1.data.groupId;
+                                        var groupId2 = record2.data.groupId;
+
+                                        var groupName1 = record1.data.groupName;
+                                        var groupName2 = record2.data.groupName;
+
+                                        // Put the "Not grouped" group (with an ID of -1) first
+                                        if (groupId1 == -1) {
+                                            return -1;
+                                        }
+                                        else if (groupId2 == -1) {
+                                            return 1;
+                                        }
+
+                                        // Otherwise, sort by group name
+                                        else {
+                                            return groupName1 > groupName2 ? 1 : (groupName1 == groupName2 ? 0 : -1);
+                                        }
+                                    }
+                                }
+                            ],
                             autoLoad: true
                         }
                     }
