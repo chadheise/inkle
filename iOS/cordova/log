@@ -18,6 +18,9 @@
 # under the License.
 #
 
-CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd )
-
-tail -f "$CORDOVA_PATH/console.log"
+# 
+# USAGE
+#
+#  ./log [path]
+#
+tail -f ${1:-".."}/console.log
