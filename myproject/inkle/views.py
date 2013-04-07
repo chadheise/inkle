@@ -587,7 +587,7 @@ def groups_panel_view(request):
 
     # Create the "Not Grouped" group
     not_grouped_group = {
-        "groupId": -1,
+        "id": -1,
         "name": "Not Grouped",
         "selected": ((auto_set_groups_as_selected) or (-1 in selected_group_ids)),
         "get_member_ids": not_grouped_members
@@ -595,6 +595,8 @@ def groups_panel_view(request):
 
     # Add the "Not Grouped" group to the response list
     response_groups.append({
+        "groupId": not_grouped_group["id"],
+        "groupName": not_grouped_group["name"],
         "html": get_group_list_item_panel_html(not_grouped_group, not_grouped_members)
     })
 
@@ -604,6 +606,7 @@ def groups_panel_view(request):
 
         response_groups.append({
             "groupId": g.id,
+            "groupName": g.name,
             "html": get_group_list_item_panel_html(g)
         })
 
@@ -2165,7 +2168,8 @@ def create_group_view(request):
     response = {
         "groupId": group.id,
         "groupName": "",
-        "html": get_group_list_item_main_content_html(group)
+        "htmlMainContent": get_group_list_item_main_content_html(group),
+        "htmlPanel": get_group_list_item_panel_html(group)
     }
 
     # Create and return a JSON object
@@ -2180,6 +2184,7 @@ def rename_group_view(request):
     try:
         group = Group.objects.get(pk = request.POST["groupId"])
         name = request.POST["name"]
+        selected = request.POST["selected"]
     except:
         raise Http404()
 
@@ -2191,6 +2196,17 @@ def rename_group_view(request):
     group.name = name
     group.save()
 
-    # Return the new group's ID
-    # TODO: get rid of this?
-    return HttpResponse(group.id)
+    # Set the selected state of the group
+    group.selected = selected
+
+    # Create a response object for the renamed group
+    response = {
+        "groupId": group.id,
+        "groupName": group.name,
+        "htmlMainContent": get_group_list_item_main_content_html(group),
+        "htmlPanel": get_group_list_item_panel_html(group)
+    }
+
+    # Create and return a JSON object
+    response = simplejson.dumps(response)
+    return HttpResponse(response, mimetype = "application/json")
