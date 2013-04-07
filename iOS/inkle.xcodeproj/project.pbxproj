@@ -37,6 +37,7 @@
 		30A0434914DC770100060A13 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30A0434614DC770100060A13 /* Localizable.strings */; };
 		30E1352710E2C1420031B30D /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* Cordova.plist */; };
 		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		8D04E1E5171220D900DCB73B /* PushNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D04E1E4171220D900DCB73B /* PushNotification.m */; };
 		8D24037715F43366000090AA /* Default@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24037615F43366000090AA /* Default@2x~iphone.png */; };
 		8D24037D15F43893000090AA /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24037A15F43893000090AA /* icon@2x.png */; };
 		8D24037E15F43893000090AA /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D24037B15F43893000090AA /* icon.png */; };
@@ -111,6 +112,8 @@
 		30E1352610E2C1420031B30D /* Cordova.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cordova.plist; path = ../Cordova.plist; sourceTree = "<group>"; };
 		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* inkle-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "inkle-Prefix.pch"; sourceTree = "<group>"; };
+		8D04E1E3171220D800DCB73B /* PushNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotification.h; sourceTree = "<group>"; };
+		8D04E1E4171220D900DCB73B /* PushNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotification.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* inkle-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "inkle-Info.plist"; path = "../inkle-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		8D24037615F43366000090AA /* Default@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x~iphone.png"; sourceTree = "<group>"; };
 		8D24037A15F43893000090AA /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
@@ -285,6 +288,7 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				8D04E1E2171220D800DCB73B /* PushNotification */,
 				8D352BA115EAFA950012E542 /* src */,
 				8D352B9E15EAF5250012E542 /* FacebookConnectPlugin.h */,
 				8D352B9F15EAF5250012E542 /* FacebookConnectPlugin.m */,
@@ -331,6 +335,15 @@
 				30A0434614DC770100060A13 /* Localizable.strings */,
 			);
 			path = se.lproj;
+			sourceTree = "<group>";
+		};
+		8D04E1E2171220D800DCB73B /* PushNotification */ = {
+			isa = PBXGroup;
+			children = (
+				8D04E1E3171220D800DCB73B /* PushNotification.h */,
+				8D04E1E4171220D900DCB73B /* PushNotification.m */,
+			);
+			path = PushNotification;
 			sourceTree = "<group>";
 		};
 		8D352BA115EAFA950012E542 /* src */ = {
@@ -508,6 +521,7 @@
 				8D352BC515EAFA950012E542 /* SBJsonBase.m in Sources */,
 				8D352BC615EAFA950012E542 /* SBJsonParser.m in Sources */,
 				8D352BC715EAFA950012E542 /* SBJsonWriter.m in Sources */,
+				8D04E1E5171220D900DCB73B /* PushNotification.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
