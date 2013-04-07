@@ -65,12 +65,12 @@
     }    
     
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    self.window = [[[UIWindow alloc] initWithFrame:screenBounds] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
     self.window.autoresizesSubviews = YES;
     
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    self.viewController = [[[MainViewController alloc] init] autorelease];
+    self.viewController = [[MainViewController alloc] init];
     self.viewController.useSplashScreen = YES;
     self.viewController.wwwFolderName = @"www";
     self.viewController.startPage = @"index.html";
@@ -134,10 +134,6 @@
     return YES;    
 }
 
-- (void) dealloc
-{
-	[super dealloc];
-}
 
 /**************************************************************************************************/
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
