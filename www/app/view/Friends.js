@@ -197,7 +197,6 @@ Ext.define("inkle.view.Friends", {
                             },
                             sorters: [
                                 {
-                                    // Sort by group name (always putting the "Not Grouped" (id = -1) group first)
                                     sorterFn: function(record1, record2) {
                                         var groupId1 = record1.data.groupId;
                                         var groupId2 = record2.data.groupId;
@@ -205,12 +204,15 @@ Ext.define("inkle.view.Friends", {
                                         var groupName1 = record1.data.groupName;
                                         var groupName2 = record2.data.groupName;
 
+                                        // Put the "Not grouped" group (with an ID of -1) first
                                         if (groupId1 == -1) {
                                             return -1;
                                         }
                                         else if (groupId2 == -1) {
                                             return 1;
                                         }
+
+                                        // Otherwise, sort by group name
                                         else {
                                             return groupName1 > groupName2 ? 1 : (groupName1 == groupName2 ? 0 : -1);
                                         }
@@ -409,12 +411,12 @@ Ext.define("inkle.view.Friends", {
             this.fireEvent("deleteLockTapped", groupsList, target, deleteLock, record);
         }
         else {
-            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["memberId"]);
+            this.fireEvent("friendsViewGroupsListItemTapped", record.getData()["groupId"]);
         }
     },
 
     onFriendsViewRequestsListItemTap: function(requestsList, index, target, record, event, options) {
-        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["memberId"]);
+        this.fireEvent("friendsViewRequestsListItemTapped", record.getData()["requestId"]);
     },
 
     // Groups list name input blur
