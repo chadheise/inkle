@@ -56,8 +56,11 @@
 	};
 
 	cordova.addConstructor(function() {
+	    /*alert('adding constructor');
+	    alert(window.plugins);
 		if(!window.plugins) window.plugins = {};
 		window.plugins.pushNotification = new PushNotification();
+		alert(window.plugins.pushNotification);*/
 	});
 
 })(window.cordova || window.Cordova);
